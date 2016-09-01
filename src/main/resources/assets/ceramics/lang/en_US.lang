@@ -1,0 +1,15 @@
+itemGroup.ceramics=Ceramics
+
+item.ceramics.clay_bucket_raw.name=Unfired Clay Bucket
+item.ceramics.clay_bucket.name=%s Clay Bucket
+item.ceramics.clay_bucket.empty.name=Clay Bucket
+item.ceramics.clay_bucket.milk.name=Milk Clay Bucket
+
+item.ceramics.clay_helmet_raw.name=Unfired Clay Helmet
+item.ceramics.clay_chestplate_raw.name=Unfired Clay Chestplate
+item.ceramics.clay_leggings_raw.name=Unfired Clay Leggings
+item.ceramics.clay_boots_raw.name=Unfired Clay Boots
+item.ceramics.clay_helmet.name=Clay Helmet
+item.ceramics.clay_chestplate.name=Clay Chestplate
+item.ceramics.clay_leggings.name=Clay Leggings
+item.ceramics.clay_boots.name=Clay Boots

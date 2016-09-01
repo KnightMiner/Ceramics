@@ -1,0 +1,16 @@
+[
+	{
+		"modid": "ceramics",
+		"name": "Ceramics",
+		"description": "Adds a few early game items based on baking clay",
+		"version": "${version}",
+		"mcversion": "${mcversion}",
+		"url": "",
+		"updateUrl": "",
+		"authorList": ["KnightMiner"],
+		"credits": "Much of the code for clay buckets is based off the Forge universal bucket",
+		"logoFile": "",
+		"screenshots": [],
+		"dependencies": []
+	}
+]
