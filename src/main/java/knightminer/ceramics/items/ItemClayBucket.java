@@ -48,12 +48,14 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 	public static final String TAG_FLUIDS = "fluids";
 	public static ItemStack MILK_BUCKET;
+	public static ItemStack BRICK;
 
 	public ItemClayBucket() {
 		this.setCreativeTab(Ceramics.tab);
 		this.hasSubtypes = true;
 
 		MILK_BUCKET = new ItemStack(Items.MILK_BUCKET);
+		BRICK = new ItemStack(Items.BRICK);
 
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, DispenseFluidContainer.getInstance());
 	}
@@ -135,6 +137,10 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 						player.addStat(StatList.getObjectUseStats(this));
 
 						drain(itemstack, Fluid.BUCKET_VOLUME, true);
+						if(itemstack.stackSize == 0) {
+							// your bucket don broke
+							player.renderBrokenItemStack(BRICK); // we use bricks for particles since the bucket model does some odd things
+						}
 					}
 
 					return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
@@ -184,6 +190,21 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 			// material
 			event.setCanceled(true);
 		}
+	}
+
+	// container items
+
+	@Override
+	public ItemStack getContainerItem(ItemStack stack) {
+		if (doesBreak(stack)) {
+			return null;
+		}
+		return new ItemStack(this);
+	}
+
+	@Override
+	public boolean hasContainerItem(ItemStack stack) {
+		return !doesBreak(stack);
 	}
 
 	// milking cows

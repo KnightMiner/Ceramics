@@ -16,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -55,6 +57,9 @@ public class Ceramics {
 	static {
 		FluidRegistry.enableUniversalBucket();
 	}
+
+	// TODO: config file?
+	// TODO: TConstruct casting support
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
@@ -97,6 +102,19 @@ public class Ceramics {
 		GameRegistry.addSmelting(clayChestplateRaw, new ItemStack(clayChestplate), 0.5f);
 		GameRegistry.addSmelting(clayLeggingsRaw, new ItemStack(clayLeggings), 0.5f);
 		GameRegistry.addSmelting(clayBootsRaw, new ItemStack(clayBoots), 0.5f);
+
+		GameRegistry.registerFuelHandler(new IFuelHandler() {
+			@Override
+			public int getBurnTime(ItemStack fuel) {
+				if(fuel != null && fuel.getItem() == clayBucket) {
+					FluidStack fluid = clayBucket.getFluid(fuel);
+					if(fluid != null && fluid.getFluid() == FluidRegistry.LAVA) {
+						return 20000;
+					}
+				}
+				return 0;
+			}
+		});
 	}
 
 	@EventHandler
