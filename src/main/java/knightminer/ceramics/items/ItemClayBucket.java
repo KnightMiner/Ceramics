@@ -234,7 +234,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 		// other fluids break if hot
 		FluidStack fluid = getFluid(stack);
-		if(fluid != null && fluid.getFluid().getBlock().getDefaultState().getMaterial() == Material.LAVA) {
+		if(fluid != null && fluid.getFluid().canBePlacedInWorld() && fluid.getFluid().getBlock().getDefaultState().getMaterial() == Material.LAVA) {
 			return true;
 		}
 
