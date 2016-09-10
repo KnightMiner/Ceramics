@@ -24,12 +24,6 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 	@Override
 	protected void setFluid(Fluid fluid) {
 		if(fluid == null) {
-
-			if(Ceramics.clayBucket.doesBreak(container)) {
-				container.stackSize = 0;
-			}
-
-			// this is a last resort in case the method is not handled elsewhere
 			Ceramics.clayBucket.drain(container, 1000, true);
 
 		}

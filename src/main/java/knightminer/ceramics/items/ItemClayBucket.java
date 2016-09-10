@@ -29,6 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
+import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.fluids.DispenseFluidContainer;
 import net.minecraftforge.fluids.Fluid;
@@ -137,10 +138,6 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 						player.addStat(StatList.getObjectUseStats(this));
 
 						drain(itemstack, Fluid.BUCKET_VOLUME, true);
-						if(itemstack.stackSize == 0) {
-							// your bucket don broke
-							player.renderBrokenItemStack(BRICK); // we use bricks for particles since the bucket model does some odd things
-						}
 					}
 
 					return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
@@ -189,6 +186,13 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 			// convert it into a water/lava bucket depending on the blocks
 			// material
 			event.setCanceled(true);
+		}
+	}
+
+	@SubscribeEvent
+	public void onItemDestroyed(PlayerDestroyItemEvent event) {
+		if(event.getOriginal() != null && event.getOriginal().getItem() == this) {
+			event.getEntityPlayer().renderBrokenItemStack(BRICK);
 		}
 	}
 
