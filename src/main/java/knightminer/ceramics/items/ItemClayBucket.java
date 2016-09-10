@@ -8,7 +8,6 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.library.FluidClayBucketWrapper;
 import knightminer.ceramics.library.Util;
 import net.minecraft.block.BlockDispenser;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityCow;
@@ -238,7 +237,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 		// other fluids break if hot
 		FluidStack fluid = getFluid(stack);
-		if(fluid != null && fluid.getFluid().canBePlacedInWorld() && fluid.getFluid().getBlock().getDefaultState().getMaterial() == Material.LAVA) {
+		if(fluid != null && fluid.getFluid().getTemperature() >= 450) {
 			return true;
 		}
 
