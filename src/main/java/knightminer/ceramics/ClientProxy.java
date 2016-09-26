@@ -2,6 +2,8 @@ package knightminer.ceramics;
 
 import javax.annotation.Nonnull;
 
+import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
+import knightminer.ceramics.library.Util;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -12,10 +14,14 @@ import net.minecraftforge.client.model.ModelLoader;
 public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerModels() {
+		for(UnfiredType type : UnfiredType.values()) {
+			registerItemModel(Ceramics.clayUnfired, type.getMeta(), "unfired_" + type.getName());
+		}
+
 		registerItemModel(Ceramics.clayBucket);
+		registerItemModel(Ceramics.clayShears);
 		ModelLoader.setCustomModelResourceLocation(Ceramics.clayBucket, 1,
 				new ModelResourceLocation(Ceramics.clayBucket.getRegistryName(), "milk"));
-		registerItemModel(Ceramics.clayBucketRaw);
 
 		registerItemModel(Ceramics.clayHelmet);
 		registerItemModel(Ceramics.clayChestplate);
@@ -39,6 +45,19 @@ public class ClientProxy extends CommonProxy {
 				}
 			});
 			ModelLoader.registerItemVariants(item, location);
+		}
+	}
+
+	private void registerItemModel(Item item, int meta, String name) {
+		if(item != null) {
+			// tell Minecraft which textures it has to load. This is resource-domain sensitive
+			if(!name.contains(":")) {
+				name = Util.resource(name);
+			}
+
+			ModelLoader.registerItemVariants(item, new ResourceLocation(name));
+			// tell the game which model to use for this item-meta combination
+			ModelLoader.setCustomModelResourceLocation(item, meta, new ModelResourceLocation(name, "inventory"));
 		}
 	}
 }
