@@ -1,0 +1,24 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "transform": "forge:default-item",
+    "model": "forge:item-layer"
+  },
+  "variants": {
+    "bucket": [{ "textures": { "layer0": "ceramics:items/unfired_bucket" }}],
+    "shears": [{ "textures": { "layer0": "ceramics:items/unfired_shears" }}],
+    "barrel": {
+      "transform": "forge:default-block",
+      "model": "ceramics:barrel",
+      "textures": {
+        "texture": "blocks/clay"
+      }
+	},
+	"barrel_extension": {
+      "model": "ceramics:barrel_extension",
+      "textures": {
+        "texture": "blocks/clay"
+      }
+	}
+  }
+}

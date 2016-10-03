@@ -3,8 +3,11 @@ package knightminer.ceramics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import knightminer.ceramics.blocks.BlockBarrel;
+import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
+import knightminer.ceramics.items.ItemBlockBarrel;
 import knightminer.ceramics.items.ItemClayBucket;
 import knightminer.ceramics.items.ItemClayShears;
 import knightminer.ceramics.items.ItemClayUnfired;
@@ -12,11 +15,19 @@ import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.CreativeTab;
 import knightminer.ceramics.library.Util;
+import knightminer.ceramics.network.CeramicsNetwork;
+import knightminer.ceramics.tileentity.TileBarrel;
+import knightminer.ceramics.tileentity.TileBarrelExtension;
+import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemCloth;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -44,11 +55,16 @@ public class Ceramics {
 
 	public static final Logger log = LogManager.getLogger(modID);
 
+	public static Block clayBarrel;
+	public static Block clayBarrelStained;
+	public static Block clayBarrelStainedExtension;
+
 	public static Item clayUnfired;
 
 	public static ItemClayBucket clayBucket;
 	public static Item clayShears;
 
+	// armor
 	public static ArmorMaterial clayArmor;
 	public static Item clayHelmet;
 	public static Item clayChestplate;
@@ -104,6 +120,18 @@ public class Ceramics {
 			clayBootsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.FEET), "clay_boots_raw");
 		}
 
+		// barrels
+		if(Config.barrelEnabled) {
+			clayBarrel = registerBlock(new ItemBlockBarrel(new BlockBarrel()), "clay_barrel");
+			clayBarrelStained = registerBlock(new ItemCloth(new BlockBarrelStained(false)), "clay_barrel_stained");
+			clayBarrelStainedExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "clay_barrel_stained_extension");
+
+			registerTE(TileBarrel.class, "barrel");
+			registerTE(TileBarrelExtension.class, "barrel_extension");
+		}
+
+		CeramicsNetwork.registerPackets();
+
 		proxy.registerModels();
 	}
 
@@ -150,6 +178,34 @@ public class Ceramics {
 			GameRegistry.addSmelting(clayLeggingsRaw, new ItemStack(clayLeggings), 0.5f);
 			GameRegistry.addSmelting(clayBootsRaw, new ItemStack(clayBoots), 0.5f);
 		}
+
+		// barrels
+		if(Config.barrelEnabled) {
+			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.BARREL.getMeta());
+			ItemStack rawExtension = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_EXTENSION.getMeta());
+			GameRegistry.addRecipe(raw.copy(), "c c", "c c", "ccc", 'c', Items.CLAY_BALL);
+			GameRegistry.addRecipe(rawExtension.copy(), "c c", "c c", "c c", 'c', Items.CLAY_BALL);
+
+			ItemStack barrel = new ItemStack(clayBarrel, 1, 0);
+			ItemStack extension = new ItemStack(clayBarrel, 1, 1);
+
+			GameRegistry.addSmelting(raw, barrel, 0.5f);
+			GameRegistry.addSmelting(rawExtension, extension, 0.5f);
+
+			for(EnumDyeColor color : EnumDyeColor.values()) {
+				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
+				GameRegistry.addRecipe(new ItemStack(clayBarrelStained, 8, color.getMetadata()),
+						"BBB", "BdB", "BBB", 'B', barrel.copy(), 'd', dye );
+				GameRegistry.addRecipe(new ItemStack(clayBarrelStainedExtension, 8, color.getMetadata()),
+						"BBB", "BdB", "BBB", 'B', extension.copy(), 'd', dye.copy() );
+
+				// alt recipe for crafting just 1
+				GameRegistry.addShapelessRecipe(new ItemStack(clayBarrelStained, 1, color.getMetadata()),
+						barrel.copy(), dye.copy() );
+				GameRegistry.addShapelessRecipe(new ItemStack(clayBarrelStainedExtension, 1, color.getMetadata()),
+						extension.copy(), dye.copy() );
+			}
+		}
 	}
 
 	@EventHandler
@@ -173,12 +229,29 @@ public class Ceramics {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private <T extends Block> T registerBlock(ItemBlock item, String name) {
+		Block block = item.getBlock();
+
+		block.setUnlocalizedName(Util.prefix(name));
+		block.setRegistryName(Util.getResource(name));
+		GameRegistry.register(block);
+
+		registerItem(item, name);
+
+		return (T) block;
+	}
+
 	private <T extends Item> T registerItem(T item, String name) {
 		item.setUnlocalizedName(Util.prefix(name));
 		item.setRegistryName(Util.getResource(name));
 		GameRegistry.register(item);
 
 		return item;
+	}
+
+	protected static void registerTE(Class<? extends TileEntity> teClazz, String name) {
+		GameRegistry.registerTileEntity(teClazz, Util.prefix(name));
 	}
 
 }

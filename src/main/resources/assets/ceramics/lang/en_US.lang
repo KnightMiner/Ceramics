@@ -1,5 +1,45 @@
 itemGroup.ceramics=Ceramics
 
+# Blocks
+tile.ceramics.clay_barrel.barrel.name=Clay Barrel
+tile.ceramics.clay_barrel.barrel_extension.name=Clay Barrel Extension
+
+tile.ceramics.clay_barrel_stained.black.name=Black Clay Barrel
+tile.ceramics.clay_barrel_stained.red.name=Red Clay Barrel
+tile.ceramics.clay_barrel_stained.green.name=Green Clay Barrel
+tile.ceramics.clay_barrel_stained.brown.name=Brown Clay Barrel
+tile.ceramics.clay_barrel_stained.blue.name=Blue Clay Barrel
+tile.ceramics.clay_barrel_stained.purple.name=Purple Clay Barrel
+tile.ceramics.clay_barrel_stained.cyan.name=Cyan Clay Barrel
+tile.ceramics.clay_barrel_stained.silver.name=Light Gray Clay Barrel
+tile.ceramics.clay_barrel_stained.gray.name=Gray Clay Barrel
+tile.ceramics.clay_barrel_stained.pink.name=Pink Clay Barrel
+tile.ceramics.clay_barrel_stained.lime.name=Lime Clay Barrel
+tile.ceramics.clay_barrel_stained.yellow.name=Yellow Clay Barrel
+tile.ceramics.clay_barrel_stained.lightBlue.name=Light Blue Clay Barrel
+tile.ceramics.clay_barrel_stained.magenta.name=Magenta Clay Barrel
+tile.ceramics.clay_barrel_stained.orange.name=Orange Clay Barrel
+tile.ceramics.clay_barrel_stained.white.name=White Clay Barrel
+
+tile.ceramics.clay_barrel_stained_extension.black.name=Black Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.red.name=Red Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.green.name=Green Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.brown.name=Brown Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.blue.name=Blue Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.purple.name=Purple Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.cyan.name=Cyan Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.silver.name=Light Gray Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.gray.name=Gray Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.pink.name=Pink Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.lime.name=Lime Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.yellow.name=Yellow Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.lightBlue.name=Light Blue Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.magenta.name=Magenta Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.orange.name=Orange Clay Barrel Extension
+tile.ceramics.clay_barrel_stained_extension.white.name=White Clay Barrel Extension
+
+# Items
+
 item.ceramics.unfired_bucket.name=Unfired Clay Bucket
 item.ceramics.clay_bucket.name=%s Clay Bucket
 item.ceramics.clay_bucket.empty.name=Clay Bucket
