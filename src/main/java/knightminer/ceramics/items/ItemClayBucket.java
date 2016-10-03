@@ -261,12 +261,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	public FluidStack getFluid(ItemStack container) {
 		// milk logic, if milk is registered we use that basically
 		if(isMilk(container)) {
-			Fluid milk = FluidRegistry.getFluid("milk");
-			if(milk != null) {
-				return new FluidStack(milk, 1000);
-			}
-
-			return null;
+			return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
 		}
 		NBTTagCompound tags = container.getTagCompound();
 		if(tags != null) {

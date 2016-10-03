@@ -32,4 +32,17 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 			Ceramics.clayBucket.fill(container, new FluidStack(fluid, Fluid.BUCKET_VOLUME), true);
 		}
 	}
+
+	@Override
+	public int fill(FluidStack resource, boolean doFill) {
+		if (container.stackSize != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || Ceramics.clayBucket.hasFluid(container) || !canFillFluidType(resource)) {
+			return 0;
+		}
+
+		if (doFill) {
+			setFluid(resource.getFluid());
+		}
+
+		return Fluid.BUCKET_VOLUME;
+	}
 }
