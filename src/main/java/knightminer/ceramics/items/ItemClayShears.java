@@ -1,16 +1,15 @@
 package knightminer.ceramics.items;
 
-import com.google.common.eventbus.Subscribe;
-
 import knightminer.ceramics.Ceramics;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ItemClayShears extends ItemShears {
 	public ItemClayShears() {
@@ -35,16 +34,12 @@ public class ItemClayShears extends ItemShears {
 	}
 
 	// webs require shears to drop
-	@Subscribe
+	@SubscribeEvent(priority = EventPriority.HIGH) // run before someone else does special stuff with string
 	public void onBlockDrops(HarvestDropsEvent event) {
-		ItemStack shears = event.getHarvester().getActiveItemStack();
-		if(shears != null && shears.getItem() == this) {
-			for(ItemStack stack : event.getDrops()) {
-				if(stack != null && stack.getItem() == Items.STRING) {
-					event.getDrops().remove(stack);
-					event.getDrops().add(new ItemStack(Blocks.WEB));
-				}
-			}
+		ItemStack shears = event.getHarvester().getHeldItemMainhand();
+		if(shears != null && shears.getItem() == this && event.getState().getBlock() == Blocks.WEB) {
+			event.getDrops().clear();
+			event.getDrops().add(new ItemStack(Blocks.WEB));
 		}
 	}
 
