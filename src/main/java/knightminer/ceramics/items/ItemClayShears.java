@@ -4,6 +4,7 @@ import knightminer.ceramics.Ceramics;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
@@ -36,7 +37,8 @@ public class ItemClayShears extends ItemShears {
 	// webs require shears to drop
 	@SubscribeEvent(priority = EventPriority.HIGH) // run before someone else does special stuff with string
 	public void onBlockDrops(HarvestDropsEvent event) {
-		ItemStack shears = event.getHarvester().getHeldItemMainhand();
+		EntityPlayer harvester = event.getHarvester();
+		ItemStack shears = harvester != null ? harvester.getHeldItemMainhand() : null;
 		if(shears != null && shears.getItem() == this && event.getState().getBlock() == Blocks.WEB) {
 			event.getDrops().clear();
 			event.getDrops().add(new ItemStack(Blocks.WEB));
