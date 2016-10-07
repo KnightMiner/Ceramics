@@ -19,12 +19,16 @@ public class Config {
 
 		bucketEnabled = configFile.getBoolean("bucket", "enabled", true,
 				"Enables the clay bucket, an alternative to the iron bucket that breaks from hot liquids");
-		shearsEnabled = configFile.getBoolean("bucket", "enabled", true,
+		shearsEnabled = configFile.getBoolean("shears", "enabled", true,
 				"Enables the clay shears, faster than iron shears but less duribility");
 		armorEnabled = configFile.getBoolean("armor", "enabled", true,
 				"Enables the clay armor, an early game alternative to leather");
 		barrelEnabled = configFile.getBoolean("barrel", "enabled", true,
 				"Enables the clay barrel, a liquid tank that can be expanded upwards");
+
+		if(configFile.hasChanged()) {
+			configFile.save();
+		}
 	}
 
 	public static boolean unfiredEnabled(UnfiredType type) {
