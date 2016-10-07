@@ -1,0 +1,13 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "ceramics:barrel",
+    "textures": {
+         "texture": "ceramics:blocks/porcelain"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+	"inventory": [{}]
+  }
+}

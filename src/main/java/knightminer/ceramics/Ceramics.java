@@ -5,9 +5,15 @@ import org.apache.logging.log4j.Logger;
 
 import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelStained;
+import knightminer.ceramics.blocks.BlockClayHard;
+import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
+import knightminer.ceramics.blocks.BlockClaySoft;
+import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
+import knightminer.ceramics.blocks.BlockPorcelainClay;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
 import knightminer.ceramics.items.ItemBlockBarrel;
+import knightminer.ceramics.items.ItemBlockEnum;
 import knightminer.ceramics.items.ItemClayBucket;
 import knightminer.ceramics.items.ItemClayShears;
 import knightminer.ceramics.items.ItemClayUnfired;
@@ -41,6 +47,7 @@ import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 @Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name)
 public class Ceramics {
@@ -56,8 +63,13 @@ public class Ceramics {
 	public static final Logger log = LogManager.getLogger(modID);
 
 	public static Block clayBarrel;
+	public static Block claySoft;
+	public static Block clayHard;
+	public static Block porcelainBarrel;
+	public static Block porcelainBarrelExtension;
 	public static Block clayBarrelStained;
 	public static Block clayBarrelStainedExtension;
+	public static Block porcelain;
 
 	public static Item clayUnfired;
 
@@ -86,9 +98,16 @@ public class Ceramics {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		Config.load(event);
-
 		// generic materials
 		clayUnfired = registerItem(new ItemClayUnfired(), "unfired_clay");
+
+		// porcelain
+		if(Config.porcelainEnabled) {
+			// not technically porcelain as I may add other soft blocks later, but for now
+			claySoft = registerBlock(new ItemBlockEnum(new BlockClaySoft()), "clay_soft");
+			clayHard = registerBlock(new ItemBlockEnum(new BlockClayHard()), "clay_hard");
+			porcelain = registerBlock(new ItemCloth(new BlockPorcelainClay()), "porcelain");
+		}
 
 		// bucket
 		if(Config.bucketEnabled) {
@@ -126,6 +145,11 @@ public class Ceramics {
 			clayBarrelStained = registerBlock(new ItemCloth(new BlockBarrelStained(false)), "clay_barrel_stained");
 			clayBarrelStainedExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "clay_barrel_stained_extension");
 
+			if(Config.porcelainEnabled) {
+				porcelainBarrel = registerBlock(new ItemCloth(new BlockBarrelStained(false)), "porcelain_barrel");
+				porcelainBarrelExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "porcelain_barrel_extension");
+			}
+
 			registerTE(TileBarrel.class, "barrel");
 			registerTE(TileBarrelExtension.class, "barrel_extension");
 		}
@@ -137,6 +161,33 @@ public class Ceramics {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		// porcelain
+		if(Config.porcelainEnabled) {
+			ItemStack porcelainItem = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta());
+			ItemStack brick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
+			ItemStack boneMeal = new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage());
+			ItemStack block = new ItemStack(claySoft, 1, ClayTypeSoft.PORCELAIN.getMeta());
+			ItemStack blockHard = new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata());
+			ItemStack brickBlock = new ItemStack(clayHard, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta());
+
+			// basic recipe: two bone mean with clay
+			GameRegistry.addShapelessRecipe(porcelainItem, Items.CLAY_BALL, boneMeal, boneMeal);
+			GameRegistry.addRecipe(block, "CC", "CC", 'C', porcelainItem.copy());
+			GameRegistry.addShapelessRecipe(new ItemStack(clayUnfired, 4, UnfiredType.PORCELAIN.getMeta()), block.copy());
+			GameRegistry.addRecipe(brickBlock, "CC", "CC", 'C', brick);
+
+			// bricks
+			GameRegistry.addSmelting(block.copy(), blockHard, 0.1f);
+			GameRegistry.addSmelting(porcelainItem.copy(), brick.copy(), 0.1f);
+
+			for(EnumDyeColor color : EnumDyeColor.values()) {
+				ItemStack dyed = new ItemStack(porcelain, 1, color.getMetadata());
+				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
+
+				GameRegistry.addRecipe(dyed, "ccc", "cdc", "ccc", 'd', dye, 'c', blockHard.copy());
+			}
+		}
+
 		// bucket
 		if(Config.bucketEnabled) {
 			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta());
@@ -192,6 +243,22 @@ public class Ceramics {
 			GameRegistry.addSmelting(raw, barrel, 0.5f);
 			GameRegistry.addSmelting(rawExtension, extension, 0.5f);
 
+			// barrels made of porcelain
+			if(Config.porcelainEnabled) {
+				ItemStack porcelainItem = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta());
+				ItemStack porcelainRaw = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN.getMeta());
+				ItemStack porcelainRawExtension = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN_EXTENSION.getMeta());
+
+				GameRegistry.addRecipe(porcelainRaw.copy(), "c c", "c c", "ccc", 'c', porcelainItem);
+				GameRegistry.addRecipe(porcelainRawExtension.copy(), "c c", "c c", "c c", 'c', porcelainItem.copy());
+
+				ItemStack porcelainBarrel2 = new ItemStack(porcelainBarrel, 1, 0);
+				ItemStack porcelainExtension = new ItemStack(porcelainBarrelExtension, 1, 0);
+
+				GameRegistry.addSmelting(porcelainRaw, porcelainBarrel2, 0.5f);
+				GameRegistry.addSmelting(porcelainRawExtension, porcelainExtension, 0.5f);
+			}
+
 			for(EnumDyeColor color : EnumDyeColor.values()) {
 				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
 				GameRegistry.addRecipe(new ItemStack(clayBarrelStained, 8, color.getMetadata()),
@@ -204,8 +271,26 @@ public class Ceramics {
 						barrel.copy(), dye.copy() );
 				GameRegistry.addShapelessRecipe(new ItemStack(clayBarrelStainedExtension, 1, color.getMetadata()),
 						extension.copy(), dye.copy() );
+
+				if(Config.porcelainEnabled) {
+					ItemStack porcelainBarrel2 = new ItemStack(porcelainBarrel, 1, OreDictionary.WILDCARD_VALUE);
+					ItemStack porcelainExtension = new ItemStack(porcelainBarrelExtension, 1, OreDictionary.WILDCARD_VALUE);
+
+					GameRegistry.addRecipe(new ItemStack(porcelainBarrel, 8, color.getMetadata()),
+							"BBB", "BdB", "BBB", 'B', porcelainBarrel2.copy(), 'd', dye.copy());
+					GameRegistry.addRecipe(new ItemStack(porcelainBarrelExtension, 8, color.getMetadata()),
+							"BBB", "BdB", "BBB", 'B', porcelainExtension.copy(), 'd', dye.copy());
+
+					// alt recipe for crafting just 1
+					GameRegistry.addShapelessRecipe(new ItemStack(porcelainBarrel, 1, color.getMetadata()),
+							porcelainBarrel2.copy(), dye.copy() );
+					GameRegistry.addShapelessRecipe(new ItemStack(porcelainBarrelExtension, 1, color.getMetadata()),
+							porcelainExtension.copy(), dye.copy() );
+				}
 			}
 		}
+
+		proxy.init();
 	}
 
 	@EventHandler

@@ -11,6 +11,7 @@ public class Config {
 	public static boolean shearsEnabled = true;
 	public static boolean armorEnabled = true;
 	public static boolean barrelEnabled = true;
+	public static boolean porcelainEnabled = true;
 
 	static Configuration configFile;
 
@@ -25,6 +26,8 @@ public class Config {
 				"Enables the clay armor, an early game alternative to leather");
 		barrelEnabled = configFile.getBoolean("barrel", "enabled", true,
 				"Enables the clay barrel, a liquid tank that can be expanded upwards");
+		porcelainEnabled = configFile.getBoolean("porcelain", "enabled", true,
+				"Enables porcelain, a whiter clay that produces true colors when dyed");
 
 		if(configFile.hasChanged()) {
 			configFile.save();
@@ -35,11 +38,21 @@ public class Config {
 		switch(type) {
 			case BUCKET:
 				return bucketEnabled;
+
 			case SHEARS:
 				return shearsEnabled;
+
 			case BARREL:
 			case BARREL_EXTENSION:
 				return barrelEnabled;
+
+			case PORCELAIN:
+			case PORCELAIN_BRICK:
+				return porcelainEnabled;
+
+			case BARREL_PORCELAIN:
+			case BARREL_PORCELAIN_EXTENSION:
+				return barrelEnabled && porcelainEnabled;
 		}
 		return true;
 	}

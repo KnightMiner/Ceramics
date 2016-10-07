@@ -51,14 +51,18 @@ public class ItemClayUnfired extends Item {
 	 */
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return "item." + Util.prefix("unfired_" + UnfiredType.fromMeta(stack.getItemDamage()).getName());
+		return "item." + Util.prefix("unfired." + UnfiredType.fromMeta(stack.getItemDamage()).getName());
 	}
 
 	public enum UnfiredType {
 		BUCKET(16),
 		SHEARS(1),
 		BARREL,
-		BARREL_EXTENSION();
+		BARREL_EXTENSION,
+		PORCELAIN,
+		PORCELAIN_BRICK,
+		BARREL_PORCELAIN,
+		BARREL_PORCELAIN_EXTENSION;
 
 		private int meta;
 		private int stackSize;

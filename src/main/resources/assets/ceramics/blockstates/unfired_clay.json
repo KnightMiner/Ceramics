@@ -7,6 +7,10 @@
   "variants": {
     "bucket": [{ "textures": { "layer0": "ceramics:items/unfired_bucket" }}],
     "shears": [{ "textures": { "layer0": "ceramics:items/unfired_shears" }}],
+    "porcelain": [{ "textures": { "layer0": "ceramics:items/porcelain_ball" }}],
+    "porcelain_brick": [{ "textures": { "layer0": "ceramics:items/porcelain_brick" }}],
+	
+	
     "barrel": {
       "transform": "forge:default-block",
       "model": "ceramics:barrel",
@@ -18,6 +22,19 @@
       "model": "ceramics:barrel_extension",
       "textures": {
         "texture": "blocks/clay"
+      }
+	},
+	"barrel_porcelain": {
+      "transform": "forge:default-block",
+      "model": "ceramics:barrel",
+      "textures": {
+        "texture": "ceramics:blocks/porcelain_raw"
+      }
+	},
+	"barrel_porcelain_extension": {
+      "model": "ceramics:barrel_extension",
+      "textures": {
+        "texture": "ceramics:blocks/porcelain_raw"
       }
 	}
   }

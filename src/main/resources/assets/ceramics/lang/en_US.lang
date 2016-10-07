@@ -1,6 +1,27 @@
 itemGroup.ceramics=Ceramics
 
 # Blocks
+tile.ceramics.clay_hard.porcelain_bricks.name=Porcelain Bricks
+tile.ceramics.clay_soft.porcelain.name=Unfired Porcelain
+
+
+tile.ceramics.porcelain.black.name=Black Porcelain
+tile.ceramics.porcelain.red.name=Red Porcelain
+tile.ceramics.porcelain.green.name=Green Porcelain
+tile.ceramics.porcelain.brown.name=Brown Porcelain
+tile.ceramics.porcelain.blue.name=Blue Porcelain
+tile.ceramics.porcelain.purple.name=Purple Porcelain
+tile.ceramics.porcelain.cyan.name=Cyan Porcelain
+tile.ceramics.porcelain.silver.name=Light Gray Porcelain
+tile.ceramics.porcelain.gray.name=Gray Porcelain
+tile.ceramics.porcelain.pink.name=Pink Porcelain
+tile.ceramics.porcelain.lime.name=Lime Porcelain
+tile.ceramics.porcelain.yellow.name=Yellow Porcelain
+tile.ceramics.porcelain.lightBlue.name=Light Blue Porcelain
+tile.ceramics.porcelain.magenta.name=Magenta Porcelain
+tile.ceramics.porcelain.orange.name=Orange Porcelain
+tile.ceramics.porcelain.white.name=White Porcelain
+
 tile.ceramics.clay_barrel.barrel.name=Clay Barrel
 tile.ceramics.clay_barrel.barrel_extension.name=Clay Barrel Extension
 
@@ -38,15 +59,53 @@ tile.ceramics.clay_barrel_stained_extension.magenta.name=Magenta Clay Barrel Ext
 tile.ceramics.clay_barrel_stained_extension.orange.name=Orange Clay Barrel Extension
 tile.ceramics.clay_barrel_stained_extension.white.name=White Clay Barrel Extension
 
+tile.ceramics.porcelain_barrel.black.name=Black Porcelain Barrel
+tile.ceramics.porcelain_barrel.red.name=Red Porcelain Barrel
+tile.ceramics.porcelain_barrel.green.name=Green Porcelain Barrel
+tile.ceramics.porcelain_barrel.brown.name=Brown Porcelain Barrel
+tile.ceramics.porcelain_barrel.blue.name=Blue Porcelain Barrel
+tile.ceramics.porcelain_barrel.purple.name=Purple Porcelain Barrel
+tile.ceramics.porcelain_barrel.cyan.name=Cyan Porcelain Barrel
+tile.ceramics.porcelain_barrel.silver.name=Light Gray Porcelain Barrel
+tile.ceramics.porcelain_barrel.gray.name=Gray Porcelain Barrel
+tile.ceramics.porcelain_barrel.pink.name=Pink Porcelain Barrel
+tile.ceramics.porcelain_barrel.lime.name=Lime Porcelain Barrel
+tile.ceramics.porcelain_barrel.yellow.name=Yellow Porcelain Barrel
+tile.ceramics.porcelain_barrel.lightBlue.name=Light Blue Porcelain Barrel
+tile.ceramics.porcelain_barrel.magenta.name=Magenta Porcelain Barrel
+tile.ceramics.porcelain_barrel.orange.name=Orange Porcelain Barrel
+tile.ceramics.porcelain_barrel.white.name=White Porcelain Barrel
+
+tile.ceramics.porcelain_barrel_extension.black.name=Black Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.red.name=Red Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.green.name=Green Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.brown.name=Brown Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.blue.name=Blue Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.purple.name=Purple Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.cyan.name=Cyan Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.silver.name=Light Gray Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.gray.name=Gray Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.pink.name=Pink Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.lime.name=Lime Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.yellow.name=Yellow Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.lightBlue.name=Light Blue Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.magenta.name=Magenta Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.orange.name=Orange Porcelain Barrel Extension
+tile.ceramics.porcelain_barrel_extension.white.name=White Porcelain Barrel Extension
+
+
 # Items
 
-item.ceramics.unfired_bucket.name=Unfired Clay Bucket
+item.ceramics.unfired.bucket.name=Unfired Clay Bucket
 item.ceramics.clay_bucket.name=%s Clay Bucket
 item.ceramics.clay_bucket.empty.name=Clay Bucket
 item.ceramics.clay_bucket.milk.name=Milk Clay Bucket
 
-item.ceramics.unfired_shears.name=Unfired Clay Shears
+item.ceramics.unfired.shears.name=Unfired Clay Shears
 item.ceramics.clay_shears.name=Clay Shears
+
+item.ceramics.unfired.porcelain.name=Unfired Porcelain
+item.ceramics.unfired.porcelain_brick.name=Porcelain Brick
 
 item.ceramics.clay_helmet_raw.name=Unfired Clay Helmet
 item.ceramics.clay_chestplate_raw.name=Unfired Clay Chestplate
@@ -57,5 +116,7 @@ item.ceramics.clay_chestplate.name=Clay Chestplate
 item.ceramics.clay_leggings.name=Clay Leggings
 item.ceramics.clay_boots.name=Clay Boots
 
-item.ceramics.unfired_barrel.name=Unfired Clay Barrel
-item.ceramics.unfired_barrel_extension.name=Unfired Clay Barrel Extension
+item.ceramics.unfired.barrel.name=Unfired Clay Barrel
+item.ceramics.unfired.barrel_extension.name=Unfired Clay Barrel Extension
+item.ceramics.unfired.barrel_porcelain.name=Unfired Porcelain Barrel
+item.ceramics.unfired.barrel_porcelain_extension.name=Unfired Clay Porcelain Extension

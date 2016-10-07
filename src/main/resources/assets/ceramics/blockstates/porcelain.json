@@ -1,0 +1,13 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "ceramics:cube_tinted",
+    "textures": {
+      "all": "ceramics:blocks/porcelain"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+	"inventory": [{}]
+  }
+}

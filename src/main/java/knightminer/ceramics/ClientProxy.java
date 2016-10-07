@@ -2,22 +2,46 @@ package knightminer.ceramics;
 
 import javax.annotation.Nonnull;
 
+import knightminer.ceramics.blocks.BlockPorcelainClay;
 import knightminer.ceramics.client.BarrelRenderer;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.IBlockColor;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class ClientProxy extends CommonProxy {
+
+	public static Minecraft minecraft = Minecraft.getMinecraft();
+
 	@Override
 	public void registerModels() {
+		// color is handled by tinting
+		ignoreProperty(BlockPorcelainClay.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
+
+		registerItemModel(Ceramics.claySoft, 0, "type=porcelain");
+		registerItemModel(Ceramics.clayHard, 0, "type=porcelain_bricks");
+
+		registerItemModel(Ceramics.porcelain);
+		registerItemModel(Ceramics.porcelainBarrel);
+		registerItemModel(Ceramics.porcelainBarrelExtension);
+
 		registerItemModel(Ceramics.clayBucket);
 		registerItemModel(Ceramics.clayShears);
 		registerItemModel(Ceramics.clayBucket, 1, "milk");
@@ -50,18 +74,56 @@ public class ClientProxy extends CommonProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBarrel.class, new BarrelRenderer());
 	}
 
+	@Override
+	public void init() {
+		final BlockColors blockColors = minecraft.getBlockColors();
+		// stained glass
+		blockColors.registerBlockColorHandler(
+				new IBlockColor() {
+					@Override
+					public int colorMultiplier(@Nonnull IBlockState state, IBlockAccess access, BlockPos pos, int tintIndex) {
+						EnumDyeColor type = state.getValue(BlockPorcelainClay.COLOR);
+						return BlockPorcelainClay.getBlockColor(type);
+					}
+				},
+				Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
+
+		minecraft.getItemColors().registerItemColorHandler(
+				new IItemColor() {
+					@SuppressWarnings("deprecation")
+					@Override
+					public int getColorFromItemstack(@Nonnull ItemStack stack, int tintIndex) {
+						IBlockState iblockstate = ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata());
+						return blockColors.colorMultiplier(iblockstate, null, null, tintIndex);
+					}
+				},
+				Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
+	}
+
 	private void registerItemModel(Item item) {
+		registerItemModel(item, "inventory");
+	}
+
+	private void registerItemModel(Block block) {
+		registerItemModel(Item.getItemFromBlock(block));
+	}
+
+	private void registerItemModel(Item item, final String variant) {
 		if(item != null) {
 			final ResourceLocation location = item.getRegistryName();
 			ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
 				@Nonnull
 				@Override
 				public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
-					return new ModelResourceLocation(location, "inventory");
+					return new ModelResourceLocation(location, variant);
 				}
 			});
 			ModelLoader.registerItemVariants(item, location);
 		}
+	}
+
+	private void registerItemModel(Block block, final String variant) {
+		registerItemModel(Item.getItemFromBlock(block), variant);
 	}
 
 	private void registerItemModel(Item item, int meta, String name) {
@@ -76,5 +138,13 @@ public class ClientProxy extends CommonProxy {
 
 	private void registerItemModel(Block block, int meta, String name) {
 		registerItemModel(Item.getItemFromBlock(block), meta, name);
+	}
+
+	private void ignoreProperty(IProperty<?> prop, Block ... blocks) {
+		for(Block block : blocks) {
+			if(block != null) {
+				ModelLoader.setCustomStateMapper(block, (new StateMap.Builder()).ignore(prop).build());
+			}
+		}
 	}
 }
