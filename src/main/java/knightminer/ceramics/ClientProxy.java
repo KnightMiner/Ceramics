@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import knightminer.ceramics.blocks.BlockPorcelainClay;
 import knightminer.ceramics.client.BarrelRenderer;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
+import knightminer.ceramics.library.Config;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
@@ -77,27 +78,43 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init() {
 		final BlockColors blockColors = minecraft.getBlockColors();
-		// stained glass
-		blockColors.registerBlockColorHandler(
-				new IBlockColor() {
-					@Override
-					public int colorMultiplier(@Nonnull IBlockState state, IBlockAccess access, BlockPos pos, int tintIndex) {
-						EnumDyeColor type = state.getValue(BlockPorcelainClay.COLOR);
-						return BlockPorcelainClay.getBlockColor(type);
-					}
-				},
-				Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
+		// porcelain colors
+		if(Config.porcelainEnabled) {
+			Block[] blocks;
+			if(Config.barrelEnabled) {
+				blocks = new Block[]{
+						Ceramics.porcelain,
+						Ceramics.porcelainBarrel,
+						Ceramics.porcelainBarrelExtension
+				};
+			}
+			else {
+				blocks = new Block[]{
+						Ceramics.porcelain
+				};
+			}
+			blockColors.registerBlockColorHandler(
+					new IBlockColor() {
+						@Override
+						public int colorMultiplier(@Nonnull IBlockState state, IBlockAccess access, BlockPos pos, int tintIndex) {
+							EnumDyeColor type = state.getValue(BlockPorcelainClay.COLOR);
+							return BlockPorcelainClay.getBlockColor(type);
+						}
+					},
+					blocks);
 
-		minecraft.getItemColors().registerItemColorHandler(
-				new IItemColor() {
-					@SuppressWarnings("deprecation")
-					@Override
-					public int getColorFromItemstack(@Nonnull ItemStack stack, int tintIndex) {
-						IBlockState iblockstate = ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata());
-						return blockColors.colorMultiplier(iblockstate, null, null, tintIndex);
-					}
-				},
-				Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
+			minecraft.getItemColors().registerItemColorHandler(
+					new IItemColor() {
+						@SuppressWarnings("deprecation")
+						@Override
+						public int getColorFromItemstack(@Nonnull ItemStack stack, int tintIndex) {
+							IBlockState iblockstate = ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata());
+							return blockColors.colorMultiplier(iblockstate, null, null, tintIndex);
+						}
+					},
+					blocks);
+
+		}
 	}
 
 	private void registerItemModel(Item item) {
