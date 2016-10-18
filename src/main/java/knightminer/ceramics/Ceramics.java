@@ -48,6 +48,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 @Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name)
 public class Ceramics {
@@ -92,6 +94,26 @@ public class Ceramics {
 	static {
 		FluidRegistry.enableUniversalBucket();
 	}
+
+	// makes oredict to int a bit easier in a couple other places
+	public static final String[] dyes = {
+			"White",
+			"Orange",
+			"Magenta",
+			"LightBlue",
+			"Yellow",
+			"Lime",
+			"Pink",
+			"Gray",
+			"LightGray",
+			"Cyan",
+			"Purple",
+			"Blue",
+			"Brown",
+			"Green",
+			"Red",
+			"Black"
+	};
 
 	// TODO: TConstruct casting support
 
@@ -152,6 +174,16 @@ public class Ceramics {
 
 			registerTE(TileBarrel.class, "barrel");
 			registerTE(TileBarrelExtension.class, "barrel_extension");
+
+			// so we can use any type
+			oredict(clayBarrel, 0, "barrelClay");
+			oredict(clayBarrelStained, "barrelClay");
+			oredict(clayBarrel, 1, "barrelExtensionClay");
+			oredict(clayBarrelStainedExtension, "barrelExtensionClay");
+
+			oredict(porcelainBarrel, "barrelPorcelain");
+			oredict(porcelainBarrelExtension, "barrelExtensionPorcelain");
+
 		}
 
 		CeramicsNetwork.registerPackets();
@@ -184,7 +216,7 @@ public class Ceramics {
 				ItemStack dyed = new ItemStack(porcelain, 1, color.getMetadata());
 				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
 
-				GameRegistry.addRecipe(dyed, "ccc", "cdc", "ccc", 'd', dye, 'c', blockHard.copy());
+				GameRegistry.addRecipe(dyed, "ccc", "cdc", "ccc", 'd', dye, 'c', new ItemStack(porcelain, 1, OreDictionary.WILDCARD_VALUE));
 			}
 		}
 
@@ -260,32 +292,29 @@ public class Ceramics {
 			}
 
 			for(EnumDyeColor color : EnumDyeColor.values()) {
-				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
-				GameRegistry.addRecipe(new ItemStack(clayBarrelStained, 8, color.getMetadata()),
-						"BBB", "BdB", "BBB", 'B', barrel.copy(), 'd', dye );
-				GameRegistry.addRecipe(new ItemStack(clayBarrelStainedExtension, 8, color.getMetadata()),
-						"BBB", "BdB", "BBB", 'B', extension.copy(), 'd', dye.copy() );
+				String dye = "dye" + dyes[color.getMetadata()];
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayBarrelStained, 8, color.getMetadata()),
+						"BBB", "BdB", "BBB", 'B', "barrelClay", 'd', dye));
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayBarrelStainedExtension, 8, color.getMetadata()),
+						"BBB", "BdB", "BBB", 'B', "barrelExtensionClay", 'd', dye));
 
 				// alt recipe for crafting just 1
-				GameRegistry.addShapelessRecipe(new ItemStack(clayBarrelStained, 1, color.getMetadata()),
-						barrel.copy(), dye.copy() );
-				GameRegistry.addShapelessRecipe(new ItemStack(clayBarrelStainedExtension, 1, color.getMetadata()),
-						extension.copy(), dye.copy() );
+				GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(clayBarrelStained, 1, color.getMetadata()),
+						"barrelClay", dye));
+				GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(clayBarrelStainedExtension, 1, color.getMetadata()),
+						"barrelExtensionClay", dye));
 
 				if(Config.porcelainEnabled) {
-					ItemStack porcelainBarrel2 = new ItemStack(porcelainBarrel, 1, OreDictionary.WILDCARD_VALUE);
-					ItemStack porcelainExtension = new ItemStack(porcelainBarrelExtension, 1, OreDictionary.WILDCARD_VALUE);
-
-					GameRegistry.addRecipe(new ItemStack(porcelainBarrel, 8, color.getMetadata()),
-							"BBB", "BdB", "BBB", 'B', porcelainBarrel2.copy(), 'd', dye.copy());
-					GameRegistry.addRecipe(new ItemStack(porcelainBarrelExtension, 8, color.getMetadata()),
-							"BBB", "BdB", "BBB", 'B', porcelainExtension.copy(), 'd', dye.copy());
+					GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(porcelainBarrel, 8, color.getMetadata()),
+							"BBB", "BdB", "BBB", 'B', "barrelPorcelain", 'd', dye));
+					GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(porcelainBarrelExtension, 8, color.getMetadata()),
+							"BBB", "BdB", "BBB", 'B', "barrelExtensionPorcelain", 'd', dye));
 
 					// alt recipe for crafting just 1
-					GameRegistry.addShapelessRecipe(new ItemStack(porcelainBarrel, 1, color.getMetadata()),
-							porcelainBarrel2.copy(), dye.copy() );
-					GameRegistry.addShapelessRecipe(new ItemStack(porcelainBarrelExtension, 1, color.getMetadata()),
-							porcelainExtension.copy(), dye.copy() );
+					GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(porcelainBarrel, 1, color.getMetadata()),
+							"barrelPorcelain", dye));
+					GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(porcelainBarrelExtension, 1, color.getMetadata()),
+							"barrelExtensionPorcelain", dye));
 				}
 			}
 		}
@@ -339,4 +368,28 @@ public class Ceramics {
 		GameRegistry.registerTileEntity(teClazz, Util.prefix(name));
 	}
 
+
+	public static void oredict(Item item, String... name) {
+		oredict(item, OreDictionary.WILDCARD_VALUE, name);
+	}
+
+	public static void oredict(Block block, String... name) {
+		oredict(block, OreDictionary.WILDCARD_VALUE, name);
+	}
+
+	public static void oredict(Item item, int meta, String... name) {
+		oredict(new ItemStack(item, 1, meta), name);
+	}
+
+	public static void oredict(Block block, int meta, String... name) {
+		oredict(new ItemStack(block, 1, meta), name);
+	}
+
+	public static void oredict(ItemStack stack, String... names) {
+		if(stack != null && stack.getItem() != null) {
+			for(String name : names) {
+				OreDictionary.registerOre(name, stack);
+			}
+		}
+	}
 }
