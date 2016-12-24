@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.annotation.Nullable;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.FluidClayBucketWrapper;
 import knightminer.ceramics.library.Util;
 import net.minecraft.block.BlockDispenser;
@@ -226,7 +227,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		else {
 			Ceramics.log.info(pos);
 			IBlockState state = world.getBlockState(pos);
-			if(state.getBlock() == Blocks.SAND) {
+			if(Config.bucketSand && state.getBlock() == Blocks.SAND) {
 				// red sand
 				if(state.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND) {
 					event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.RED_SAND));
@@ -239,7 +240,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 				event.setResult(Event.Result.ALLOW);
 			}
 			// gravel
-			else if(state.getBlock() == Blocks.GRAVEL) {
+			else if(Config.bucketSand && state.getBlock() == Blocks.GRAVEL) {
 				event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.GRAVEL));
 				world.setBlockState(pos, Blocks.AIR.getDefaultState());
 				event.setResult(Event.Result.ALLOW);
@@ -523,7 +524,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		}
 		// special fluids
 		for(SpecialFluid fluid : SpecialFluid.values()) {
-			if(fluid != SpecialFluid.EMPTY) {
+			if(Config.fluidEnabled(fluid)) {
 				subItems.add(new ItemStack(this, 1, fluid.getMeta()));
 			}
 		}

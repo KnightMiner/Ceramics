@@ -1,5 +1,6 @@
 package knightminer.ceramics.library;
 
+import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -8,6 +9,7 @@ public class Config {
 	private Config() {}
 
 	public static boolean bucketEnabled = true;
+	public static boolean bucketSand = true;
 	public static boolean shearsEnabled = true;
 	public static boolean armorEnabled = true;
 	public static boolean barrelEnabled = true;
@@ -20,6 +22,8 @@ public class Config {
 
 		bucketEnabled = configFile.getBoolean("bucket", "enabled", true,
 				"Enables the clay bucket, an alternative to the iron bucket that breaks from hot liquids");
+		bucketSand = configFile.getBoolean("bucketSand", "enabled", true,
+				"Allows the clay bucket to pick up sand and gravel, because why not?");
 		shearsEnabled = configFile.getBoolean("shears", "enabled", true,
 				"Enables the clay shears, faster than iron shears but less duribility");
 		armorEnabled = configFile.getBoolean("armor", "enabled", true,
@@ -34,6 +38,9 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Determines if the unfired item is enabled
+	 */
 	public static boolean unfiredEnabled(UnfiredType type) {
 		switch(type) {
 			case BUCKET:
@@ -53,6 +60,22 @@ public class Config {
 			case BARREL_PORCELAIN:
 			case BARREL_PORCELAIN_EXTENSION:
 				return barrelEnabled && porcelainEnabled;
+		}
+		return true;
+	}
+
+	/**
+	 * Determines if the special bucket fluid is enabled
+	 */
+	public static boolean fluidEnabled(SpecialFluid type) {
+		switch(type) {
+			// added separately before fluids
+			case EMPTY:
+				return false;
+			case SAND:
+			case RED_SAND:
+			case GRAVEL:
+				return bucketSand;
 		}
 		return true;
 	}
