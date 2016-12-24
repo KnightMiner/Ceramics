@@ -1,6 +1,7 @@
 package knightminer.ceramics.items;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
@@ -8,10 +9,13 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.library.FluidClayBucketWrapper;
 import knightminer.ceramics.library.Util;
 import net.minecraft.block.BlockDispenser;
+import net.minecraft.block.BlockSand;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
@@ -21,6 +25,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.translation.I18n;
@@ -29,7 +34,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract;
 import net.minecraftforge.fluids.DispenseFluidContainer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -47,15 +51,12 @@ import net.minecraftforge.items.ItemHandlerHelper;
 public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 	public static final String TAG_FLUIDS = "fluids";
-	public static ItemStack MILK_BUCKET;
-	public static ItemStack BRICK;
+	public static ItemStack MILK_BUCKET = new ItemStack(Items.MILK_BUCKET);
+	public static ItemStack BRICK = new ItemStack(Items.BRICK);
 
 	public ItemClayBucket() {
 		this.setCreativeTab(Ceramics.tab);
 		this.hasSubtypes = true;
-
-		MILK_BUCKET = new ItemStack(Items.MILK_BUCKET);
-		BRICK = new ItemStack(Items.BRICK);
 
 		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, DispenseFluidContainer.getInstance());
 	}
@@ -72,8 +73,9 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
-		if(isMilk(stack)) {
-			return I18n.translateToLocal("item." + Util.prefix("clay_bucket.milk") + ".name");
+		if(hasSpecialFluid(stack)) {
+			String specialFluid = getSpecialFluid(stack).getName();
+			return I18n.translateToLocal("item." + Util.prefix("clay_bucket." + specialFluid) + ".name");
 		}
 		FluidStack fluidStack = getFluid(stack);
 		if(fluidStack == null) {
@@ -92,15 +94,14 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemstack, World world, EntityPlayer player,
 			EnumHand hand) {
 
-		if(isMilk(itemstack)) {
+		// milk we set active and return success, drinking code is done elsewhere
+		if(getSpecialFluid(itemstack) == SpecialFluid.MILK) {
 			player.setActiveHand(hand);
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
 		}
 
-		FluidStack fluidStack = getFluid(itemstack);
-
 		// empty bucket logic is just an event :)
-		if(fluidStack == null) {
+		if(!hasFluid(itemstack)) {
 			ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack,
 					this.rayTrace(world, player, true));
 			if(ret != null) {
@@ -123,8 +124,46 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 			// can the player place there?
 			if(player.canPlayerEdit(targetPos, mop.sideHit, itemstack)) {
+				// first, try placing special fluids
+				FluidStack fluidStack = getFluid(itemstack);
+				if(hasSpecialFluid(itemstack)) {
+					// go through each relevant type
+					IBlockState state = null;
+					switch(getSpecialFluid(itemstack)) {
+						case SAND:
+							state = Blocks.SAND.getDefaultState()
+							.withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND);
+							break;
+						case RED_SAND:
+							state = Blocks.SAND.getDefaultState()
+							.withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND);
+							break;
+						case GRAVEL:
+							state = Blocks.GRAVEL.getDefaultState();
+							break;
+					}
+
+					// if we got a block state
+					if(state != null) {
+						world.setBlockState(targetPos, state);
+						// sound effect
+						world.playSound(player, targetPos,
+								state.getBlock().getSoundType(state, world, targetPos, player).getPlaceSound(),
+								SoundCategory.BLOCKS, 1.0F, 0.8F);
+
+						// only empty if not creative
+						if(!player.capabilities.isCreativeMode) {
+							player.addStat(StatList.getObjectUseStats(this));
+
+							setSpecialFluid(itemstack, SpecialFluid.EMPTY);
+						}
+
+						return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
+
+					}
+				}
 				// try placing liquid
-				if(FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), fluidStack, targetPos)) {
+				else if(FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), fluidStack, targetPos)) {
 					// success!
 
 					// water and lava use the non-flowing form for the fluid, so
@@ -133,6 +172,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 						world.notifyBlockOfStateChange(targetPos, world.getBlockState(targetPos).getBlock());
 					}
 
+					// only empty if not creative
 					if(!player.capabilities.isCreativeMode) {
 						player.addStat(StatList.getObjectUseStats(this));
 
@@ -176,15 +216,40 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 		ItemStack filledBucket = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos,
 				target.sideHit);
+
+		// if we have a bucket from the fluid, use that
 		if(filledBucket != null) {
 			event.setResult(Event.Result.ALLOW);
 			event.setFilledBucket(filledBucket);
 		}
+		// otherwise, try gravel/sand
 		else {
-			// cancel event, otherwise the vanilla minecraft ItemBucket would
-			// convert it into a water/lava bucket depending on the blocks
-			// material
-			event.setCanceled(true);
+			Ceramics.log.info(pos);
+			IBlockState state = world.getBlockState(pos);
+			if(state.getBlock() == Blocks.SAND) {
+				// red sand
+				if(state.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND) {
+					event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.RED_SAND));
+				}
+				// regular sand
+				else {
+					event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.SAND));
+				}
+				world.setBlockState(pos, Blocks.AIR.getDefaultState());
+				event.setResult(Event.Result.ALLOW);
+			}
+			// gravel
+			else if(state.getBlock() == Blocks.GRAVEL) {
+				event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.GRAVEL));
+				world.setBlockState(pos, Blocks.AIR.getDefaultState());
+				event.setResult(Event.Result.ALLOW);
+			}
+			else {
+				// cancel event, otherwise the vanilla minecraft ItemBucket would
+				// convert it into a water/lava bucket depending on the blocks
+				// material
+				event.setCanceled(true);
+			}
 		}
 	}
 
@@ -210,28 +275,27 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		return !doesBreak(stack);
 	}
 
-	// milking cows
-	@SubscribeEvent
-	public void onInteractWithEntity(EntityInteract event) {
-		ItemStack stack = event.getItemStack();
-		EntityPlayer player = event.getEntityPlayer();
-		if(stack != null && stack.getItem() == this && !hasFluid(stack) && event.getTarget() instanceof EntityCow
-				&& !player.capabilities.isCreativeMode) {
+	@Override
+	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target, EnumHand hand) {
+		// only work if the bucket is empty and right clicking a cow
+		if(!hasFluid(stack) && target instanceof EntityCow && !player.capabilities.isCreativeMode) {
+			// if we have multiple buckets in the stack, move to a new slot
 			if(stack.stackSize > 1) {
 				stack.stackSize -= 1;
-				ItemHandlerHelper.giveItemToPlayer(player, setMilk(new ItemStack(this), true));
+				ItemHandlerHelper.giveItemToPlayer(player, setSpecialFluid(new ItemStack(this), SpecialFluid.MILK));
 			}
 			else {
-				setMilk(stack, true);
+				setSpecialFluid(stack, SpecialFluid.MILK);
 			}
 
-			event.setCanceled(true);
+			return true;
 		}
+		return false;
 	}
 
 	public boolean doesBreak(ItemStack stack) {
-		// milk never breaks
-		if(isMilk(stack)) {
+		// special fluids never breaks
+		if(hasSpecialFluid(stack)) {
 			return false;
 		}
 
@@ -244,14 +308,28 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		return false;
 	}
 
-	// in case I change it later
-	public boolean isMilk(ItemStack stack) {
-		return stack.getItemDamage() == 1;
+	/**
+	 * Checks if the stack is not a regular dynamic bucket
+	 * Used for sand, gravel, and milk
+	 * @param stack  Stack to check
+	 * @return true if the bucket contains a special fluid
+	 */
+	public boolean hasSpecialFluid(ItemStack stack) {
+		return stack.getItemDamage() != 0;
+	}
+
+	/**
+	 * Gets the special fluid type for the bucket
+	 * @param stack  Stack to check
+	 * @return the special fluid type
+	 */
+	public SpecialFluid getSpecialFluid(ItemStack stack) {
+		return SpecialFluid.fromMeta(stack.getItemDamage());
 	}
 
 	// in case I change it later
-	public ItemStack setMilk(ItemStack stack, boolean milk) {
-		stack.setItemDamage(milk ? 1 : 0);
+	public ItemStack setSpecialFluid(ItemStack stack, SpecialFluid fluid) {
+		stack.setItemDamage(fluid.getMeta());
 		return stack;
 	}
 
@@ -260,7 +338,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	@Override
 	public FluidStack getFluid(ItemStack container) {
 		// milk logic, if milk is registered we use that basically
-		if(isMilk(container)) {
+		if(getSpecialFluid(container) == SpecialFluid.MILK) {
 			return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
 		}
 		NBTTagCompound tags = container.getTagCompound();
@@ -276,7 +354,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	 * true due to milk buckets
 	 */
 	public boolean hasFluid(ItemStack container) {
-		if(isMilk(container)) {
+		if(hasSpecialFluid(container)) {
 			return true;
 		}
 
@@ -313,7 +391,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		// registered
 		if(resource.getFluid().getName().equals("milk")) {
 			if(doFill) {
-				setMilk(container, true);
+				setSpecialFluid(container, SpecialFluid.MILK);
 			}
 			return getCapacity();
 		}
@@ -339,10 +417,6 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 	@Override
 	public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
-		if(maxDrain == Integer.MAX_VALUE) {
-			Ceramics.log.info("Loading model thingy");
-		}
-
 		// has to be exactly 1, must be handled from the caller
 		if(container.stackSize != 1) {
 			return null;
@@ -360,10 +434,11 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 			}
 			else {
 				// milk simply requires a metadata change
-				if(isMilk(container)) {
-					setMilk(container, false);
+				if(getSpecialFluid(container) == SpecialFluid.MILK) {
+					setSpecialFluid(container, SpecialFluid.EMPTY);
 				}
-				else {
+				// don't run for non-fluids
+				else if(!hasSpecialFluid(container)) {
 					NBTTagCompound tag = container.getTagCompound();
 					if(tag != null) {
 						tag.removeTag(TAG_FLUIDS);
@@ -389,13 +464,13 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	@Override
 	@Nullable
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		// milk check
-		if(!isMilk(stack)) {
+		// must be milk
+		if(getSpecialFluid(stack) != SpecialFluid.MILK) {
 			return stack;
 		}
 
 		if(entityLiving instanceof EntityPlayer && !((EntityPlayer) entityLiving).capabilities.isCreativeMode) {
-			setMilk(stack, false);
+			setSpecialFluid(stack, SpecialFluid.EMPTY);
 		}
 
 		if(!worldIn.isRemote) {
@@ -414,7 +489,8 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	 */
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return isMilk(stack) ? 32 : 0;
+		// milk requires drinking time
+		return getSpecialFluid(stack) == SpecialFluid.MILK ? 32 : 0;
 	}
 
 	/**
@@ -423,7 +499,8 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	 */
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		return isMilk(stack) ? EnumAction.DRINK : EnumAction.NONE;
+		// milk has drinking animation
+		return getSpecialFluid(stack) == SpecialFluid.MILK ? EnumAction.DRINK : EnumAction.NONE;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -444,12 +521,63 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 				}
 			}
 		}
-		// milk
-		subItems.add(new ItemStack(this, 1, 1));
+		// special fluids
+		for(SpecialFluid fluid : SpecialFluid.values()) {
+			if(fluid != SpecialFluid.EMPTY) {
+				subItems.add(new ItemStack(this, 1, fluid.getMeta()));
+			}
+		}
 	}
 
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
 		return new FluidClayBucketWrapper(stack);
+	}
+
+	/**
+	 * Special fluid types
+	 */
+	public enum SpecialFluid {
+		EMPTY,
+		MILK,
+		SAND,
+		RED_SAND,
+		GRAVEL;
+
+		private int meta;
+
+		// store the meta to access faster
+		SpecialFluid() {
+			meta = ordinal();
+		}
+
+		/**
+		 * Gets the name for this fluid type, used for model locations
+		 * @return fluid type metadata
+		 */
+		public String getName() {
+			return this.toString().toLowerCase(Locale.US);
+		}
+
+		/**
+		 * Gets the metadata for this fluid type
+		 * @return fluid type metadata
+		 */
+		public int getMeta() {
+			return meta;
+		}
+
+		/**
+		 * Gets a type from metadata
+		 * @param meta  metadata input
+		 * @return value for the specifed metadata
+		 */
+		public static SpecialFluid fromMeta(int meta) {
+			if(meta < 0 || meta > values().length) {
+				meta = 0;
+			}
+
+			return values()[meta];
+		}
 	}
 }

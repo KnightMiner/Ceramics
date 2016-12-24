@@ -1,5 +1,13 @@
 {
   "forge_marker": 1,
+  "defaults": {
+    "model": "forge:item-layer",
+    "textures": {
+      "layer0": "ceramics:items/clay_bucket_base",
+      "layer2": "ceramics:items/clay_bucket_cover"
+    },
+    "transform": "forge:default-item"
+  },
   "variants": {
     "inventory": {
       "model": "forge:forgebucket",
@@ -8,20 +16,30 @@
         "fluid": "forge:items/bucket_fluid",
         "cover": "ceramics:items/clay_bucket_cover"
       },
-      "transform": "forge:default-item",
       "custom": {
         "fluid": "water",
         "flipGas": true
       }
     },
-	"milk": {
-      "model": "forge:item-layer",
+	"milk": [{
       "textures": {
-        "layer0": "ceramics:items/clay_bucket_base",
-        "layer1": "forge:items/bucket_fluid",
-        "layer2": "ceramics:items/clay_bucket_cover"
-      },
-      "transform": "forge:default-item"
-	}
+        "layer1": "forge:items/bucket_fluid"
+      }
+	}],
+	"gravel": [{
+      "textures": {
+        "layer1": "ceramics:items/bucket_gravel"
+      }
+	}],
+	"sand": [{
+      "textures": {
+        "layer1": "ceramics:items/bucket_sand"
+      }
+	}],
+	"red_sand": [{
+      "textures": {
+        "layer1": "ceramics:items/bucket_red_sand"
+      }
+	}]
   }
 }

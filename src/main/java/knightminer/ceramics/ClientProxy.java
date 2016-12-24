@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import knightminer.ceramics.blocks.BlockPorcelainClay;
 import knightminer.ceramics.client.BarrelRenderer;
+import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.tileentity.TileBarrel;
@@ -36,6 +37,7 @@ public class ClientProxy extends CommonProxy {
 		// color is handled by tinting
 		ignoreProperty(BlockPorcelainClay.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
 
+		// eventually loop this...
 		registerItemModel(Ceramics.claySoft, 0, "type=porcelain");
 		registerItemModel(Ceramics.clayHard, 0, "type=porcelain_bricks");
 
@@ -45,7 +47,13 @@ public class ClientProxy extends CommonProxy {
 
 		registerItemModel(Ceramics.clayBucket);
 		registerItemModel(Ceramics.clayShears);
-		registerItemModel(Ceramics.clayBucket, 1, "milk");
+
+		// loop through the special bucket types
+		for(SpecialFluid fluid : SpecialFluid.values()) {
+			if(fluid != SpecialFluid.EMPTY) {
+				registerItemModel(Ceramics.clayBucket, fluid.getMeta(), fluid.getName());
+			}
+		}
 
 		registerItemModel(Ceramics.clayHelmet);
 		registerItemModel(Ceramics.clayChestplate);

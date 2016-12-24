@@ -100,6 +100,9 @@ item.ceramics.unfired.bucket.name=Unfired Clay Bucket
 item.ceramics.clay_bucket.name=%s Clay Bucket
 item.ceramics.clay_bucket.empty.name=Clay Bucket
 item.ceramics.clay_bucket.milk.name=Milk Clay Bucket
+item.ceramics.clay_bucket.gravel.name=Gravel Clay Bucket
+item.ceramics.clay_bucket.sand.name=Sand Clay Bucket
+item.ceramics.clay_bucket.red_sand.name=Red Sand Clay Bucket
 
 item.ceramics.unfired.shears.name=Unfired Clay Shears
 item.ceramics.clay_shears.name=Clay Shears
