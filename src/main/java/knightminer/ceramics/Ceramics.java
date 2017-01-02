@@ -176,6 +176,9 @@ public class Ceramics {
 			registerTE(TileBarrel.class, "barrel");
 			registerTE(TileBarrelExtension.class, "barrel_extension");
 
+			// for other mods adding porcelain
+			oredict(clayUnfired, UnfiredType.PORCELAIN.getMeta(), "clayPorcelain");
+
 			// so we can use any type
 			oredict(clayBarrel, 0, "barrelClay");
 			oredict(clayBarrelStained, "barrelClay");
@@ -213,7 +216,7 @@ public class Ceramics {
 			// block crafting
 			ItemStack porcelainAlt2 = porcelainItem.copy();
 			porcelainAlt2.stackSize = 4;
-			GameRegistry.addRecipe(block, "CC", "CC", 'C', porcelainItem.copy());
+			GameRegistry.addRecipe(new ShapedOreRecipe(block, "CC", "CC", 'C', "clayPorcelain"));
 			GameRegistry.addShapelessRecipe(porcelainAlt2, block.copy());
 			GameRegistry.addRecipe(brickBlock, "CC", "CC", 'C', brick);
 
@@ -279,7 +282,7 @@ public class Ceramics {
 		if(Config.barrelEnabled) {
 			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.BARREL.getMeta());
 			ItemStack rawExtension = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_EXTENSION.getMeta());
-			GameRegistry.addRecipe(raw.copy(), "c c", "c c", "ccc", 'c', Items.CLAY_BALL);
+			GameRegistry.addRecipe(raw.copy(), "c c", "ccc", " c ", 'c', Items.CLAY_BALL);
 			GameRegistry.addRecipe(rawExtension.copy(), "c c", "c c", "c c", 'c', Items.CLAY_BALL);
 
 			ItemStack barrel = new ItemStack(clayBarrel, 1, 0);
@@ -290,12 +293,11 @@ public class Ceramics {
 
 			// barrels made of porcelain
 			if(Config.porcelainEnabled) {
-				ItemStack porcelainItem = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta());
 				ItemStack porcelainRaw = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN.getMeta());
 				ItemStack porcelainRawExtension = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN_EXTENSION.getMeta());
 
-				GameRegistry.addRecipe(porcelainRaw.copy(), "c c", "c c", "ccc", 'c', porcelainItem);
-				GameRegistry.addRecipe(porcelainRawExtension.copy(), "c c", "c c", "c c", 'c', porcelainItem.copy());
+				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRaw.copy(), "c c", "ccc", " c ", 'c', "clayPorcelain"));
+				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRawExtension.copy(), "c c", "c c", "c c", 'c', "clayPorcelain"));
 
 				ItemStack porcelainBarrel2 = new ItemStack(porcelainBarrel, 1, 0);
 				ItemStack porcelainExtension = new ItemStack(porcelainBarrelExtension, 1, 0);
