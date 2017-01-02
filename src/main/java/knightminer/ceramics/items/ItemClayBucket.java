@@ -7,9 +7,9 @@ import javax.annotation.Nullable;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.library.Config;
+import knightminer.ceramics.library.DispenseClayBucket;
 import knightminer.ceramics.library.FluidClayBucketWrapper;
 import knightminer.ceramics.library.Util;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.state.IBlockState;
@@ -36,7 +36,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.fluids.DispenseFluidContainer;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -60,7 +59,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		this.setCreativeTab(Ceramics.tab);
 		this.hasSubtypes = true;
 
-		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, DispenseFluidContainer.getInstance());
+		BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, DispenseClayBucket.getInstance());
 	}
 
 	// allow empty to stack to 16
@@ -129,42 +128,32 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 				// first, try placing special fluids
 				FluidStack fluidStack = getFluid(itemstack);
 				if(hasSpecialFluid(itemstack)) {
-					// go through each relevant type
-					IBlockState state = null;
-					switch(getSpecialFluid(itemstack)) {
-						case SAND:
-							state = Blocks.SAND.getDefaultState()
-							.withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND);
-							break;
-						case RED_SAND:
-							state = Blocks.SAND.getDefaultState()
-							.withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND);
-							break;
-						case GRAVEL:
-							state = Blocks.GRAVEL.getDefaultState();
-							break;
-					}
+					// get the state from the fluid
+					IBlockState state = getSpecialFluid(itemstack).getState();
 
-					// if we got a block state
+					// if we got a block state (not milk basically)
 					if(state != null) {
-						if(!world.isRemote) {
-							world.setBlockState(targetPos, state);
+						IBlockState currentState = world.getBlockState(targetPos);
+						if(currentState.getBlock().isReplaceable(world, targetPos)) {
+							// place block
+							if(!world.isRemote) {
+								world.setBlockState(targetPos, state);
+							}
+
+							// sound effect
+							world.playSound(player, targetPos,
+									state.getBlock().getSoundType(state, world, targetPos, player).getPlaceSound(),
+									SoundCategory.BLOCKS, 1.0F, 0.8F);
+
+							// only empty if not creative
+							if(!player.capabilities.isCreativeMode) {
+								player.addStat(StatList.getObjectUseStats(this));
+
+								setSpecialFluid(itemstack, SpecialFluid.EMPTY);
+							}
+
+							return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
 						}
-
-						// sound effect
-						world.playSound(player, targetPos,
-								state.getBlock().getSoundType(state, world, targetPos, player).getPlaceSound(),
-								SoundCategory.BLOCKS, 1.0F, 0.8F);
-
-						// only empty if not creative
-						if(!player.capabilities.isCreativeMode) {
-							player.addStat(StatList.getObjectUseStats(this));
-
-							setSpecialFluid(itemstack, SpecialFluid.EMPTY);
-						}
-
-						return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
-
 					}
 				}
 				// try placing liquid
@@ -230,26 +219,23 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		// otherwise, try gravel/sand
 		else {
 			IBlockState state = world.getBlockState(pos);
-			Block block = state.getBlock();
-			if(Config.bucketSand && (block == Blocks.SAND || block == Blocks.GRAVEL)) {
-				// sand
-				if(block == Blocks.SAND) {
-					// is it red?
-					if(state.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND) {
-						event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.RED_SAND));
-					}
-					else {
-						event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.SAND));
-					}
-				}
-				// not sand means gravel
-				else {
-					event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.GRAVEL));
-				}
-				// regular sand
+			SpecialFluid fluid = SpecialFluid.fromState(state);
+			if(fluid != null) {
+				// fill the bucket
+				event.setFilledBucket(setSpecialFluid(singleBucket, fluid));
+
+				// play sound
+				EntityPlayer player = event.getEntityPlayer();
+				world.playSound(player, pos,
+						state.getBlock().getSoundType(state, world, pos, player).getBreakSound(),
+						SoundCategory.BLOCKS, 1.0F, 0.8F);
+
+				// set air
 				if(!world.isRemote) {
-					world.setBlockState(pos, Blocks.AIR.getDefaultState());
+					world.setBlockToAir(pos);
 				}
+
+				// and allow
 				event.setResult(Event.Result.ALLOW);
 			}
 			else {
@@ -531,7 +517,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		}
 		// special fluids
 		for(SpecialFluid fluid : SpecialFluid.values()) {
-			if(fluid.show) {
+			if(fluid.show()) {
 				subItems.add(new ItemStack(this, 1, fluid.getMeta()));
 			}
 		}
@@ -546,24 +532,24 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	 * Special fluid types
 	 */
 	public enum SpecialFluid {
-		EMPTY(false),
+		EMPTY,
 		MILK,
-		SAND(false),
-		RED_SAND(false),
-		GRAVEL(false);
+		SAND(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.SAND)),
+		RED_SAND(Blocks.SAND.getDefaultState().withProperty(BlockSand.VARIANT, BlockSand.EnumType.RED_SAND)),
+		GRAVEL(Blocks.GRAVEL.getDefaultState());
 
 		// store the meta to access faster
 		private int meta;
-		private boolean show;
+		private IBlockState state;
 
 		SpecialFluid() {
 			this.meta = ordinal();
-			this.show = true;
+			this.state = null;
 		}
 
-		SpecialFluid(boolean show) {
+		SpecialFluid(IBlockState state) {
 			this.meta = ordinal();
-			this.show = show;
+			this.state = state;
 		}
 
 		/**
@@ -593,6 +579,55 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 			}
 
 			return values()[meta];
+		}
+
+		/**
+		 * Determines if the special fluid is a block type
+		 */
+		public boolean show() {
+			if(isBlock()) {
+				return false;
+			}
+			return this != EMPTY;
+		}
+
+		/**
+		 * Determines if the special fluid is a block type
+		 */
+		public boolean isBlock() {
+			return state != null;
+		}
+
+		/**
+		 * Gets the block for the special fluid
+		 */
+		public IBlockState getState() {
+			return state;
+		}
+
+		/**
+		 * Gets the special fluid from the specified state
+		 * @param state
+		 * @return The fluid for the state, or null if none exists
+		 */
+		@Nullable
+		public static SpecialFluid fromState(IBlockState state) {
+			// feature disabled
+			if(!Config.bucketSand) {
+				return null;
+			}
+
+			// try all listed blocks
+			for(SpecialFluid fluid : values()) {
+				if(fluid.isBlock()) {
+					if(state == fluid.getState()) {
+						return fluid;
+					}
+				}
+			}
+
+			// none? return null
+			return null;
 		}
 	}
 }
