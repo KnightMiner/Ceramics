@@ -123,3 +123,9 @@ item.ceramics.unfired.barrel.name=Unfired Clay Barrel
 item.ceramics.unfired.barrel_extension.name=Unfired Clay Barrel Extension
 item.ceramics.unfired.barrel_porcelain.name=Unfired Porcelain Barrel
 item.ceramics.unfired.barrel_porcelain_extension.name=Unfired Porcelain Barrel Extension
+
+
+# JEI Descriptions
+ceramics.jei.bucket=Clay buckets are an early game alternative to the standard iron bucket. Like their iron counterparts, they can be used to transport liquids, but will break after pouring out a hot liquid.
+ceramics.jei.barrel.base=Barrels are a simple fluid storage block, storing up to 4 buckets. If broken, the barrel will lose its fluid.
+ceramics.jei.barrel.extension=Barrel extensions can be placed above barrels to extend the capacity. An extension adds 4 buckets to the capacity, and can be additionally placed on an extension for nearly unlimited height.
