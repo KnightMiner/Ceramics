@@ -9,6 +9,7 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.FluidClayBucketWrapper;
 import knightminer.ceramics.library.Util;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.state.IBlockState;
@@ -146,7 +147,10 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 					// if we got a block state
 					if(state != null) {
-						world.setBlockState(targetPos, state);
+						if(!world.isRemote) {
+							world.setBlockState(targetPos, state);
+						}
+
 						// sound effect
 						world.playSound(player, targetPos,
 								state.getBlock().getSoundType(state, world, targetPos, player).getPlaceSound(),
@@ -225,24 +229,27 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		}
 		// otherwise, try gravel/sand
 		else {
-			Ceramics.log.info(pos);
 			IBlockState state = world.getBlockState(pos);
-			if(Config.bucketSand && state.getBlock() == Blocks.SAND) {
-				// red sand
-				if(state.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND) {
-					event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.RED_SAND));
+			Block block = state.getBlock();
+			if(Config.bucketSand && (block == Blocks.SAND || block == Blocks.GRAVEL)) {
+				// sand
+				if(block == Blocks.SAND) {
+					// is it red?
+					if(state.getValue(BlockSand.VARIANT) == BlockSand.EnumType.RED_SAND) {
+						event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.RED_SAND));
+					}
+					else {
+						event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.SAND));
+					}
+				}
+				// not sand means gravel
+				else {
+					event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.GRAVEL));
 				}
 				// regular sand
-				else {
-					event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.SAND));
+				if(!world.isRemote) {
+					world.setBlockState(pos, Blocks.AIR.getDefaultState());
 				}
-				world.setBlockState(pos, Blocks.AIR.getDefaultState());
-				event.setResult(Event.Result.ALLOW);
-			}
-			// gravel
-			else if(Config.bucketSand && state.getBlock() == Blocks.GRAVEL) {
-				event.setFilledBucket(setSpecialFluid(singleBucket, SpecialFluid.GRAVEL));
-				world.setBlockState(pos, Blocks.AIR.getDefaultState());
 				event.setResult(Event.Result.ALLOW);
 			}
 			else {
@@ -524,7 +531,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		}
 		// special fluids
 		for(SpecialFluid fluid : SpecialFluid.values()) {
-			if(Config.fluidEnabled(fluid)) {
+			if(fluid.show) {
 				subItems.add(new ItemStack(this, 1, fluid.getMeta()));
 			}
 		}
@@ -539,17 +546,24 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	 * Special fluid types
 	 */
 	public enum SpecialFluid {
-		EMPTY,
+		EMPTY(false),
 		MILK,
-		SAND,
-		RED_SAND,
-		GRAVEL;
-
-		private int meta;
+		SAND(false),
+		RED_SAND(false),
+		GRAVEL(false);
 
 		// store the meta to access faster
+		private int meta;
+		private boolean show;
+
 		SpecialFluid() {
-			meta = ordinal();
+			this.meta = ordinal();
+			this.show = true;
+		}
+
+		SpecialFluid(boolean show) {
+			this.meta = ordinal();
+			this.show = show;
 		}
 
 		/**

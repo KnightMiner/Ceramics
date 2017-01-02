@@ -1,6 +1,5 @@
 package knightminer.ceramics.library;
 
-import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -60,22 +59,6 @@ public class Config {
 			case BARREL_PORCELAIN:
 			case BARREL_PORCELAIN_EXTENSION:
 				return barrelEnabled && porcelainEnabled;
-		}
-		return true;
-	}
-
-	/**
-	 * Determines if the special bucket fluid is enabled
-	 */
-	public static boolean fluidEnabled(SpecialFluid type) {
-		switch(type) {
-			// added separately before fluids
-			case EMPTY:
-				return false;
-			case SAND:
-			case RED_SAND:
-			case GRAVEL:
-				return bucketSand;
 		}
 		return true;
 	}
