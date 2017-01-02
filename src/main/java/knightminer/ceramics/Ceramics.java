@@ -202,10 +202,18 @@ public class Ceramics {
 			ItemStack blockHard = new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata());
 			ItemStack brickBlock = new ItemStack(clayHard, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta());
 
-			// basic recipe: two bone mean with clay
-			GameRegistry.addShapelessRecipe(porcelainItem, Items.CLAY_BALL, boneMeal, boneMeal);
+			// basic recipe: bone meal with clay
+			GameRegistry.addShapelessRecipe(porcelainItem, Items.CLAY_BALL, boneMeal);
+			// alt recipe: quartz
+			ItemStack porcelainAlt = porcelainItem.copy();
+			porcelainAlt.stackSize = 2;
+			GameRegistry.addShapelessRecipe(porcelainAlt, Items.CLAY_BALL, Items.CLAY_BALL, Items.QUARTZ);
+
+			// block crafting
+			ItemStack porcelainAlt2 = porcelainItem.copy();
+			porcelainAlt2.stackSize = 4;
 			GameRegistry.addRecipe(block, "CC", "CC", 'C', porcelainItem.copy());
-			GameRegistry.addShapelessRecipe(new ItemStack(clayUnfired, 4, UnfiredType.PORCELAIN.getMeta()), block.copy());
+			GameRegistry.addShapelessRecipe(porcelainAlt2, block.copy());
 			GameRegistry.addRecipe(brickBlock, "CC", "CC", 'C', brick);
 
 			// bricks
