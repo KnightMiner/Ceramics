@@ -15,6 +15,7 @@ import knightminer.ceramics.items.ItemArmorClayRaw;
 import knightminer.ceramics.items.ItemBlockBarrel;
 import knightminer.ceramics.items.ItemBlockEnum;
 import knightminer.ceramics.items.ItemClayBucket;
+import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayShears;
 import knightminer.ceramics.items.ItemClayUnfired;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
@@ -231,8 +232,12 @@ public class Ceramics {
 		// bucket
 		if(Config.bucketEnabled) {
 			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta());
+			ItemStack milk = new ItemStack(clayBucket, 1, SpecialFluid.MILK.getMeta());
 			GameRegistry.addRecipe(raw.copy(), "c c", " c ", 'c', Items.CLAY_BALL);
 			GameRegistry.addSmelting(raw, new ItemStack(clayBucket), 0.5f);
+
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.CAKE), "MMM", "SES", "WWW",
+					'M', milk, 'S', Items.SUGAR, 'E', "egg", 'W', "cropWheat"));
 
 			// register lava bucket as a fuel
 			GameRegistry.registerFuelHandler(new IFuelHandler() {
