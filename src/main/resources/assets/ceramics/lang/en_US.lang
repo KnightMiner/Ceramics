@@ -2,6 +2,10 @@ itemGroup.ceramics=Ceramics
 
 # Blocks
 tile.ceramics.clay_hard.porcelain_bricks.name=Porcelain Bricks
+tile.ceramics.clay_hard.dark_bricks.name=Dark Bricks
+tile.ceramics.clay_hard.marine_bricks.name=Marine Bricks
+tile.ceramics.clay_hard.golden_bricks.name=Golden Bricks
+tile.ceramics.clay_hard.dragon_bricks.name=Dragon Bricks
 tile.ceramics.clay_soft.porcelain.name=Unfired Porcelain
 
 

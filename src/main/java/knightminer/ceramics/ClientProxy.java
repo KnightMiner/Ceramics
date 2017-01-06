@@ -2,6 +2,7 @@ package knightminer.ceramics;
 
 import javax.annotation.Nonnull;
 
+import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockPorcelainClay;
 import knightminer.ceramics.client.BarrelRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
@@ -10,6 +11,7 @@ import knightminer.ceramics.library.Config;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
@@ -22,6 +24,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -38,8 +41,8 @@ public class ClientProxy extends CommonProxy {
 		ignoreProperty(BlockPorcelainClay.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
 
 		// eventually loop this...
-		registerItemModel(Ceramics.claySoft, 0, "type=porcelain");
-		registerItemModel(Ceramics.clayHard, 0, "type=porcelain_bricks");
+		registerItemModels(Ceramics.claySoft);
+		registerItemModels(Ceramics.clayHard);
 
 		registerItemModel(Ceramics.porcelain);
 		registerItemModel(Ceramics.porcelainBarrel);
@@ -163,6 +166,14 @@ public class ClientProxy extends CommonProxy {
 
 	private void registerItemModel(Block block, int meta, String name) {
 		registerItemModel(Item.getItemFromBlock(block), meta, name);
+	}
+	private <T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> void registerItemModels(BlockEnumBase<T> block) {
+		if(block != null) {
+			PropertyEnum<T> prop = block.getMappingProperty();
+			for(T value : prop.getAllowedValues()) {
+				registerItemModel(block, value.getMeta(), prop.getName() + "=" + value.getName());
+			}
+		}
 	}
 
 	private void ignoreProperty(IProperty<?> prop, Block ... blocks) {

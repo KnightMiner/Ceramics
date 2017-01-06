@@ -16,7 +16,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & BlockEnumBase.IBlockMeta> extends Block {
+public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> extends Block {
 
 	private PropertyEnum<T> prop;
 	private T[] values;
@@ -88,11 +88,14 @@ public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & Bl
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
 		for(T type : values) {
-			list.add(new ItemStack(itemIn, 1, type.getMeta()));
+			if(type.shouldDisplay()) {
+				list.add(new ItemStack(itemIn, 1, type.getMeta()));
+			}
 		}
 	}
 
-	public interface IBlockMeta {
+	public interface IEnumMeta {
 		public int getMeta();
+		public boolean shouldDisplay();
 	}
 }

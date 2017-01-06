@@ -27,7 +27,7 @@ public class ItemClayUnfired extends Item {
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
 		for(UnfiredType type : UnfiredType.values()) {
-			if(Config.unfiredEnabled(type)) {
+			if(type.shouldDisplay()) {
 				subItems.add(new ItemStack(itemIn, 1, type.getMeta()));
 			}
 		}
@@ -79,6 +79,32 @@ public class ItemClayUnfired extends Item {
 
 		public int getMeta() {
 			return meta;
+		}
+
+		/**
+		 * Determines if the unfired item is enabled
+		 */
+		public boolean shouldDisplay() {
+			switch(this) {
+				case BUCKET:
+					return Config.bucketEnabled;
+
+				case SHEARS:
+					return Config.shearsEnabled;
+
+				case BARREL:
+				case BARREL_EXTENSION:
+					return Config.barrelEnabled;
+
+				case PORCELAIN:
+				case PORCELAIN_BRICK:
+					return Config.porcelainEnabled;
+
+				case BARREL_PORCELAIN:
+				case BARREL_PORCELAIN_EXTENSION:
+					return Config.barrelEnabled && Config.porcelainEnabled;
+			}
+			return true;
 		}
 
 		public int getStackSize() {

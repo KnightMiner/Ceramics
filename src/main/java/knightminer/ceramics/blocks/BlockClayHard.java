@@ -3,6 +3,7 @@ package knightminer.ceramics.blocks;
 import java.util.Locale;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.Config;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -21,8 +22,12 @@ public class BlockClayHard extends BlockEnumBase<BlockClayHard.ClayTypeHard> {
 		this.setSoundType(SoundType.STONE);
 	}
 
-	public enum ClayTypeHard implements IStringSerializable, BlockEnumBase.IBlockMeta {
-		PORCELAIN_BRICKS;
+	public enum ClayTypeHard implements IStringSerializable, BlockEnumBase.IEnumMeta {
+		PORCELAIN_BRICKS,
+		DARK_BRICKS,
+		MARINE_BRICKS,
+		GOLDEN_BRICKS,
+		DRAGON_BRICKS;
 
 		private int meta;
 
@@ -33,6 +38,21 @@ public class BlockClayHard extends BlockEnumBase<BlockClayHard.ClayTypeHard> {
 		@Override
 		public int getMeta() {
 			return meta;
+		}
+
+		@Override
+		public boolean shouldDisplay() {
+			switch(this) {
+				case PORCELAIN_BRICKS:
+					return Config.porcelainEnabled;
+				case DARK_BRICKS:
+				case MARINE_BRICKS:
+				case GOLDEN_BRICKS:
+				case DRAGON_BRICKS:
+					return Config.fancyBricksEnabled;
+			}
+
+			return false;
 		}
 
 		public static ClayTypeHard fromMeta(int meta) {

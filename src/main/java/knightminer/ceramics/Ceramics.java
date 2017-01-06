@@ -66,8 +66,8 @@ public class Ceramics {
 	public static final Logger log = LogManager.getLogger(modID);
 
 	public static Block clayBarrel;
-	public static Block claySoft;
-	public static Block clayHard;
+	public static BlockClaySoft claySoft;
+	public static BlockClayHard clayHard;
 	public static Block porcelainBarrel;
 	public static Block porcelainBarrelExtension;
 	public static Block clayBarrelStained;
@@ -123,12 +123,12 @@ public class Ceramics {
 		Config.load(event);
 		// generic materials
 		clayUnfired = registerItem(new ItemClayUnfired(), "unfired_clay");
+		clayHard = registerBlock(new ItemBlockEnum(new BlockClayHard()), "clay_hard");
 
 		// porcelain
 		if(Config.porcelainEnabled) {
 			// not technically porcelain as I may add other soft blocks later, but for now
 			claySoft = registerBlock(new ItemBlockEnum(new BlockClaySoft()), "clay_soft");
-			clayHard = registerBlock(new ItemBlockEnum(new BlockClayHard()), "clay_hard");
 			porcelain = registerBlock(new ItemCloth(new BlockPorcelainClay()), "porcelain");
 		}
 
@@ -332,6 +332,32 @@ public class Ceramics {
 							"barrelExtensionPorcelain", dye));
 				}
 			}
+		}
+
+		// decorative bricks
+		if(Config.fancyBricksEnabled) {
+			String[] surround = { "bbb", "b#b", "bbb" };
+
+			// first two: crafted with regular clay
+			// dark bricks: bit of black
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.DARK_BRICKS.getMeta()),
+					surround, 'b', Items.BRICK, '#', "dyeBlack"));
+			// dragon bricks: breath of the end
+			GameRegistry.addRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.DRAGON_BRICKS.getMeta()),
+					surround, 'b', Items.BRICK, '#', Items.DRAGON_BREATH);
+
+			// if porcelain is disabled, use regular bricks for those recipes
+			Object secondBrick = Items.BRICK;
+			if(Config.porcelainEnabled) {
+				secondBrick = new ItemStack(clayUnfired, 1, ItemClayUnfired.UnfiredType.PORCELAIN_BRICK.getMeta());
+			}
+
+			// marine bricks: dye of the sea
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.MARINE_BRICKS.getMeta()),
+					surround, 'b', secondBrick, '#', "dyeBlue"));
+			// gold bricks: shard of gold
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.GOLDEN_BRICKS.getMeta()),
+					surround, 'b', secondBrick, '#', "nuggetGold"));
 		}
 
 		proxy.init();

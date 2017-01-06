@@ -4,8 +4,30 @@
     "model": "cube_all"
   },
   "variants": {
-    "type": {
-      "porcelain_bricks": { "textures": { "all": "ceramics:blocks/porcelain_bricks" }}
-	}
+    "type=porcelain_bricks": [{ "textures": { "all": "ceramics:blocks/porcelain_bricks" }}],
+    "type=dark_bricks": [
+      { "textures": { "all": "ceramics:blocks/dark_bricks/1" }},
+      { "textures": { "all": "ceramics:blocks/dark_bricks/2" }},
+      { "textures": { "all": "ceramics:blocks/dark_bricks/3" }},
+      { "textures": { "all": "ceramics:blocks/dark_bricks/4" }}
+    ],
+    "type=marine_bricks": [
+      { "textures": { "all": "ceramics:blocks/marine_bricks/1" }},
+      { "textures": { "all": "ceramics:blocks/marine_bricks/2" }},
+      { "textures": { "all": "ceramics:blocks/marine_bricks/3" }},
+      { "textures": { "all": "ceramics:blocks/marine_bricks/4" }}
+    ],
+    "type=golden_bricks": [
+      { "textures": { "all": "ceramics:blocks/golden_bricks/1" }},
+      { "textures": { "all": "ceramics:blocks/golden_bricks/2" }},
+      { "textures": { "all": "ceramics:blocks/golden_bricks/3" }},
+      { "textures": { "all": "ceramics:blocks/golden_bricks/4" }}
+    ],
+    "type=dragon_bricks": [
+      { "textures": { "all": "ceramics:blocks/dragon_bricks/1" }},
+      { "textures": { "all": "ceramics:blocks/dragon_bricks/2" }},
+      { "textures": { "all": "ceramics:blocks/dragon_bricks/3" }},
+      { "textures": { "all": "ceramics:blocks/dragon_bricks/4" }}
+    ]
   }
 }

@@ -52,7 +52,7 @@ public class BlockClaySoft extends BlockEnumBase<BlockClaySoft.ClayTypeSoft> {
 		return 4;
 	}
 
-	public enum ClayTypeSoft implements IStringSerializable, BlockEnumBase.IBlockMeta {
+	public enum ClayTypeSoft implements IStringSerializable, BlockEnumBase.IEnumMeta {
 		PORCELAIN;
 
 		private int meta;
@@ -72,6 +72,11 @@ public class BlockClaySoft extends BlockEnumBase<BlockClaySoft.ClayTypeSoft> {
 			}
 
 			return values()[meta];
+		}
+
+		@Override
+		public boolean shouldDisplay() {
+			return true;
 		}
 
 		@Override
