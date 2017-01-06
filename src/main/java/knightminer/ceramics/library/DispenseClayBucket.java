@@ -33,7 +33,7 @@ public class DispenseClayBucket extends BehaviorDefaultDispenseItem {
 	public ItemStack dispenseStack(IBlockSource source, ItemStack stack) {
 		// data from the dispenser and the world
 		World world = source.getWorld();
-		EnumFacing dispenserFacing = source.func_189992_e().getValue(BlockDispenser.FACING);
+		EnumFacing dispenserFacing = source.getBlockState().getValue(BlockDispenser.FACING);
 		BlockPos pos = source.getBlockPos().offset(dispenserFacing);
 		IBlockState state = source.getWorld().getBlockState(pos);
 

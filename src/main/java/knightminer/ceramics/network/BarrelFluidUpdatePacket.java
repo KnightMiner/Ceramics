@@ -48,7 +48,7 @@ public class BarrelFluidUpdatePacket extends PacketBase {
 			getMainThread(ctx).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {
-					TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(message.pos);
+					TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
 					if(te instanceof TileBarrel) {
 						((TileBarrel) te).updateFluidTo(message.fluid);
 					}

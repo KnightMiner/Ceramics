@@ -28,7 +28,7 @@ public abstract class PacketBase implements IMessage {
 			return Minecraft.getMinecraft();
 		}
 		else {
-			return (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
+			return (WorldServer) ctx.getServerHandler().playerEntity.world;
 		}
 	}
 }

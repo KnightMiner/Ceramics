@@ -72,7 +72,7 @@ public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
 		int b = color & 0xFF;
 
 		// lighting
-		int brightness = mc.theWorld.getCombinedLight(pos, fluid.getFluid().getLuminosity());
+		int brightness = mc.world.getCombinedLight(pos, fluid.getFluid().getLuminosity());
 		int light1 = brightness >> 0x10 & 0xFFFF;
 		int light2 = brightness & 0xFFFF;
 

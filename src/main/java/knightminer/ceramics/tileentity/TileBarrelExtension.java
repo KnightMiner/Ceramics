@@ -22,7 +22,7 @@ public class TileBarrelExtension extends TileBarrelBase {
 			return null;
 		}
 
-		TileEntity te = worldObj.getTileEntity(masterPos);
+		TileEntity te = world.getTileEntity(masterPos);
 		if(te instanceof TileBarrel) {
 			return (TileBarrel) te;
 		}

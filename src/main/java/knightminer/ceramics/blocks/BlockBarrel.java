@@ -126,7 +126,7 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 	 */
 	@Override
 	public void fillWithRain(World world, BlockPos pos) {
-		float f = world.getBiomeGenForCoords(pos).getFloatTemperature(pos);
+		float f = world.getBiome(pos).getFloatTemperature(pos);
 		if (world.getBiomeProvider().getTemperatureAtHeight(f, pos.getY()) >= 0.15f) {
 			TileEntity te = world.getTileEntity(pos);
 			if(te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, EnumFacing.UP)) {

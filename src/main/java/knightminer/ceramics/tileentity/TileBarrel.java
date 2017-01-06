@@ -62,18 +62,18 @@ public class TileBarrel extends TileBarrelBase {
 	@Override
 	public void checkBarrelStructure() {
 		BlockPos topPos = this.pos.up();
-		IBlockState state = worldObj.getBlockState(topPos);
+		IBlockState state = world.getBlockState(topPos);
 		while(state.getBlock() instanceof BlockBarrel && ((BlockBarrel) state.getBlock()).isExtension(state)) {
 
 			// set the master in the TE
-			TileEntity te = worldObj.getTileEntity(topPos);
+			TileEntity te = world.getTileEntity(topPos);
 			if(te instanceof TileBarrelExtension) {
 				((TileBarrelExtension)te).setMaster(this.pos);
 			}
 
 			// data for next iteration
 			topPos = topPos.up();
-			state = worldObj.getBlockState(topPos);
+			state = world.getBlockState(topPos);
 		}
 
 		// this position failed, so go back down to one that worked
@@ -102,7 +102,7 @@ public class TileBarrel extends TileBarrelBase {
 		if(newStrength != lastStrength) {
 			this.lastStrength = newStrength;
 			// send block update so the comparators update
-			this.worldObj.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+			this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
 		}
 	}
 
