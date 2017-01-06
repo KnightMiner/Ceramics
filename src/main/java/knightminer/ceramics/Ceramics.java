@@ -1,5 +1,7 @@
 package knightminer.ceramics;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -145,6 +147,9 @@ public class Ceramics {
 			claySoft = registerBlock(new ItemBlockEnum(new BlockClaySoft()), "clay_soft");
 			porcelain = registerBlock(new ItemCloth(new BlockPorcelainClay()), "porcelain");
 			stairsPorcelainBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.PORCELAIN_BRICKS, "porcelain_bricks_stairs");
+
+			// for other mods adding porcelain
+			oredict(clayUnfired, UnfiredType.PORCELAIN.getMeta(), "clayPorcelain");
 		}
 
 		// fancy brick stairs, slabs and main blocks done above
@@ -199,9 +204,6 @@ public class Ceramics {
 			registerTE(TileBarrel.class, "barrel");
 			registerTE(TileBarrelExtension.class, "barrel_extension");
 
-			// for other mods adding porcelain
-			oredict(clayUnfired, UnfiredType.PORCELAIN.getMeta(), "clayPorcelain");
-
 			// so we can use any type
 			oredict(clayBarrel, 0, "barrelClay");
 			oredict(clayBarrelStained, "barrelClay");
@@ -245,10 +247,13 @@ public class Ceramics {
 
 			// bricks
 			GameRegistry.addSmelting(block.copy(), blockHard, 0.1f);
-			GameRegistry.addSmelting(porcelainItem.copy(), brick.copy(), 0.1f);
 			// slabs and stairs
 			addSlabRecipe(claySlab, ClayTypeHard.PORCELAIN_BRICKS.getMeta(), brickBlock);
 			addStairRecipe(stairsPorcelainBricks, brickBlock);
+
+			// brick recipe
+			// handled using oredict in postInit
+			//GameRegistry.addSmelting(porcelainItem.copy(), brick.copy(), 0.1f);
 
 			for(EnumDyeColor color : EnumDyeColor.values()) {
 				ItemStack dyed = new ItemStack(porcelain, 1, color.getMetadata());
@@ -414,6 +419,15 @@ public class Ceramics {
 		}
 		if(Config.shearsEnabled) {
 			MinecraftForge.EVENT_BUS.register(clayShears);
+		}
+
+		// add recipes using all stacks in the oredictionary for bricks
+		if(Config.porcelainEnabled) {
+			List<ItemStack> porcelains = OreDictionary.getOres("clayPorcelain", false);
+			for(ItemStack porcelain : porcelains) {
+				ItemStack brick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
+				GameRegistry.addSmelting(porcelain, brick, 0.1f);
+			}
 		}
 	}
 
