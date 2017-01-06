@@ -3,7 +3,7 @@ package knightminer.ceramics.blocks;
 import java.util.List;
 
 import knightminer.ceramics.Ceramics;
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
@@ -16,15 +16,16 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> extends Block implements IBlockEnum<T> {
+public abstract class BlockEnumSlabBase<T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> extends BlockSlab implements IBlockEnum<T> {
 
 	private PropertyEnum<T> prop;
 	private T[] values;
 
-	public BlockEnumBase(Material material, PropertyEnum<T> prop) {
+	public BlockEnumSlabBase(Material material, PropertyEnum<T> prop) {
 		super(setTemp(material, prop));
 		this.prop = prop;
 
+		this.useNeighborBrightness = true;
 		this.setCreativeTab(Ceramics.tab);
 		values = prop.getValueClass().getEnumConstants();
 	}
@@ -44,9 +45,9 @@ public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & Bl
 	@Override
 	protected BlockStateContainer createBlockState() {
 		if(prop == null) {
-			return new BlockStateContainer(this, new IProperty[] {temp});
+			return new BlockStateContainer(this, new IProperty[] {temp, HALF});
 		}
-		return new BlockStateContainer(this, new IProperty[] {prop});
+		return new BlockStateContainer(this, new IProperty[] {prop, HALF});
 	}
 
 	public T fromMeta(int meta) {
@@ -62,7 +63,9 @@ public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & Bl
 	 */
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(prop, fromMeta(meta));
+		return this.getDefaultState()
+				.withProperty(prop, fromMeta(meta & 7))
+				.withProperty(HALF, ((meta & 8) > 0) ? EnumBlockHalf.TOP : EnumBlockHalf.BOTTOM);
 	}
 
 	/**
@@ -70,7 +73,9 @@ public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & Bl
 	 */
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		return (state.getValue(prop)).getMeta();
+		int meta = state.getValue(prop).getMeta();
+		meta |= state.getValue(HALF) == EnumBlockHalf.TOP ? 8 : 0;
+		return meta;
 	}
 
 	/**
@@ -79,8 +84,25 @@ public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & Bl
 	 */
 	@Override
 	public int damageDropped(IBlockState state) {
-		return getMetaFromState(state);
+		return state.getValue(prop).getMeta();
 	}
+
+	/**
+	 * Returns the slab block name with the type associated with it
+	 */
+	@Override
+	public String getUnlocalizedName(int meta) {
+		IBlockState state = getStateFromMeta(meta);
+		String name = state.getValue(prop).getName();
+		return super.getUnlocalizedName() + "." + name;
+	}
+
+	/**
+	 * Gets the full version of this slab
+	 * @param state slab state
+	 * @return full block variant
+	 */
+	public abstract IBlockState getFullBlock(IBlockState state);
 
 	/**
 	 * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
@@ -95,8 +117,21 @@ public abstract class BlockEnumBase<T extends Enum<T> & IStringSerializable & Bl
 		}
 	}
 
-	public interface IEnumMeta {
-		public int getMeta();
-		public boolean shouldDisplay();
+
+	/* slab methods */
+
+	@Override
+	public boolean isDouble() {
+		return false;
+	}
+
+	@Override
+	public IProperty<?> getVariantProperty() {
+		return prop;
+	}
+
+	@Override
+	public Comparable<?> getTypeForItem(ItemStack stack) {
+		return fromMeta(stack.getMetadata());
 	}
 }

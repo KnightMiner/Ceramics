@@ -1,0 +1,62 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "half_slab",
+	"textures": {
+		"top": "#side",
+		"bottom": "#side"
+	}
+  },
+  "variants": {
+    "half=bottom,type=porcelain_bricks": [{ "textures": { "side": "ceramics:blocks/porcelain_bricks" }}],
+    "half=bottom,type=dark_bricks": [
+      { "textures": { "side": "ceramics:blocks/dark_bricks/1" }},
+      { "textures": { "side": "ceramics:blocks/dark_bricks/2" }},
+      { "textures": { "side": "ceramics:blocks/dark_bricks/3" }},
+      { "textures": { "side": "ceramics:blocks/dark_bricks/4" }}
+    ],
+    "half=bottom,type=marine_bricks": [
+      { "textures": { "side": "ceramics:blocks/marine_bricks/1" }},
+      { "textures": { "side": "ceramics:blocks/marine_bricks/2" }},
+      { "textures": { "side": "ceramics:blocks/marine_bricks/3" }},
+      { "textures": { "side": "ceramics:blocks/marine_bricks/4" }}
+    ],
+    "half=bottom,type=golden_bricks": [
+      { "textures": { "side": "ceramics:blocks/golden_bricks/1" }},
+      { "textures": { "side": "ceramics:blocks/golden_bricks/2" }},
+      { "textures": { "side": "ceramics:blocks/golden_bricks/3" }},
+      { "textures": { "side": "ceramics:blocks/golden_bricks/4" }}
+    ],
+    "half=bottom,type=dragon_bricks": [
+      { "textures": { "side": "ceramics:blocks/dragon_bricks/1" }},
+      { "textures": { "side": "ceramics:blocks/dragon_bricks/2" }},
+      { "textures": { "side": "ceramics:blocks/dragon_bricks/3" }},
+      { "textures": { "side": "ceramics:blocks/dragon_bricks/4" }}
+    ],
+    "half=top,type=porcelain_bricks": [{ "model": "upper_slab", "textures": { "side": "ceramics:blocks/porcelain_bricks" }}],
+    "half=top,type=dark_bricks": [
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dark_bricks/1" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dark_bricks/2" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dark_bricks/3" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dark_bricks/4" }}
+    ],
+    "half=top,type=marine_bricks": [
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/marine_bricks/1" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/marine_bricks/2" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/marine_bricks/3" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/marine_bricks/4" }}
+    ],
+    "half=top,type=golden_bricks": [
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/golden_bricks/1" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/golden_bricks/2" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/golden_bricks/3" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/golden_bricks/4" }}
+    ],
+    "half=top,type=dragon_bricks": [
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dragon_bricks/1" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dragon_bricks/2" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dragon_bricks/3" }},
+      { "model": "upper_slab", "textures": { "side": "ceramics:blocks/dragon_bricks/4" }}
+    ]
+  }
+}

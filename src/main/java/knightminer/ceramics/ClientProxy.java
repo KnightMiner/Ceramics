@@ -3,7 +3,9 @@ package knightminer.ceramics;
 import javax.annotation.Nonnull;
 
 import knightminer.ceramics.blocks.BlockEnumBase;
+import knightminer.ceramics.blocks.BlockEnumSlabBase;
 import knightminer.ceramics.blocks.BlockPorcelainClay;
+import knightminer.ceramics.blocks.IBlockEnum;
 import knightminer.ceramics.client.BarrelRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
@@ -40,14 +42,24 @@ public class ClientProxy extends CommonProxy {
 		// color is handled by tinting
 		ignoreProperty(BlockPorcelainClay.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
 
-		// eventually loop this...
+		// base blocks
 		registerItemModels(Ceramics.claySoft);
 		registerItemModels(Ceramics.clayHard);
+		registerItemModels(Ceramics.claySlab);
 
+		// stairs
+		registerItemModel(Ceramics.stairsPorcelainBricks);
+		registerItemModel(Ceramics.stairsDarkBricks);
+		registerItemModel(Ceramics.stairsGoldenBricks);
+		registerItemModel(Ceramics.stairsMarineBricks);
+		registerItemModel(Ceramics.stairsDragonBricks);
+
+		// porcelain
 		registerItemModel(Ceramics.porcelain);
 		registerItemModel(Ceramics.porcelainBarrel);
 		registerItemModel(Ceramics.porcelainBarrelExtension);
 
+		// items
 		registerItemModel(Ceramics.clayBucket);
 		registerItemModel(Ceramics.clayShears);
 
@@ -58,6 +70,7 @@ public class ClientProxy extends CommonProxy {
 			}
 		}
 
+		// armor
 		registerItemModel(Ceramics.clayHelmet);
 		registerItemModel(Ceramics.clayChestplate);
 		registerItemModel(Ceramics.clayLeggings);
@@ -100,9 +113,7 @@ public class ClientProxy extends CommonProxy {
 				};
 			}
 			else {
-				blocks = new Block[]{
-						Ceramics.porcelain
-				};
+				blocks = new Block[]{ Ceramics.porcelain };
 			}
 			blockColors.registerBlockColorHandler(
 					new IBlockColor() {
@@ -127,6 +138,9 @@ public class ClientProxy extends CommonProxy {
 
 		}
 	}
+
+
+	/* Helper methods */
 
 	private void registerItemModel(Item item) {
 		registerItemModel(item, "inventory");
@@ -167,11 +181,20 @@ public class ClientProxy extends CommonProxy {
 	private void registerItemModel(Block block, int meta, String name) {
 		registerItemModel(Item.getItemFromBlock(block), meta, name);
 	}
+
 	private <T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> void registerItemModels(BlockEnumBase<T> block) {
+		registerItemModels(block, "");
+	}
+
+	private <T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> void registerItemModels(BlockEnumSlabBase<T> block) {
+		registerItemModels(block, "half=bottom,");
+	}
+
+	private <B extends Block & IBlockEnum<T>, T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> void registerItemModels(B block, String prefix) {
 		if(block != null) {
 			PropertyEnum<T> prop = block.getMappingProperty();
 			for(T value : prop.getAllowedValues()) {
-				registerItemModel(block, value.getMeta(), prop.getName() + "=" + value.getName());
+				registerItemModel(block, value.getMeta(), prefix + prop.getName() + "=" + value.getName());
 			}
 		}
 	}

@@ -2,7 +2,8 @@ package knightminer.ceramics.items;
 
 import javax.annotation.Nonnull;
 
-import knightminer.ceramics.blocks.BlockEnumBase;
+import knightminer.ceramics.blocks.IBlockEnum;
+import net.minecraft.block.Block;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemColored;
@@ -12,7 +13,7 @@ public class ItemBlockEnum extends ItemColored {
 
 	private PropertyEnum<?> prop;
 
-	public ItemBlockEnum(BlockEnumBase<?> block) {
+	public <T extends Block & IBlockEnum<?>> ItemBlockEnum(T block) {
 		super(block, true);
 		this.prop = block.getMappingProperty();
 	}

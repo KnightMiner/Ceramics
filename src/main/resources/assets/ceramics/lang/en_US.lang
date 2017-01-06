@@ -8,6 +8,18 @@ tile.ceramics.clay_hard.golden_bricks.name=Golden Bricks
 tile.ceramics.clay_hard.dragon_bricks.name=Dragon Bricks
 tile.ceramics.clay_soft.porcelain.name=Unfired Porcelain
 
+tile.ceramics.clay_slab.porcelain_bricks.name=Porcelain Bricks Slab
+tile.ceramics.clay_slab.dark_bricks.name=Dark Bricks Slab
+tile.ceramics.clay_slab.marine_bricks.name=Marine Bricks Slab
+tile.ceramics.clay_slab.golden_bricks.name=Golden Bricks Slab
+tile.ceramics.clay_slab.dragon_bricks.name=Dragon Bricks Slab
+
+tile.ceramics.porcelain_bricks_stairs.name=Porcelain Bricks Stairs
+tile.ceramics.dark_bricks_stairs.name=Dark Bricks Stairs
+tile.ceramics.marine_bricks_stairs.name=Marine Bricks Stairs
+tile.ceramics.golden_bricks_stairs.name=Golden Bricks Stairs
+tile.ceramics.dragon_bricks_stairs.name=Dragon Bricks Stairs
+
 
 tile.ceramics.porcelain.black.name=Black Porcelain
 tile.ceramics.porcelain.red.name=Red Porcelain

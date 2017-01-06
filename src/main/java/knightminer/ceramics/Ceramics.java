@@ -7,13 +7,17 @@ import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.blocks.BlockClayHard;
 import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
+import knightminer.ceramics.blocks.BlockClaySlab;
 import knightminer.ceramics.blocks.BlockClaySoft;
 import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
+import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockPorcelainClay;
+import knightminer.ceramics.blocks.BlockStairsBase;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
 import knightminer.ceramics.items.ItemBlockBarrel;
 import knightminer.ceramics.items.ItemBlockEnum;
+import knightminer.ceramics.items.ItemBlockEnumSlab;
 import knightminer.ceramics.items.ItemClayBucket;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayShears;
@@ -35,6 +39,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemCloth;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -68,11 +73,18 @@ public class Ceramics {
 	public static Block clayBarrel;
 	public static BlockClaySoft claySoft;
 	public static BlockClayHard clayHard;
+	public static BlockClaySlab claySlab;
 	public static Block porcelainBarrel;
 	public static Block porcelainBarrelExtension;
 	public static Block clayBarrelStained;
 	public static Block clayBarrelStainedExtension;
 	public static Block porcelain;
+
+	public static Block stairsPorcelainBricks;
+	public static Block stairsDarkBricks;
+	public static Block stairsGoldenBricks;
+	public static Block stairsMarineBricks;
+	public static Block stairsDragonBricks;
 
 	public static Item clayUnfired;
 
@@ -118,18 +130,29 @@ public class Ceramics {
 
 	// TODO: TConstruct casting support
 
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		Config.load(event);
 		// generic materials
 		clayUnfired = registerItem(new ItemClayUnfired(), "unfired_clay");
 		clayHard = registerBlock(new ItemBlockEnum(new BlockClayHard()), "clay_hard");
+		claySlab = registerBlock(new ItemBlockEnumSlab(new BlockClaySlab()), "clay_slab");
 
 		// porcelain
 		if(Config.porcelainEnabled) {
 			// not technically porcelain as I may add other soft blocks later, but for now
 			claySoft = registerBlock(new ItemBlockEnum(new BlockClaySoft()), "clay_soft");
 			porcelain = registerBlock(new ItemCloth(new BlockPorcelainClay()), "porcelain");
+			stairsPorcelainBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.PORCELAIN_BRICKS, "porcelain_bricks_stairs");
+		}
+
+		// fancy brick stairs, slabs and main blocks done above
+		if(Config.fancyBricksEnabled) {
+			stairsDarkBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.DARK_BRICKS, "dark_bricks_stairs");
+			stairsGoldenBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.GOLDEN_BRICKS, "golden_bricks_stairs");
+			stairsMarineBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.MARINE_BRICKS, "marine_bricks_stairs");
+			stairsDragonBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.DRAGON_BRICKS, "dragon_bricks_stairs");
 		}
 
 		// bucket
@@ -223,6 +246,9 @@ public class Ceramics {
 			// bricks
 			GameRegistry.addSmelting(block.copy(), blockHard, 0.1f);
 			GameRegistry.addSmelting(porcelainItem.copy(), brick.copy(), 0.1f);
+			// slabs and stairs
+			addSlabRecipe(claySlab, ClayTypeHard.PORCELAIN_BRICKS.getMeta(), brickBlock);
+			addStairRecipe(stairsPorcelainBricks, brickBlock);
 
 			for(EnumDyeColor color : EnumDyeColor.values()) {
 				ItemStack dyed = new ItemStack(porcelain, 1, color.getMetadata());
@@ -340,24 +366,42 @@ public class Ceramics {
 
 			// first two: crafted with regular clay
 			// dark bricks: bit of black
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.DARK_BRICKS.getMeta()),
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.DARK_BRICKS.getMeta()),
 					surround, 'b', Items.BRICK, '#', "dyeBlack"));
 			// dragon bricks: breath of the end
-			GameRegistry.addRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.DRAGON_BRICKS.getMeta()),
+			GameRegistry.addRecipe(new ItemStack(clayHard, 2, ClayTypeHard.DRAGON_BRICKS.getMeta()),
 					surround, 'b', Items.BRICK, '#', Items.DRAGON_BREATH);
 
 			// if porcelain is disabled, use regular bricks for those recipes
 			Object secondBrick = Items.BRICK;
 			if(Config.porcelainEnabled) {
-				secondBrick = new ItemStack(clayUnfired, 1, ItemClayUnfired.UnfiredType.PORCELAIN_BRICK.getMeta());
+				secondBrick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
 			}
 
 			// marine bricks: dye of the sea
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.MARINE_BRICKS.getMeta()),
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.MARINE_BRICKS.getMeta()),
 					surround, 'b', secondBrick, '#', "dyeBlue"));
 			// gold bricks: shard of gold
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, BlockClayHard.ClayTypeHard.GOLDEN_BRICKS.getMeta()),
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.GOLDEN_BRICKS.getMeta()),
 					surround, 'b', secondBrick, '#', "nuggetGold"));
+
+
+			// slabs and stairs
+			ItemStack darkBricks = new ItemStack(clayHard, 1, ClayTypeHard.DARK_BRICKS.getMeta());
+			addSlabRecipe(claySlab, ClayTypeHard.DARK_BRICKS.getMeta(), darkBricks);
+			addStairRecipe(stairsDarkBricks, darkBricks);
+
+			ItemStack goldenBricks = new ItemStack(clayHard, 1, ClayTypeHard.GOLDEN_BRICKS.getMeta());
+			addSlabRecipe(claySlab, ClayTypeHard.GOLDEN_BRICKS.getMeta(), goldenBricks);
+			addStairRecipe(stairsGoldenBricks, goldenBricks);
+
+			ItemStack marineBricks = new ItemStack(clayHard, 1, ClayTypeHard.MARINE_BRICKS.getMeta());
+			addSlabRecipe(claySlab, ClayTypeHard.MARINE_BRICKS.getMeta(), marineBricks);
+			addStairRecipe(stairsMarineBricks, marineBricks);
+
+			ItemStack dragonBricks = new ItemStack(clayHard, 1, ClayTypeHard.DRAGON_BRICKS.getMeta());
+			addSlabRecipe(claySlab, ClayTypeHard.DRAGON_BRICKS.getMeta(), dragonBricks);
+			addStairRecipe(stairsDragonBricks, dragonBricks);
 		}
 
 		proxy.init();
@@ -384,6 +428,9 @@ public class Ceramics {
 		}
 	}
 
+
+	/* Blocks, items, and TEs */
+
 	@SuppressWarnings("unchecked")
 	private <T extends Block> T registerBlock(ItemBlock item, String name) {
 		Block block = item.getBlock();
@@ -395,6 +442,10 @@ public class Ceramics {
 		registerItem(item, name);
 
 		return (T) block;
+	}
+
+	protected <E extends Enum<E> & BlockEnumBase.IEnumMeta & IStringSerializable> BlockStairsBase registerBlockStairsFrom(BlockEnumBase<E> block, E value, String name) {
+		return registerBlock(new ItemBlock(new BlockStairsBase(block.getDefaultState().withProperty(block.getMappingProperty(), value))), name);
 	}
 
 	private <T extends Item> T registerItem(T item, String name) {
@@ -409,6 +460,8 @@ public class Ceramics {
 		GameRegistry.registerTileEntity(teClazz, Util.prefix(name));
 	}
 
+
+	/* Oredictionary */
 
 	public static void oredict(Item item, String... name) {
 		oredict(item, OreDictionary.WILDCARD_VALUE, name);
@@ -432,5 +485,15 @@ public class Ceramics {
 				OreDictionary.registerOre(name, stack);
 			}
 		}
+	}
+
+
+	/* Recipe shortcuts */
+	protected static void addSlabRecipe(Block slab, int meta, ItemStack input) {
+		GameRegistry.addShapedRecipe(new ItemStack(slab, 6, meta), "BBB", 'B', input);
+	}
+
+	protected static void addStairRecipe(Block stairs, ItemStack input) {
+		GameRegistry.addShapedRecipe(new ItemStack(stairs, 4), "B  ", "BB ", "BBB", 'B', input);
 	}
 }
