@@ -256,7 +256,7 @@ public class Ceramics {
 			//GameRegistry.addSmelting(porcelainItem.copy(), brick.copy(), 0.1f);
 
 			for(EnumDyeColor color : EnumDyeColor.values()) {
-				ItemStack dyed = new ItemStack(porcelain, 1, color.getMetadata());
+				ItemStack dyed = new ItemStack(porcelain, 8, color.getMetadata());
 				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
 
 				GameRegistry.addRecipe(dyed, "ccc", "cdc", "ccc", 'd', dye, 'c', new ItemStack(porcelain, 1, OreDictionary.WILDCARD_VALUE));
