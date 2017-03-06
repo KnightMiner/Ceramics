@@ -13,7 +13,8 @@ import knightminer.ceramics.blocks.BlockClaySlab;
 import knightminer.ceramics.blocks.BlockClaySoft;
 import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
 import knightminer.ceramics.blocks.BlockEnumBase;
-import knightminer.ceramics.blocks.BlockPorcelainClay;
+import knightminer.ceramics.blocks.BlockStained;
+import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.BlockStairsBase;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
@@ -145,7 +146,7 @@ public class Ceramics {
 		if(Config.porcelainEnabled) {
 			// not technically porcelain as I may add other soft blocks later, but for now
 			claySoft = registerBlock(new ItemBlockEnum(new BlockClaySoft()), "clay_soft");
-			porcelain = registerBlock(new ItemCloth(new BlockPorcelainClay()), "porcelain");
+			porcelain = registerBlock(new ItemBlockEnum(new BlockStained()), "porcelain");
 			stairsPorcelainBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.PORCELAIN_BRICKS, "porcelain_bricks_stairs");
 
 			// for other mods adding porcelain

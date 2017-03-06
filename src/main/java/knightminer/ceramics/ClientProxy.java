@@ -4,7 +4,8 @@ import javax.annotation.Nonnull;
 
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockEnumSlabBase;
-import knightminer.ceramics.blocks.BlockPorcelainClay;
+import knightminer.ceramics.blocks.BlockStained;
+import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.IBlockEnum;
 import knightminer.ceramics.client.BarrelRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
@@ -40,7 +41,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerModels() {
 		// color is handled by tinting
-		ignoreProperty(BlockPorcelainClay.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
+		ignoreProperty(BlockStained.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
 
 		// base blocks
 		registerItemModels(Ceramics.claySoft);
@@ -119,8 +120,8 @@ public class ClientProxy extends CommonProxy {
 					new IBlockColor() {
 						@Override
 						public int colorMultiplier(@Nonnull IBlockState state, IBlockAccess access, BlockPos pos, int tintIndex) {
-							EnumDyeColor type = state.getValue(BlockPorcelainClay.COLOR);
-							return BlockPorcelainClay.getBlockColor(type);
+							StainedColor type = state.getValue(BlockStained.COLOR);
+							return type.getColor();
 						}
 					},
 					blocks);
