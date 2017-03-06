@@ -2,10 +2,10 @@ package knightminer.ceramics.blocks;
 
 import java.util.List;
 
+import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,11 +18,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockBarrelStained extends BlockBarrel {
 
 	private boolean extension;
-	public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.<EnumDyeColor>create("color", EnumDyeColor.class);
 
 	public BlockBarrelStained(boolean extension) {
 		super(Material.ROCK);
-		this.setDefaultState(this.getBlockState().getBaseState().withProperty(COLOR, EnumDyeColor.WHITE));
+		this.setDefaultState(this.getBlockState().getBaseState().withProperty(BlockStained.COLOR, StainedColor.WHITE));
 		this.extension = extension;
 	}
 
@@ -49,7 +48,7 @@ public class BlockBarrelStained extends BlockBarrel {
 	 */
 	@Override
 	public MapColor getMapColor(IBlockState state) {
-		return state.getValue(COLOR).getMapColor();
+		return state.getValue(BlockStained.COLOR).asDyeColor().getMapColor();
 	}
 
 	/**
@@ -57,7 +56,7 @@ public class BlockBarrelStained extends BlockBarrel {
 	 */
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(COLOR, EnumDyeColor.byMetadata(meta));
+		return this.getDefaultState().withProperty(BlockStained.COLOR, StainedColor.fromMeta(meta));
 	}
 
 	/**
@@ -65,11 +64,11 @@ public class BlockBarrelStained extends BlockBarrel {
 	 */
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		return state.getValue(COLOR).getMetadata();
+		return state.getValue(BlockStained.COLOR).getMeta();
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState() {
-		return new BlockStateContainer(this, new IProperty[] {COLOR});
+		return new BlockStateContainer(this, new IProperty[] {BlockStained.COLOR});
 	}
 }

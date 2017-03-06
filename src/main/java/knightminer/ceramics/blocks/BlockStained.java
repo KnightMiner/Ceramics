@@ -6,6 +6,7 @@ import knightminer.ceramics.Ceramics;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.IStringSerializable;
 
 public class BlockStained extends BlockEnumBase<BlockStained.StainedColor> {
@@ -71,6 +72,10 @@ public class BlockStained extends BlockEnumBase<BlockStained.StainedColor> {
 		@Override
 		public boolean shouldDisplay() {
 			return true;
+		}
+
+		public EnumDyeColor asDyeColor() {
+			return EnumDyeColor.byMetadata(this.getMeta());
 		}
 	}
 

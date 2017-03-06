@@ -16,7 +16,6 @@ import knightminer.ceramics.blocks.BlockClayWall;
 import knightminer.ceramics.blocks.BlockClayWall.ClayWallType;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockStained;
-import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.BlockStairsBase;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
