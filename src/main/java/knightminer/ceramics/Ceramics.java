@@ -12,6 +12,8 @@ import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
 import knightminer.ceramics.blocks.BlockClaySlab;
 import knightminer.ceramics.blocks.BlockClaySoft;
 import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
+import knightminer.ceramics.blocks.BlockClayWall;
+import knightminer.ceramics.blocks.BlockClayWall.ClayWallType;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockStained;
 import knightminer.ceramics.blocks.BlockStained.StainedColor;
@@ -33,6 +35,7 @@ import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumDyeColor;
@@ -77,6 +80,7 @@ public class Ceramics {
 	public static BlockClaySoft claySoft;
 	public static BlockClayHard clayHard;
 	public static BlockClaySlab claySlab;
+	public static BlockClayWall clayWall;
 	public static Block porcelainBarrel;
 	public static Block porcelainBarrelExtension;
 	public static Block clayBarrelStained;
@@ -141,6 +145,7 @@ public class Ceramics {
 		clayUnfired = registerItem(new ItemClayUnfired(), "unfired_clay");
 		clayHard = registerBlock(new ItemBlockEnum(new BlockClayHard()), "clay_hard");
 		claySlab = registerBlock(new ItemBlockEnumSlab(new BlockClaySlab()), "clay_slab");
+		clayWall = registerBlock(new ItemBlockEnum(new BlockClayWall()), "clay_wall");
 
 		// porcelain
 		if(Config.porcelainEnabled) {
@@ -250,6 +255,7 @@ public class Ceramics {
 			GameRegistry.addSmelting(block.copy(), blockHard, 0.1f);
 			// slabs and stairs
 			addSlabRecipe(claySlab, ClayTypeHard.PORCELAIN_BRICKS.getMeta(), brickBlock);
+			addWallRecipe(clayWall, ClayWallType.PORCELAIN_BRICKS.getMeta(), brickBlock);
 			addStairRecipe(stairsPorcelainBricks, brickBlock);
 
 			// brick recipe
@@ -395,19 +401,27 @@ public class Ceramics {
 			// slabs and stairs
 			ItemStack darkBricks = new ItemStack(clayHard, 1, ClayTypeHard.DARK_BRICKS.getMeta());
 			addSlabRecipe(claySlab, ClayTypeHard.DARK_BRICKS.getMeta(), darkBricks);
+			addWallRecipe(clayWall, ClayWallType.DARK_BRICKS.getMeta(), darkBricks);
 			addStairRecipe(stairsDarkBricks, darkBricks);
 
 			ItemStack goldenBricks = new ItemStack(clayHard, 1, ClayTypeHard.GOLDEN_BRICKS.getMeta());
 			addSlabRecipe(claySlab, ClayTypeHard.GOLDEN_BRICKS.getMeta(), goldenBricks);
+			addWallRecipe(clayWall, ClayWallType.GOLDEN_BRICKS.getMeta(), goldenBricks);
 			addStairRecipe(stairsGoldenBricks, goldenBricks);
 
 			ItemStack marineBricks = new ItemStack(clayHard, 1, ClayTypeHard.MARINE_BRICKS.getMeta());
 			addSlabRecipe(claySlab, ClayTypeHard.MARINE_BRICKS.getMeta(), marineBricks);
+			addWallRecipe(clayWall, ClayWallType.MARINE_BRICKS.getMeta(), marineBricks);
 			addStairRecipe(stairsMarineBricks, marineBricks);
 
 			ItemStack dragonBricks = new ItemStack(clayHard, 1, ClayTypeHard.DRAGON_BRICKS.getMeta());
 			addSlabRecipe(claySlab, ClayTypeHard.DRAGON_BRICKS.getMeta(), dragonBricks);
+			addWallRecipe(clayWall, ClayWallType.DRAGON_BRICKS.getMeta(), dragonBricks);
 			addStairRecipe(stairsDragonBricks, dragonBricks);
+		}
+
+		if(Config.brickWallEnabled) {
+			addWallRecipe(clayWall, ClayWallType.BRICKS.getMeta(), new ItemStack(Blocks.BRICK_BLOCK));
 		}
 
 		proxy.init();
@@ -510,5 +524,9 @@ public class Ceramics {
 
 	protected static void addStairRecipe(Block stairs, ItemStack input) {
 		GameRegistry.addShapedRecipe(new ItemStack(stairs, 4), "B  ", "BB ", "BBB", 'B', input);
+	}
+
+	protected static void addWallRecipe(Block wall, int meta, ItemStack input) {
+		GameRegistry.addShapedRecipe(new ItemStack(wall, 6, meta), "BBB", "BBB", 'B', input);
 	}
 }

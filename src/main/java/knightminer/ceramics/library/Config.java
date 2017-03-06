@@ -13,6 +13,7 @@ public class Config {
 	public static boolean barrelEnabled = true;
 	public static boolean porcelainEnabled = true;
 	public static boolean fancyBricksEnabled = true;
+	public static boolean brickWallEnabled = true;
 
 	static Configuration configFile;
 
@@ -33,6 +34,8 @@ public class Config {
 				"Enables porcelain, a whiter clay that produces true colors when dyed");
 		fancyBricksEnabled = configFile.getBoolean("fancyBricks", "enabled", true,
 				"Enables four additional decorative bricks");
+		brickWallEnabled = configFile.getBoolean("brickWall", "enabled", true,
+				"Enables walls made of vanilla bricks. Mainly here if another mod provides this feature (e.g. Quark)");
 
 		if(configFile.hasChanged()) {
 			configFile.save();

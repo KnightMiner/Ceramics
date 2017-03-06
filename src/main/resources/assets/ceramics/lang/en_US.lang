@@ -20,6 +20,13 @@ tile.ceramics.marine_bricks_stairs.name=Marine Bricks Stairs
 tile.ceramics.golden_bricks_stairs.name=Golden Bricks Stairs
 tile.ceramics.dragon_bricks_stairs.name=Dragon Bricks Stairs
 
+tile.ceramics.clay_wall.bricks.name=Bricks Wall
+tile.ceramics.clay_wall.porcelain_bricks.name=Porcelain Bricks Wall
+tile.ceramics.clay_wall.dark_bricks.name=Dark Bricks Wall
+tile.ceramics.clay_wall.marine_bricks.name=Marine Bricks Wall
+tile.ceramics.clay_wall.golden_bricks.name=Golden Bricks Wall
+tile.ceramics.clay_wall.dragon_bricks.name=Dragon Bricks Wall
+
 # porcelain
 tile.ceramics.porcelain.black.name=Black Porcelain
 tile.ceramics.porcelain.red.name=Red Porcelain

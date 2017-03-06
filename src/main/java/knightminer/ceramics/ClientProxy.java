@@ -2,6 +2,7 @@ package knightminer.ceramics;
 
 import javax.annotation.Nonnull;
 
+import knightminer.ceramics.blocks.BlockClayWall;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockEnumSlabBase;
 import knightminer.ceramics.blocks.BlockStained;
@@ -11,8 +12,10 @@ import knightminer.ceramics.client.BarrelRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
+import knightminer.ceramics.library.PropertyStateMapper;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockWall;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -42,11 +45,14 @@ public class ClientProxy extends CommonProxy {
 	public void registerModels() {
 		// color is handled by tinting
 		ignoreProperty(BlockStained.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
+		// separate all walls to their own file
+		ModelLoader.setCustomStateMapper(Ceramics.clayWall, new PropertyStateMapper("clay_wall", BlockClayWall.TYPE, BlockWall.VARIANT));
 
 		// base blocks
 		registerItemModels(Ceramics.claySoft);
 		registerItemModels(Ceramics.clayHard);
 		registerItemModels(Ceramics.claySlab);
+		registerItemModels(Ceramics.clayWall);
 
 		// stairs
 		registerItemModel(Ceramics.stairsPorcelainBricks);
@@ -154,6 +160,7 @@ public class ClientProxy extends CommonProxy {
 	private void registerItemModel(Item item, final String variant) {
 		if(item != null) {
 			final ResourceLocation location = item.getRegistryName();
+			// so all meta get the item model
 			ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
 				@Nonnull
 				@Override
@@ -183,7 +190,7 @@ public class ClientProxy extends CommonProxy {
 		registerItemModel(Item.getItemFromBlock(block), meta, name);
 	}
 
-	private <T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> void registerItemModels(BlockEnumBase<T> block) {
+	private <B extends Block & IBlockEnum<T>, T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> void registerItemModels(B block) {
 		registerItemModels(block, "");
 	}
 

@@ -1,0 +1,6 @@
+{
+    "parent": "block/wall_post",
+    "textures": {
+        "wall": "ceramics:blocks/golden_bricks/2"
+    }
+}

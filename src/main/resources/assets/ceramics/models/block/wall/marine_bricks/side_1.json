@@ -1,0 +1,6 @@
+{
+    "parent": "block/wall_side",
+    "textures": {
+        "wall": "ceramics:blocks/marine_bricks/1"
+    }
+}
