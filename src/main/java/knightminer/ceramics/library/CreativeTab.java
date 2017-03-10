@@ -1,7 +1,6 @@
 package knightminer.ceramics.library;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,13 +27,8 @@ public class CreativeTab extends CreativeTabs {
 	}
 
 	@Override
-	public Item getTabIconItem() {
-		return icon.getItem();
-	}
-
-	@Override
-	public int getIconItemDamage() {
-		return icon.getItemDamage();
+	public ItemStack getTabIconItem() {
+		return icon;
 	}
 
 }

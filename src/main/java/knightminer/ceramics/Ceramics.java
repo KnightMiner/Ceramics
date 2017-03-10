@@ -180,7 +180,7 @@ public class Ceramics {
 		if(Config.armorEnabled) {
 			clayArmor = EnumHelper.addArmorMaterial(Util.prefix("clay"), "cermamics:clay", 4, new int[]{1, 2, 3, 1}, 7,
 					null, 0);
-			clayArmor.customCraftingMaterial = Items.BRICK;
+			clayArmor.repairMaterial = new ItemStack(Items.BRICK);
 			clayHelmet = registerItem(new ItemArmorClay(EntityEquipmentSlot.HEAD), "clay_helmet");
 			clayChestplate = registerItem(new ItemArmorClay(EntityEquipmentSlot.CHEST), "clay_chestplate");
 			clayLeggings = registerItem(new ItemArmorClay(EntityEquipmentSlot.LEGS), "clay_leggings");
@@ -188,7 +188,7 @@ public class Ceramics {
 
 			clayArmorRaw = EnumHelper.addArmorMaterial(Util.prefix("clay_raw"), "cermamics:clay_raw", 1,
 					new int[]{1, 1, 1, 1}, 1, null, 0);
-			clayArmor.customCraftingMaterial = Items.CLAY_BALL;
+			clayArmor.repairMaterial = new ItemStack(Items.CLAY_BALL);
 			clayHelmetRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.HEAD), "clay_helmet_raw");
 			clayChestplateRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.CHEST), "clay_chestplate_raw");
 			clayLeggingsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.LEGS), "clay_leggings_raw");
@@ -240,12 +240,12 @@ public class Ceramics {
 			GameRegistry.addShapelessRecipe(porcelainItem, Items.CLAY_BALL, boneMeal);
 			// alt recipe: quartz
 			ItemStack porcelainAlt = porcelainItem.copy();
-			porcelainAlt.stackSize = 2;
+			porcelainAlt.setCount(2);
 			GameRegistry.addShapelessRecipe(porcelainAlt, Items.CLAY_BALL, Items.CLAY_BALL, Items.QUARTZ);
 
 			// block crafting
 			ItemStack porcelainAlt2 = porcelainItem.copy();
-			porcelainAlt2.stackSize = 4;
+			porcelainAlt2.setCount(4);
 			GameRegistry.addRecipe(new ShapedOreRecipe(block, "CC", "CC", 'C', "clayPorcelain"));
 			GameRegistry.addShapelessRecipe(porcelainAlt2, block.copy());
 			GameRegistry.addRecipe(brickBlock, "CC", "CC", 'C', brick);

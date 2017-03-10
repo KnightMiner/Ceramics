@@ -1,7 +1,5 @@
 package knightminer.ceramics.blocks;
 
-import java.util.List;
-
 import knightminer.ceramics.Ceramics;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWall;
@@ -14,6 +12,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -106,7 +105,7 @@ public class BlockEnumWallBase<T extends Enum<T> & IStringSerializable & BlockEn
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
+	public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
 		for(T type : values) {
 			if(type.shouldDisplay()) {
 				list.add(new ItemStack(itemIn, 1, type.getMeta()));

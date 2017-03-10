@@ -27,12 +27,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -107,17 +110,43 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
+		ItemStack stack = player.getHeldItem(hand);
+		// if its a block ignore, lets place it instead
+		if((stack.getItem() instanceof ItemBlock)) {
+			return false;
+		}
+
+		// check the TE
 		TileEntity te = world.getTileEntity(pos);
 		if(te == null || !te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)) {
 			return false;
 		}
 
 		IFluidHandler fluidHandler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
-		FluidUtil.interactWithFluidHandler(stack, fluidHandler, player);
+		FluidActionResult result = FluidUtil.interactWithFluidHandler(stack, fluidHandler, player);
 
-		// prevent interaction so stuff like buckets and other things don't place the liquid block
-		return stack != null && !(stack.getItem() instanceof ItemBlock);
+		// display the level of the barrel
+		if(!world.isRemote) {
+			FluidStack fluid = fluidHandler.getTankProperties()[0].getContents();
+			if(fluid == null) {
+				player.sendStatusMessage(new TextComponentTranslation("ceramics.barrel.fluid.empty"), true);
+			}
+			else {
+				player.sendStatusMessage(new TextComponentTranslation("ceramics.barrel.fluid.amount", new Object[] {
+						fluid.amount,
+						fluid.getLocalizedName()
+				}), true);
+			}
+		}
+
+		// modify the held stack
+		if(result.isSuccess()) {
+			player.setHeldItem(hand, result.getResult());
+			return true;
+		}
+
+		return false;
 	}
 
 	// rain filling!
@@ -183,7 +212,7 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, List<ItemStack> list) {
+	public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
 		list.add(new ItemStack(itemIn, 1, 0));
 		list.add(new ItemStack(itemIn, 1, 1));
 	}
@@ -231,7 +260,7 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 	protected static final AxisAlignedBB AABB_WALL_WEST  = new AxisAlignedBB(0.0625, 0, 0.0625, 0.125,  1,      0.9375);
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity) {
+	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean p_185477_7_) {
 		if(!isExtension(state)) {
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, AABB_BASE);
 		}
@@ -247,7 +276,7 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 	@Override
 	@Deprecated
 	@Nullable
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
 		return BOUNDS;
 	}
 

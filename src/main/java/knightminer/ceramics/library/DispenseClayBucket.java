@@ -81,14 +81,14 @@ public class DispenseClayBucket extends BehaviorDefaultDispenseItem {
 					}
 
 					// if the stack size is 1, change the stack
-					if(stack.stackSize == 1) {
+					if(stack.getCount() == 1) {
 						Ceramics.clayBucket.setSpecialFluid(stack, newFluid);
 					}
 					// if bigger than 1, fill a copy
 					else {
 						ItemStack copy = stack.copy();
-						copy.stackSize = 1;
-						stack.stackSize -= 1;
+						copy.setCount(1);
+						stack.shrink(1);
 						Ceramics.clayBucket.setSpecialFluid(copy, newFluid);
 
 						// try adding the copy to the dispenser

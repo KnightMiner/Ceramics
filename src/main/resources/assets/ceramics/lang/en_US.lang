@@ -147,6 +147,9 @@ item.ceramics.unfired.barrel_extension.name=Unfired Clay Barrel Extension
 item.ceramics.unfired.barrel_porcelain.name=Unfired Porcelain Barrel
 item.ceramics.unfired.barrel_porcelain_extension.name=Unfired Porcelain Barrel Extension
 
+# Messages
+ceramics.barrel.fluid.empty=Barrel is empty
+ceramics.barrel.fluid.amount=Contains: %smb %s
 
 # JEI Descriptions
 ceramics.jei.bucket=Clay buckets are an early game alternative to the standard iron bucket. Like their iron counterparts, they can be used to transport liquids, but will break after pouring out a hot liquid.

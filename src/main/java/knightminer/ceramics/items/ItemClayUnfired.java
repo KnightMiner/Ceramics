@@ -1,6 +1,5 @@
 package knightminer.ceramics.items;
 
-import java.util.List;
 import java.util.Locale;
 
 import knightminer.ceramics.Ceramics;
@@ -9,6 +8,7 @@ import knightminer.ceramics.library.Util;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -25,7 +25,7 @@ public class ItemClayUnfired extends Item {
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		for(UnfiredType type : UnfiredType.values()) {
 			if(type.shouldDisplay()) {
 				subItems.add(new ItemStack(itemIn, 1, type.getMeta()));

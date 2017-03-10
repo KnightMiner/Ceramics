@@ -8,6 +8,8 @@ import knightminer.ceramics.library.Util;
 import mezz.jei.api.IJeiRuntime;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.IModRegistry;
+import mezz.jei.api.ISubtypeRegistry;
+import mezz.jei.api.ingredients.IModIngredientRegistration;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 
@@ -50,7 +52,12 @@ public class JEIPlugin implements IModPlugin {
 	}
 
 	@Override
-	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-	}
+	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {}
+
+	@Override
+	public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {}
+
+	@Override
+	public void registerIngredients(IModIngredientRegistration registry) {}
 
 }

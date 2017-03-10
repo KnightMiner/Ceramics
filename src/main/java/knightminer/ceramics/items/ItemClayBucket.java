@@ -1,6 +1,5 @@
 package knightminer.ceramics.items;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.annotation.Nullable;
@@ -27,6 +26,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -37,10 +37,10 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -49,7 +49,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 @SuppressWarnings("deprecation")
-public class ItemClayBucket extends Item implements IFluidContainerItem {
+public class ItemClayBucket extends Item {
 
 	public static final String TAG_FLUIDS = "fluids";
 	public static ItemStack MILK_BUCKET = new ItemStack(Items.MILK_BUCKET);
@@ -92,30 +92,30 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemstack, World world, EntityPlayer player,
-			EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 
 		// milk we set active and return success, drinking code is done elsewhere
-		if(getSpecialFluid(itemstack) == SpecialFluid.MILK) {
+		if(getSpecialFluid(stack) == SpecialFluid.MILK) {
 			player.setActiveHand(hand);
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
+			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 		}
 
 		// empty bucket logic is just an event :)
-		if(!hasFluid(itemstack)) {
-			ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack,
+		if(!hasFluid(stack)) {
+			ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack,
 					this.rayTrace(world, player, true));
 			if(ret != null) {
 				return ret;
 			}
 
-			return ActionResult.newResult(EnumActionResult.PASS, itemstack);
+			return ActionResult.newResult(EnumActionResult.PASS, stack);
 		}
 
 		// clicked on a block?
 		RayTraceResult mop = this.rayTrace(world, player, false);
 		if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK) {
-			return ActionResult.newResult(EnumActionResult.PASS, itemstack);
+			return ActionResult.newResult(EnumActionResult.PASS, stack);
 		}
 
 		BlockPos clickPos = mop.getBlockPos();
@@ -124,12 +124,12 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 			BlockPos targetPos = clickPos.offset(mop.sideHit);
 
 			// can the player place there?
-			if(player.canPlayerEdit(targetPos, mop.sideHit, itemstack)) {
+			if(player.canPlayerEdit(targetPos, mop.sideHit, stack)) {
 				// first, try placing special fluids
-				FluidStack fluidStack = getFluid(itemstack);
-				if(hasSpecialFluid(itemstack)) {
+				FluidStack fluidStack = getFluid(stack);
+				if(hasSpecialFluid(stack)) {
 					// get the state from the fluid
-					IBlockState state = getSpecialFluid(itemstack).getState();
+					IBlockState state = getSpecialFluid(stack).getState();
 
 					// if we got a block state (not milk basically)
 					if(state != null) {
@@ -149,37 +149,48 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 							if(!player.capabilities.isCreativeMode) {
 								player.addStat(StatList.getObjectUseStats(this));
 
-								setSpecialFluid(itemstack, SpecialFluid.EMPTY);
+								setSpecialFluid(stack, SpecialFluid.EMPTY);
 							}
 
-							return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
+							return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
 						}
 					}
 				}
 				// try placing liquid
-				else if(FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), fluidStack, targetPos)) {
-					// success!
+				else {
+					FluidActionResult result = FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), targetPos, stack, fluidStack);
 
-					// water and lava use the non-flowing form for the fluid, so
-					// give it a block update to make it flow
-					if(fluidStack.getFluid() == FluidRegistry.WATER || fluidStack.getFluid() == FluidRegistry.LAVA) {
-						world.notifyBlockOfStateChange(targetPos, world.getBlockState(targetPos).getBlock());
+					if(result.isSuccess()) {
+						// water and lava place non-flowing for some reason
+						if(fluidStack.getFluid() == FluidRegistry.WATER || fluidStack.getFluid() == FluidRegistry.LAVA) {
+							IBlockState state = world.getBlockState(targetPos);
+							world.neighborChanged(targetPos, state.getBlock(), targetPos);
+						}
+
+
+						ItemStack returnStack = stack.copy();
+						if(!player.capabilities.isCreativeMode) {
+							returnStack.shrink(1);
+							ItemStack drained = result.getResult().copy();
+
+							// if the stack is empty, relace it with the empty bucket
+							if(returnStack.isEmpty()) {
+								returnStack = drained;
+							}
+							else if(!drained.isEmpty()) {
+								// otheriwise add empty bucket to player inventory
+								ItemHandlerHelper.giveItemToPlayer(player, drained);
+							}
+						}
+
+						return ActionResult.newResult(EnumActionResult.SUCCESS, returnStack);
 					}
-
-					// only empty if not creative
-					if(!player.capabilities.isCreativeMode) {
-						player.addStat(StatList.getObjectUseStats(this));
-
-						drain(itemstack, Fluid.BUCKET_VOLUME, true);
-					}
-
-					return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
 				}
 			}
 		}
 
 		// couldn't place liquid there
-		return ActionResult.newResult(EnumActionResult.FAIL, itemstack);
+		return ActionResult.newResult(EnumActionResult.FAIL, stack);
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOW)
@@ -198,7 +209,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		// needs to target a block or entity
 
 		ItemStack singleBucket = emptyBucket.copy();
-		singleBucket.stackSize = 1;
+		singleBucket.setCount(1);
 
 		RayTraceResult target = event.getTarget();
 		if(target == null || target.typeOfHit != RayTraceResult.Type.BLOCK) {
@@ -208,13 +219,12 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		World world = event.getWorld();
 		BlockPos pos = target.getBlockPos();
 
-		ItemStack filledBucket = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos,
-				target.sideHit);
+		FluidActionResult result = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
 
 		// if we have a bucket from the fluid, use that
-		if(filledBucket != null) {
+		if(result.isSuccess()) {
 			event.setResult(Event.Result.ALLOW);
-			event.setFilledBucket(filledBucket);
+			event.setFilledBucket(result.getResult());
 		}
 		// otherwise, try gravel/sand
 		else {
@@ -249,7 +259,8 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 	@SubscribeEvent
 	public void onItemDestroyed(PlayerDestroyItemEvent event) {
-		if(event.getOriginal() != null && event.getOriginal().getItem() == this) {
+		ItemStack original = event.getOriginal();
+		if(original.getItem() == this) {
 			event.getEntityPlayer().renderBrokenItemStack(BRICK);
 		}
 	}
@@ -274,8 +285,8 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		// only work if the bucket is empty and right clicking a cow
 		if(!hasFluid(stack) && target instanceof EntityCow && !player.capabilities.isCreativeMode) {
 			// if we have multiple buckets in the stack, move to a new slot
-			if(stack.stackSize > 1) {
-				stack.stackSize -= 1;
+			if(stack.getCount() > 1) {
+				stack.shrink(1);
 				ItemHandlerHelper.giveItemToPlayer(player, setSpecialFluid(new ItemStack(this), SpecialFluid.MILK));
 			}
 			else {
@@ -329,7 +340,6 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 	/* Fluids */
 
-	@Override
 	public FluidStack getFluid(ItemStack container) {
 		// milk logic, if milk is registered we use that basically
 		if(getSpecialFluid(container) == SpecialFluid.MILK) {
@@ -355,19 +365,13 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		return getFluid(container) != null;
 	}
 
-	@Override
-	public int getCapacity(ItemStack container) {
-		return getCapacity();
-	}
-
 	public int getCapacity() {
 		return Fluid.BUCKET_VOLUME;
 	}
 
-	@Override
 	public int fill(ItemStack container, FluidStack resource, boolean doFill) {
 		// has to be exactly 1, must be handled from the caller
-		if(container.stackSize != 1) {
+		if(container.getCount() != 1) {
 			return 0;
 		}
 
@@ -409,22 +413,21 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 		return 0;
 	}
 
-	@Override
 	public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain) {
 		// has to be exactly 1, must be handled from the caller
-		if(container.stackSize != 1) {
+		if(container.getCount() != 1) {
 			return null;
 		}
 
 		// can only drain everything at once
-		if(maxDrain < getCapacity(container)) {
+		if(maxDrain < getCapacity()) {
 			return null;
 		}
 
 		FluidStack fluidStack = getFluid(container);
 		if(doDrain && hasFluid(container)) {
 			if(doesBreak(container)) {
-				container.stackSize = 0;
+				container.setCount(0);
 			}
 			else {
 				// milk simply requires a metadata change
@@ -499,7 +502,7 @@ public class ItemClayBucket extends Item implements IFluidContainerItem {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		// empty
 		subItems.add(new ItemStack(this));
 

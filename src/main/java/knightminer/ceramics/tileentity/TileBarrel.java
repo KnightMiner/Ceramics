@@ -102,7 +102,7 @@ public class TileBarrel extends TileBarrelBase {
 		if(newStrength != lastStrength) {
 			this.lastStrength = newStrength;
 			// send block update so the comparators update
-			this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType());
+			this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
 		}
 	}
 
