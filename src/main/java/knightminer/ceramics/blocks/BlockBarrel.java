@@ -108,16 +108,18 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack stack, EnumFacing side, float hitX, float hitY, float hitZ) {
+		// if its a block ignore, lets place it instead
+		if(stack != null && (stack.getItem() instanceof ItemBlock)) {
+			return false;
+		}
+
 		TileEntity te = world.getTileEntity(pos);
 		if(te == null || !te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)) {
 			return false;
 		}
 
 		IFluidHandler fluidHandler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
-		FluidUtil.interactWithFluidHandler(stack, fluidHandler, player);
-
-		// prevent interaction so stuff like buckets and other things don't place the liquid block
-		return stack != null && !(stack.getItem() instanceof ItemBlock);
+		return FluidUtil.interactWithFluidHandler(stack, fluidHandler, player);
 	}
 
 	// rain filling!
