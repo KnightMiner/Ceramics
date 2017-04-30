@@ -187,7 +187,7 @@ public class Ceramics {
 			clayBoots = registerItem(new ItemArmorClay(EntityEquipmentSlot.FEET), "clay_boots");
 
 			clayArmorRaw = EnumHelper.addArmorMaterial(Util.prefix("clay_raw"), "cermamics:clay_raw", 1,
-					new int[]{1, 1, 1, 1}, 1, null, 0);
+					new int[]{1, 1, 1, 1}, 0, null, 0);
 			clayArmor.customCraftingMaterial = Items.CLAY_BALL;
 			clayHelmetRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.HEAD), "clay_helmet_raw");
 			clayChestplateRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.CHEST), "clay_chestplate_raw");
