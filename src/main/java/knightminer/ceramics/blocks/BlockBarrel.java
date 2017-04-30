@@ -22,7 +22,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -111,18 +110,14 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-		ItemStack stack = player.getHeldItem(hand);
-		// if its a block ignore, lets place it instead
-		if((stack.getItem() instanceof ItemBlock)) {
-			return false;
-		}
-
 		// check the TE
 		TileEntity te = world.getTileEntity(pos);
 		if(te == null || !te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)) {
-			return false;
+			// return true on clients to prevent invalid interaction on extensions
+			return world.isRemote;
 		}
 
+		ItemStack stack = player.getHeldItem(hand);
 		IFluidHandler fluidHandler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
 		FluidActionResult result = FluidUtil.interactWithFluidHandler(stack, fluidHandler, player);
 
@@ -146,7 +141,8 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 			return true;
 		}
 
-		return false;
+		// otherwise return true if it is a fluid handler to prevent in world placement
+		return FluidUtil.getFluidHandler(stack) != null;
 	}
 
 	// rain filling!
