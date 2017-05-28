@@ -117,8 +117,7 @@ public class BlockBarrel extends Block implements ITileEntityProvider, IFaucetDe
 		// check the TE
 		TileEntity te = world.getTileEntity(pos);
 		if(te == null || !te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)) {
-			// return true on clients to prevent invalid interaction on extensions
-			return world.isRemote;
+			return false;
 		}
 
 		ItemStack stack = player.getHeldItem(hand);
