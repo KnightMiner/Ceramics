@@ -8,8 +8,6 @@ import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.library.BarrelTank;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -180,27 +178,4 @@ public class TileBarrel extends TileBarrelBase {
 			tank.setCapacity(capacity);
 		}
 	}
-
-
-	// we send all our info to the client on load
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-		super.onDataPacket(net, pkt);
-		readFromNBT(pkt.getNbtCompound());
-	}
-
-	@Nonnull
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		// new tag instead of super since default implementation calls the super of writeToNBT
-		return writeToNBT(new NBTTagCompound());
-	}
-
 }
