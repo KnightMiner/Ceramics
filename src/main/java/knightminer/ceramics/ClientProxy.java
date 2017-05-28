@@ -104,6 +104,8 @@ public class ClientProxy extends CommonProxy {
 		}
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBarrel.class, new BarrelRenderer());
+
+		registerItemModel(Ceramics.porcelainFaucet);
 	}
 
 	@Override

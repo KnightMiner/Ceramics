@@ -29,8 +29,10 @@ import knightminer.ceramics.items.ItemClayUnfired;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.CreativeTab;
+import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.library.Util;
 import knightminer.ceramics.network.CeramicsNetwork;
+import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
 import net.minecraft.block.Block;
@@ -50,6 +52,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.IFuelHandler;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -62,7 +65,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name)
+@Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name, dependencies = "after:tconstruct[1.11.2-2.7.0.26,);" )
 public class Ceramics {
 	public static final String name = "Ceramics";
 	public static final String modID = "ceramics";
@@ -110,6 +113,9 @@ public class Ceramics {
 	public static Item clayLeggingsRaw;
 	public static Item clayBootsRaw;
 
+	// tic support
+	public static Block porcelainFaucet;
+
 	static {
 		FluidRegistry.enableUniversalBucket();
 	}
@@ -133,8 +139,6 @@ public class Ceramics {
 			"Red",
 			"Black"
 	};
-
-	// TODO: TConstruct casting support
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@EventHandler
@@ -220,9 +224,14 @@ public class Ceramics {
 
 		}
 
+		// load plugins
+		if(Loader.isModLoaded(ModIDs.TINKERS)) {
+			TConstructPlugin.preInit();
+		}
+
 		CeramicsNetwork.registerPackets();
 
-		proxy.registerModels();
+		proxy.preInit();
 	}
 
 	@EventHandler
@@ -423,6 +432,11 @@ public class Ceramics {
 			addWallRecipe(clayWall, ClayWallType.BRICKS.getMeta(), new ItemStack(Blocks.BRICK_BLOCK));
 		}
 
+		// load plugins
+		if(Loader.isModLoaded(ModIDs.TINKERS)) {
+			TConstructPlugin.init();
+		}
+
 		proxy.init();
 	}
 
@@ -443,6 +457,10 @@ public class Ceramics {
 				GameRegistry.addSmelting(porcelain, brick, 0.1f);
 			}
 		}
+		// load plugins
+		if(Loader.isModLoaded(ModIDs.TINKERS)) {
+			TConstructPlugin.postInit();
+		}
 	}
 
 	// Old version compatibility
@@ -460,7 +478,7 @@ public class Ceramics {
 	/* Blocks, items, and TEs */
 
 	@SuppressWarnings("unchecked")
-	private <T extends Block> T registerBlock(ItemBlock item, String name) {
+	public static <T extends Block> T registerBlock(ItemBlock item, String name) {
 		Block block = item.getBlock();
 
 		block.setUnlocalizedName(Util.prefix(name));
@@ -472,11 +490,11 @@ public class Ceramics {
 		return (T) block;
 	}
 
-	protected <E extends Enum<E> & BlockEnumBase.IEnumMeta & IStringSerializable> BlockStairsBase registerBlockStairsFrom(BlockEnumBase<E> block, E value, String name) {
+	protected static <E extends Enum<E> & BlockEnumBase.IEnumMeta & IStringSerializable> BlockStairsBase registerBlockStairsFrom(BlockEnumBase<E> block, E value, String name) {
 		return registerBlock(new ItemBlock(new BlockStairsBase(block.getDefaultState().withProperty(block.getMappingProperty(), value))), name);
 	}
 
-	private <T extends Item> T registerItem(T item, String name) {
+	private static <T extends Item> T registerItem(T item, String name) {
 		item.setUnlocalizedName(Util.prefix(name));
 		item.setRegistryName(Util.getResource(name));
 		GameRegistry.register(item);

@@ -17,6 +17,10 @@ public class TileBarrelExtension extends TileBarrelBase {
 		this.masterPos = pos;
 	}
 
+	public BlockPos getMasterPos() {
+		return masterPos;
+	}
+
 	public TileBarrel getMaster() {
 		if(masterPos == null) {
 			return null;

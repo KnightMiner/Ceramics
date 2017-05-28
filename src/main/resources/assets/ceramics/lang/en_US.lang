@@ -27,6 +27,8 @@ tile.ceramics.clay_wall.marine_bricks.name=Marine Bricks Wall
 tile.ceramics.clay_wall.golden_bricks.name=Golden Bricks Wall
 tile.ceramics.clay_wall.dragon_bricks.name=Dragon Bricks Wall
 
+tile.ceramics.faucet.name=Porcelain Faucet
+
 # porcelain
 tile.ceramics.porcelain.black.name=Black Porcelain
 tile.ceramics.porcelain.red.name=Red Porcelain

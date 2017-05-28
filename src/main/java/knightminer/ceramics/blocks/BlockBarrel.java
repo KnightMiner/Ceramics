@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Lists;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelBase;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
@@ -40,10 +41,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
-public class BlockBarrel extends Block implements ITileEntityProvider {
+@Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
+public class BlockBarrel extends Block implements ITileEntityProvider, IFaucetDepth {
 
 	public static PropertyBool EXTENSION = PropertyBool.create("extension");
 
@@ -321,5 +325,24 @@ public class BlockBarrel extends Block implements ITileEntityProvider {
 		}
 
 		return raytraceresult1;
+	}
+
+	@Optional.Method(modid=ModIDs.TINKERS)
+	@Override
+	public float getFlowDepth(World world, BlockPos pos, IBlockState state) {
+		if(isExtension(state)) {
+			TileEntity te = world.getTileEntity(pos);
+			if(te instanceof TileBarrelExtension) {
+				BlockPos master = ((TileBarrelExtension)te).getMasterPos();
+				if(master != null) {
+					return 0.9375f + pos.getY() - master.getY();
+				}
+			}
+
+			return 1;
+		} else {
+			// main barrel is just a flat return
+			return 0.9375f;
+		}
 	}
 }

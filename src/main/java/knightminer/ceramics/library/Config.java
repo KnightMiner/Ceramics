@@ -14,6 +14,7 @@ public class Config {
 	public static boolean porcelainEnabled = true;
 	public static boolean fancyBricksEnabled = true;
 	public static boolean brickWallEnabled = true;
+	public static boolean porcelainFaucetEnabled = true;
 
 	static Configuration configFile;
 
@@ -36,6 +37,8 @@ public class Config {
 				"Enables four additional decorative bricks");
 		brickWallEnabled = configFile.getBoolean("brickWall", "enabled", true,
 				"Enables walls made of vanilla bricks. Mainly here if another mod provides this feature (e.g. Quark)");
+		porcelainFaucetEnabled = configFile.getBoolean("porcelainFaucet", "enabled", true,
+				"Enables porcelain versions of the Tinkers Construct faucet. Requires porcelain and Tinkers' Construct.") && porcelainEnabled;
 
 		if(configFile.hasChanged()) {
 			configFile.save();

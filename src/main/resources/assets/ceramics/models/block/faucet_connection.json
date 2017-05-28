@@ -1,0 +1,20 @@
+{
+    "textures": {
+        "particle": "#tex",
+		"front": "ceramics:blocks/faucet_front"
+    },
+    "elements": [
+        {
+            "name": "Cube",
+            "from": [ 4, 4, 16 ], 
+            "to": [ 12, 11, 17 ], 
+            "faces": {
+                "north": { "texture": "#front", "uv": [  4,  5, 12, 12 ] },
+                "east":  { "texture": "#tex",   "uv": [ 15,  5, 16, 12 ] },
+                "west":  { "texture": "#tex",   "uv": [  0,  5,  1, 12 ] },
+                "up":    { "texture": "#tex",   "uv": [  4,  0, 12,  1 ] },
+                "down":  { "texture": "#tex",   "uv": [  4, 15, 12, 16 ] }
+            }
+        }
+    ]
+}
