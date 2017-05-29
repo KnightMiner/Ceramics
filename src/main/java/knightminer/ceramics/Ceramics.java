@@ -65,7 +65,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name, dependencies = "after:tconstruct[1.10.2-2.6.5,);" )
+@Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name, dependencies = "after:tconstruct@[1.10.2-2.6.5,);" )
 public class Ceramics {
 	public static final String name = "Ceramics";
 	public static final String modID = "ceramics";
