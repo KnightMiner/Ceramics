@@ -197,6 +197,9 @@ public class Ceramics {
 			clayChestplateRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.CHEST), "clay_chestplate_raw");
 			clayLeggingsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.LEGS), "clay_leggings_raw");
 			clayBootsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.FEET), "clay_boots_raw");
+
+			oredict(clayUnfired, UnfiredType.CLAY_PLATE_RAW.getMeta(), "plateClayRaw");
+			oredict(clayUnfired, UnfiredType.CLAY_PLATE.getMeta(), "plateClay", "plateBrick"); // plateBrick is because bricks are ingotBrick
 		}
 
 		// barrels
@@ -312,16 +315,36 @@ public class Ceramics {
 
 		// armor
 		if(Config.armorEnabled) {
-			GameRegistry.addRecipe(new ItemStack(clayHelmetRaw), "ccc", "c c", 'c', Items.CLAY_BALL);
-			GameRegistry.addRecipe(new ItemStack(clayChestplateRaw), "c c", "ccc", "ccc", 'c', Items.CLAY_BALL);
-			GameRegistry.addRecipe(new ItemStack(clayLeggingsRaw), "ccc", "c c", "c c", 'c', Items.CLAY_BALL);
-			GameRegistry.addRecipe(new ItemStack(clayBootsRaw), "c c", "c c", 'c', Items.CLAY_BALL);
+			ItemStack clayPlate = new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta());
+			ItemStack clayPlateRaw = new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE_RAW.getMeta());
 
+			// craft plates of clay
+			GameRegistry.addRecipe(clayPlateRaw.copy(), "cc", 'c', Items.CLAY_BALL);
+			GameRegistry.addSmelting(clayPlateRaw, clayPlate, 0.5f);
 
-			GameRegistry.addSmelting(clayHelmetRaw, new ItemStack(clayHelmet), 0.5f);
-			GameRegistry.addSmelting(clayChestplateRaw, new ItemStack(clayChestplate), 0.5f);
-			GameRegistry.addSmelting(clayLeggingsRaw, new ItemStack(clayLeggings), 0.5f);
-			GameRegistry.addSmelting(clayBootsRaw, new ItemStack(clayBoots), 0.5f);
+			// and forge into armor. Ceramic armor is a thing in history
+			GameRegistry.addRecipe(new ItemStack(clayHelmet), "ccc", "c c", 'c', clayPlate);
+			GameRegistry.addRecipe(new ItemStack(clayChestplate), "c c", "ccc", "ccc", 'c', clayPlate);
+			GameRegistry.addRecipe(new ItemStack(clayLeggings), "ccc", "c c", "c c", 'c', clayPlate);
+			GameRegistry.addRecipe(new ItemStack(clayBoots), "c c", "c c", 'c', clayPlate);
+
+			// if you would rather skip a step...
+			// this is kept partly because legacy, partly because two hit armor is kinda fun
+
+			// if smelting armor, use plates for consistancy with above recipe as clay is pretty cheap
+			// normally I prefer the regular clay one as it fits the easter egg better
+			ItemStack rawArmorItem = Config.smeltClayArmor ? clayPlateRaw : new ItemStack(Items.CLAY_BALL);
+			GameRegistry.addRecipe(new ItemStack(clayHelmetRaw), "ccc", "c c", 'c', rawArmorItem);
+			GameRegistry.addRecipe(new ItemStack(clayChestplateRaw), "c c", "ccc", "ccc", 'c', rawArmorItem);
+			GameRegistry.addRecipe(new ItemStack(clayLeggingsRaw), "ccc", "c c", "c c", 'c', rawArmorItem);
+			GameRegistry.addRecipe(new ItemStack(clayBootsRaw), "c c", "c c", 'c', rawArmorItem);
+
+			if(Config.smeltClayArmor) {
+				GameRegistry.addSmelting(clayHelmetRaw, new ItemStack(clayHelmet), 0.5f);
+				GameRegistry.addSmelting(clayChestplateRaw, new ItemStack(clayChestplate), 0.5f);
+				GameRegistry.addSmelting(clayLeggingsRaw, new ItemStack(clayLeggings), 0.5f);
+				GameRegistry.addSmelting(clayBootsRaw, new ItemStack(clayBoots), 0.5f);
+			}
 		}
 
 		// barrels

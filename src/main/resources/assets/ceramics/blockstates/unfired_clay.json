@@ -9,6 +9,8 @@
     "shears": [{ "textures": { "layer0": "ceramics:items/unfired_shears" }}],
     "porcelain": [{ "textures": { "layer0": "ceramics:items/porcelain_ball" }}],
     "porcelain_brick": [{ "textures": { "layer0": "ceramics:items/porcelain_brick" }}],
+    "clay_plate": [{ "textures": { "layer0": "ceramics:items/clay_plate" }}],
+    "clay_plate_raw": [{ "textures": { "layer0": "ceramics:items/clay_plate_raw" }}],
 	
 	
     "barrel": {

@@ -135,6 +135,9 @@ item.ceramics.clay_shears.name=Clay Shears
 item.ceramics.unfired.porcelain.name=Unfired Porcelain
 item.ceramics.unfired.porcelain_brick.name=Porcelain Brick
 
+item.ceramics.unfired.clay_plate.name=Clay Plate
+item.ceramics.unfired.clay_plate_raw.name=Unfired Clay Plate
+
 item.ceramics.clay_helmet_raw.name=Unfired Clay Helmet
 item.ceramics.clay_chestplate_raw.name=Unfired Clay Chestplate
 item.ceramics.clay_leggings_raw.name=Unfired Clay Leggings

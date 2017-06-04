@@ -4,6 +4,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class Config {
+
 	private Config() {}
 
 	public static boolean bucketEnabled = true;
@@ -15,6 +16,7 @@ public class Config {
 	public static boolean fancyBricksEnabled = true;
 	public static boolean brickWallEnabled = true;
 	public static boolean porcelainFaucetEnabled = true;
+	public static boolean smeltClayArmor = false;
 
 	static Configuration configFile;
 
@@ -25,10 +27,15 @@ public class Config {
 				"Enables the clay bucket, an alternative to the iron bucket that breaks from hot liquids");
 		bucketSand = configFile.getBoolean("bucketSand", "enabled", true,
 				"Allows the clay bucket to pick up sand and gravel, because why not?");
+
 		shearsEnabled = configFile.getBoolean("shears", "enabled", true,
 				"Enables the clay shears, faster than iron shears but less duribility");
+
 		armorEnabled = configFile.getBoolean("armor", "enabled", true,
 				"Enables the clay armor, an early game alternative to leather");
+		smeltClayArmor = configFile.getBoolean("smeltClayArmor", "enabled", false,
+				"Allows clay armor to be created by smelting raw clay armor (old recipe). Switched to plates for more realism/nicer smelting recipes");
+
 		barrelEnabled = configFile.getBoolean("barrel", "enabled", true,
 				"Enables the clay barrel, a liquid tank that can be expanded upwards");
 		porcelainEnabled = configFile.getBoolean("porcelain", "enabled", true,

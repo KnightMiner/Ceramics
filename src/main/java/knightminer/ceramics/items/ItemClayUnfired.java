@@ -62,7 +62,9 @@ public class ItemClayUnfired extends Item {
 		PORCELAIN,
 		PORCELAIN_BRICK,
 		BARREL_PORCELAIN,
-		BARREL_PORCELAIN_EXTENSION;
+		BARREL_PORCELAIN_EXTENSION,
+		CLAY_PLATE_RAW,
+		CLAY_PLATE;
 
 		private int meta;
 		private int stackSize;
@@ -85,6 +87,7 @@ public class ItemClayUnfired extends Item {
 		 * Determines if the unfired item is enabled
 		 */
 		public boolean shouldDisplay() {
+			// defined as a switch as we cannot pass along a boolean reference in a constructor easily
 			switch(this) {
 				case BUCKET:
 					return Config.bucketEnabled;
@@ -103,7 +106,12 @@ public class ItemClayUnfired extends Item {
 				case BARREL_PORCELAIN:
 				case BARREL_PORCELAIN_EXTENSION:
 					return Config.barrelEnabled && Config.porcelainEnabled;
+
+				case CLAY_PLATE:
+				case CLAY_PLATE_RAW:
+					return Config.armorEnabled;
 			}
+			// fallback incase it was missed
 			return true;
 		}
 
