@@ -35,7 +35,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -120,9 +119,8 @@ public class BlockBarrel extends Block implements ITileEntityProvider, IFaucetDe
 			return false;
 		}
 
-		ItemStack stack = player.getHeldItem(hand);
 		IFluidHandler fluidHandler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
-		FluidActionResult result = FluidUtil.interactWithFluidHandler(stack, fluidHandler, player);
+		boolean success = FluidUtil.interactWithFluidHandler(player, hand, world, pos, side);
 
 		// display the level of the barrel
 		if(!world.isRemote) {
@@ -138,14 +136,8 @@ public class BlockBarrel extends Block implements ITileEntityProvider, IFaucetDe
 			}
 		}
 
-		// modify the held stack
-		if(result.isSuccess()) {
-			player.setHeldItem(hand, result.getResult());
-			return true;
-		}
-
 		// otherwise return true if it is a fluid handler to prevent in world placement
-		return FluidUtil.getFluidHandler(stack) != null;
+		return success || FluidUtil.getFluidHandler(player.getHeldItem(hand)) != null;
 	}
 
 	// rain filling!
