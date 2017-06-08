@@ -3,6 +3,7 @@ package knightminer.ceramics.plugin.tconstruct;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
+import knightminer.ceramics.library.ModIDs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -39,13 +40,18 @@ public class TConstructPlugin {
 			TinkerRegistry.registerTableCasting(new BucketCastingRecipe(Ceramics.clayBucket));
 		}
 		if(Config.armorEnabled) {
-			// cast clay plates, cause clay
-			TinkerRegistry.registerTableCasting(new ItemStack(Ceramics.clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta()),
-					TinkerSmeltery.castPlate, TinkerFluids.clay, Material.VALUE_Ingot * 2);
+			ItemStack castPlate = GameRegistry.makeItemStack(ModIDs.Tinkers.cast, ModIDs.Tinkers.castPlateMeta, 1, null);
+			if(!castPlate.isEmpty()) {
+				// cast clay plates, cause clay
+				TinkerRegistry.registerTableCasting(new ItemStack(Ceramics.clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta()),
+						castPlate, TinkerFluids.clay, Material.VALUE_Ingot * 2);
 
-			for(FluidStack fluid : TinkerSmeltery.castCreationFluids) {
-				TinkerRegistry.registerTableCasting(new CastingRecipe(TinkerSmeltery.castPlate,
-						RecipeMatch.of(new ItemStack(Ceramics.clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta())), fluid, true, true));
+				for(FluidStack fluid : TinkerSmeltery.castCreationFluids) {
+					TinkerRegistry.registerTableCasting(new CastingRecipe(castPlate,
+							RecipeMatch.of(new ItemStack(Ceramics.clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta())), fluid, true, true));
+				}
+			} else {
+				Ceramics.log.error("Failed to find Tinkers Construct cast item");
 			}
 		}
 	}
