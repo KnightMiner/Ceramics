@@ -32,6 +32,7 @@ import knightminer.ceramics.library.CreativeTab;
 import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.library.Util;
 import knightminer.ceramics.network.CeramicsNetwork;
+import knightminer.ceramics.plugin.bwm.BetterWithModsPlugin;
 import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
@@ -459,6 +460,9 @@ public class Ceramics {
 		// load plugins
 		if(Loader.isModLoaded(ModIDs.TINKERS)) {
 			TConstructPlugin.init();
+		}
+		if(Loader.isModLoaded(ModIDs.BWM)) {
+			BetterWithModsPlugin.init();
 		}
 
 		proxy.init();
