@@ -24,6 +24,7 @@ public class BlockClaySoft extends BlockEnumBase<BlockClaySoft.ClayTypeSoft> {
 		this.setHardness(0.6f);
 		this.setResistance(3);
 		this.setSoundType(SoundType.GROUND);
+		this.setHarvestLevel("shovel", -1);
 	}
 
 	/**

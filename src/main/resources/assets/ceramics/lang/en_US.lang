@@ -47,6 +47,11 @@ tile.ceramics.porcelain.magenta.name=Magenta Porcelain
 tile.ceramics.porcelain.orange.name=Orange Porcelain
 tile.ceramics.porcelain.white.name=White Porcelain
 
+tile.ceramics.clay_barrel_unfired.clay.name=Unfired Clay Barrel
+tile.ceramics.clay_barrel_unfired.clay_extension.name=Unfired Clay Barrel Extension
+tile.ceramics.clay_barrel_unfired.porcelain.name=Unfired Porcelain Barrel
+tile.ceramics.clay_barrel_unfired.porcelain_extension.name=Unfired Porcelain Barrel Extension
+
 tile.ceramics.clay_barrel.barrel.name=Clay Barrel
 tile.ceramics.clay_barrel.barrel_extension.name=Clay Barrel Extension
 

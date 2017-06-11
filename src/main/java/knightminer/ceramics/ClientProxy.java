@@ -97,6 +97,11 @@ public class ClientProxy extends CommonProxy {
 		registerItemModel(Ceramics.clayBarrel, 0, "extension=false");
 		registerItemModel(Ceramics.clayBarrel, 1, "extension=true");
 
+		registerItemModel(Ceramics.clayBarrelUnfired, 0, "extension=false,type=clay");
+		registerItemModel(Ceramics.clayBarrelUnfired, 1, "extension=true,type=clay");
+		registerItemModel(Ceramics.clayBarrelUnfired, 2, "extension=false,type=porcelain");
+		registerItemModel(Ceramics.clayBarrelUnfired, 3, "extension=true,type=porcelain");
+
 		// barrel colors
 		for(EnumDyeColor type : EnumDyeColor.values()) {
 			registerItemModel(Ceramics.clayBarrelStained, type.getMetadata(), "color=" + type.getName());

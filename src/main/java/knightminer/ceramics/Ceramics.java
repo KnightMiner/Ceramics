@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelStained;
+import knightminer.ceramics.blocks.BlockBarrelUnfired;
 import knightminer.ceramics.blocks.BlockClayHard;
 import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
 import knightminer.ceramics.blocks.BlockClaySlab;
@@ -81,6 +82,7 @@ public class Ceramics {
 	public static final Logger log = LogManager.getLogger(modID);
 
 	public static Block clayBarrel;
+	public static Block clayBarrelUnfired;
 	public static BlockClaySoft claySoft;
 	public static BlockClayHard clayHard;
 	public static BlockClaySlab claySlab;
@@ -206,7 +208,8 @@ public class Ceramics {
 
 		// barrels
 		if(Config.barrelEnabled) {
-			clayBarrel = registerBlock(new ItemBlockBarrel(new BlockBarrel()), "clay_barrel");
+			clayBarrelUnfired = registerBlock(new ItemBlockBarrel(new BlockBarrelUnfired(), new String[] {"clay", "clay_extension", "porcelain", "porcelain_extension"}), "clay_barrel_unfired");
+			clayBarrel = registerBlock(new ItemBlockBarrel(new BlockBarrel(), new String[] {"barrel", "barrel_extension"}), "clay_barrel");
 			clayBarrelStained = registerBlock(new ItemCloth(new BlockBarrelStained(false)), "clay_barrel_stained");
 			clayBarrelStainedExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "clay_barrel_stained_extension");
 
@@ -351,10 +354,13 @@ public class Ceramics {
 
 		// barrels
 		if(Config.barrelEnabled) {
-			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.BARREL.getMeta());
-			ItemStack rawExtension = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_EXTENSION.getMeta());
+			ItemStack raw = new ItemStack(clayBarrelUnfired, 1, 0);
+			ItemStack rawExtension = new ItemStack(clayBarrelUnfired, 1, 1);
 			GameRegistry.addRecipe(raw.copy(), "c c", "ccc", " c ", 'c', Items.CLAY_BALL);
 			GameRegistry.addRecipe(rawExtension.copy(), "c c", "c c", "c c", 'c', Items.CLAY_BALL);
+			// TODO: old compat, probably remove in 1.12
+			GameRegistry.addShapelessRecipe(raw.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL.getMeta()));
+			GameRegistry.addShapelessRecipe(rawExtension.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_EXTENSION.getMeta()));
 
 			ItemStack barrel = new ItemStack(clayBarrel, 1, 0);
 			ItemStack extension = new ItemStack(clayBarrel, 1, 1);
@@ -364,11 +370,14 @@ public class Ceramics {
 
 			// barrels made of porcelain
 			if(Config.porcelainEnabled) {
-				ItemStack porcelainRaw = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN.getMeta());
-				ItemStack porcelainRawExtension = new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN_EXTENSION.getMeta());
+				ItemStack porcelainRaw = new ItemStack(clayBarrelUnfired, 1, 2);
+				ItemStack porcelainRawExtension = new ItemStack(clayBarrelUnfired, 1, 3);
 
 				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRaw.copy(), "c c", "ccc", " c ", 'c', "clayPorcelain"));
 				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRawExtension.copy(), "c c", "c c", "c c", 'c', "clayPorcelain"));
+				// TODO: old item compat, probably remove in 1.12
+				GameRegistry.addShapelessRecipe(porcelainRaw.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN.getMeta()));
+				GameRegistry.addShapelessRecipe(porcelainRawExtension.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN_EXTENSION.getMeta()));
 
 				ItemStack porcelainBarrel2 = new ItemStack(porcelainBarrel, 1, 0);
 				ItemStack porcelainExtension = new ItemStack(porcelainBarrelExtension, 1, 0);
@@ -494,6 +503,7 @@ public class Ceramics {
 	// Old version compatibility
 	@Mod.EventHandler
 	public void onMissingMapping(FMLMissingMappingsEvent event) {
+		// TODO: can probably safely remove this in 1.12
 		for(FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
 			// remap old name for bucket, no one should really be keeping raw buckets anyways
 			if(Config.bucketEnabled && mapping.type == GameRegistry.Type.ITEM && (mapping.name.equals(Util.resource("clay_bucket_raw")))) {

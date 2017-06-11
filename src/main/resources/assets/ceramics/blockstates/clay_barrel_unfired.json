@@ -1,0 +1,25 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "extension": {
+      "true": {
+        "model": "ceramics:barrel_extension"
+      },
+      "false": {
+        "model": "ceramics:barrel"
+      }
+    },
+    "type": {
+      "clay": {
+        "textures": {
+          "texture": "blocks/clay"
+        }
+      },
+      "porcelain": {
+        "textures": {
+          "texture": "ceramics:blocks/porcelain_raw"
+        }
+      }
+    }
+  }
+}

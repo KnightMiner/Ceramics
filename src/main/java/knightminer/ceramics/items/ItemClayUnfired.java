@@ -95,17 +95,15 @@ public class ItemClayUnfired extends Item {
 				case SHEARS:
 					return Config.shearsEnabled;
 
-				case BARREL:
-				case BARREL_EXTENSION:
-					return Config.barrelEnabled;
-
 				case PORCELAIN:
 				case PORCELAIN_BRICK:
 					return Config.porcelainEnabled;
 
+				case BARREL:
+				case BARREL_EXTENSION:
 				case BARREL_PORCELAIN:
 				case BARREL_PORCELAIN_EXTENSION:
-					return Config.barrelEnabled && Config.porcelainEnabled;
+					return false; // moved to clayBarrelUnfired, here until I add more items
 
 				case CLAY_PLATE:
 				case CLAY_PLATE_RAW:
