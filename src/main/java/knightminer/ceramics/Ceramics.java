@@ -38,6 +38,7 @@ import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStoneSlab;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -244,6 +245,9 @@ public class Ceramics {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		// adds a recipe for a brick slab from two bricks
+		GameRegistry.addRecipe(new ItemStack(Blocks.STONE_SLAB, 1, BlockStoneSlab.EnumType.BRICK.getMetadata()), "bb", 'b', Items.BRICK);
+
 		// porcelain
 		if(Config.porcelainEnabled) {
 			ItemStack porcelainItem = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta());
@@ -256,27 +260,27 @@ public class Ceramics {
 			// basic recipe: bone meal with clay
 			GameRegistry.addShapelessRecipe(porcelainItem, Items.CLAY_BALL, boneMeal);
 			// alt recipe: quartz
-			ItemStack porcelainAlt = porcelainItem.copy();
-			porcelainAlt.setCount(2);
-			GameRegistry.addShapelessRecipe(porcelainAlt, Items.CLAY_BALL, Items.CLAY_BALL, Items.QUARTZ);
+			ItemStack porcelain2 = porcelainItem.copy();
+			porcelain2.setCount(2);
+			GameRegistry.addShapelessRecipe(porcelain2, Items.CLAY_BALL, Items.CLAY_BALL, Items.QUARTZ);
 
-			// block crafting
-			ItemStack porcelainAlt2 = porcelainItem.copy();
-			porcelainAlt2.setCount(4);
-			GameRegistry.addRecipe(new ShapedOreRecipe(block, "CC", "CC", 'C', "clayPorcelain"));
-			GameRegistry.addShapelessRecipe(porcelainAlt2, block.copy());
+			// brick crafting
+			// brick item done is post init using oredictionary
 			GameRegistry.addRecipe(brickBlock, "CC", "CC", 'C', brick);
+			// adds a recipe for a brick slab from two bricks
+			GameRegistry.addRecipe(new ItemStack(claySlab, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta()), "bb", 'b', brick);
 
-			// bricks
+			// block
+			ItemStack porcelain4 = porcelainItem.copy();
+			porcelain4.setCount(4);
+			GameRegistry.addShapelessRecipe(porcelain4, block.copy());
+			GameRegistry.addRecipe(new ShapedOreRecipe(block, "CC", "CC", 'C', "clayPorcelain"));
 			GameRegistry.addSmelting(block.copy(), blockHard, 0.1f);
+
 			// slabs and stairs
 			addSlabRecipe(claySlab, ClayTypeHard.PORCELAIN_BRICKS.getMeta(), brickBlock);
 			addWallRecipe(clayWall, ClayWallType.PORCELAIN_BRICKS.getMeta(), brickBlock);
 			addStairRecipe(stairsPorcelainBricks, brickBlock);
-
-			// brick recipe
-			// handled using oredict in postInit
-			//GameRegistry.addSmelting(porcelainItem.copy(), brick.copy(), 0.1f);
 
 			for(EnumDyeColor color : EnumDyeColor.values()) {
 				ItemStack dyed = new ItemStack(porcelain, 8, color.getMetadata());
@@ -423,21 +427,23 @@ public class Ceramics {
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.DARK_BRICKS.getMeta()),
 					surround, 'b', Items.BRICK, '#', "dyeBlack"));
 			// dragon bricks: breath of the end
-			GameRegistry.addRecipe(new ItemStack(clayHard, 2, ClayTypeHard.DRAGON_BRICKS.getMeta()),
-					surround, 'b', Items.BRICK, '#', Items.DRAGON_BREATH);
+			GameRegistry.addRecipe(new ItemStack(clayHard, 8, ClayTypeHard.DRAGON_BRICKS.getMeta()),
+					surround, 'b', Blocks.BRICK_BLOCK, '#', Items.DRAGON_BREATH);
 
 			// if porcelain is disabled, use regular bricks for those recipes
 			Object secondBrick = Items.BRICK;
+			Object secondBrickBlock = Blocks.BRICK_BLOCK;
 			if(Config.porcelainEnabled) {
 				secondBrick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
+				secondBrickBlock = new ItemStack(clayHard, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta());
 			}
 
 			// marine bricks: dye of the sea
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.MARINE_BRICKS.getMeta()),
 					surround, 'b', secondBrick, '#', "dyeBlue"));
 			// gold bricks: shard of gold
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.GOLDEN_BRICKS.getMeta()),
-					surround, 'b', secondBrick, '#', "nuggetGold"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.GOLDEN_BRICKS.getMeta()),
+					surround, 'b', secondBrickBlock, '#', "nuggetGold"));
 
 
 			// slabs and stairs
