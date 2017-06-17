@@ -5,6 +5,8 @@
   },
   "variants": {
     "type=porcelain_bricks": [{ "textures": { "all": "ceramics:blocks/porcelain_bricks" }}],
+    "type=lava_bricks": [{ "textures": { "all": "ceramics:blocks/lava_bricks" }}],
+    "type=rainbow_bricks": [{ "textures": { "all": "ceramics:blocks/rainbow_bricks" }}],
     "type=dark_bricks": [
       { "textures": { "all": "ceramics:blocks/dark_bricks/1" }},
       { "textures": { "all": "ceramics:blocks/dark_bricks/2" }},

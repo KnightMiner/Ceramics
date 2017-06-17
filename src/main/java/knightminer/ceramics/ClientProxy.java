@@ -51,6 +51,7 @@ public class ClientProxy extends CommonProxy {
 		// base blocks
 		registerItemModels(Ceramics.claySoft);
 		registerItemModels(Ceramics.clayHard);
+		registerItemModels(Ceramics.rainbowClay);
 		registerItemModels(Ceramics.claySlab);
 		registerItemModels(Ceramics.clayWall);
 
@@ -60,6 +61,8 @@ public class ClientProxy extends CommonProxy {
 		registerItemModel(Ceramics.stairsGoldenBricks);
 		registerItemModel(Ceramics.stairsMarineBricks);
 		registerItemModel(Ceramics.stairsDragonBricks);
+		registerItemModel(Ceramics.stairsLavaBricks);
+		registerItemModel(Ceramics.stairsRainbowBricks);
 
 		// porcelain
 		registerItemModel(Ceramics.porcelain);

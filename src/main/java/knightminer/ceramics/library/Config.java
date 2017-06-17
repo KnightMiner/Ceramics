@@ -16,6 +16,7 @@ public class Config {
 	public static boolean fancyBricksEnabled = true;
 	public static boolean brickWallEnabled = true;
 	public static boolean porcelainFaucetEnabled = true;
+	public static boolean rainbowClayEnabled = true;
 	public static boolean smeltClayArmor = false;
 
 	static Configuration configFile;
@@ -42,6 +43,8 @@ public class Config {
 				"Enables porcelain, a whiter clay that produces true colors when dyed");
 		fancyBricksEnabled = configFile.getBoolean("fancyBricks", "enabled", true,
 				"Enables four additional decorative bricks");
+		rainbowClayEnabled = configFile.getBoolean("rainbowClay", "enabled", true,
+				"Enables clay bricks and blocks with a rainbow animation. Includes brick slabs, stairs, and walls.");
 		brickWallEnabled = configFile.getBoolean("brickWall", "enabled", true,
 				"Enables walls made of vanilla bricks. Mainly here if another mod provides this feature (e.g. Quark)");
 		porcelainFaucetEnabled = configFile.getBoolean("porcelainFaucet", "enabled", true,

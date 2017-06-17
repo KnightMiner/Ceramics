@@ -10,6 +10,8 @@ import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.blocks.BlockBarrelUnfired;
 import knightminer.ceramics.blocks.BlockClayHard;
 import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
+import knightminer.ceramics.blocks.BlockClayRainbow;
+import knightminer.ceramics.blocks.BlockClayRainbow.RainbowStart;
 import knightminer.ceramics.blocks.BlockClaySlab;
 import knightminer.ceramics.blocks.BlockClaySoft;
 import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
@@ -17,6 +19,7 @@ import knightminer.ceramics.blocks.BlockClayWall;
 import knightminer.ceramics.blocks.BlockClayWall.ClayWallType;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockStained;
+import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.BlockStairsBase;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
@@ -88,6 +91,7 @@ public class Ceramics {
 	public static BlockClayHard clayHard;
 	public static BlockClaySlab claySlab;
 	public static BlockClayWall clayWall;
+	public static BlockClayRainbow rainbowClay;
 	public static Block porcelainBarrel;
 	public static Block porcelainBarrelExtension;
 	public static Block clayBarrelStained;
@@ -99,6 +103,8 @@ public class Ceramics {
 	public static Block stairsGoldenBricks;
 	public static Block stairsMarineBricks;
 	public static Block stairsDragonBricks;
+	public static Block stairsLavaBricks;
+	public static Block stairsRainbowBricks;
 
 	public static Item clayUnfired;
 
@@ -172,6 +178,13 @@ public class Ceramics {
 			stairsGoldenBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.GOLDEN_BRICKS, "golden_bricks_stairs");
 			stairsMarineBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.MARINE_BRICKS, "marine_bricks_stairs");
 			stairsDragonBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.DRAGON_BRICKS, "dragon_bricks_stairs");
+			stairsLavaBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.LAVA_BRICKS, "lava_bricks_stairs");
+		}
+
+		// animated rainbow colors
+		if(Config.rainbowClayEnabled) {
+			rainbowClay = registerBlock(new ItemBlockEnum(new BlockClayRainbow()), "rainbow_clay");
+			stairsRainbowBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.RAINBOW_BRICKS, "rainbow_bricks_stairs");
 		}
 
 		// bucket
@@ -430,6 +443,12 @@ public class Ceramics {
 			GameRegistry.addRecipe(new ItemStack(clayHard, 8, ClayTypeHard.DRAGON_BRICKS.getMeta()),
 					surround, 'b', Blocks.BRICK_BLOCK, '#', Items.DRAGON_BREATH);
 
+			// lava bricks: magma mortor
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.LAVA_BRICKS.getMeta()),
+					surround, 'b', Blocks.BRICK_BLOCK, '#', Items.LAVA_BUCKET));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.LAVA_BRICKS.getMeta()),
+					surround, 'b', Blocks.BRICK_BLOCK, '#', Ceramics.clayBucket.withFluid(FluidRegistry.LAVA)));
+
 			// if porcelain is disabled, use regular bricks for those recipes
 			Object secondBrick = Items.BRICK;
 			Object secondBrickBlock = Blocks.BRICK_BLOCK;
@@ -466,6 +485,36 @@ public class Ceramics {
 			addSlabRecipe(claySlab, ClayTypeHard.DRAGON_BRICKS.getMeta(), dragonBricks);
 			addWallRecipe(clayWall, ClayWallType.DRAGON_BRICKS.getMeta(), dragonBricks);
 			addStairRecipe(stairsDragonBricks, dragonBricks);
+
+			ItemStack lavaBricks = new ItemStack(clayHard, 1, ClayTypeHard.LAVA_BRICKS.getMeta());
+			addSlabRecipe(claySlab, ClayTypeHard.LAVA_BRICKS.getMeta(), lavaBricks);
+			addWallRecipe(clayWall, ClayWallType.LAVA_BRICKS.getMeta(), lavaBricks);
+			addStairRecipe(stairsLavaBricks, lavaBricks);
+		}
+
+		if(Config.rainbowClayEnabled) {
+			Object hardClay = Blocks.HARDENED_CLAY;
+			Object bricks = Blocks.BRICK_BLOCK;
+			if(Config.porcelainEnabled) {
+				hardClay = new ItemStack(porcelain, 1, StainedColor.WHITE.getMeta());
+				bricks = new ItemStack(clayHard, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta());
+			}
+
+			// three dyes and a block to transform
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(rainbowClay, 6, RainbowStart.RED.getMeta()),
+					"BBB", "rgb", "BBB", 'B', hardClay, 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 6, ClayTypeHard.RAINBOW_BRICKS.getMeta()),
+					"BBB", "rgb", "BBB", 'B', bricks, 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
+
+			ItemStack rainbowBricks = new ItemStack(clayHard, 1, ClayTypeHard.RAINBOW_BRICKS.getMeta());
+			addSlabRecipe(claySlab, ClayTypeHard.RAINBOW_BRICKS.getMeta(), rainbowBricks);
+			addWallRecipe(clayWall, ClayWallType.RAINBOW_BRICKS.getMeta(), rainbowBricks);
+			addStairRecipe(stairsRainbowBricks, rainbowBricks);
+
+			// switch between animation starts for rainbow clay
+			for(int i = 0; i < 8; i++) {
+				GameRegistry.addShapelessRecipe(new ItemStack(rainbowClay, 1, (i + 1) % 8), new ItemStack(rainbowClay, 1, i));
+			}
 		}
 
 		if(Config.brickWallEnabled) {

@@ -14,7 +14,7 @@ public class BlockClayHard extends BlockEnumBase<BlockClayHard.ClayTypeHard> {
 	public static final PropertyEnum<ClayTypeHard> TYPE = PropertyEnum.<ClayTypeHard>create("type", ClayTypeHard.class);
 
 	public BlockClayHard() {
-		super(Material.CLAY, TYPE);
+		super(Material.ROCK, TYPE);
 		this.setCreativeTab(Ceramics.tab);
 		this.setHarvestLevel("pickaxe", 0);
 		this.setHardness(1.25f);
@@ -27,7 +27,9 @@ public class BlockClayHard extends BlockEnumBase<BlockClayHard.ClayTypeHard> {
 		DARK_BRICKS,
 		MARINE_BRICKS,
 		GOLDEN_BRICKS,
-		DRAGON_BRICKS;
+		DRAGON_BRICKS,
+		LAVA_BRICKS,
+		RAINBOW_BRICKS;
 
 		private int meta;
 
@@ -45,14 +47,11 @@ public class BlockClayHard extends BlockEnumBase<BlockClayHard.ClayTypeHard> {
 			switch(this) {
 				case PORCELAIN_BRICKS:
 					return Config.porcelainEnabled;
-				case DARK_BRICKS:
-				case MARINE_BRICKS:
-				case GOLDEN_BRICKS:
-				case DRAGON_BRICKS:
-					return Config.fancyBricksEnabled;
+				case RAINBOW_BRICKS:
+					return Config.rainbowClayEnabled;
 			}
 
-			return false;
+			return Config.fancyBricksEnabled;
 		}
 
 		public static ClayTypeHard fromMeta(int meta) {

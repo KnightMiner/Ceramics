@@ -9,11 +9,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
-public class BlockClayWall extends BlockEnumWallBase<BlockClayWall.ClayWallType> {
+public class BlockClayRainbow extends BlockEnumBase<BlockClayRainbow.RainbowStart> {
 
-	public static final PropertyEnum<ClayWallType> TYPE = PropertyEnum.<ClayWallType>create("type", ClayWallType.class);
-	public BlockClayWall() {
-		super(Material.ROCK, TYPE);
+	public static final PropertyEnum<RainbowStart> START = PropertyEnum.<RainbowStart>create("start", RainbowStart.class);
+
+	public BlockClayRainbow() {
+		super(Material.ROCK, START);
 		this.setCreativeTab(Ceramics.tab);
 		this.setHarvestLevel("pickaxe", 0);
 		this.setHardness(1.25f);
@@ -21,19 +22,19 @@ public class BlockClayWall extends BlockEnumWallBase<BlockClayWall.ClayWallType>
 		this.setSoundType(SoundType.STONE);
 	}
 
-	public enum ClayWallType implements IStringSerializable, BlockEnumBase.IEnumMeta {
-		BRICKS,
-		PORCELAIN_BRICKS,
-		DARK_BRICKS,
-		MARINE_BRICKS,
-		GOLDEN_BRICKS,
-		DRAGON_BRICKS,
-		LAVA_BRICKS,
-		RAINBOW_BRICKS;
+	public enum RainbowStart implements IStringSerializable, BlockEnumBase.IEnumMeta {
+		RED,
+		ORANGE,
+		YELLOW,
+		GREEN,
+		CYAN,
+		BLUE,
+		PURPLE,
+		MAGENTA;
 
 		private int meta;
 
-		ClayWallType() {
+		RainbowStart() {
 			meta = this.ordinal();
 		}
 
@@ -44,19 +45,10 @@ public class BlockClayWall extends BlockEnumWallBase<BlockClayWall.ClayWallType>
 
 		@Override
 		public boolean shouldDisplay() {
-			switch(this) {
-				case BRICKS:
-					return Config.brickWallEnabled;
-				case PORCELAIN_BRICKS:
-					return Config.porcelainEnabled;
-				case RAINBOW_BRICKS:
-					return Config.rainbowClayEnabled;
-			}
-
-			return Config.fancyBricksEnabled;
+			return Config.rainbowClayEnabled;
 		}
 
-		public static ClayWallType fromMeta(int meta) {
+		public static RainbowStart fromMeta(int meta) {
 			if(meta < 0 || meta >= values().length) {
 				meta = 0;
 			}

@@ -531,6 +531,18 @@ public class ItemClayBucket extends Item {
 		return new FluidClayBucketWrapper(stack);
 	}
 
+	public ItemStack withFluid(Fluid fluid) {
+		ItemStack stack = new ItemStack(this, 1, 0);
+
+		// add fluid to NBT
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setTag(TAG_FLUIDS, new FluidStack(fluid, getCapacity()).writeToNBT(new NBTTagCompound()));
+		stack.setTagCompound(tag);
+
+		// return
+		return stack;
+	}
+
 	/**
 	 * Special fluid types
 	 */
