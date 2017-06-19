@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "rainbow_clay"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_slab",
+    "data": 6,
+    "count": 6
+  },
+  "pattern": [
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "ceramics:clay_hard",
+      "data": 6
+    }
+  }
+}

@@ -31,10 +31,11 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
+//import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
-@Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
-public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepth {
+//@Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
+//public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepth {
+public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider {
 
 	public BlockBarrel(Material material) {
 		super(material);
@@ -176,9 +177,9 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
-		list.add(new ItemStack(itemIn, 1, 0));
-		list.add(new ItemStack(itemIn, 1, 1));
+	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+		list.add(new ItemStack(this, 1, 0));
+		list.add(new ItemStack(this, 1, 1));
 	}
 
 	/* Block properties */
@@ -197,8 +198,8 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 		return 0;
 	}
 
-	@Optional.Method(modid=ModIDs.TINKERS)
-	@Override
+	//@Optional.Method(modid=ModIDs.TINKERS)
+	//@Override
 	public float getFlowDepth(World world, BlockPos pos, IBlockState state) {
 		if(isExtension(state)) {
 			TileEntity te = world.getTileEntity(pos);

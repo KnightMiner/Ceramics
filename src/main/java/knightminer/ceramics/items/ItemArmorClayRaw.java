@@ -16,7 +16,7 @@ public class ItemArmorClayRaw extends ItemArmor {
 	public ItemArmorClayRaw(EntityEquipmentSlot slot) {
 		super(Ceramics.clayArmorRaw, 0, slot);
 		this.setMaxDamage(1); // unfired clay armor doesn't hold together
-		this.setCreativeTab(Ceramics.tab);
+		this.setCreativeTab(null);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -35,7 +35,7 @@ public class ItemArmorClayRaw extends ItemArmor {
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		// shh, its an easter egg now :)
 	}
 

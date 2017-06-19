@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_barrel_stained_extension",
+    "data": 2,
+    "count": 8
+  },
+  "pattern": [
+    "BBB",
+    "BdB",
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "#CLAY_EXTENSION"
+    },
+    "d": {
+      "ore": "dyeMagenta",
+      "type": "forge:ore_dict"
+    }
+  }
+}

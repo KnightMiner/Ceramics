@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "armor"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_chestplate_raw"
+  },
+  "pattern": [
+    "c c",
+    "ccc",
+    "ccc"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:clay_ball"
+    }
+  }
+}

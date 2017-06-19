@@ -1,0 +1,121 @@
+[
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "barrel"
+      }
+    ],
+    "name": "CLAY_BARREL",
+    "ingredient": [
+      {
+        "item": "ceramics:clay_barrel",
+        "data": 0
+      },
+      {
+        "item": "ceramics:clay_barrel_stained",
+        "data": 32767
+      }
+    ]
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "barrel"
+      }
+    ],
+    "name": "CLAY_EXTENSION",
+    "ingredient": [
+      {
+        "item": "ceramics:clay_barrel",
+        "data": 1
+      },
+      {
+        "item": "ceramics:clay_barrel_stained_extension",
+        "data": 32767
+      }
+    ]
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "porcelain"
+      }
+    ],
+    "name": "PORCELAIN",
+    "ingredient": [
+      {
+        "item": "ceramics:porcelain",
+        "data": 32767
+      }
+    ]
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "barrel"
+      },
+      {
+        "type": "config",
+        "enabled": "porcelain"
+      }
+    ],
+    "name": "PORCELAIN_BARREL",
+    "ingredient": [
+      {
+        "item": "ceramics:porcelain_barrel",
+        "data": 32767
+      }
+    ]
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "barrel"
+      },
+      {
+        "type": "config",
+        "enabled": "porcelain"
+      }
+    ],
+    "name": "PORCELAIN_EXTENSION",
+    "ingredient": [
+      {
+        "item": "ceramics:porcelain_barrel_extension",
+        "data": 32767
+      }
+    ]
+  },
+  {
+    "name": "LAVA_BUCKET",
+    "ingredient": [
+      {
+        "item": "minecraft:lava_bucket"
+      }
+    ]
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "bucket"
+      }
+    ],
+    "name": "LAVA_BUCKET",
+    "ingredient": [
+      {
+        "item": "minecraft:lava_bucket"
+      },
+      {
+        "type": "minecraft:item_nbt",
+        "item": "ceramics:clay_bucket",
+        "data": 0,
+        "nbt": {"fluids": {"FluidName": "lava", "Amount": 1000}}
+      }
+    ]
+  }
+]

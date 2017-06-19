@@ -1,0 +1,21 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "armor"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_boots_raw"
+  },
+  "pattern": [
+    "c c",
+    "c c"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:clay_ball"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "fancy_bricks"
+    }
+  ],
+  "result": {
+    "item": "ceramics:marine_bricks_stairs",
+    "count": 4
+  },
+  "pattern": [
+    "B  ",
+    "BB ",
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "ceramics:clay_hard",
+      "data": 2
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "rainbow_clay"
+    }
+  ],
+  "result": {
+    "item": "ceramics:rainbow_bricks_stairs",
+    "count": 4
+  },
+  "pattern": [
+    "B  ",
+    "BB ",
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "ceramics:clay_hard",
+      "data": 6
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_wall",
+    "data": 1,
+    "count": 6
+  },
+  "pattern": [
+    "BBB",
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "ceramics:clay_hard",
+      "data": 0
+    }
+  }
+}

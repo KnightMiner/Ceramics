@@ -7,7 +7,7 @@ import knightminer.ceramics.library.ModIDs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import slimeknights.mantle.item.ItemBlockMeta;
+/*import slimeknights.mantle.item.ItemBlockMeta;
 import slimeknights.mantle.util.RecipeMatch;
 import slimeknights.tconstruct.library.TinkerRegistry;
 import slimeknights.tconstruct.library.materials.Material;
@@ -55,4 +55,4 @@ public class TConstructPlugin {
 			}
 		}
 	}
-}
+}*/

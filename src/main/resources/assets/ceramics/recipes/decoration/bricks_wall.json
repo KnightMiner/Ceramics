@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "brick_wall"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_wall",
+    "data": 0,
+    "count": 6
+  },
+  "pattern": [
+    "BBB",
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "minecraft:brick_block"
+    }
+  }
+}

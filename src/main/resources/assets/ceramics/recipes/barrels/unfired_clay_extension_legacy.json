@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_barrel_unfired",
+    "data": 1
+  },
+  "ingredients": [
+    {
+      "item": "ceramics:unfired_clay",
+      "data": 3
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

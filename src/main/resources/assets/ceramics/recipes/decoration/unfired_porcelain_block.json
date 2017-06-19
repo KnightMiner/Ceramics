@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_soft",
+    "data": 0
+  },
+  "pattern": [
+    "CC",
+    "CC"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "C": {
+      "ore": "clayPorcelain",
+      "type": "forge:ore_dict"
+    }
+  }
+}

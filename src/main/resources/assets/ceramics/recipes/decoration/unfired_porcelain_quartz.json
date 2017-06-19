@@ -1,0 +1,25 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:unfired_clay",
+    "data": 4,
+    "count": 2
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:clay_ball"
+    },
+    {
+      "item": "minecraft:clay_ball"
+    },
+    {
+      "item": "minecraft:quartz"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,37 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "rainbow_clay"
+    }
+  ],
+  "result": {
+    "item": "ceramics:rainbow_clay",
+    "data": 0,
+    "count": 6
+  },
+  "pattern": [
+    "BBB",
+    "rgb",
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "ceramics:porcelain",
+      "data": 0
+    },
+    "r": {
+      "ore": "dyeRed",
+      "type": "forge:ore_dict"
+    },
+    "b": {
+      "ore": "dyeBlue",
+      "type": "forge:ore_dict"
+    },
+    "g": {
+      "ore": "dyeGreen",
+      "type": "forge:ore_dict"
+    }
+  }
+}

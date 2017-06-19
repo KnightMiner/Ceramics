@@ -1,0 +1,34 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "fancy_bricks"
+    }
+  ],
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "fancy_bricks"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_hard",
+    "data": 1,
+    "count": 2
+  },
+  "pattern": [
+    "bbb",
+    "b#b",
+    "bbb"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:brick"
+    },
+    "#": {
+      "ore": "dyeBlack",
+      "type": "forge:ore_dict"
+    }
+  }
+}

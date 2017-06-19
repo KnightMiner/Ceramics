@@ -1,9 +1,18 @@
 package knightminer.ceramics;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelStained;
@@ -21,6 +30,7 @@ import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockStained;
 import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.BlockStairsBase;
+import knightminer.ceramics.blocks.IBlockEnum;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
 import knightminer.ceramics.items.ItemBlockBarrel;
@@ -37,7 +47,7 @@ import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.library.Util;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.plugin.bwm.BetterWithModsPlugin;
-import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
+//import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
 import net.minecraft.block.Block;
@@ -234,22 +244,13 @@ public class Ceramics {
 
 			registerTE(TileBarrel.class, "barrel");
 			registerTE(TileBarrelExtension.class, "barrel_extension");
-
-			// so we can use any type
-			oredict(clayBarrel, 0, "barrelClay");
-			oredict(clayBarrelStained, "barrelClay");
-			oredict(clayBarrel, 1, "barrelExtensionClay");
-			oredict(clayBarrelStainedExtension, "barrelExtensionClay");
-
-			oredict(porcelainBarrel, "barrelPorcelain");
-			oredict(porcelainBarrelExtension, "barrelExtensionPorcelain");
-
 		}
 
 		// load plugins
+		/*
 		if(Loader.isModLoaded(ModIDs.TINKERS)) {
 			TConstructPlugin.preInit();
-		}
+		}*/
 
 		CeramicsNetwork.registerPackets();
 
@@ -258,60 +259,17 @@ public class Ceramics {
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		// adds a recipe for a brick slab from two bricks
-		GameRegistry.addRecipe(new ItemStack(Blocks.STONE_SLAB, 1, BlockStoneSlab.EnumType.BRICK.getMetadata()), "bb", 'b', Items.BRICK);
-
 		// porcelain
 		if(Config.porcelainEnabled) {
-			ItemStack porcelainItem = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta());
-			ItemStack brick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
-			ItemStack boneMeal = new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage());
-			ItemStack block = new ItemStack(claySoft, 1, ClayTypeSoft.PORCELAIN.getMeta());
-			ItemStack blockHard = new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata());
-			ItemStack brickBlock = new ItemStack(clayHard, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta());
-
-			// basic recipe: bone meal with clay
-			GameRegistry.addShapelessRecipe(porcelainItem, Items.CLAY_BALL, boneMeal);
-			// alt recipe: quartz
-			ItemStack porcelain2 = porcelainItem.copy();
-			porcelain2.setCount(2);
-			GameRegistry.addShapelessRecipe(porcelain2, Items.CLAY_BALL, Items.CLAY_BALL, Items.QUARTZ);
-
-			// brick crafting
-			// brick item done is post init using oredictionary
-			GameRegistry.addRecipe(brickBlock, "CC", "CC", 'C', brick);
-			// adds a recipe for a brick slab from two bricks
-			GameRegistry.addRecipe(new ItemStack(claySlab, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta()), "bb", 'b', brick);
-
-			// block
-			ItemStack porcelain4 = porcelainItem.copy();
-			porcelain4.setCount(4);
-			GameRegistry.addShapelessRecipe(porcelain4, block.copy());
-			GameRegistry.addRecipe(new ShapedOreRecipe(block, "CC", "CC", 'C', "clayPorcelain"));
-			GameRegistry.addSmelting(block.copy(), blockHard, 0.1f);
-
-			// slabs and stairs
-			addSlabRecipe(claySlab, ClayTypeHard.PORCELAIN_BRICKS.getMeta(), brickBlock);
-			addWallRecipe(clayWall, ClayWallType.PORCELAIN_BRICKS.getMeta(), brickBlock);
-			addStairRecipe(stairsPorcelainBricks, brickBlock);
-
-			for(EnumDyeColor color : EnumDyeColor.values()) {
-				ItemStack dyed = new ItemStack(porcelain, 8, color.getMetadata());
-				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
-
-				GameRegistry.addRecipe(dyed, "ccc", "cdc", "ccc", 'd', dye, 'c', new ItemStack(porcelain, 1, OreDictionary.WILDCARD_VALUE));
-			}
+			// smelt raw porcelain blocks into porcelain
+			GameRegistry.addSmelting(new ItemStack(claySoft, 1, ClayTypeSoft.PORCELAIN.getMeta()),
+					new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata()), 0.1f);
 		}
 
 		// bucket
 		if(Config.bucketEnabled) {
-			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta());
-			ItemStack milk = new ItemStack(clayBucket, 1, SpecialFluid.MILK.getMeta());
-			GameRegistry.addRecipe(raw.copy(), "c c", " c ", 'c', Items.CLAY_BALL);
-			GameRegistry.addSmelting(raw, new ItemStack(clayBucket), 0.5f);
-
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.CAKE), "MMM", "SES", "WWW",
-					'M', milk, 'S', Items.SUGAR, 'E', "egg", 'W', "cropWheat"));
+			// fire buckets
+			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta()), new ItemStack(clayBucket), 0.5f);
 
 			// register lava bucket as a fuel
 			GameRegistry.registerFuelHandler(new IFuelHandler() {
@@ -330,201 +288,35 @@ public class Ceramics {
 
 		// shears
 		if(Config.shearsEnabled) {
-			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.SHEARS.getMeta());
-			GameRegistry.addRecipe(raw.copy(), "c ", " c", 'c', Items.CLAY_BALL);
-			GameRegistry.addSmelting(raw, new ItemStack(clayShears), 0.5f);
+			// fire shears
+			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.SHEARS.getMeta()), new ItemStack(clayShears), 0.5f);
 		}
 
 		// armor
 		if(Config.armorEnabled) {
-			ItemStack clayPlate = new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta());
-			ItemStack clayPlateRaw = new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE_RAW.getMeta());
-
-			// craft plates of clay
-			GameRegistry.addRecipe(clayPlateRaw.copy(), "cc", 'c', Items.CLAY_BALL);
-			GameRegistry.addSmelting(clayPlateRaw, clayPlate, 0.5f);
-
-			// and forge into armor. Ceramic armor is a thing in history
-			GameRegistry.addRecipe(new ItemStack(clayHelmet), "ccc", "c c", 'c', clayPlate);
-			GameRegistry.addRecipe(new ItemStack(clayChestplate), "c c", "ccc", "ccc", 'c', clayPlate);
-			GameRegistry.addRecipe(new ItemStack(clayLeggings), "ccc", "c c", "c c", 'c', clayPlate);
-			GameRegistry.addRecipe(new ItemStack(clayBoots), "c c", "c c", 'c', clayPlate);
-
-			// if you would rather skip a step...
-			// this is kept partly because legacy, partly because two hit armor is kinda fun
-
-			// if smelting armor, use plates for consistancy with above recipe as clay is pretty cheap
-			// normally I prefer the regular clay one as it fits the easter egg better
-			ItemStack rawArmorItem = Config.smeltClayArmor ? clayPlateRaw : new ItemStack(Items.CLAY_BALL);
-			GameRegistry.addRecipe(new ItemStack(clayHelmetRaw), "ccc", "c c", 'c', rawArmorItem);
-			GameRegistry.addRecipe(new ItemStack(clayChestplateRaw), "c c", "ccc", "ccc", 'c', rawArmorItem);
-			GameRegistry.addRecipe(new ItemStack(clayLeggingsRaw), "ccc", "c c", "c c", 'c', rawArmorItem);
-			GameRegistry.addRecipe(new ItemStack(clayBootsRaw), "c c", "c c", 'c', rawArmorItem);
-
-			if(Config.smeltClayArmor) {
-				GameRegistry.addSmelting(clayHelmetRaw, new ItemStack(clayHelmet), 0.5f);
-				GameRegistry.addSmelting(clayChestplateRaw, new ItemStack(clayChestplate), 0.5f);
-				GameRegistry.addSmelting(clayLeggingsRaw, new ItemStack(clayLeggings), 0.5f);
-				GameRegistry.addSmelting(clayBootsRaw, new ItemStack(clayBoots), 0.5f);
-			}
+			// fire the plates
+			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE_RAW.getMeta()),
+					new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta()), 0.5f);
 		}
 
 		// barrels
 		if(Config.barrelEnabled) {
-			ItemStack raw = new ItemStack(clayBarrelUnfired, 1, 0);
-			ItemStack rawExtension = new ItemStack(clayBarrelUnfired, 1, 1);
-			GameRegistry.addRecipe(raw.copy(), "c c", "ccc", " c ", 'c', Items.CLAY_BALL);
-			GameRegistry.addRecipe(rawExtension.copy(), "c c", "c c", "c c", 'c', Items.CLAY_BALL);
-			// TODO: old compat, probably remove in 1.12
-			GameRegistry.addShapelessRecipe(raw.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL.getMeta()));
-			GameRegistry.addShapelessRecipe(rawExtension.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_EXTENSION.getMeta()));
+			// fire the barrels
+			GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 0), new ItemStack(clayBarrel, 1, 0), 0.5f);
+			GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 1), new ItemStack(clayBarrel, 1, 1), 0.5f);
 
-			ItemStack barrel = new ItemStack(clayBarrel, 1, 0);
-			ItemStack extension = new ItemStack(clayBarrel, 1, 1);
-
-			GameRegistry.addSmelting(raw, barrel, 0.5f);
-			GameRegistry.addSmelting(rawExtension, extension, 0.5f);
-
-			// barrels made of porcelain
+			// fire barrels made of porcelain
 			if(Config.porcelainEnabled) {
-				ItemStack porcelainRaw = new ItemStack(clayBarrelUnfired, 1, 2);
-				ItemStack porcelainRawExtension = new ItemStack(clayBarrelUnfired, 1, 3);
-
-				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRaw.copy(), "c c", "ccc", " c ", 'c', "clayPorcelain"));
-				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRawExtension.copy(), "c c", "c c", "c c", 'c', "clayPorcelain"));
-				// TODO: old item compat, probably remove in 1.12
-				GameRegistry.addShapelessRecipe(porcelainRaw.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN.getMeta()));
-				GameRegistry.addShapelessRecipe(porcelainRawExtension.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN_EXTENSION.getMeta()));
-
-				ItemStack porcelainBarrel2 = new ItemStack(porcelainBarrel, 1, 0);
-				ItemStack porcelainExtension = new ItemStack(porcelainBarrelExtension, 1, 0);
-
-				GameRegistry.addSmelting(porcelainRaw, porcelainBarrel2, 0.5f);
-				GameRegistry.addSmelting(porcelainRawExtension, porcelainExtension, 0.5f);
+				GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 2), new ItemStack(porcelainBarrel, 1, 0), 0.5f);
+				GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 3), new ItemStack(porcelainBarrelExtension, 1, 0), 0.5f);
 			}
-
-			for(EnumDyeColor color : EnumDyeColor.values()) {
-				String dye = "dye" + dyes[color.getMetadata()];
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayBarrelStained, 8, color.getMetadata()),
-						"BBB", "BdB", "BBB", 'B', "barrelClay", 'd', dye));
-				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayBarrelStainedExtension, 8, color.getMetadata()),
-						"BBB", "BdB", "BBB", 'B', "barrelExtensionClay", 'd', dye));
-
-				// alt recipe for crafting just 1
-				GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(clayBarrelStained, 1, color.getMetadata()),
-						"barrelClay", dye));
-				GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(clayBarrelStainedExtension, 1, color.getMetadata()),
-						"barrelExtensionClay", dye));
-
-				if(Config.porcelainEnabled) {
-					GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(porcelainBarrel, 8, color.getMetadata()),
-							"BBB", "BdB", "BBB", 'B', "barrelPorcelain", 'd', dye));
-					GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(porcelainBarrelExtension, 8, color.getMetadata()),
-							"BBB", "BdB", "BBB", 'B', "barrelExtensionPorcelain", 'd', dye));
-
-					// alt recipe for crafting just 1
-					GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(porcelainBarrel, 1, color.getMetadata()),
-							"barrelPorcelain", dye));
-					GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(porcelainBarrelExtension, 1, color.getMetadata()),
-							"barrelExtensionPorcelain", dye));
-				}
-			}
-		}
-
-		// decorative bricks
-		if(Config.fancyBricksEnabled) {
-			String[] surround = { "bbb", "b#b", "bbb" };
-
-			// first two: crafted with regular clay
-			// dark bricks: bit of black
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.DARK_BRICKS.getMeta()),
-					surround, 'b', Items.BRICK, '#', "dyeBlack"));
-			// dragon bricks: breath of the end
-			GameRegistry.addRecipe(new ItemStack(clayHard, 8, ClayTypeHard.DRAGON_BRICKS.getMeta()),
-					surround, 'b', Blocks.BRICK_BLOCK, '#', Items.DRAGON_BREATH);
-
-			// lava bricks: magma mortor
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.LAVA_BRICKS.getMeta()),
-					surround, 'b', Blocks.BRICK_BLOCK, '#', Items.LAVA_BUCKET));
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.LAVA_BRICKS.getMeta()),
-					surround, 'b', Blocks.BRICK_BLOCK, '#', Ceramics.clayBucket.withFluid(FluidRegistry.LAVA)));
-
-			// if porcelain is disabled, use regular bricks for those recipes
-			Object secondBrick = Items.BRICK;
-			Object secondBrickBlock = Blocks.BRICK_BLOCK;
-			if(Config.porcelainEnabled) {
-				secondBrick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
-				secondBrickBlock = new ItemStack(clayHard, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta());
-			}
-
-			// marine bricks: dye of the sea
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 2, ClayTypeHard.MARINE_BRICKS.getMeta()),
-					surround, 'b', secondBrick, '#', "dyeBlue"));
-			// gold bricks: shard of gold
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.GOLDEN_BRICKS.getMeta()),
-					surround, 'b', secondBrickBlock, '#', "nuggetGold"));
-
-
-			// slabs and stairs
-			ItemStack darkBricks = new ItemStack(clayHard, 1, ClayTypeHard.DARK_BRICKS.getMeta());
-			addSlabRecipe(claySlab, ClayTypeHard.DARK_BRICKS.getMeta(), darkBricks);
-			addWallRecipe(clayWall, ClayWallType.DARK_BRICKS.getMeta(), darkBricks);
-			addStairRecipe(stairsDarkBricks, darkBricks);
-
-			ItemStack goldenBricks = new ItemStack(clayHard, 1, ClayTypeHard.GOLDEN_BRICKS.getMeta());
-			addSlabRecipe(claySlab, ClayTypeHard.GOLDEN_BRICKS.getMeta(), goldenBricks);
-			addWallRecipe(clayWall, ClayWallType.GOLDEN_BRICKS.getMeta(), goldenBricks);
-			addStairRecipe(stairsGoldenBricks, goldenBricks);
-
-			ItemStack marineBricks = new ItemStack(clayHard, 1, ClayTypeHard.MARINE_BRICKS.getMeta());
-			addSlabRecipe(claySlab, ClayTypeHard.MARINE_BRICKS.getMeta(), marineBricks);
-			addWallRecipe(clayWall, ClayWallType.MARINE_BRICKS.getMeta(), marineBricks);
-			addStairRecipe(stairsMarineBricks, marineBricks);
-
-			ItemStack dragonBricks = new ItemStack(clayHard, 1, ClayTypeHard.DRAGON_BRICKS.getMeta());
-			addSlabRecipe(claySlab, ClayTypeHard.DRAGON_BRICKS.getMeta(), dragonBricks);
-			addWallRecipe(clayWall, ClayWallType.DRAGON_BRICKS.getMeta(), dragonBricks);
-			addStairRecipe(stairsDragonBricks, dragonBricks);
-
-			ItemStack lavaBricks = new ItemStack(clayHard, 1, ClayTypeHard.LAVA_BRICKS.getMeta());
-			addSlabRecipe(claySlab, ClayTypeHard.LAVA_BRICKS.getMeta(), lavaBricks);
-			addWallRecipe(clayWall, ClayWallType.LAVA_BRICKS.getMeta(), lavaBricks);
-			addStairRecipe(stairsLavaBricks, lavaBricks);
-		}
-
-		if(Config.rainbowClayEnabled) {
-			Object hardClay = Blocks.HARDENED_CLAY;
-			Object bricks = Blocks.BRICK_BLOCK;
-			if(Config.porcelainEnabled) {
-				hardClay = new ItemStack(porcelain, 1, StainedColor.WHITE.getMeta());
-				bricks = new ItemStack(clayHard, 1, ClayTypeHard.PORCELAIN_BRICKS.getMeta());
-			}
-
-			// three dyes and a block to transform
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(rainbowClay, 6, RainbowStart.RED.getMeta()),
-					"BBB", "rgb", "BBB", 'B', hardClay, 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 6, ClayTypeHard.RAINBOW_BRICKS.getMeta()),
-					"BBB", "rgb", "BBB", 'B', bricks, 'r', "dyeRed", 'g', "dyeGreen", 'b', "dyeBlue"));
-
-			ItemStack rainbowBricks = new ItemStack(clayHard, 1, ClayTypeHard.RAINBOW_BRICKS.getMeta());
-			addSlabRecipe(claySlab, ClayTypeHard.RAINBOW_BRICKS.getMeta(), rainbowBricks);
-			addWallRecipe(clayWall, ClayWallType.RAINBOW_BRICKS.getMeta(), rainbowBricks);
-			addStairRecipe(stairsRainbowBricks, rainbowBricks);
-
-			// switch between animation starts for rainbow clay
-			for(int i = 0; i < 8; i++) {
-				GameRegistry.addShapelessRecipe(new ItemStack(rainbowClay, 1, (i + 1) % 8), new ItemStack(rainbowClay, 1, i));
-			}
-		}
-
-		if(Config.brickWallEnabled) {
-			addWallRecipe(clayWall, ClayWallType.BRICKS.getMeta(), new ItemStack(Blocks.BRICK_BLOCK));
 		}
 
 		// load plugins
+		/*
 		if(Loader.isModLoaded(ModIDs.TINKERS)) {
 			TConstructPlugin.init();
-		}
+		}*/
 		if(Loader.isModLoaded(ModIDs.BWM)) {
 			BetterWithModsPlugin.init();
 		}
@@ -550,24 +342,13 @@ public class Ceramics {
 			}
 		}
 		// load plugins
+		/*
 		if(Loader.isModLoaded(ModIDs.TINKERS)) {
 			TConstructPlugin.postInit();
-		}
+		}*/
 	}
 
-	// Old version compatibility
-	@Mod.EventHandler
-	public void onMissingMapping(FMLMissingMappingsEvent event) {
-		// TODO: can probably safely remove this in 1.12
-		for(FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
-			// remap old name for bucket, no one should really be keeping raw buckets anyways
-			if(Config.bucketEnabled && mapping.type == GameRegistry.Type.ITEM && (mapping.name.equals(Util.resource("clay_bucket_raw")))) {
-				mapping.remap(clayUnfired);
-			}
-		}
-	}
-
-
+	
 	/* Blocks, items, and TEs */
 
 	@SuppressWarnings("unchecked")
@@ -624,19 +405,5 @@ public class Ceramics {
 				OreDictionary.registerOre(name, stack);
 			}
 		}
-	}
-
-
-	/* Recipe shortcuts */
-	protected static void addSlabRecipe(Block slab, int meta, ItemStack input) {
-		GameRegistry.addShapedRecipe(new ItemStack(slab, 6, meta), "BBB", 'B', input);
-	}
-
-	protected static void addStairRecipe(Block stairs, ItemStack input) {
-		GameRegistry.addShapedRecipe(new ItemStack(stairs, 4), "B  ", "BB ", "BBB", 'B', input);
-	}
-
-	protected static void addWallRecipe(Block wall, int meta, ItemStack input) {
-		GameRegistry.addShapedRecipe(new ItemStack(wall, 6, meta), "BBB", "BBB", 'B', input);
 	}
 }

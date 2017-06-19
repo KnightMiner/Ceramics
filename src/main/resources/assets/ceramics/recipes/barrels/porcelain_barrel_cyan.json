@@ -1,0 +1,32 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    },
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:porcelain_barrel",
+    "data": 9,
+    "count": 8
+  },
+  "pattern": [
+    "BBB",
+    "BdB",
+    "BBB"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "B": {
+      "item": "#PORCELAIN_BARREL"
+    },
+    "d": {
+      "ore": "dyeCyan",
+      "type": "forge:ore_dict"
+    }
+  }
+}

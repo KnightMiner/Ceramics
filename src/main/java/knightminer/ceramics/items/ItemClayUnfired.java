@@ -25,10 +25,12 @@ public class ItemClayUnfired extends Item {
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		for(UnfiredType type : UnfiredType.values()) {
-			if(type.shouldDisplay()) {
-				subItems.add(new ItemStack(itemIn, 1, type.getMeta()));
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (this.isInCreativeTab(tab)) {
+			for(UnfiredType type : UnfiredType.values()) {
+				if(type.shouldDisplay()) {
+					subItems.add(new ItemStack(this, 1, type.getMeta()));
+				}
 			}
 		}
 	}

@@ -1,0 +1,39 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "bucket"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cake"
+  },
+  "pattern": [
+    "MMM",
+    "SES",
+    "WWW"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "S": {
+      "item": "minecraft:sugar"
+    },
+    "E": {
+      "ore": "egg",
+      "type": "forge:ore_dict"
+    },
+    "W": {
+      "ore": "cropWheat",
+      "type": "forge:ore_dict"
+    },
+    "M": [
+      {
+        "item": "minecraft:milk_bucket"
+      },
+      {
+        "item": "ceramics:clay_bucket",
+        "data": 1
+      }
+    ]
+  }
+}

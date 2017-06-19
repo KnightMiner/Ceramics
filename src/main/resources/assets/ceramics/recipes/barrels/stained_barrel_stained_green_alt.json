@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_barrel_stained",
+    "data": 13
+  },
+  "ingredients": [
+    {
+      "item": "#CLAY_BARREL"
+    },
+    {
+      "ore": "dyeGreen",
+      "type": "forge:ore_dict"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

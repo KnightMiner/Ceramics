@@ -1,0 +1,5 @@
+{
+  "conditions": {
+    "config": "knightminer.ceramics.library.Config$ConditionConfig"
+  }
+}

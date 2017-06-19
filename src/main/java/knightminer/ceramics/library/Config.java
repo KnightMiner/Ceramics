@@ -1,6 +1,19 @@
 package knightminer.ceramics.library;
 
+import java.util.function.BooleanSupplier;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+
+import knightminer.ceramics.Ceramics;
+import net.minecraft.util.JsonUtils;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.IConditionFactory;
+import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class Config {
@@ -17,7 +30,6 @@ public class Config {
 	public static boolean brickWallEnabled = true;
 	public static boolean porcelainFaucetEnabled = true;
 	public static boolean rainbowClayEnabled = true;
-	public static boolean smeltClayArmor = false;
 
 	static Configuration configFile;
 
@@ -34,11 +46,10 @@ public class Config {
 
 		armorEnabled = configFile.getBoolean("armor", "enabled", true,
 				"Enables the clay armor, an early game alternative to leather");
-		smeltClayArmor = configFile.getBoolean("smeltClayArmor", "enabled", false,
-				"Allows clay armor to be created by smelting raw clay armor (old recipe). Switched to plates for more realism/nicer smelting recipes");
-
+		
 		barrelEnabled = configFile.getBoolean("barrel", "enabled", true,
 				"Enables the clay barrel, a liquid tank that can be expanded upwards");
+		
 		porcelainEnabled = configFile.getBoolean("porcelain", "enabled", true,
 				"Enables porcelain, a whiter clay that produces true colors when dyed");
 		fancyBricksEnabled = configFile.getBoolean("fancyBricks", "enabled", true,
@@ -47,11 +58,43 @@ public class Config {
 				"Enables clay bricks and blocks with a rainbow animation. Includes brick slabs, stairs, and walls.");
 		brickWallEnabled = configFile.getBoolean("brickWall", "enabled", true,
 				"Enables walls made of vanilla bricks. Mainly here if another mod provides this feature (e.g. Quark)");
+		
 		porcelainFaucetEnabled = configFile.getBoolean("porcelainFaucet", "enabled", true,
 				"Enables porcelain versions of the Tinkers Construct faucet. Requires porcelain and Tinkers' Construct.") && porcelainEnabled;
 
 		if(configFile.hasChanged()) {
 			configFile.save();
+		}
+	}
+	
+	public static class ConditionConfig implements IConditionFactory {
+		public BooleanSupplier parse(JsonContext context, JsonObject json) {
+			String enabled = JsonUtils.getString(json, "enabled");
+			return () -> configEnabled(enabled);
+		}
+		
+		// this is just so I am not doing () -> each time really, I'm lazy :)
+		private static boolean configEnabled(String config) {
+			switch(config) {
+				case "barrel":
+					return barrelEnabled;
+				case "bucket":
+					return bucketEnabled;
+				case "armor":
+					return armorEnabled;
+				case "fancy_bricks":
+					return fancyBricksEnabled;
+				case "brick_wall":
+					return brickWallEnabled;
+				case "rainbow_clay":
+					return rainbowClayEnabled;
+				case "porcelain":
+					return porcelainEnabled;
+				case "shears":
+					return shearsEnabled;
+			}
+			
+			throw new JsonSyntaxException("Config option '" + config + "' does not exist");
 		}
 	}
 }

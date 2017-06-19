@@ -1,0 +1,15 @@
+{
+  "result": {
+    "item": "minecraft:stone_slab",
+    "data": 4
+  },
+  "pattern": [
+    "bb"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:brick"
+    }
+  }
+}

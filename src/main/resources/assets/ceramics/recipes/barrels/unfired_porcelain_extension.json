@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    },
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_barrel_unfired",
+    "data": 3
+  },
+  "pattern": [
+    "c c",
+    "c c",
+    "c c"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "ore": "clayPorcelain",
+      "type": "forge:ore_dict"
+    }
+  }
+}

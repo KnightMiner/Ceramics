@@ -108,10 +108,10 @@ public abstract class BlockEnumSlabBase<T extends Enum<T> & IStringSerializable 
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> list) {
+	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
 		for(T type : values) {
 			if(type.shouldDisplay()) {
-				list.add(new ItemStack(itemIn, 1, type.getMeta()));
+				list.add(new ItemStack(this, 1, type.getMeta()));
 			}
 		}
 	}

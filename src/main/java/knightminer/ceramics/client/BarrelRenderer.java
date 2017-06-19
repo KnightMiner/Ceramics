@@ -7,9 +7,9 @@ import org.lwjgl.opengl.GL11;
 import knightminer.ceramics.library.BarrelTank;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -21,7 +21,7 @@ public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
 	public static Minecraft mc = Minecraft.getMinecraft();
 
 	@Override
-	public void renderTileEntityAt(@Nonnull TileBarrel barrel, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void renderTileEntityAt(TileBarrel barrel, double x, double y, double z, float partialTicks, int destroyStage, float p_192841_10_) {
 		BarrelTank tank = barrel.getTank();
 
 		FluidStack fluid = tank.getFluid();
@@ -49,7 +49,7 @@ public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
 		}
 
 		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer renderer = tessellator.getBuffer();
+		BufferBuilder renderer = tessellator.getBuffer();
 		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 		mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 

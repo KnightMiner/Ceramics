@@ -502,28 +502,30 @@ public class ItemClayBucket extends Item {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
-		// empty
-		subItems.add(new ItemStack(this));
-
-		// add all fluids that the bucket can be filled with
-		for(Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-			// skip milk if registered since we add it manually whether it is a
-			// fluid or not
-			if(!fluid.getName().equals("milk")) {
-				FluidStack fs = new FluidStack(fluid, getCapacity());
-				ItemStack stack = new ItemStack(this);
-				if(fill(stack, fs, true) == fs.amount) {
-					subItems.add(stack);
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+        if (this.isInCreativeTab(tab)) {
+			// empty
+			subItems.add(new ItemStack(this));
+	
+			// add all fluids that the bucket can be filled with
+			for(Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+				// skip milk if registered since we add it manually whether it is a
+				// fluid or not
+				if(!fluid.getName().equals("milk")) {
+					FluidStack fs = new FluidStack(fluid, getCapacity());
+					ItemStack stack = new ItemStack(this);
+					if(fill(stack, fs, true) == fs.amount) {
+						subItems.add(stack);
+					}
 				}
 			}
-		}
-		// special fluids
-		for(SpecialFluid fluid : SpecialFluid.values()) {
-			if(fluid.show()) {
-				subItems.add(new ItemStack(this, 1, fluid.getMeta()));
+			// special fluids
+			for(SpecialFluid fluid : SpecialFluid.values()) {
+				if(fluid.show()) {
+					subItems.add(new ItemStack(this, 1, fluid.getMeta()));
+				}
 			}
-		}
+        }
 	}
 
 	@Override

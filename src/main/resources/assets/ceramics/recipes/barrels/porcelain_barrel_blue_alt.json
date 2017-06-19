@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    },
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:porcelain_barrel",
+    "data": 11
+  },
+  "ingredients": [
+    {
+      "item": "#PORCELAIN_BARREL"
+    },
+    {
+      "ore": "dyeBlue",
+      "type": "forge:ore_dict"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

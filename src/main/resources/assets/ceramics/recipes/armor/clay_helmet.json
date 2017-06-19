@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "armor"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_helmet"
+  },
+  "pattern": [
+    "ccc",
+    "c c"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "ceramics:unfired_clay",
+      "data": 9
+    }
+  }
+}

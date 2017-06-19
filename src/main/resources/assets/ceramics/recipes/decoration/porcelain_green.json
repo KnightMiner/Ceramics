@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:porcelain",
+    "data": 13,
+    "count": 8
+  },
+  "pattern": [
+    "ccc",
+    "cdc",
+    "ccc"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "#PORCELAIN"
+    },
+    "d": {
+      "ore": "dyeGreen",
+      "type": "forge:ore_dict"
+    }
+  }
+}

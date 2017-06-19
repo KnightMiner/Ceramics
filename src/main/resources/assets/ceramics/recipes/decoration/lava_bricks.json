@@ -1,0 +1,27 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "fancy_bricks"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_hard",
+    "data": 5,
+    "count": 8
+  },
+  "pattern": [
+    "bbb",
+    "b#b",
+    "bbb"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "b": {
+      "item": "minecraft:brick_block"
+    },
+    "#": {
+      "item": "#LAVA_BUCKET"
+    }
+  }
+}

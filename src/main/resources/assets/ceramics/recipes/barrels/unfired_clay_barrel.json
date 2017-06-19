@@ -1,0 +1,23 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    }
+  ],
+  "result": {
+    "item": "ceramics:clay_barrel_unfired",
+    "data": 0
+  },
+  "pattern": [
+    "c c",
+    "ccc",
+    " c "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:clay_ball"
+    }
+  }
+}

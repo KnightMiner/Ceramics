@@ -16,6 +16,7 @@ import net.minecraft.world.IBlockAccess;
  * This is our own copy of the faucet from Tinkers. It still uses the old TE (and thus TESR),
  * but has some special visual compatibility with barrels
  */
+/*
 public class BlockFaucet extends slimeknights.tconstruct.smeltery.block.BlockFaucet {
 
 	public static final PropertyBool CONNECTED = PropertyBool.create("connected");
@@ -36,7 +37,7 @@ public class BlockFaucet extends slimeknights.tconstruct.smeltery.block.BlockFau
 	/**
 	 * Get the actual Block state of this Block at the given position. This applies properties not visible in the
 	 * metadata, such as fence connections.
-	 */
+	 /
 	@Override
 	@Deprecated
 	public IBlockState getActualState(IBlockState stateIn, IBlockAccess world, BlockPos pos) {
@@ -54,3 +55,4 @@ public class BlockFaucet extends slimeknights.tconstruct.smeltery.block.BlockFau
 		return state;
 	}
 }
+*/

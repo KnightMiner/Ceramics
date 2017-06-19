@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "bucket"
+    }
+  ],
+  "result": {
+    "item": "ceramics:unfired_clay",
+    "data": 0
+  },
+  "pattern": [
+    "c c",
+    " c "
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:clay_ball"
+    }
+  }
+}

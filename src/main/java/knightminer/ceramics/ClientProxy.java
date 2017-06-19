@@ -26,6 +26,8 @@ import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -168,7 +170,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	private void registerItemModel(Item item, final String variant) {
-		if(item != null) {
+		if(item != null && item != Items.AIR) {
 			final ResourceLocation location = item.getRegistryName();
 			// so all meta get the item model
 			ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
@@ -187,7 +189,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	private void registerItemModel(Item item, int meta, String name) {
-		if(item != null) {
+		if(item != null && item != Items.AIR) {
 			// tell Minecraft which textures it has to load. This is resource-domain sensitive
 			final ResourceLocation location = item.getRegistryName();
 
@@ -209,7 +211,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	private <B extends Block & IBlockEnum<T>, T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> void registerItemModels(B block, String prefix) {
-		if(block != null) {
+		if(block != null && block != Blocks.AIR) {
 			PropertyEnum<T> prop = block.getMappingProperty();
 			for(T value : prop.getAllowedValues()) {
 				registerItemModel(block, value.getMeta(), prefix + prop.getName() + "=" + value.getName());
@@ -219,7 +221,7 @@ public class ClientProxy extends CommonProxy {
 
 	private void ignoreProperty(IProperty<?> prop, Block ... blocks) {
 		for(Block block : blocks) {
-			if(block != null) {
+			if(block != null && block != Blocks.AIR) {
 				ModelLoader.setCustomStateMapper(block, (new StateMap.Builder()).ignore(prop).build());
 			}
 		}

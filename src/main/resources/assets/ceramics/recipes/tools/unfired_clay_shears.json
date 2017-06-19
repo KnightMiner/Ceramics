@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "shears"
+    }
+  ],
+  "result": {
+    "item": "ceramics:unfired_clay",
+    "data": 1
+  },
+  "pattern": [
+    "c ",
+    " c"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "c": {
+      "item": "minecraft:clay_ball"
+    }
+  }
+}
