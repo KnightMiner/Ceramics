@@ -265,6 +265,9 @@ public class Ceramics {
 		// adds a recipe for a brick slab from two bricks
 		GameRegistry.addRecipe(new ItemStack(Blocks.STONE_SLAB, 1, BlockStoneSlab.EnumType.BRICK.getMetadata()), "bb", 'b', Items.BRICK);
 
+		// convert clay blocks to clay. Just a nice thing to have with all the clay I have
+		GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 4), Blocks.CLAY);
+
 		// porcelain
 		if(Config.porcelainEnabled) {
 			ItemStack porcelainItem = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta());
@@ -301,9 +304,9 @@ public class Ceramics {
 
 			for(EnumDyeColor color : EnumDyeColor.values()) {
 				ItemStack dyed = new ItemStack(porcelain, 8, color.getMetadata());
-				ItemStack dye = new ItemStack(Items.DYE, 1, color.getDyeDamage());
+				String dye = "dye" + dyes[color.getMetadata()];
 
-				GameRegistry.addRecipe(dyed, "ccc", "cdc", "ccc", 'd', dye, 'c', new ItemStack(porcelain, 1, OreDictionary.WILDCARD_VALUE));
+				GameRegistry.addRecipe(new ShapedOreRecipe(dyed, "ccc", "cdc", "ccc", 'd', dye, 'c', new ItemStack(porcelain, 1, OreDictionary.WILDCARD_VALUE)));
 			}
 		}
 
