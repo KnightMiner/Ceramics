@@ -284,6 +284,12 @@ public class Ceramics {
 			// fire the barrels
 			GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 0), new ItemStack(clayBarrel, 1, 0), 0.5f);
 			GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 1), new ItemStack(clayBarrel, 1, 1), 0.5f);
+
+			// fire barrels made of porcelain
+			if(Config.porcelainEnabled) {
+				GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 2), new ItemStack(porcelainBarrel, 1, 0), 0.5f);
+				GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 3), new ItemStack(porcelainBarrelExtension, 1, 0), 0.5f);
+			}
 		}
 
 		// load plugins
