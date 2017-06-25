@@ -60,7 +60,7 @@ public class Config {
 				"Enables walls made of vanilla bricks. Mainly here if another mod provides this feature (e.g. Quark)");
 		
 		porcelainFaucetEnabled = configFile.getBoolean("porcelainFaucet", "enabled", true,
-				"Enables porcelain versions of the Tinkers Construct faucet. Requires porcelain and Tinkers' Construct.") && porcelainEnabled;
+				"Enables porcelain faucets for moving fluids. Requires porcelain") && porcelainEnabled;
 
 		if(configFile.hasChanged()) {
 			configFile.save();
