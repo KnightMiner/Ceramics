@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import knightminer.ceramics.blocks.BlockBarrel;
+import knightminer.ceramics.blocks.BlockBarrelPorcelain;
 import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.blocks.BlockBarrelUnfired;
 import knightminer.ceramics.blocks.BlockClayHard;
@@ -230,8 +231,8 @@ public class Ceramics {
 			clayBarrelStainedExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "clay_barrel_stained_extension");
 
 			if(Config.porcelainEnabled) {
-				porcelainBarrel = registerBlock(new ItemCloth(new BlockBarrelStained(false)), "porcelain_barrel");
-				porcelainBarrelExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "porcelain_barrel_extension");
+				porcelainBarrel = registerBlock(new ItemCloth(new BlockBarrelPorcelain(false)), "porcelain_barrel");
+				porcelainBarrelExtension = registerBlock(new ItemCloth(new BlockBarrelPorcelain(true)), "porcelain_barrel_extension");
 			}
 
 			registerTE(TileBarrel.class, "barrel");

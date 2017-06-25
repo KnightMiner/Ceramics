@@ -24,6 +24,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -62,7 +63,7 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 		if(isExtension(getStateFromMeta(meta))) {
 			return new TileBarrelExtension();
 		}
-		return new TileBarrel();
+		return new TileBarrel(Fluid.BUCKET_VOLUME * 4);
 	}
 
 	// check structure
@@ -140,6 +141,15 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 				fluidHandler.fill(new FluidStack(FluidRegistry.WATER, 100), true);
 			}
 		}
+	}
+
+	/**
+	 * Used by the tile entity to determine if this block is a valid extension for the barrel
+	 * @param state  State to test
+	 * @return  True if the state is a valid extension for this barrel type
+	 */
+	public boolean isValidExtension(IBlockState state) {
+		return state.getBlock() == Ceramics.clayBarrel && state.getValue(EXTENSION) || state.getBlock() == Ceramics.clayBarrelStainedExtension;
 	}
 
 	/* Blockstate */
