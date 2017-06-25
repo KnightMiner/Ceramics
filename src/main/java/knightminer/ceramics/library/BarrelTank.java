@@ -1,8 +1,7 @@
 package knightminer.ceramics.library;
 
-import knightminer.ceramics.network.BarrelCapacityChangedPacket;
-import knightminer.ceramics.network.BarrelFluidUpdatePacket;
 import knightminer.ceramics.network.CeramicsNetwork;
+import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -50,7 +49,7 @@ public class BarrelTank extends FluidTank {
 			renderOffset += amount;
 			World world = parent.getWorld();
 			if(!world.isRemote) {
-				CeramicsNetwork.sendToAllAround(world, parent.getPos(), new BarrelFluidUpdatePacket(parent.getPos(), this.getFluid()));
+				CeramicsNetwork.sendToAllAround(world, parent.getPos(), new FluidUpdatePacket(parent.getPos(), this.getFluid()));
 			}
 		}
 	}
@@ -59,17 +58,11 @@ public class BarrelTank extends FluidTank {
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 
-
 		// reduce the fluid size if its over the new capacity
 		if(this.fluid != null && this.fluid.amount > capacity) {
 			this.drain(this.fluid.amount - capacity, true);
 		}
 		renderOffset = 0; // don't render it lowering from a barrel above breaking, that looks dumb
-
-		World world = parent.getWorld();
-		if(world != null && !world.isRemote) {
-			CeramicsNetwork.sendToAllAround(world, parent.getPos(), new BarrelCapacityChangedPacket(parent.getPos(), capacity));
-		}
 	}
 
 	@Override

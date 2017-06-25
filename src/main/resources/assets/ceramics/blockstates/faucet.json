@@ -1,26 +1,20 @@
 {
     "forge_marker": 1,
     "defaults": {
-        "model": "tconstruct:faucet",
-		"textures": {
-			"tex": "ceramics:blocks/porcelain",
-			"particle": "ceramics:blocks/porcelain"
-		}
+        "model": "ceramics:faucet"
     },
-	"variants": {
+    "variants": {
         "facing": {
-            "up": { "model": "tconstruct:faucet_top" },
+            "up": { "model": "ceramics:faucet_top" },
             "north": { "y": 180 },
             "east":  { "y": 270 },
             "south": { "y": 0 },
             "west":  { "y": 90 }
         },
-		"connected": {
-			"true": { "submodel": { "connection": {"model": "ceramics:faucet_connection" }}},
-			"false": {}
-		},
-        "inventory": {
-            "model": "tconstruct:faucet"
-        }
+        "connected": {
+            "true": { "model": "ceramics:faucet_connected" },
+            "false": {}
+        },
+        "inventory": [{}]
     }
 }

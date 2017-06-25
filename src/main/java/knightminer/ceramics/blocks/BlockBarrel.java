@@ -3,7 +3,7 @@ package knightminer.ceramics.blocks;
 import javax.annotation.Nonnull;
 
 import knightminer.ceramics.Ceramics;
-import knightminer.ceramics.library.ModIDs;
+import knightminer.ceramics.library.IFaucetDepthFallback;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelBase;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
@@ -14,7 +14,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -23,19 +22,18 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 //import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
 //@Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
-//public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepth {
-public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider {
+public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepthFallback {
 
 	public BlockBarrel(Material material) {
 		super(material);
@@ -62,7 +60,7 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider 
 		if(isExtension(getStateFromMeta(meta))) {
 			return new TileBarrelExtension();
 		}
-		return new TileBarrel();
+		return new TileBarrel(Fluid.BUCKET_VOLUME * 4);
 	}
 
 	// check structure
@@ -142,6 +140,15 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider 
 		}
 	}
 
+	/**
+	 * Used by the tile entity to determine if this block is a valid extension for the barrel
+	 * @param state  State to test
+	 * @return  True if the state is a valid extension for this barrel type
+	 */
+	public boolean isValidExtension(IBlockState state) {
+		return state.getBlock() == Ceramics.clayBarrel && state.getValue(EXTENSION) || state.getBlock() == Ceramics.clayBarrelStainedExtension;
+	}
+
 	/* Blockstate */
 
 	@Override
@@ -198,8 +205,7 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider 
 		return 0;
 	}
 
-	//@Optional.Method(modid=ModIDs.TINKERS)
-	//@Override
+	@Override
 	public float getFlowDepth(World world, BlockPos pos, IBlockState state) {
 		if(isExtension(state)) {
 			TileEntity te = world.getTileEntity(pos);

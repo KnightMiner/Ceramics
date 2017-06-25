@@ -12,14 +12,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class BarrelFluidUpdatePacket extends PacketBase {
+public class FaucetActivationPacket extends PacketBase {
 
 	public BlockPos pos;
 	public FluidStack fluid;
 
-	public BarrelFluidUpdatePacket() {}
+	public FaucetActivationPacket() {}
 
-	public BarrelFluidUpdatePacket(BlockPos pos, FluidStack fluid) {
+	public FaucetActivationPacket(BlockPos pos, FluidStack fluid) {
 		this.pos = pos;
 		this.fluid = fluid;
 	}
@@ -41,10 +41,10 @@ public class BarrelFluidUpdatePacket extends PacketBase {
 		ByteBufUtils.writeTag(buf, tag);
 	}
 
-	public static class BarrelFluidUpdateHandler implements IMessageHandler<BarrelFluidUpdatePacket, IMessage> {
+	public static class BarrelFluidUpdateHandler implements IMessageHandler<FaucetActivationPacket, IMessage> {
 
 		@Override
-		public IMessage onMessage(final BarrelFluidUpdatePacket message, MessageContext ctx) {
+		public IMessage onMessage(final FaucetActivationPacket message, MessageContext ctx) {
 			getMainThread(ctx).addScheduledTask(new Runnable() {
 				@Override
 				public void run() {

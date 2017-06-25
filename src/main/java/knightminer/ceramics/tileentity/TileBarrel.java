@@ -3,9 +3,10 @@ package knightminer.ceramics.tileentity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.library.BarrelTank;
+import knightminer.ceramics.network.BarrelSizeChangedPacket;
+import knightminer.ceramics.network.CeramicsNetwork;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -21,17 +22,25 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileBarrel extends TileBarrelBase {
 
-	public static final int BASE_CAPACITY = Fluid.BUCKET_VOLUME * 4;
+	private static final int BASE_CAPACITY = Fluid.BUCKET_VOLUME * 4;
 
-	public BlockPos topPos;
+	public int height;
 	private BarrelTank tank;
+	/** Capacity per block of the barrel */
+	private int baseCapacity;
+	/** Cached capacity for the barrel */
 	private int capacity;
 	private int lastStrength;
 
 	public TileBarrel() {
-		this.tank = new BarrelTank(BASE_CAPACITY, this);
-		this.capacity = BASE_CAPACITY;
+		this(BASE_CAPACITY);
+	}
+
+	public TileBarrel(int baseCapacity) {
+		this.tank = new BarrelTank(baseCapacity, this);
+		this.baseCapacity = this.capacity = baseCapacity;
 		this.lastStrength = -1;
+		this.height = 0;
 	}
 
 	/* Fluid interactions */
@@ -59,10 +68,19 @@ public class TileBarrel extends TileBarrelBase {
 	/* extended barrels */
 	@Override
 	public void checkBarrelStructure() {
-		BlockPos topPos = this.pos.up();
-		IBlockState state = world.getBlockState(topPos);
-		while(state.getBlock() instanceof BlockBarrel && ((BlockBarrel) state.getBlock()).isExtension(state)) {
+		if(world.isRemote) {
+			// let the server handle all the structure checking, the client only runs it sometimes anyways
+			return;
+		}
 
+		IBlockState barrelState = world.getBlockState(this.pos);
+		if(!(barrelState.getBlock() instanceof BlockBarrel)) {
+			return; // safety check, not sure if error handing is needed
+		}
+		BlockBarrel barrel = (BlockBarrel) barrelState.getBlock();
+
+		BlockPos topPos = this.pos.up();
+		while(barrel.isValidExtension(world.getBlockState(topPos))) {
 			// set the master in the TE
 			TileEntity te = world.getTileEntity(topPos);
 			if(te instanceof TileBarrelExtension) {
@@ -71,16 +89,18 @@ public class TileBarrel extends TileBarrelBase {
 
 			// data for next iteration
 			topPos = topPos.up();
-			state = world.getBlockState(topPos);
 		}
 
 		// this position failed, so go back down to one that worked
-		this.topPos = topPos.down();
-		int newCapacity = BASE_CAPACITY * (this.topPos.getY() + 1 - this.pos.getY());
+		this.height = topPos.down().getY() - this.pos.getY();
+		int newCapacity = baseCapacity * (height + 1);
 		if(newCapacity != capacity) {
 			this.capacity = newCapacity;
 			tank.setCapacity(newCapacity);
 			onTankContentsChanged();
+
+			// send the update to the client
+			CeramicsNetwork.sendToAllAround(world, pos, new BarrelSizeChangedPacket(pos, capacity, height));
 		}
 	}
 
@@ -109,10 +129,7 @@ public class TileBarrel extends TileBarrelBase {
 	@SideOnly(Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
 		int y = pos.getY();
-		if(topPos != null) {
-			y = topPos.getY();
-		}
-		y += 1;
+		y += height + 1;
 
 		return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, y, pos.getZ() + 1);
 	}
@@ -126,14 +143,20 @@ public class TileBarrel extends TileBarrelBase {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void updateCapacityTo(int capacity2) {
+	public void updateSize(int capacity, int height) {
+		this.capacity = capacity;
 		tank.setCapacity(capacity);
+		this.height = height;
 	}
 
 	/* NBT */
 	public static final String TAG_TANK = "tank";
+	public static final String TAG_HEIGHT = "height";
+	@Deprecated
 	public static final String TAG_TOP = "topPos";
+	@Deprecated
 	public static final String TAG_CAPACITY = "capacity";
+	public static final String TAG_BASE_CAPACITY = "baseCapacity";
 
 	@Nonnull
 	@Override
@@ -142,16 +165,8 @@ public class TileBarrel extends TileBarrelBase {
 
 		tags.setTag(TAG_TANK, tank.writeToNBT(new NBTTagCompound()));
 
-		if(topPos != null) {
-			NBTTagCompound top = new NBTTagCompound();
-			top.setInteger("x", topPos.getX());
-			top.setInteger("y", topPos.getY());
-			top.setInteger("z", topPos.getZ());
-
-			tags.setTag(TAG_TOP, top);
-		}
-
-		tags.setInteger(TAG_CAPACITY, capacity);
+		tags.setInteger(TAG_HEIGHT, height);
+		tags.setInteger(TAG_BASE_CAPACITY, baseCapacity);
 
 		return tags;
 	}
@@ -164,18 +179,24 @@ public class TileBarrel extends TileBarrelBase {
 		if(tankTag != null) {
 			tank.readFromNBT(tankTag);
 		}
-		else {
-			Ceramics.log.info("No tag");
+
+		if(tags.hasKey(TAG_HEIGHT)) {
+			height = tags.getInteger(TAG_HEIGHT);
+		} else {
+			// transfer old tag to new one
+			NBTTagCompound top = tags.getCompoundTag(TAG_TOP);
+			if(top != null && top.hasKey("y")) {
+				int y = top.getInteger("y");
+				this.height = y - this.pos.getY();
+			}
 		}
 
-		NBTTagCompound top = tags.getCompoundTag(TAG_TOP);
-		if(top != null && top.hasKey("x") && top.hasKey("y") && top.hasKey("z")) {
-			this.topPos = new BlockPos(top.getInteger("x"), top.getInteger("y"), top.getInteger("z"));
+		if(tags.hasKey(TAG_BASE_CAPACITY)) {
+			baseCapacity = tags.getInteger(TAG_BASE_CAPACITY);
 		}
 
-		if(tags.hasKey(TAG_CAPACITY)) {
-			capacity = tags.getInteger(TAG_CAPACITY);
-			tank.setCapacity(capacity);
-		}
+		// calculate the capacity from the base and the height
+		capacity = baseCapacity * (height + 1);
+		tank.setCapacity(capacity);
 	}
 }

@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import knightminer.ceramics.blocks.BlockBarrel;
+import knightminer.ceramics.blocks.BlockBarrelPorcelain;
 import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.blocks.BlockBarrelUnfired;
 import knightminer.ceramics.blocks.BlockClayHard;
@@ -15,6 +16,7 @@ import knightminer.ceramics.blocks.BlockClaySoft;
 import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
 import knightminer.ceramics.blocks.BlockClayWall;
 import knightminer.ceramics.blocks.BlockEnumBase;
+import knightminer.ceramics.blocks.BlockFaucet;
 import knightminer.ceramics.blocks.BlockStained;
 import knightminer.ceramics.blocks.BlockStairsBase;
 import knightminer.ceramics.items.ItemArmorClay;
@@ -35,6 +37,7 @@ import knightminer.ceramics.plugin.bwm.BetterWithModsPlugin;
 //import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
+import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -217,19 +220,19 @@ public class Ceramics {
 			clayBarrelStainedExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "clay_barrel_stained_extension");
 
 			if(Config.porcelainEnabled) {
-				porcelainBarrel = registerBlock(new ItemCloth(new BlockBarrelStained(false)), "porcelain_barrel");
-				porcelainBarrelExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "porcelain_barrel_extension");
+				porcelainBarrel = registerBlock(new ItemCloth(new BlockBarrelPorcelain(false)), "porcelain_barrel");
+				porcelainBarrelExtension = registerBlock(new ItemCloth(new BlockBarrelPorcelain(true)), "porcelain_barrel_extension");
 			}
 
 			registerTE(TileBarrel.class, "barrel");
 			registerTE(TileBarrelExtension.class, "barrel_extension");
 		}
 
-		// load plugins
-		/*
-		if(Loader.isModLoaded(ModIDs.TINKERS)) {
-			TConstructPlugin.preInit();
-		}*/
+		if(Config.porcelainFaucetEnabled) {
+			porcelainFaucet = Ceramics.registerBlock(new ItemBlock(new BlockFaucet()), "faucet");
+
+			registerTE(TileFaucet.class, "faucet");
+		}
 
 		CeramicsNetwork.registerPackets();
 
@@ -243,6 +246,7 @@ public class Ceramics {
 			// smelt raw porcelain blocks into porcelain
 			GameRegistry.addSmelting(new ItemStack(claySoft, 1, ClayTypeSoft.PORCELAIN.getMeta()),
 					new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata()), 0.1f);
+
 		}
 
 		// bucket
@@ -280,19 +284,9 @@ public class Ceramics {
 			// fire the barrels
 			GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 0), new ItemStack(clayBarrel, 1, 0), 0.5f);
 			GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 1), new ItemStack(clayBarrel, 1, 1), 0.5f);
-
-			// fire barrels made of porcelain
-			if(Config.porcelainEnabled) {
-				GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 2), new ItemStack(porcelainBarrel, 1, 0), 0.5f);
-				GameRegistry.addSmelting(new ItemStack(clayBarrelUnfired, 1, 3), new ItemStack(porcelainBarrelExtension, 1, 0), 0.5f);
-			}
 		}
 
 		// load plugins
-		/*
-		if(Loader.isModLoaded(ModIDs.TINKERS)) {
-			TConstructPlugin.init();
-		}*/
 		if(Loader.isModLoaded(ModIDs.BWM)) {
 			BetterWithModsPlugin.init();
 		}

@@ -1,8 +1,12 @@
 package knightminer.ceramics.network;
 
 import knightminer.ceramics.Ceramics;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -13,10 +17,25 @@ public class CeramicsNetwork {
 
 	private static int id = 0;
 	public static void registerPackets() {
-		INSTANCE.registerMessage(BarrelFluidUpdatePacket.BarrelFluidUpdateHandler.class, BarrelFluidUpdatePacket.class, id++, Side.CLIENT);
-		INSTANCE.registerMessage(BarrelCapacityChangedPacket.BarrelCapacityChangedHandler.class, BarrelCapacityChangedPacket.class, id++, Side.CLIENT);
+		INSTANCE.registerMessage(FluidUpdatePacket.FluidUpdateHandler.class, FluidUpdatePacket.class, id++, Side.CLIENT);
+		INSTANCE.registerMessage(BarrelSizeChangedPacket.BarrelCapacityChangedHandler.class, BarrelSizeChangedPacket.class, id++, Side.CLIENT);
 	}
+
 	public static void sendToAllAround(World world, BlockPos pos, PacketBase message) {
 		INSTANCE.sendToAllAround(message, new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+	}
+
+	public static void sendToClients(WorldServer world, BlockPos pos, PacketBase packet) {
+		Chunk chunk = world.getChunkFromBlockCoords(pos);
+		for(EntityPlayer player : world.playerEntities) {
+			// only send to relevant players
+			if(!(player instanceof EntityPlayerMP)) {
+				continue;
+			}
+			EntityPlayerMP playerMP = (EntityPlayerMP) player;
+			if(world.getPlayerChunkMap().isPlayerWatchingChunk(playerMP, chunk.x, chunk.z)) {
+				INSTANCE.sendTo(packet, playerMP);
+			}
+		}
 	}
 }
