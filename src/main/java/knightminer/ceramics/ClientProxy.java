@@ -6,7 +6,6 @@ import knightminer.ceramics.blocks.BlockClayWall;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockEnumSlabBase;
 import knightminer.ceramics.blocks.BlockStained;
-import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.IBlockEnum;
 import knightminer.ceramics.client.BarrelRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
@@ -24,8 +23,6 @@ import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -34,8 +31,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
@@ -135,23 +130,14 @@ public class ClientProxy extends CommonProxy {
 				blocks = new Block[]{ Ceramics.porcelain };
 			}
 			blockColors.registerBlockColorHandler(
-					new IBlockColor() {
-						@Override
-						public int colorMultiplier(@Nonnull IBlockState state, IBlockAccess access, BlockPos pos, int tintIndex) {
-							StainedColor type = state.getValue(BlockStained.COLOR);
-							return type.getColor();
-						}
-					},
+					(state, access, pos, tintIndex) -> state.getValue(BlockStained.COLOR).getColor(),
 					blocks);
 
 			minecraft.getItemColors().registerItemColorHandler(
-					new IItemColor() {
+					(stack, tintIndex) -> {
 						@SuppressWarnings("deprecation")
-						@Override
-						public int getColorFromItemstack(@Nonnull ItemStack stack, int tintIndex) {
-							IBlockState iblockstate = ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata());
-							return blockColors.colorMultiplier(iblockstate, null, null, tintIndex);
-						}
+						IBlockState iblockstate = ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata());
+						return blockColors.colorMultiplier(iblockstate, null, null, tintIndex);
 					},
 					blocks);
 

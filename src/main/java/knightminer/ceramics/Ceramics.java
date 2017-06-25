@@ -1,18 +1,8 @@
 package knightminer.ceramics;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelStained;
@@ -20,24 +10,19 @@ import knightminer.ceramics.blocks.BlockBarrelUnfired;
 import knightminer.ceramics.blocks.BlockClayHard;
 import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
 import knightminer.ceramics.blocks.BlockClayRainbow;
-import knightminer.ceramics.blocks.BlockClayRainbow.RainbowStart;
 import knightminer.ceramics.blocks.BlockClaySlab;
 import knightminer.ceramics.blocks.BlockClaySoft;
 import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
 import knightminer.ceramics.blocks.BlockClayWall;
-import knightminer.ceramics.blocks.BlockClayWall.ClayWallType;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockStained;
-import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.BlockStairsBase;
-import knightminer.ceramics.blocks.IBlockEnum;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
 import knightminer.ceramics.items.ItemBlockBarrel;
 import knightminer.ceramics.items.ItemBlockEnum;
 import knightminer.ceramics.items.ItemBlockEnumSlab;
 import knightminer.ceramics.items.ItemClayBucket;
-import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayShears;
 import knightminer.ceramics.items.ItemClayUnfired;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
@@ -51,8 +36,6 @@ import knightminer.ceramics.plugin.bwm.BetterWithModsPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockStoneSlab;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumDyeColor;
@@ -67,19 +50,15 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 @Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name, dependencies =
 		"required-after:forge@[13.20.0.2289,);after:tconstruct@[1.11.2-2.7.0.27,);" )
@@ -272,17 +251,14 @@ public class Ceramics {
 			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta()), new ItemStack(clayBucket), 0.5f);
 
 			// register lava bucket as a fuel
-			GameRegistry.registerFuelHandler(new IFuelHandler() {
-				@Override
-				public int getBurnTime(ItemStack fuel) {
-					if(fuel != null && fuel.getItem() == clayBucket) {
-						FluidStack fluid = clayBucket.getFluid(fuel);
-						if(fluid != null && fluid.getFluid() == FluidRegistry.LAVA) {
-							return 20000;
-						}
+			GameRegistry.registerFuelHandler((fuel) -> {
+				if(fuel != null && fuel.getItem() == clayBucket) {
+					FluidStack fluid = clayBucket.getFluid(fuel);
+					if(fluid != null && fluid.getFluid() == FluidRegistry.LAVA) {
+						return 20000;
 					}
-					return 0;
 				}
+				return 0;
 			});
 		}
 
@@ -348,7 +324,7 @@ public class Ceramics {
 		}*/
 	}
 
-	
+
 	/* Blocks, items, and TEs */
 
 	@SuppressWarnings("unchecked")
