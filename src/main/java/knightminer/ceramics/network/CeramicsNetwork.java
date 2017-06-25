@@ -13,10 +13,25 @@ public class CeramicsNetwork {
 
 	private static int id = 0;
 	public static void registerPackets() {
-		INSTANCE.registerMessage(BarrelFluidUpdatePacket.BarrelFluidUpdateHandler.class, BarrelFluidUpdatePacket.class, id++, Side.CLIENT);
 		INSTANCE.registerMessage(BarrelCapacityChangedPacket.BarrelCapacityChangedHandler.class, BarrelCapacityChangedPacket.class, id++, Side.CLIENT);
+		INSTANCE.registerMessage(FluidUpdatePacket.FluidUpdateHandler.class, FluidUpdatePacket.class, id++, Side.CLIENT);
 	}
+
 	public static void sendToAllAround(World world, BlockPos pos, PacketBase message) {
 		INSTANCE.sendToAllAround(message, new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 64));
+	}
+
+	public static void sendToClients(WorldServer world, BlockPos pos, PacketBase packet) {
+		Chunk chunk = world.getChunkFromBlockCoords(pos);
+		for(EntityPlayer player : world.playerEntities) {
+			// only send to relevant players
+			if(!(player instanceof EntityPlayerMP)) {
+				continue;
+			}
+			EntityPlayerMP playerMP = (EntityPlayerMP) player;
+			if(world.getPlayerChunkMap().isPlayerWatchingChunk(playerMP, chunk.xPosition, chunk.zPosition)) {
+				INSTANCE.sendTo(packet, playerMP);
+			}
+		}
 	}
 }

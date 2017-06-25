@@ -18,6 +18,7 @@ import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
 import knightminer.ceramics.blocks.BlockClayWall;
 import knightminer.ceramics.blocks.BlockClayWall.ClayWallType;
 import knightminer.ceramics.blocks.BlockEnumBase;
+import knightminer.ceramics.blocks.BlockFaucet;
 import knightminer.ceramics.blocks.BlockStained;
 import knightminer.ceramics.blocks.BlockStained.StainedColor;
 import knightminer.ceramics.blocks.BlockStairsBase;
@@ -40,6 +41,7 @@ import knightminer.ceramics.plugin.bwm.BetterWithModsPlugin;
 import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
+import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStoneSlab;
 import net.minecraft.init.Blocks;
@@ -246,9 +248,10 @@ public class Ceramics {
 
 		}
 
-		// load plugins
-		if(Loader.isModLoaded(ModIDs.TINKERS)) {
-			TConstructPlugin.preInit();
+		if(Config.porcelainFaucetEnabled) {
+			porcelainFaucet = Ceramics.registerBlock(new ItemBlock(new BlockFaucet()), "faucet");
+
+			registerTE(TileFaucet.class, "faucet");
 		}
 
 		CeramicsNetwork.registerPackets();
@@ -431,6 +434,14 @@ public class Ceramics {
 			}
 		}
 
+		if(Config.porcelainFaucetEnabled) {
+			// just the standard recipes, only using porcelain bricks
+			ItemStack porcelainBrick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
+
+			GameRegistry.addRecipe(new ItemStack(porcelainFaucet),
+					"b b", " b ", 'b', porcelainBrick.copy()); // Faucet
+		}
+
 		// decorative bricks
 		if(Config.fancyBricksEnabled) {
 			String[] surround = { "bbb", "b#b", "bbb" };
@@ -522,9 +533,6 @@ public class Ceramics {
 		}
 
 		// load plugins
-		if(Loader.isModLoaded(ModIDs.TINKERS)) {
-			TConstructPlugin.init();
-		}
 		if(Loader.isModLoaded(ModIDs.BWM)) {
 			BetterWithModsPlugin.init();
 		}

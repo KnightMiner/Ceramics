@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -30,11 +31,7 @@ public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
 		}
 
 		BlockPos pos = barrel.getPos();
-		int blockHeight = 1;
-		if(barrel.topPos != null) {
-			pos = barrel.topPos;
-			blockHeight = 1 + barrel.topPos.getY() - barrel.getPos().getY();
-		}
+		int blockHeight = 1 + barrel.height;
 
 		float height = ((float) fluid.amount - tank.renderOffset) / tank.getCapacity() * blockHeight - 0.0625f;
 
@@ -57,34 +54,13 @@ public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
 		GlStateManager.disableCull();
 
 		TextureAtlasSprite sprite = mc.getTextureMapBlocks().getTextureExtry(fluid.getFluid().getStill(fluid).toString());
-
-		// uv
-		double minU = sprite.getInterpolatedU(2);
-		double maxU = sprite.getInterpolatedU(14);
-		double minV = sprite.getInterpolatedV(2);
-		double maxV = sprite.getInterpolatedV(14);
-
-		// color data
 		int color = fluid.getFluid().getColor(fluid);
-		int a = color >> 24 & 0xFF;
-		int r = color >> 16 & 0xFF;
-		int g = color >> 8 & 0xFF;
-		int b = color & 0xFF;
-
-		// lighting
 		int brightness = mc.world.getCombinedLight(pos, fluid.getFluid().getLuminosity());
-		int light1 = brightness >> 0x10 & 0xFFFF;
-		int light2 = brightness & 0xFFFF;
-
-		renderer.pos(0.125, height, 0.125).color(r, g, b, a).tex(minU, minV).lightmap(light1, light2).endVertex();
-		renderer.pos(0.125, height, 0.875).color(r, g, b, a).tex(minU, maxV).lightmap(light1, light2).endVertex();
-		renderer.pos(0.875, height, 0.875).color(r, g, b, a).tex(maxU, maxV).lightmap(light1, light2).endVertex();
-		renderer.pos(0.875, height, 0.125).color(r, g, b, a).tex(maxU, minV).lightmap(light1, light2).endVertex();
+		RenderUtils.putTexturedQuad(renderer, sprite, 0.125, height, 0.125, 0.75, 0, 0.75, EnumFacing.UP, color, brightness, false);
 
 		tessellator.draw();
 		GlStateManager.enableCull();
 
 		RenderUtils.post();
-
 	}
 }

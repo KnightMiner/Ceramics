@@ -1,8 +1,8 @@
 package knightminer.ceramics.library;
 
 import knightminer.ceramics.network.BarrelCapacityChangedPacket;
-import knightminer.ceramics.network.BarrelFluidUpdatePacket;
 import knightminer.ceramics.network.CeramicsNetwork;
+import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
@@ -50,7 +50,7 @@ public class BarrelTank extends FluidTank {
 			renderOffset += amount;
 			World world = parent.getWorld();
 			if(!world.isRemote) {
-				CeramicsNetwork.sendToAllAround(world, parent.getPos(), new BarrelFluidUpdatePacket(parent.getPos(), this.getFluid()));
+				CeramicsNetwork.sendToAllAround(world, parent.getPos(), new FluidUpdatePacket(parent.getPos(), this.getFluid()));
 			}
 		}
 	}

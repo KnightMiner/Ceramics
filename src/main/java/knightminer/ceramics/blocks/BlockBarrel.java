@@ -3,6 +3,7 @@ package knightminer.ceramics.blocks;
 import javax.annotation.Nonnull;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.IFaucetDepthFallback;
 import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelBase;
@@ -34,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
 @Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
-public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepth {
+public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepth, IFaucetDepthFallback {
 
 	public BlockBarrel(Material material) {
 		super(material);
@@ -197,7 +198,6 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 		return 0;
 	}
 
-	@Optional.Method(modid=ModIDs.TINKERS)
 	@Override
 	public float getFlowDepth(World world, BlockPos pos, IBlockState state) {
 		if(isExtension(state)) {
