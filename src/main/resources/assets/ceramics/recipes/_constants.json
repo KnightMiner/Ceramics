@@ -45,12 +45,10 @@
       }
     ],
     "name": "PORCELAIN",
-    "ingredient": [
-      {
-        "item": "ceramics:porcelain",
-        "data": 32767
-      }
-    ]
+    "ingredient": {
+      "item": "ceramics:porcelain",
+      "data": 32767
+    }
   },
   {
     "conditions": [
@@ -64,12 +62,10 @@
       }
     ],
     "name": "PORCELAIN_BARREL",
-    "ingredient": [
-      {
-        "item": "ceramics:porcelain_barrel",
-        "data": 32767
-      }
-    ]
+    "ingredient": {
+      "item": "ceramics:porcelain_barrel",
+      "data": 32767
+    }
   },
   {
     "conditions": [
@@ -83,20 +79,17 @@
       }
     ],
     "name": "PORCELAIN_EXTENSION",
-    "ingredient": [
-      {
-        "item": "ceramics:porcelain_barrel_extension",
-        "data": 32767
-      }
-    ]
+    "ingredient": {
+      "item": "ceramics:porcelain_barrel_extension",
+      "data": 32767
+    }
   },
+  
   {
     "name": "LAVA_BUCKET",
-    "ingredient": [
-      {
-        "item": "minecraft:lava_bucket"
-      }
-    ]
+    "ingredient": {
+      "item": "minecraft:lava_bucket"
+    }
   },
   {
     "conditions": [
@@ -117,5 +110,63 @@
         "nbt": {"fluids": {"FluidName": "lava", "Amount": 1000}}
       }
     ]
+  },
+  
+  {
+    "name": "WHITE_PORCELAIN",
+    "ingredient": {
+      "item": "minecraft:hardened_clay"
+    }
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "porcelain"
+      }
+    ],
+    "name": "WHITE_PORCELAIN",
+    "ingredient": {
+      "item": "ceramics:porcelain",
+      "data": 0
+    }
+  },
+  {
+    "name": "PORCELAIN_BRICK",
+    "ingredient": {
+      "item": "minecraft:brick"
+    }
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "porcelain"
+      }
+    ],
+    "name": "PORCELAIN_BRICK",
+    "ingredient": {
+      "item": "ceramics:unfired_clay",
+      "data": 5
+    }
+  },
+  {
+    "name": "PORCELAIN_BRICK_BLOCK",
+    "ingredient": {
+      "item": "minecraft:brick_block"
+    }
+  },
+  {
+    "conditions": [
+      {
+        "type": "config",
+        "enabled": "porcelain"
+      }
+    ],
+    "name": "PORCELAIN_BRICK_BLOCK",
+    "ingredient": {
+      "item": "ceramics:clay_hard",
+      "data": 0
+    }
   }
 ]

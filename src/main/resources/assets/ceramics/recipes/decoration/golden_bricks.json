@@ -18,8 +18,7 @@
   "type": "forge:ore_shaped",
   "key": {
     "b": {
-      "item": "ceramics:clay_hard",
-      "data": 0
+      "item": "#PORCELAIN_BRICK_BLOCK"
     },
     "#": {
       "ore": "nuggetGold",

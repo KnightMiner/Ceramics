@@ -18,7 +18,7 @@
   "type": "forge:ore_shaped",
   "key": {
     "B": {
-      "item": "ceramics:clay_hard",
+      "item": "#PORCELAIN_BRICK_BLOCK",
       "data": 0
     },
     "r": {

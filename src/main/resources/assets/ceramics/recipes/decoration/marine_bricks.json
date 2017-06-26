@@ -18,8 +18,7 @@
   "type": "forge:ore_shaped",
   "key": {
     "b": {
-      "item": "ceramics:unfired_clay",
-      "data": 5
+      "item": "#PORCELAIN_BRICK"
     },
     "#": {
       "ore": "dyeBlue",
