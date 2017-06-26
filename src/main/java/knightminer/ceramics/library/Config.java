@@ -19,6 +19,9 @@ public class Config {
 	public static boolean rainbowClayEnabled = true;
 	public static boolean smeltClayArmor = false;
 
+	public static int barrelClayCapacity = 4;
+	public static int barrelPorcelainCapacity = 6;
+
 	static Configuration configFile;
 
 	public static void load(FMLPreInitializationEvent event) {
@@ -49,6 +52,11 @@ public class Config {
 				"Enables walls made of vanilla bricks. Mainly here if another mod provides this feature (e.g. Quark)");
 		porcelainFaucetEnabled = configFile.getBoolean("porcelainFaucet", "enabled", true,
 				"Enables porcelain faucets for moving fluids. Requires porcelain") && porcelainEnabled;
+
+		barrelClayCapacity = configFile.getInt("capacityClay", "barrel", 4, 1, 100,
+				"Storage capacity for clay barrels in buckets. This determines the base and the amount each extension adds. Changing this will require breaking and replacing the barrel to update.");
+		barrelPorcelainCapacity = configFile.getInt("capacityPorcelain", "barrel", 6, 1, 100,
+				"Storage capacity for porcelain barrels in buckets. This determines the base and the amount each extension adds. Changing this will require breaking and replacing the barrel to update.");
 
 		if(configFile.hasChanged()) {
 			configFile.save();
