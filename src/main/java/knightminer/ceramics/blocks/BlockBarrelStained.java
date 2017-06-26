@@ -1,20 +1,15 @@
 package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.blocks.BlockStained.StainedColor;
-import net.minecraft.block.material.MapColor;
+import knightminer.ceramics.library.Config;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockBarrelStained extends BlockBarrel {
 
@@ -37,10 +32,11 @@ public class BlockBarrelStained extends BlockBarrel {
 	 * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
 	 */
 	@Override
-	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-		for (EnumDyeColor enumdyecolor : EnumDyeColor.values()) {
-			list.add(new ItemStack(this, 1, enumdyecolor.getMetadata()));
+		if(Config.barrelEnabled) {
+			for (EnumDyeColor enumdyecolor : EnumDyeColor.values()) {
+				list.add(new ItemStack(this, 1, enumdyecolor.getMetadata()));
+			}
 		}
 	}
 

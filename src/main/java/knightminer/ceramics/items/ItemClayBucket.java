@@ -44,8 +44,6 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 @SuppressWarnings("deprecation")
@@ -98,7 +96,7 @@ public class ItemClayBucket extends Item {
 		// milk we set active and return success, drinking code is done elsewhere
 		if(getSpecialFluid(stack) == SpecialFluid.MILK) {
 			player.setActiveHand(hand);
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
+			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		}
 
 		// empty bucket logic is just an event :)
@@ -500,13 +498,12 @@ public class ItemClayBucket extends Item {
 		return getSpecialFluid(stack) == SpecialFluid.MILK ? EnumAction.DRINK : EnumAction.NONE;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        if (this.isInCreativeTab(tab)) {
+		if (Config.bucketEnabled && this.isInCreativeTab(tab)) {
 			// empty
 			subItems.add(new ItemStack(this));
-	
+
 			// add all fluids that the bucket can be filled with
 			for(Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
 				// skip milk if registered since we add it manually whether it is a
@@ -525,7 +522,7 @@ public class ItemClayBucket extends Item {
 					subItems.add(new ItemStack(this, 1, fluid.getMeta()));
 				}
 			}
-        }
+		}
 	}
 
 	@Override

@@ -1,13 +1,16 @@
 package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -45,4 +48,13 @@ public class ItemClayShears extends ItemShears {
 		}
 	}
 
+	/**
+	 * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+	 */
+	@Override
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+		if (Config.shearsEnabled && this.isInCreativeTab(tab)) {
+			subItems.add(new ItemStack(this));
+		}
+	}
 }

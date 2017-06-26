@@ -5,7 +5,7 @@ import net.minecraft.item.ItemMultiTexture;
 
 public class ItemBlockBarrel extends ItemMultiTexture {
 
-	public ItemBlockBarrel(Block block, String[] names) {
+	public ItemBlockBarrel(Block block, String... names) {
 		super(block, block, names);
 	}
 }

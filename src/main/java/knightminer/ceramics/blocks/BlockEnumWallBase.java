@@ -9,12 +9,9 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockEnumWallBase<T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> extends BlockWall implements IBlockEnum<T>  {
 
@@ -91,20 +88,9 @@ public class BlockEnumWallBase<T extends Enum<T> & IStringSerializable & BlockEn
 	}
 
 	/**
-	 * Returns the slab block name with the type associated with it
-	 *
-	@Override
-	public String getUnlocalizedName(int meta) {
-		IBlockState state = getStateFromMeta(meta);
-		String name = state.getValue(prop).getName();
-		return super.getUnlocalizedName() + "." + name;
-	}*/
-
-	/**
 	 * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
 	 */
 	@Override
-	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
 		for(T type : values) {
 			if(type.shouldDisplay()) {

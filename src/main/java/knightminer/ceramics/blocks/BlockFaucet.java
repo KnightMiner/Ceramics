@@ -4,10 +4,10 @@ package knightminer.ceramics.blocks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.Config;
 import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -17,12 +17,15 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -33,12 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class BlockFaucet extends BlockContainer {
 
 	// Facing == input, can be any side except bottom, because down always is output direction
-	public static final PropertyDirection FACING = PropertyDirection.create("facing", new Predicate<EnumFacing>() {
-		@Override
-		public boolean apply(@Nullable EnumFacing input) {
-			return input != EnumFacing.DOWN;
-		}
-	});
+	public static final PropertyDirection FACING = PropertyDirection.create("facing", (@Nullable EnumFacing input) -> input != EnumFacing.DOWN);
 	public static final PropertyBool CONNECTED = PropertyBool.create("connected");
 
 	public BlockFaucet() {
@@ -185,8 +183,6 @@ public class BlockFaucet extends BlockContainer {
 		return new TileFaucet();
 	}
 
-
-
 	/**
 	 * Called by ItemBlocks just before a block is actually set in the world, to allow for adjustments to the
 	 * IBlockstate
@@ -200,5 +196,15 @@ public class BlockFaucet extends BlockContainer {
 		}
 
 		return this.getDefaultState().withProperty(FACING, enumfacing);
+	}
+
+	/**
+	 * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
+	 */
+	@Override
+	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
+		if(Config.faucetEnabled) {
+			list.add(new ItemStack(this));
+		}
 	}
 }

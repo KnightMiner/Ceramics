@@ -47,7 +47,7 @@ public class FaucetRenderer extends TileEntitySpecialRenderer<TileFaucet> {
 	}
 
 	@Override
-	public void renderTileEntityAt(@Nonnull TileFaucet te, double x, double y, double z, float partialTicks, int destroyStage, float p_192841_10_) {
+	public void render(@Nonnull TileFaucet te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if(!te.isPouring || te.drained == null) {
 			return;
 		}

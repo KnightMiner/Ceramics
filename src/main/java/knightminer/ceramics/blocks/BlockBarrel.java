@@ -3,6 +3,7 @@ package knightminer.ceramics.blocks;
 import javax.annotation.Nonnull;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.IFaucetDepthFallback;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelBase;
@@ -28,9 +29,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-//import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
 //@Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
 public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepthFallback {
@@ -183,10 +181,11 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 	 * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
 	 */
 	@Override
-	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
-		list.add(new ItemStack(this, 1, 0));
-		list.add(new ItemStack(this, 1, 1));
+		if(Config.barrelEnabled) {
+			list.add(new ItemStack(this, 1, 0));
+			list.add(new ItemStack(this, 1, 1));
+		}
 	}
 
 	/* Block properties */

@@ -8,12 +8,9 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class BlockEnumSlabBase<T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> extends BlockSlab implements IBlockEnum<T> {
 
@@ -107,7 +104,6 @@ public abstract class BlockEnumSlabBase<T extends Enum<T> & IStringSerializable 
 	 * returns a list of blocks with the same ID, but different meta (eg: wood returns 4 blocks)
 	 */
 	@Override
-	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
 		for(T type : values) {
 			if(type.shouldDisplay()) {

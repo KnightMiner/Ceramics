@@ -3,6 +3,7 @@ package knightminer.ceramics.blocks;
 import java.util.Locale;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.Config;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -71,7 +72,7 @@ public class BlockStained extends BlockEnumBase<BlockStained.StainedColor> {
 
 		@Override
 		public boolean shouldDisplay() {
-			return true;
+			return Config.porcelainEnabled;
 		}
 
 		public EnumDyeColor asDyeColor() {

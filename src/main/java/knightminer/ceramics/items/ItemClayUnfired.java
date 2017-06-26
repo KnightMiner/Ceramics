@@ -9,8 +9,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ItemClayUnfired extends Item {
 
@@ -24,9 +22,8 @@ public class ItemClayUnfired extends Item {
 	 * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
 	 */
 	@Override
-	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
-        if (this.isInCreativeTab(tab)) {
+		if (this.isInCreativeTab(tab)) {
 			for(UnfiredType type : UnfiredType.values()) {
 				if(type.shouldDisplay()) {
 					subItems.add(new ItemStack(this, 1, type.getMeta()));

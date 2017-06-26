@@ -1,9 +1,6 @@
 package knightminer.ceramics;
 
 public class CommonProxy {
-	public void preInit() {
-		registerModels();
-	}
+	public void preInit() {}
 	public void init() {}
-	public void registerModels() {}
 }

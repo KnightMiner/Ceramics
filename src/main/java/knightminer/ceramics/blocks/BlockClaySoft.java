@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.items.ItemClayUnfired;
+import knightminer.ceramics.library.Config;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -77,7 +78,7 @@ public class BlockClaySoft extends BlockEnumBase<BlockClaySoft.ClayTypeSoft> {
 
 		@Override
 		public boolean shouldDisplay() {
-			return true;
+			return Config.porcelainEnabled;
 		}
 
 		@Override

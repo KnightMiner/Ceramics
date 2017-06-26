@@ -33,15 +33,30 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ClientProxy extends CommonProxy {
 
 	public static Minecraft minecraft = Minecraft.getMinecraft();
 
 	@Override
-	public void registerModels() {
+	public void preInit() {
+		MinecraftForge.EVENT_BUS.register(this);
+
+		if(Config.barrelEnabled) {
+			ClientRegistry.bindTileEntitySpecialRenderer(TileBarrel.class, new BarrelRenderer());
+		}
+		if(Config.faucetEnabled) {
+			ClientRegistry.bindTileEntitySpecialRenderer(TileFaucet.class, new FaucetRenderer());
+		}
+	}
+
+	@SubscribeEvent
+	public void registerModels(ModelRegistryEvent event) {
 		// color is handled by tinting
 		ignoreProperty(BlockStained.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
 		// separate all walls to their own file
@@ -110,14 +125,7 @@ public class ClientProxy extends CommonProxy {
 			registerItemModel(Ceramics.clayBarrelStainedExtension, type.getMetadata(), "color=" + type.getName());
 		}
 
-		if(Config.barrelEnabled) {
-			ClientRegistry.bindTileEntitySpecialRenderer(TileBarrel.class, new BarrelRenderer());
-		}
-		if(Config.porcelainFaucetEnabled) {
-			ClientRegistry.bindTileEntitySpecialRenderer(TileFaucet.class, new FaucetRenderer());
-		}
-
-		registerItemModel(Ceramics.porcelainFaucet);
+		registerItemModel(Ceramics.faucet);
 	}
 
 	@Override

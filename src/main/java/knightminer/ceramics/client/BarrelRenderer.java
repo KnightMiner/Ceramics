@@ -20,7 +20,7 @@ public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
 	public static Minecraft mc = Minecraft.getMinecraft();
 
 	@Override
-	public void renderTileEntityAt(TileBarrel barrel, double x, double y, double z, float partialTicks, int destroyStage, float p_192841_10_) {
+	public void render(TileBarrel barrel, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		BarrelTank tank = barrel.getTank();
 
 		FluidStack fluid = tank.getFluid();

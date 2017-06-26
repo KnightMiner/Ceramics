@@ -18,7 +18,7 @@ import knightminer.ceramics.blocks.BlockClayWall;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockFaucet;
 import knightminer.ceramics.blocks.BlockStained;
-import knightminer.ceramics.blocks.BlockStairsBase;
+import knightminer.ceramics.blocks.BlockStairsEnum;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
 import knightminer.ceramics.items.ItemBlockBarrel;
@@ -34,7 +34,6 @@ import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.library.Util;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.plugin.bwm.BetterWithModsPlugin;
-//import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
 import knightminer.ceramics.tileentity.TileFaucet;
@@ -51,6 +50,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
@@ -60,8 +60,10 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name, dependencies =
 		"required-after:forge@[13.20.0.2289,);after:tconstruct@[1.11.2-2.7.0.27,);" )
@@ -88,7 +90,7 @@ public class Ceramics {
 	public static Block porcelainBarrelExtension;
 	public static Block clayBarrelStained;
 	public static Block clayBarrelStainedExtension;
-	public static Block porcelain;
+	public static BlockStained porcelain;
 
 	public static Block stairsPorcelainBricks;
 	public static Block stairsDarkBricks;
@@ -117,7 +119,7 @@ public class Ceramics {
 	public static Item clayBootsRaw;
 
 	// tic support
-	public static Block porcelainFaucet;
+	public static Block faucet;
 
 	static {
 		FluidRegistry.enableUniversalBucket();
@@ -147,106 +149,137 @@ public class Ceramics {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		Config.load(event);
-		// generic materials
-		clayUnfired = registerItem(new ItemClayUnfired(), "unfired_clay");
-		clayHard = registerBlock(new ItemBlockEnum(new BlockClayHard()), "clay_hard");
-		claySlab = registerBlock(new ItemBlockEnumSlab(new BlockClaySlab()), "clay_slab");
-		clayWall = registerBlock(new ItemBlockEnum(new BlockClayWall()), "clay_wall");
 
-		// porcelain
-		if(Config.porcelainEnabled) {
-			// not technically porcelain as I may add other soft blocks later, but for now
-			claySoft = registerBlock(new ItemBlockEnum(new BlockClaySoft()), "clay_soft");
-			porcelain = registerBlock(new ItemBlockEnum(new BlockStained()), "porcelain");
-			stairsPorcelainBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.PORCELAIN_BRICKS, "porcelain_bricks_stairs");
-
-			// for other mods adding porcelain
-			oredict(clayUnfired, UnfiredType.PORCELAIN.getMeta(), "clayPorcelain");
-		}
-
-		// fancy brick stairs, slabs and main blocks done above
-		if(Config.fancyBricksEnabled) {
-			stairsDarkBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.DARK_BRICKS, "dark_bricks_stairs");
-			stairsGoldenBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.GOLDEN_BRICKS, "golden_bricks_stairs");
-			stairsMarineBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.MARINE_BRICKS, "marine_bricks_stairs");
-			stairsDragonBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.DRAGON_BRICKS, "dragon_bricks_stairs");
-			stairsLavaBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.LAVA_BRICKS, "lava_bricks_stairs");
-		}
-
-		// animated rainbow colors
-		if(Config.rainbowClayEnabled) {
-			rainbowClay = registerBlock(new ItemBlockEnum(new BlockClayRainbow()), "rainbow_clay");
-			stairsRainbowBricks = registerBlockStairsFrom(clayHard, ClayTypeHard.RAINBOW_BRICKS, "rainbow_bricks_stairs");
-		}
-
-		// bucket
-		if(Config.bucketEnabled) {
-			clayBucket = registerItem(new ItemClayBucket(), "clay_bucket");
-			tab.setIcon(new ItemStack(clayBucket));
-		}
-
-		// shears
-		if(Config.shearsEnabled) {
-			clayShears = registerItem(new ItemClayShears(), "clay_shears");
-		}
-
-		// armor
-		if(Config.armorEnabled) {
-			clayArmor = EnumHelper.addArmorMaterial(Util.prefix("clay"), "cermamics:clay", 4, new int[]{1, 2, 3, 1}, 7,
-					null, 0);
-			clayArmor.repairMaterial = new ItemStack(Items.BRICK);
-			clayHelmet = registerItem(new ItemArmorClay(EntityEquipmentSlot.HEAD), "clay_helmet");
-			clayChestplate = registerItem(new ItemArmorClay(EntityEquipmentSlot.CHEST), "clay_chestplate");
-			clayLeggings = registerItem(new ItemArmorClay(EntityEquipmentSlot.LEGS), "clay_leggings");
-			clayBoots = registerItem(new ItemArmorClay(EntityEquipmentSlot.FEET), "clay_boots");
-
-			clayArmorRaw = EnumHelper.addArmorMaterial(Util.prefix("clay_raw"), "cermamics:clay_raw", 1,
-					new int[]{1, 1, 1, 1}, 0, null, 0);
-			clayArmor.repairMaterial = new ItemStack(Items.CLAY_BALL);
-			clayHelmetRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.HEAD), "clay_helmet_raw");
-			clayChestplateRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.CHEST), "clay_chestplate_raw");
-			clayLeggingsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.LEGS), "clay_leggings_raw");
-			clayBootsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.FEET), "clay_boots_raw");
-
-			oredict(clayUnfired, UnfiredType.CLAY_PLATE_RAW.getMeta(), "plateClayRaw");
-			oredict(clayUnfired, UnfiredType.CLAY_PLATE.getMeta(), "plateClay", "plateBrick"); // plateBrick is because bricks are ingotBrick
-		}
-
-		// barrels
-		if(Config.barrelEnabled) {
-			clayBarrelUnfired = registerBlock(new ItemBlockBarrel(new BlockBarrelUnfired(), new String[] {"clay", "clay_extension", "porcelain", "porcelain_extension"}), "clay_barrel_unfired");
-			clayBarrel = registerBlock(new ItemBlockBarrel(new BlockBarrel(), new String[] {"barrel", "barrel_extension"}), "clay_barrel");
-			clayBarrelStained = registerBlock(new ItemCloth(new BlockBarrelStained(false)), "clay_barrel_stained");
-			clayBarrelStainedExtension = registerBlock(new ItemCloth(new BlockBarrelStained(true)), "clay_barrel_stained_extension");
-
-			if(Config.porcelainEnabled) {
-				porcelainBarrel = registerBlock(new ItemCloth(new BlockBarrelPorcelain(false)), "porcelain_barrel");
-				porcelainBarrelExtension = registerBlock(new ItemCloth(new BlockBarrelPorcelain(true)), "porcelain_barrel_extension");
-			}
-
-			registerTE(TileBarrel.class, "barrel");
-			registerTE(TileBarrelExtension.class, "barrel_extension");
-		}
-
-		if(Config.porcelainFaucetEnabled) {
-			porcelainFaucet = Ceramics.registerBlock(new ItemBlock(new BlockFaucet()), "faucet");
-
-			registerTE(TileFaucet.class, "faucet");
-		}
+		// create armor materials
+		clayArmor = EnumHelper.addArmorMaterial(Util.prefix("clay"), "cermamics:clay", 4,
+				new int[]{1, 2, 3, 1}, 7, null, 0);
+		clayArmor.repairMaterial = new ItemStack(Items.BRICK);
+		clayArmorRaw = EnumHelper.addArmorMaterial(Util.prefix("clay_raw"), "cermamics:clay_raw", 1,
+				new int[]{1, 1, 1, 1}, 0, null, 0);
+		clayArmor.repairMaterial = new ItemStack(Items.CLAY_BALL);
 
 		CeramicsNetwork.registerPackets();
 
 		proxy.preInit();
 	}
 
+	@Mod.EventBusSubscriber(modid=modID)
+	public static class Registration {
+		@SubscribeEvent
+		public static void registerBlocks(RegistryEvent.Register<Block> event) {
+			IForgeRegistry<Block> r = event.getRegistry();
+
+			// core blocks
+			clayHard = registerBlock(r, new BlockClayHard(), "clay_hard");
+			claySoft = registerBlock(r, new BlockClaySoft(), "clay_soft");
+			claySlab = registerBlock(r, new BlockClaySlab(), "clay_slab");
+			clayWall = registerBlock(r, new BlockClayWall(), "clay_wall");
+
+			// porcelain
+			porcelain = registerBlock(r, new BlockStained(), "porcelain");
+			stairsPorcelainBricks = registerStairsFrom(r, clayHard, ClayTypeHard.PORCELAIN_BRICKS, "porcelain_bricks_stairs");
+
+			// rainbow clay
+			rainbowClay = registerBlock(r, new BlockClayRainbow(), "rainbow_clay");
+			stairsRainbowBricks = registerStairsFrom(r, clayHard, ClayTypeHard.RAINBOW_BRICKS, "rainbow_bricks_stairs");
+
+			// fancy bricks
+			stairsDarkBricks = registerStairsFrom(r, clayHard, ClayTypeHard.DARK_BRICKS, "dark_bricks_stairs");
+			stairsGoldenBricks = registerStairsFrom(r, clayHard, ClayTypeHard.GOLDEN_BRICKS, "golden_bricks_stairs");
+			stairsMarineBricks = registerStairsFrom(r, clayHard, ClayTypeHard.MARINE_BRICKS, "marine_bricks_stairs");
+			stairsDragonBricks = registerStairsFrom(r, clayHard, ClayTypeHard.DRAGON_BRICKS, "dragon_bricks_stairs");
+			stairsLavaBricks = registerStairsFrom(r, clayHard, ClayTypeHard.LAVA_BRICKS, "lava_bricks_stairs");
+
+			// barrels
+			clayBarrelUnfired = registerBlock(r, new BlockBarrelUnfired(), "clay_barrel_unfired");
+			clayBarrel = registerBlock(r, new BlockBarrel(), "clay_barrel");
+			clayBarrelStained = registerBlock(r, new BlockBarrelStained(false), "clay_barrel_stained");
+			clayBarrelStainedExtension = registerBlock(r, new BlockBarrelStained(true), "clay_barrel_stained_extension");
+			porcelainBarrel = registerBlock(r, new BlockBarrelPorcelain(false), "porcelain_barrel");
+			porcelainBarrelExtension = registerBlock(r, new BlockBarrelPorcelain(true), "porcelain_barrel_extension");
+
+			registerTE(TileBarrel.class, "barrel");
+			registerTE(TileBarrelExtension.class, "barrel_extension");
+
+			// faucet
+			faucet = registerBlock(r, new BlockFaucet(), "faucet");
+			registerTE(TileFaucet.class, "faucet");
+		}
+
+		@SubscribeEvent
+		public static void registerItems(RegistryEvent.Register<Item> event) {
+			IForgeRegistry<Item> r = event.getRegistry();
+
+			// generic materials
+			clayUnfired = registerItem(r, new ItemClayUnfired(), "unfired_clay");
+
+			// bucket
+			clayBucket = registerItem(r, new ItemClayBucket(), "clay_bucket");
+			tab.setIcon(new ItemStack(clayBucket));
+
+			// shears
+			clayShears = registerItem(r, new ItemClayShears(), "clay_shears");
+
+			// armor
+			clayHelmet = registerItem(r, new ItemArmorClay(EntityEquipmentSlot.HEAD), "clay_helmet");
+			clayChestplate = registerItem(r, new ItemArmorClay(EntityEquipmentSlot.CHEST), "clay_chestplate");
+			clayLeggings = registerItem(r, new ItemArmorClay(EntityEquipmentSlot.LEGS), "clay_leggings");
+			clayBoots = registerItem(r, new ItemArmorClay(EntityEquipmentSlot.FEET), "clay_boots");
+
+			clayHelmetRaw = registerItem(r, new ItemArmorClayRaw(EntityEquipmentSlot.HEAD), "clay_helmet_raw");
+			clayChestplateRaw = registerItem(r, new ItemArmorClayRaw(EntityEquipmentSlot.CHEST), "clay_chestplate_raw");
+			clayLeggingsRaw = registerItem(r, new ItemArmorClayRaw(EntityEquipmentSlot.LEGS), "clay_leggings_raw");
+			clayBootsRaw = registerItem(r, new ItemArmorClayRaw(EntityEquipmentSlot.FEET), "clay_boots_raw");
+
+
+			//// item blocks ////
+
+			// base materials
+			registerItemBlock(r, new ItemBlockEnum(clayHard));
+			registerItemBlock(r, new ItemBlockEnum(claySoft));
+			registerItemBlock(r, new ItemBlockEnum(clayWall));
+			registerItemBlock(r, new ItemBlockEnumSlab(claySlab));
+
+			// porcelain
+			registerItemBlock(r, new ItemBlockEnum(porcelain));
+			registerItemBlock(r, stairsPorcelainBricks);
+
+			// rainbow clay
+			registerItemBlock(r, new ItemBlockEnum(rainbowClay));
+			registerItemBlock(r, stairsRainbowBricks);
+
+			// fancy bricks
+			registerItemBlock(r, stairsDarkBricks);
+			registerItemBlock(r, stairsGoldenBricks);
+			registerItemBlock(r, stairsMarineBricks);
+			registerItemBlock(r, stairsDragonBricks);
+			registerItemBlock(r, stairsLavaBricks);
+
+			// barrels
+			registerItemBlock(r, new ItemBlockBarrel(clayBarrelUnfired, "clay", "clay_extension", "porcelain", "porcelain_extension"));
+			registerItemBlock(r, new ItemBlockBarrel(clayBarrel, "barrel", "barrel_extension"));
+			registerItemBlock(r, new ItemCloth(clayBarrelStained));
+			registerItemBlock(r, new ItemCloth(clayBarrelStainedExtension));
+			registerItemBlock(r, new ItemCloth(porcelainBarrel));
+			registerItemBlock(r, new ItemCloth(porcelainBarrelExtension));
+
+			// faucet
+			registerItemBlock(r, faucet);
+		}
+	}
+
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
+		oredict(clayUnfired, UnfiredType.CLAY_PLATE_RAW.getMeta(), "plateClayRaw");
+		oredict(clayUnfired, UnfiredType.CLAY_PLATE.getMeta(), "plateClay", "plateBrick"); // plateBrick is because bricks are ingotBrick
+
 		// porcelain
 		if(Config.porcelainEnabled) {
+			oredict(clayUnfired, UnfiredType.PORCELAIN.getMeta(), "clayPorcelain");
+
 			// smelt raw porcelain blocks into porcelain
 			GameRegistry.addSmelting(new ItemStack(claySoft, 1, ClayTypeSoft.PORCELAIN.getMeta()),
 					new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata()), 0.1f);
-
 		}
 
 		// bucket
@@ -277,6 +310,7 @@ public class Ceramics {
 			// fire the plates
 			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE_RAW.getMeta()),
 					new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta()), 0.5f);
+
 		}
 
 		// barrels
@@ -327,30 +361,43 @@ public class Ceramics {
 
 	/* Blocks, items, and TEs */
 
-	@SuppressWarnings("unchecked")
-	public static <T extends Block> T registerBlock(ItemBlock item, String name) {
-		Block block = item.getBlock();
-
+	public static <T extends Block> T registerBlock(IForgeRegistry<Block> registry, T block, String name) {
 		block.setUnlocalizedName(Util.prefix(name));
 		block.setRegistryName(Util.getResource(name));
-		GameRegistry.register(block);
 
-		registerItem(item, name);
+		registry.register(block);
 
-		return (T) block;
+		return block;
 	}
 
-	protected static <E extends Enum<E> & BlockEnumBase.IEnumMeta & IStringSerializable> BlockStairsBase registerBlockStairsFrom(BlockEnumBase<E> block, E value, String name) {
-		return registerBlock(new ItemBlock(new BlockStairsBase(block.getDefaultState().withProperty(block.getMappingProperty(), value))), name);
+	protected static <E extends Enum<E> & BlockEnumBase.IEnumMeta & IStringSerializable> BlockStairsEnum registerStairsFrom(IForgeRegistry<Block> registry, BlockEnumBase<E> block, E value, String name) {
+		return registerBlock(registry, new BlockStairsEnum<>(block, value), name);
 	}
 
-	private static <T extends Item> T registerItem(T item, String name) {
-		item.setUnlocalizedName(Util.prefix(name));
-		item.setRegistryName(Util.getResource(name));
-		GameRegistry.register(item);
+	public static ItemBlock registerItemBlock(IForgeRegistry<Item> registry, Block block) {
+		return registerItemBlock(registry, new ItemBlock(block));
+	}
+
+	public static <T extends ItemBlock> T registerItemBlock(IForgeRegistry<Item> registry, T item) {
+		// grab names from the existing block
+		Block block = item.getBlock();
+		item.setUnlocalizedName(block.getUnlocalizedName());
+		item.setRegistryName(block.getRegistryName());
+
+		registry.register(item);
 
 		return item;
 	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends Item> T registerItem(IForgeRegistry<Item> registry, T block, String name) {
+		block.setUnlocalizedName(Util.prefix(name));
+		block.setRegistryName(Util.getResource(name));
+		registry.register(block);
+
+		return block;
+	}
+
 
 	protected static void registerTE(Class<? extends TileEntity> teClazz, String name) {
 		GameRegistry.registerTileEntity(teClazz, Util.prefix(name));
