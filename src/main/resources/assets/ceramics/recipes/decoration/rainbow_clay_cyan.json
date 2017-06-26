@@ -5,6 +5,7 @@
       "enabled": "rainbow_clay"
     }
   ],
+  "group": "ceramics:rainbow_swap",
   "result": {
     "item": "ceramics:rainbow_clay",
     "data": 4

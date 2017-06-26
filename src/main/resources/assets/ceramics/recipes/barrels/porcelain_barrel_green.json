@@ -9,6 +9,7 @@
       "enabled": "porcelain"
     }
   ],
+  "group": "ceramics:barrel_porcelain",
   "result": {
     "item": "ceramics:porcelain_barrel",
     "data": 13,

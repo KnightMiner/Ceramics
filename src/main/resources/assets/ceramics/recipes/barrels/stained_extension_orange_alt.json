@@ -5,6 +5,7 @@
       "enabled": "barrel"
     }
   ],
+  "group": "ceramics:barrel_staining_alt",
   "result": {
     "item": "ceramics:clay_barrel_stained_extension",
     "data": 1

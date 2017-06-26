@@ -5,6 +5,7 @@
       "enabled": "porcelain"
     }
   ],
+  "group": "ceramics:porcelain",
   "result": {
     "item": "ceramics:unfired_clay",
     "data": 4,

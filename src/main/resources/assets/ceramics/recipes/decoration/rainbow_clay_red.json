@@ -18,8 +18,7 @@
   "type": "forge:ore_shaped",
   "key": {
     "B": {
-      "item": "ceramics:porcelain",
-      "data": 0
+      "item": "#WHITE_PORCELAIN"
     },
     "r": {
       "ore": "dyeRed",
