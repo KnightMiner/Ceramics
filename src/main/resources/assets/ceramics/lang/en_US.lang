@@ -192,3 +192,5 @@ ceramics.barrel.fluid.amount=Contains: %smb %s
 ceramics.jei.bucket=Clay buckets are an early game alternative to the standard iron bucket. Like their iron counterparts, they can be used to transport liquids, but will break after pouring out a hot liquid.
 ceramics.jei.barrel.base=Barrels are a simple fluid storage block, storing up to 4 buckets. If broken, the barrel will lose its fluid.
 ceramics.jei.barrel.extension=Barrel extensions can be placed above barrels to extend the capacity. An extension adds 4 buckets to the capacity, and can be additionally placed on an extension for nearly unlimited height.
+ceramics.jei.barrel_porcelain.base=Porcelain barrels are an upgraded version of the clay barrel with a capacity of 6 buckets. Like its clay counterpart, it will lose its fluid when broken.
+ceramics.jei.barrel_porcelain.extension=Porcelain barrel extensions can be used to extend a porcelain barrel's capacity. The function the same as the clay extensions except they add 6 to the capacity, though clay and porcelain extension and barrels can not be mixed.

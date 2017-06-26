@@ -38,16 +38,21 @@ public class JEIPlugin implements IModPlugin {
 				extensions.add(new ItemStack(Ceramics.clayBarrelStainedExtension, 1, color.getMetadata()));
 			}
 
-			// porcelain ones, we want all the colors in order
-			if(Config.porcelainEnabled) {
-				for(EnumDyeColor color : EnumDyeColor.values()) {
-					barrels.add(new ItemStack(Ceramics.porcelainBarrel, 1, color.getMetadata()));
-					extensions.add(new ItemStack(Ceramics.porcelainBarrelExtension, 1, color.getMetadata()));
-				}
-			}
-
 			registry.addDescription(barrels, Util.prefix("jei.barrel.base"));
 			registry.addDescription(extensions, Util.prefix("jei.barrel.extension"));
+
+			// porcelain ones, have a larger capacity so a separate entry
+			if(Config.porcelainEnabled) {
+				ArrayList<ItemStack> porcelainBarrels = new ArrayList<ItemStack>();
+				ArrayList<ItemStack> porcelainExtensions = new ArrayList<ItemStack>();
+				for(EnumDyeColor color : EnumDyeColor.values()) {
+					porcelainBarrels.add(new ItemStack(Ceramics.porcelainBarrel, 1, color.getMetadata()));
+					porcelainExtensions.add(new ItemStack(Ceramics.porcelainBarrelExtension, 1, color.getMetadata()));
+				}
+
+				registry.addDescription(porcelainBarrels, Util.prefix("jei.barrel_porcelain.base"));
+				registry.addDescription(porcelainExtensions, Util.prefix("jei.barrel_porcelain.extension"));
+			}
 		}
 	}
 
