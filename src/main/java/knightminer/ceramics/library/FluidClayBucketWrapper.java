@@ -22,14 +22,16 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 	}
 
 	@Override
-	protected void setFluid(Fluid fluid) {
-		if(fluid == null) {
+	protected void setFluid(FluidStack stack) {
+		if(stack == null) {
 			Ceramics.clayBucket.drain(container, 1000, true);
-
+			return;
 		}
-		else if(FluidRegistry.getBucketFluids().contains(fluid) || fluid == FluidRegistry.LAVA
+
+		Fluid fluid = stack.getFluid();
+		if(FluidRegistry.getBucketFluids().contains(fluid) || fluid == FluidRegistry.LAVA
 				|| fluid == FluidRegistry.WATER || fluid.getName().equals("milk")) {
-			Ceramics.clayBucket.fill(container, new FluidStack(fluid, Fluid.BUCKET_VOLUME), true);
+			Ceramics.clayBucket.fill(container, new FluidStack(stack, Fluid.BUCKET_VOLUME), true);
 		}
 	}
 
