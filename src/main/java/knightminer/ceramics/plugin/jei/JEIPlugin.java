@@ -12,10 +12,12 @@ import mezz.jei.api.ISubtypeRegistry;
 import mezz.jei.api.ingredients.IModIngredientRegistration;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.translation.I18n;
 
 @mezz.jei.api.JEIPlugin
 public class JEIPlugin implements IModPlugin {
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void register(IModRegistry registry) {
 		// descriptions
@@ -38,8 +40,8 @@ public class JEIPlugin implements IModPlugin {
 				extensions.add(new ItemStack(Ceramics.clayBarrelStainedExtension, 1, color.getMetadata()));
 			}
 
-			registry.addDescription(barrels, Util.prefix("jei.barrel.base"));
-			registry.addDescription(extensions, Util.prefix("jei.barrel.extension"));
+			registry.addDescription(barrels, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.base"), Config.barrelClayCapacity));
+			registry.addDescription(extensions, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.extension"), Config.barrelClayCapacity));
 
 			// porcelain ones, have a larger capacity so a separate entry
 			if(Config.porcelainEnabled) {
@@ -50,8 +52,8 @@ public class JEIPlugin implements IModPlugin {
 					porcelainExtensions.add(new ItemStack(Ceramics.porcelainBarrelExtension, 1, color.getMetadata()));
 				}
 
-				registry.addDescription(porcelainBarrels, Util.prefix("jei.barrel_porcelain.base"));
-				registry.addDescription(porcelainExtensions, Util.prefix("jei.barrel_porcelain.extension"));
+				registry.addDescription(porcelainBarrels, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.porcelain.base"), Config.barrelPorcelainCapacity));
+				registry.addDescription(porcelainExtensions, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.porcelain.extension"), Config.barrelPorcelainCapacity));
 			}
 		}
 	}
