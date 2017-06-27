@@ -58,7 +58,7 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 		if(isExtension(getStateFromMeta(meta))) {
 			return new TileBarrelExtension();
 		}
-		return new TileBarrel(Fluid.BUCKET_VOLUME * 4);
+		return new TileBarrel(Fluid.BUCKET_VOLUME * Config.barrelClayCapacity);
 	}
 
 	// check structure

@@ -1,6 +1,7 @@
 package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.library.Config;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
 import net.minecraft.block.state.IBlockState;
@@ -20,7 +21,7 @@ public class BlockBarrelPorcelain extends BlockBarrelStained {
 		if(isExtension(getStateFromMeta(meta))) {
 			return new TileBarrelExtension();
 		}
-		return new TileBarrel(Fluid.BUCKET_VOLUME * 6);
+		return new TileBarrel(Fluid.BUCKET_VOLUME * Config.barrelPorcelainCapacity);
 	}
 
 	/**
