@@ -272,7 +272,7 @@ public class ItemClayBucket extends Item {
 	@Override
 	public ItemStack getContainerItem(ItemStack stack) {
 		if (doesBreak(stack)) {
-			return null;
+			return ItemStack.EMPTY;
 		}
 		return new ItemStack(this);
 	}
