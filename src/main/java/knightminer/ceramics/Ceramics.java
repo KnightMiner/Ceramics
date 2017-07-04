@@ -52,7 +52,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -66,7 +65,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name, dependencies =
-		"required-after:forge@[14.21.0.2364,);" )
+		"required-after:forge@[14.21.1.2394,);" )
 public class Ceramics {
 	public static final String name = "Ceramics";
 	public static final String modID = "ceramics";
@@ -286,17 +285,6 @@ public class Ceramics {
 		if(Config.bucketEnabled) {
 			// fire buckets
 			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta()), new ItemStack(clayBucket), 0.5f);
-
-			// register lava bucket as a fuel
-			GameRegistry.registerFuelHandler((fuel) -> {
-				if(fuel != null && fuel.getItem() == clayBucket) {
-					FluidStack fluid = clayBucket.getFluid(fuel);
-					if(fluid != null && fluid.getFluid() == FluidRegistry.LAVA) {
-						return 20000;
-					}
-				}
-				return 0;
-			});
 		}
 
 		// shears

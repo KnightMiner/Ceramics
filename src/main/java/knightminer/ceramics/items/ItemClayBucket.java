@@ -498,6 +498,20 @@ public class ItemClayBucket extends Item {
 		return getSpecialFluid(stack) == SpecialFluid.MILK ? EnumAction.DRINK : EnumAction.NONE;
 	}
 
+
+	/**
+	 * @return the fuel burn time for this itemStack in a furnace.
+	 * Return 0 to make it not act as a fuel.
+	 * Return -1 to let the default vanilla logic decide.
+	 */
+	@Override
+	public int getItemBurnTime(ItemStack stack) {
+		FluidStack fluid = getFluid(stack);
+		if(fluid != null && fluid.getFluid() == FluidRegistry.LAVA) {
+			return 20000;
+		}
+		return 0;
+	}
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		if (Config.bucketEnabled && this.isInCreativeTab(tab)) {
