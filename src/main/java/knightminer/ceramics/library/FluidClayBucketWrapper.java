@@ -42,7 +42,7 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 		}
 
 		if (doFill) {
-			setFluid(resource.getFluid());
+			setFluid(resource);
 		}
 
 		return Fluid.BUCKET_VOLUME;

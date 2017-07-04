@@ -89,6 +89,9 @@ public class ItemClayBucket extends Item {
 		return I18n.translateToLocalFormatted(unloc + ".name", fluidStack.getLocalizedName());
 	}
 
+
+	/* Bucket behavior */
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
@@ -263,7 +266,8 @@ public class ItemClayBucket extends Item {
 		}
 	}
 
-	// container items
+
+	/* Container logic */
 
 	@Override
 	public ItemStack getContainerItem(ItemStack stack) {
@@ -278,25 +282,7 @@ public class ItemClayBucket extends Item {
 		return !doesBreak(stack);
 	}
 
-	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target, EnumHand hand) {
-		// only work if the bucket is empty and right clicking a cow
-		if(!hasFluid(stack) && target instanceof EntityCow && !player.capabilities.isCreativeMode) {
-			// if we have multiple buckets in the stack, move to a new slot
-			if(stack.getCount() > 1) {
-				stack.shrink(1);
-				ItemHandlerHelper.giveItemToPlayer(player, setSpecialFluid(new ItemStack(this), SpecialFluid.MILK));
-			}
-			else {
-				setSpecialFluid(stack, SpecialFluid.MILK);
-			}
-
-			return true;
-		}
-		return false;
-	}
-
-	public boolean doesBreak(ItemStack stack) {
+	private boolean doesBreak(ItemStack stack) {
 		// special fluids never breaks
 		if(hasSpecialFluid(stack)) {
 			return false;
@@ -310,6 +296,9 @@ public class ItemClayBucket extends Item {
 
 		return false;
 	}
+
+
+	/* Special fluid behavior */
 
 	/**
 	 * Checks if the stack is not a regular dynamic bucket
@@ -330,13 +319,13 @@ public class ItemClayBucket extends Item {
 		return SpecialFluid.fromMeta(stack.getItemDamage());
 	}
 
-	// in case I change it later
 	public ItemStack setSpecialFluid(ItemStack stack, SpecialFluid fluid) {
 		stack.setItemDamage(fluid.getMeta());
 		return stack;
 	}
 
-	/* Fluids */
+
+	/* Standard fluid logic */
 
 	public FluidStack getFluid(ItemStack container) {
 		// milk logic, if milk is registered we use that basically
@@ -450,6 +439,7 @@ public class ItemClayBucket extends Item {
 		return fluidStack;
 	}
 
+
 	/* Milk bucket logic */
 	/**
 	 * Called when the player finishes using this Item (E.g. finishes eating.).
@@ -498,6 +488,25 @@ public class ItemClayBucket extends Item {
 		return getSpecialFluid(stack) == SpecialFluid.MILK ? EnumAction.DRINK : EnumAction.NONE;
 	}
 
+	// fill with milk from cows
+	@Override
+	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer player, EntityLivingBase target, EnumHand hand) {
+		// only work if the bucket is empty and right clicking a cow
+		if(!hasFluid(stack) && target instanceof EntityCow && !player.capabilities.isCreativeMode) {
+			// if we have multiple buckets in the stack, move to a new slot
+			if(stack.getCount() > 1) {
+				stack.shrink(1);
+				ItemHandlerHelper.giveItemToPlayer(player, setSpecialFluid(new ItemStack(this), SpecialFluid.MILK));
+			}
+			else {
+				setSpecialFluid(stack, SpecialFluid.MILK);
+			}
+
+			return true;
+		}
+		return false;
+	}
+
 
 	/**
 	 * @return the fuel burn time for this itemStack in a furnace.
@@ -512,6 +521,10 @@ public class ItemClayBucket extends Item {
 		}
 		return 0;
 	}
+
+
+	/* Misc */
+
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
 		if (Config.bucketEnabled && this.isInCreativeTab(tab)) {
@@ -542,18 +555,6 @@ public class ItemClayBucket extends Item {
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt) {
 		return new FluidClayBucketWrapper(stack);
-	}
-
-	public ItemStack withFluid(Fluid fluid) {
-		ItemStack stack = new ItemStack(this, 1, 0);
-
-		// add fluid to NBT
-		NBTTagCompound tag = new NBTTagCompound();
-		tag.setTag(TAG_FLUIDS, new FluidStack(fluid, getCapacity()).writeToNBT(new NBTTagCompound()));
-		stack.setTagCompound(tag);
-
-		// return
-		return stack;
 	}
 
 	/**

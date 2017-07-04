@@ -124,27 +124,6 @@ public class Ceramics {
 		FluidRegistry.enableUniversalBucket();
 	}
 
-	// makes oredict to int a bit easier in a couple other places
-	public static final String[] dyes = {
-			"White",
-			"Orange",
-			"Magenta",
-			"LightBlue",
-			"Yellow",
-			"Lime",
-			"Pink",
-			"Gray",
-			"LightGray",
-			"Cyan",
-			"Purple",
-			"Blue",
-			"Brown",
-			"Green",
-			"Red",
-			"Black"
-	};
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		Config.load(event);
@@ -237,7 +216,7 @@ public class Ceramics {
 			registerItemBlock(r, new ItemBlockEnum(clayHard));
 			registerItemBlock(r, new ItemBlockEnum(claySoft));
 			registerItemBlock(r, new ItemBlockEnum(clayWall));
-			registerItemBlock(r, new ItemBlockEnumSlab(claySlab));
+			registerItemBlock(r, new ItemBlockEnumSlab<>(claySlab));
 
 			// porcelain
 			registerItemBlock(r, new ItemBlockEnum(porcelain));
@@ -358,7 +337,7 @@ public class Ceramics {
 		return block;
 	}
 
-	protected static <E extends Enum<E> & BlockEnumBase.IEnumMeta & IStringSerializable> BlockStairsEnum registerStairsFrom(IForgeRegistry<Block> registry, BlockEnumBase<E> block, E value, String name) {
+	protected static <E extends Enum<E> & BlockEnumBase.IEnumMeta & IStringSerializable> BlockStairsEnum<E> registerStairsFrom(IForgeRegistry<Block> registry, BlockEnumBase<E> block, E value, String name) {
 		return registerBlock(registry, new BlockStairsEnum<>(block, value), name);
 	}
 
@@ -377,7 +356,6 @@ public class Ceramics {
 		return item;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T extends Item> T registerItem(IForgeRegistry<Item> registry, T block, String name) {
 		block.setUnlocalizedName(Util.prefix(name));
 		block.setRegistryName(Util.getResource(name));
