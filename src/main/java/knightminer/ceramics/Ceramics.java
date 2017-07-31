@@ -461,8 +461,10 @@ public class Ceramics {
 			// lava bricks: magma mortor
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.LAVA_BRICKS.getMeta()),
 					surround, 'b', Blocks.BRICK_BLOCK, '#', Items.LAVA_BUCKET));
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.LAVA_BRICKS.getMeta()),
-					surround, 'b', Blocks.BRICK_BLOCK, '#', Ceramics.clayBucket.withFluid(FluidRegistry.LAVA)));
+			if(Config.bucketEnabled) {
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(clayHard, 8, ClayTypeHard.LAVA_BRICKS.getMeta()),
+						surround, 'b', Blocks.BRICK_BLOCK, '#', Ceramics.clayBucket.withFluid(FluidRegistry.LAVA)));
+			}
 
 			// if porcelain is disabled, use regular bricks for those recipes
 			Object secondBrick = Items.BRICK;
