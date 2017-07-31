@@ -85,6 +85,7 @@ public class ClientProxy extends CommonProxy {
 
 		// items
 		registerItemModel(Ceramics.clayBucket);
+		registerItemModel(Ceramics.clayBucketBlock);
 		registerItemModel(Ceramics.clayShears);
 
 		// loop through the special bucket types

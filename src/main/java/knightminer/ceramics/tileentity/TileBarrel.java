@@ -126,6 +126,11 @@ public class TileBarrel extends TileBarrelBase {
 
 	/* Rendering */
 	@Override
+	public boolean hasFastRenderer() {
+		return true;
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
 	public AxisAlignedBB getRenderBoundingBox() {
 		int y = pos.getY();

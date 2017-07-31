@@ -1,26 +1,22 @@
 package knightminer.ceramics.client;
 
-import org.lwjgl.opengl.GL11;
+import javax.annotation.Nonnull;
 
 import knightminer.ceramics.library.BarrelTank;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.fluids.FluidStack;
 
-public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
+public class BarrelRenderer extends FastTESR<TileBarrel> {
 	public static Minecraft mc = Minecraft.getMinecraft();
 
 	@Override
-	public void render(TileBarrel barrel, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+	public void renderTileEntityFast(@Nonnull TileBarrel barrel, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder renderer) {
 		BarrelTank tank = barrel.getTank();
 
 		FluidStack fluid = tank.getFluid();
@@ -43,22 +39,12 @@ public class BarrelRenderer extends TileEntitySpecialRenderer<TileBarrel> {
 			tank.renderOffset = 0;
 		}
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder renderer = tessellator.getBuffer();
-		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-		mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-		RenderUtils.pre(x, y, z);
-		GlStateManager.disableCull();
+		renderer.setTranslation(x, y, z);
 
 		TextureAtlasSprite sprite = mc.getTextureMapBlocks().getTextureExtry(fluid.getFluid().getStill(fluid).toString());
 		int color = fluid.getFluid().getColor(fluid);
 		int brightness = mc.world.getCombinedLight(pos, fluid.getFluid().getLuminosity());
 		RenderUtils.putTexturedQuad(renderer, sprite, 0.125, height, 0.125, 0.75, 0, 0.75, EnumFacing.UP, color, brightness, false);
-
-		tessellator.draw();
-		GlStateManager.enableCull();
-
-		RenderUtils.post();
+		renderer.setTranslation(0, 0, 0);
 	}
 }

@@ -8,6 +8,7 @@ import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelPorcelain;
 import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.blocks.BlockBarrelUnfired;
+import knightminer.ceramics.blocks.BlockClayBucket;
 import knightminer.ceramics.blocks.BlockClayHard;
 import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
 import knightminer.ceramics.blocks.BlockClayRainbow;
@@ -90,6 +91,7 @@ public class Ceramics {
 	public static Block clayBarrelStained;
 	public static Block clayBarrelStainedExtension;
 	public static BlockStained porcelain;
+	public static Block clayBucketBlock;
 
 	public static Block stairsPorcelainBricks;
 	public static Block stairsDarkBricks;
@@ -103,6 +105,9 @@ public class Ceramics {
 
 	public static ItemClayBucket clayBucket;
 	public static Item clayShears;
+
+	// simplicity
+	private static ItemStack unfiredBucket;
 
 	// armor
 	public static ArmorMaterial clayArmor;
@@ -176,6 +181,9 @@ public class Ceramics {
 			porcelainBarrel = registerBlock(r, new BlockBarrelPorcelain(false), "porcelain_barrel");
 			porcelainBarrelExtension = registerBlock(r, new BlockBarrelPorcelain(true), "porcelain_barrel_extension");
 
+			// special bucket
+			clayBucketBlock = registerBlock(r, new BlockClayBucket(), "clay_bucket_block");
+
 			registerTE(TileBarrel.class, "barrel");
 			registerTE(TileBarrelExtension.class, "barrel_extension");
 
@@ -211,6 +219,11 @@ public class Ceramics {
 
 
 			//// item blocks ////
+
+			// bucket
+			ItemBlock clayBucket = new ItemBlock(clayBucketBlock);
+			clayBucket.setMaxStackSize(16);
+			registerItemBlock(r, clayBucket);
 
 			// base materials
 			registerItemBlock(r, new ItemBlockEnum(clayHard));
@@ -262,8 +275,10 @@ public class Ceramics {
 
 		// bucket
 		if(Config.bucketEnabled) {
-			// fire buckets
-			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta()), new ItemStack(clayBucket), 0.5f);
+			// fire buckets, ensure we use the right one
+			ItemStack unfiredBucket = Config.placeClayBucket ? new ItemStack(clayBucketBlock) : new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta());
+
+			GameRegistry.addSmelting(unfiredBucket, new ItemStack(clayBucket), 0.5f);
 		}
 
 		// shears
