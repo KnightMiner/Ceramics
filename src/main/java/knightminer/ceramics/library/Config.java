@@ -18,6 +18,7 @@ public class Config {
 	public static boolean porcelainFaucetEnabled = true;
 	public static boolean rainbowClayEnabled = true;
 	public static boolean smeltClayArmor = false;
+	public static boolean placeClayBucket = false;
 
 	public static int barrelClayCapacity = 4;
 	public static int barrelPorcelainCapacity = 6;
@@ -31,6 +32,8 @@ public class Config {
 				"Enables the clay bucket, an alternative to the iron bucket that breaks from hot liquids");
 		bucketSand = configFile.getBoolean("bucketSand", "enabled", true,
 				"Allows the clay bucket to pick up sand and gravel, because why not?");
+		placeClayBucket = configFile.getBoolean("placeClayBucket", "enabled", false,
+				"Allows the unfired clay bucket to be placed in the world, for the sake of block based kilns. Normal clay buckets remain unplaceable");
 
 		shearsEnabled = configFile.getBoolean("shears", "enabled", true,
 				"Enables the clay shears, faster than iron shears but less duribility");

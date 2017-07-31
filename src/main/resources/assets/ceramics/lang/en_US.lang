@@ -55,6 +55,7 @@ tile.ceramics.rainbow_clay.magenta.name=Rainbow Porcelain
 tile.ceramics.rainbow_clay.magenta.tooltip=Starts on magenta
 
 tile.ceramics.faucet.name=Porcelain Faucet
+tile.ceramics.clay_bucket_block.name=Unfired Clay Bucket
 
 # porcelain
 tile.ceramics.porcelain.black.name=Black Porcelain

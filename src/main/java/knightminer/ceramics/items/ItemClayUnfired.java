@@ -90,7 +90,7 @@ public class ItemClayUnfired extends Item {
 			// defined as a switch as we cannot pass along a boolean reference in a constructor easily
 			switch(this) {
 				case BUCKET:
-					return Config.bucketEnabled;
+					return Config.bucketEnabled && !Config.placeClayBucket;
 
 				case SHEARS:
 					return Config.shearsEnabled;

@@ -9,6 +9,7 @@ import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelPorcelain;
 import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.blocks.BlockBarrelUnfired;
+import knightminer.ceramics.blocks.BlockClayBucket;
 import knightminer.ceramics.blocks.BlockClayHard;
 import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
 import knightminer.ceramics.blocks.BlockClayRainbow;
@@ -100,6 +101,7 @@ public class Ceramics {
 	public static Block clayBarrelStained;
 	public static Block clayBarrelStainedExtension;
 	public static Block porcelain;
+	public static Block clayBucketBlock;
 
 	public static Block stairsPorcelainBricks;
 	public static Block stairsDarkBricks;
@@ -113,6 +115,9 @@ public class Ceramics {
 
 	public static ItemClayBucket clayBucket;
 	public static Item clayShears;
+
+	// simplicity
+	private static ItemStack unfiredBucket;
 
 	// armor
 	public static ArmorMaterial clayArmor;
@@ -193,6 +198,16 @@ public class Ceramics {
 		// bucket
 		if(Config.bucketEnabled) {
 			clayBucket = registerItem(new ItemClayBucket(), "clay_bucket");
+
+			// placeable clay buckets
+			if(Config.placeClayBucket) {
+				ItemBlock clayBucket = new ItemBlock(new BlockClayBucket());
+				clayBucket.setMaxStackSize(16);
+				clayBucketBlock = registerBlock(clayBucket, "clay_bucket_block");
+				unfiredBucket = new ItemStack(clayBucketBlock);
+			} else {
+				unfiredBucket = new ItemStack(clayUnfired, 0, UnfiredType.BUCKET.getMeta());
+			}
 			tab.setIcon(new ItemStack(clayBucket));
 		}
 
@@ -312,7 +327,7 @@ public class Ceramics {
 
 		// bucket
 		if(Config.bucketEnabled) {
-			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta());
+			ItemStack raw = unfiredBucket;
 			ItemStack milk = new ItemStack(clayBucket, 1, SpecialFluid.MILK.getMeta());
 			GameRegistry.addRecipe(raw.copy(), "c c", " c ", 'c', Items.CLAY_BALL);
 			GameRegistry.addSmelting(raw, new ItemStack(clayBucket), 0.5f);
