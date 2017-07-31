@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL11;
 
 import knightminer.ceramics.blocks.BlockFaucet;
 import knightminer.ceramics.library.IFaucetDepthFallback;
+import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -19,13 +20,14 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
+import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
 public class FaucetRenderer extends TileEntitySpecialRenderer<TileFaucet> {
 
 	private static IDepthGetter depth;
 	static {
 		// if Tinkers Construct is loaded, pipe to its interface
-		/*
 		if(Loader.isModLoaded(ModIDs.TINKERS)) {
 			depth = (world, pos, state) -> {
 				if(state.getBlock() instanceof IFaucetDepth) {
@@ -35,15 +37,15 @@ public class FaucetRenderer extends TileEntitySpecialRenderer<TileFaucet> {
 				return 15f/16f;
 			};
 			// otherwise use mine, really just a fallback
-		} else { */
-		depth = (world, pos, state) -> {
-			if(state.getBlock() instanceof IFaucetDepthFallback) {
-				return ((IFaucetDepthFallback)state.getBlock()).getFlowDepth(world, pos, state);
-			}
+		} else {
+			depth = (world, pos, state) -> {
+				if(state.getBlock() instanceof IFaucetDepthFallback) {
+					return ((IFaucetDepthFallback)state.getBlock()).getFlowDepth(world, pos, state);
+				}
 
-			return 15f/16f;
-		};
-		//}
+				return 15f/16f;
+			};
+		}
 	}
 
 	@Override

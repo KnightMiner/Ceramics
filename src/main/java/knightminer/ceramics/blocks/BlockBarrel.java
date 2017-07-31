@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.IFaucetDepthFallback;
+import knightminer.ceramics.library.ModIDs;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelBase;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
@@ -29,9 +30,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.common.Optional;
+import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
-//@Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
-public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepthFallback {
+@Optional.Interface(iface="slimeknights.tconstruct.library.smeltery.IFaucetDepth", modid=ModIDs.TINKERS)
+public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider, IFaucetDepth, IFaucetDepthFallback {
 
 	public BlockBarrel(Material material) {
 		super(material);

@@ -1,4 +1,4 @@
-/*package knightminer.ceramics.plugin.tconstruct;
+package knightminer.ceramics.plugin.tconstruct;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
@@ -44,4 +44,3 @@ public class TConstructPlugin {
 		}
 	}
 }
- */
