@@ -9,6 +9,7 @@ import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.DispenseClayBucket;
 import knightminer.ceramics.library.FluidClayBucketWrapper;
 import knightminer.ceramics.library.Util;
+import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.state.IBlockState;
@@ -18,6 +19,7 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -28,6 +30,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.translation.I18n;
@@ -121,12 +124,43 @@ public class ItemClayBucket extends Item {
 		BlockPos clickPos = mop.getBlockPos();
 		// can we place liquid there?
 		if(world.isBlockModifiable(player, clickPos)) {
-			BlockPos targetPos = clickPos.offset(mop.sideHit);
+			FluidStack fluidStack = getFluid(stack);
 
-			// can the player place there?
-			if(player.canPlayerEdit(targetPos, mop.sideHit, stack)) {
-				// first, try placing special fluids
-				FluidStack fluidStack = getFluid(stack);
+			// first, try cauldron
+			IBlockState clickState = world.getBlockState(clickPos);
+			if(!player.isSneaking() && clickState.getBlock() == Blocks.CAULDRON) {
+				ItemStack returnStack = stack.copy();
+				if(clickState.getValue(BlockCauldron.LEVEL).intValue() < 3 && fluidStack.getFluid() == FluidRegistry.WATER) {
+					if(!player.capabilities.isCreativeMode) {
+						returnStack.shrink(1);
+						ItemStack drained = new ItemStack(this);
+
+						// if the stack is empty, relace it with the empty bucket
+						if(returnStack.isEmpty()) {
+							returnStack = drained;
+						}
+						else if(!drained.isEmpty()) {
+							// otheriwise add empty bucket to player inventory
+							ItemHandlerHelper.giveItemToPlayer(player, drained);
+						}
+					}
+
+					player.addStat(StatList.CAULDRON_FILLED);
+					if(!world.isRemote) {
+						Blocks.CAULDRON.setWaterLevel(world, clickPos, clickState, 3);
+					}
+					world.playSound((EntityPlayer)null, clickPos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+				}
+
+				return ActionResult.newResult(EnumActionResult.SUCCESS, returnStack);
+
+				// try fluid positions then
+				// can the player place there?
+			} else if(player.canPlayerEdit(clickPos, mop.sideHit, stack)) {
+				BlockPos targetPos = clickPos.offset(mop.sideHit);
+
+				// next, try special fluids
 				if(hasSpecialFluid(stack)) {
 					// get the state from the fluid
 					IBlockState state = getSpecialFluid(stack).getState();
@@ -155,9 +189,8 @@ public class ItemClayBucket extends Item {
 							return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
 						}
 					}
-				}
-				// try placing liquid
-				else {
+					// try placing liquid
+				} else {
 					FluidActionResult result = FluidUtil.tryPlaceFluid(player, player.getEntityWorld(), targetPos, stack, fluidStack);
 
 					if(result.isSuccess()) {
@@ -218,8 +251,34 @@ public class ItemClayBucket extends Item {
 
 		World world = event.getWorld();
 		BlockPos pos = target.getBlockPos();
+		IBlockState state = world.getBlockState(pos);
 
-		FluidActionResult result = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
+		// first, try cauldrons (as long as the player is not sneaking
+		EntityPlayer player = event.getEntityPlayer();
+		if(state.getBlock() == Blocks.CAULDRON && (player == null || !player.isSneaking())) {
+			// if full, fill the bucket
+			if(state.getValue(BlockCauldron.LEVEL).intValue() == 3) {
+
+				// fill the bucket
+				event.setResult(Event.Result.ALLOW);
+				event.setFilledBucket(withFluid(FluidRegistry.WATER));
+				if(!world.isRemote) {
+					Blocks.CAULDRON.setWaterLevel(world, pos, state, 0);
+				}
+
+				// sound
+				if(player != null) {
+					SoundEvent soundevent = FluidRegistry.WATER.getFillSound(new FluidStack(FluidRegistry.WATER, 1000));
+					player.playSound(soundevent, 1f, 1f);
+					player.addStat(StatList.CAULDRON_USED);
+				}
+			} else {
+				event.setCanceled(true);
+			}
+			return;
+		}
+
+		FluidActionResult result = FluidUtil.tryPickUpFluid(singleBucket, player, world, pos, target.sideHit);
 
 		// if we have a bucket from the fluid, use that
 		if(result.isSuccess()) {
@@ -228,14 +287,12 @@ public class ItemClayBucket extends Item {
 		}
 		// otherwise, try gravel/sand
 		else {
-			IBlockState state = world.getBlockState(pos);
 			SpecialFluid fluid = SpecialFluid.fromState(state);
 			if(fluid != null) {
 				// fill the bucket
 				event.setFilledBucket(setSpecialFluid(singleBucket, fluid));
 
 				// play sound
-				EntityPlayer player = event.getEntityPlayer();
 				world.playSound(player, pos,
 						state.getBlock().getSoundType(state, world, pos, player).getBreakSound(),
 						SoundCategory.BLOCKS, 1.0F, 0.8F);
