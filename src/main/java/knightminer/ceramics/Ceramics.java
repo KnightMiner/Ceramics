@@ -330,7 +330,10 @@ public class Ceramics {
 			ItemStack raw = unfiredBucket;
 			ItemStack milk = new ItemStack(clayBucket, 1, SpecialFluid.MILK.getMeta());
 			GameRegistry.addRecipe(raw.copy(), "c c", " c ", 'c', Items.CLAY_BALL);
-			GameRegistry.addSmelting(raw, new ItemStack(clayBucket), 0.5f);
+			// uncrafting
+			GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 3), raw);
+			// firing
+			GameRegistry.addSmelting(raw.copy(), new ItemStack(clayBucket), 0.5f);
 
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.CAKE), "MMM", "SES", "WWW",
 					'M', milk, 'S', Items.SUGAR, 'E', "egg", 'W', "cropWheat"));
@@ -354,6 +357,9 @@ public class Ceramics {
 		if(Config.shearsEnabled) {
 			ItemStack raw = new ItemStack(clayUnfired, 1, UnfiredType.SHEARS.getMeta());
 			GameRegistry.addRecipe(raw.copy(), "c ", " c", 'c', Items.CLAY_BALL);
+			// uncrafting
+			GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 2), raw);
+			// firing
 			GameRegistry.addSmelting(raw, new ItemStack(clayShears), 0.5f);
 		}
 
@@ -364,7 +370,8 @@ public class Ceramics {
 
 			// craft plates of clay
 			GameRegistry.addRecipe(clayPlateRaw.copy(), "cc", 'c', Items.CLAY_BALL);
-			GameRegistry.addSmelting(clayPlateRaw, clayPlate, 0.5f);
+			GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 2), clayPlateRaw);
+			GameRegistry.addSmelting(clayPlateRaw.copy(), clayPlate, 0.5f);
 
 			// and forge into armor. Ceramic armor is a thing in history
 			GameRegistry.addRecipe(new ItemStack(clayHelmet), "ccc", "c c", 'c', clayPlate);
@@ -383,6 +390,20 @@ public class Ceramics {
 			GameRegistry.addRecipe(new ItemStack(clayLeggingsRaw), "ccc", "c c", "c c", 'c', rawArmorItem);
 			GameRegistry.addRecipe(new ItemStack(clayBootsRaw), "c c", "c c", 'c', rawArmorItem);
 
+			// reverse the crafting in case of accidental crafting
+			ItemStack output = rawArmorItem.copy();
+			output.setCount(5);
+			GameRegistry.addShapelessRecipe(output, clayHelmetRaw);
+			output = output.copy();
+			output.setCount(8);
+			GameRegistry.addShapelessRecipe(output, clayChestplateRaw);
+			output = output.copy();
+			output.setCount(7);
+			GameRegistry.addShapelessRecipe(output, clayLeggingsRaw);
+			output = output.copy();
+			output.setCount(4);
+			GameRegistry.addShapelessRecipe(output, clayBootsRaw);
+
 			if(Config.smeltClayArmor) {
 				GameRegistry.addSmelting(clayHelmetRaw, new ItemStack(clayHelmet), 0.5f);
 				GameRegistry.addSmelting(clayChestplateRaw, new ItemStack(clayChestplate), 0.5f);
@@ -397,6 +418,9 @@ public class Ceramics {
 			ItemStack rawExtension = new ItemStack(clayBarrelUnfired, 1, 1);
 			GameRegistry.addRecipe(raw.copy(), "c c", "ccc", " c ", 'c', Items.CLAY_BALL);
 			GameRegistry.addRecipe(rawExtension.copy(), "c c", "c c", "c c", 'c', Items.CLAY_BALL);
+			// uncrafting
+			GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 6), raw);
+			GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 6), rawExtension);
 			// TODO: old compat, probably remove in 1.12
 			GameRegistry.addShapelessRecipe(raw.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL.getMeta()));
 			GameRegistry.addShapelessRecipe(rawExtension.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_EXTENSION.getMeta()));
@@ -414,6 +438,11 @@ public class Ceramics {
 
 				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRaw.copy(), "c c", "ccc", " c ", 'c', "clayPorcelain"));
 				GameRegistry.addRecipe(new ShapedOreRecipe(porcelainRawExtension.copy(), "c c", "c c", "c c", 'c', "clayPorcelain"));
+				// uncrafting
+				ItemStack output = new ItemStack(clayUnfired, 6, UnfiredType.PORCELAIN.getMeta());
+				GameRegistry.addShapelessRecipe(output, porcelainRaw);
+				GameRegistry.addShapelessRecipe(output.copy(), porcelainRawExtension);
+
 				// TODO: old item compat, probably remove in 1.12
 				GameRegistry.addShapelessRecipe(porcelainRaw.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN.getMeta()));
 				GameRegistry.addShapelessRecipe(porcelainRawExtension.copy(), new ItemStack(clayUnfired, 1, UnfiredType.BARREL_PORCELAIN_EXTENSION.getMeta()));
