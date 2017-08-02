@@ -294,6 +294,7 @@ public class Ceramics {
 			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE_RAW.getMeta()),
 					new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta()), 0.5f);
 
+
 		}
 
 		// barrels

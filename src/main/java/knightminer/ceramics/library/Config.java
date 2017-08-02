@@ -25,6 +25,7 @@ public class Config {
 	public static boolean brickWallEnabled = true;
 	public static boolean faucetEnabled = true;
 	public static boolean rainbowClayEnabled = true;
+	public static boolean rawClayArmorEnabled = true;
 	public static boolean placeClayBucket = false;
 
 	public static int barrelClayCapacity = 4;
@@ -47,6 +48,8 @@ public class Config {
 
 		armorEnabled = configFile.getBoolean("armor", "enabled", true,
 				"Enables the clay armor, an early game alternative to leather");
+		rawClayArmorEnabled = configFile.getBoolean("rawClayArmorEnabled", "enabled", true,
+				"Allows you to create armor out of clay directly which has one durability and terriable protection.") && armorEnabled;
 
 		barrelEnabled = configFile.getBoolean("barrel", "enabled", true,
 				"Enables the clay barrel, a liquid tank that can be expanded upwards");
@@ -91,6 +94,8 @@ public class Config {
 					return placeClayBucket;
 				case "armor":
 					return armorEnabled;
+				case "raw_armor":
+					return rawClayArmorEnabled;
 				case "faucet":
 					return faucetEnabled;
 				case "fancy_bricks":
