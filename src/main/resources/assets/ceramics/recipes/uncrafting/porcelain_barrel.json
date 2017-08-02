@@ -1,0 +1,38 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    },
+    {
+      "type": "config",
+      "enabled": "porcelain"
+    }
+  ],
+  "result": {
+    "item": "ceramics:unfired_clay",
+    "data": 4,
+    "count": 6
+  },
+  "ingredients": [
+    [
+      {
+        "item": "ceramics:clay_barrel_unfired",
+        "data": 2
+      },
+      {
+        "item": "ceramics:clay_barrel_unfired",
+        "data": 3
+      },
+      {
+        "item": "ceramics:unfired_clay",
+        "data": 6
+      },
+      {
+        "item": "ceramics:unfired_clay",
+        "data": 7
+      }
+    ]
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,34 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "barrel"
+    }
+  ],
+  "result": {
+    "item": "minecraft:clay_ball",
+    "count": 6
+  },
+  "group": "ceramics:clay_uncrafting",
+  "ingredients": [
+    [
+      {
+        "item": "ceramics:clay_barrel_unfired",
+        "data": 0
+      },
+      {
+        "item": "ceramics:clay_barrel_unfired",
+        "data": 1
+      },
+      {
+        "item": "ceramics:unfired_clay",
+        "data": 2
+      },
+      {
+        "item": "ceramics:unfired_clay",
+        "data": 3
+      }
+    ]
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,26 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "bucket"
+    }
+  ],
+  "result": {
+    "item": "minecraft:clay_ball",
+    "count": 3
+  },
+  "group": "ceramics:clay_uncrafting",
+  "ingredients": [
+    [
+      {
+        "item": "ceramics:unfired_clay",
+        "data": 0
+      },
+      {
+        "item": "ceramics:clay_bucket_block",
+        "data": 0
+      }
+    ]
+  ],
+  "type": "forge:ore_shapeless"
+}

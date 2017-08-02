@@ -1,0 +1,19 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "raw_armor"
+    }
+  ],
+  "result": {
+    "item": "minecraft:clay_ball",
+    "count": 7
+  },
+  "group": "ceramics:clay_uncrafting",
+  "ingredients": [
+    {
+      "item": "ceramics:clay_leggings_raw"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}
