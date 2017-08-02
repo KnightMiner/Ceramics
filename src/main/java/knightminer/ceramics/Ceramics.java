@@ -226,13 +226,16 @@ public class Ceramics {
 			clayLeggings = registerItem(new ItemArmorClay(EntityEquipmentSlot.LEGS), "clay_leggings");
 			clayBoots = registerItem(new ItemArmorClay(EntityEquipmentSlot.FEET), "clay_boots");
 
-			clayArmorRaw = EnumHelper.addArmorMaterial(Util.prefix("clay_raw"), "cermamics:clay_raw", 1,
-					new int[]{1, 1, 1, 1}, 0, null, 0);
-			clayArmor.repairMaterial = new ItemStack(Items.CLAY_BALL);
-			clayHelmetRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.HEAD), "clay_helmet_raw");
-			clayChestplateRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.CHEST), "clay_chestplate_raw");
-			clayLeggingsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.LEGS), "clay_leggings_raw");
-			clayBootsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.FEET), "clay_boots_raw");
+			// raw clay armor anyone?
+			if(Config.rawClayArmorEnabled) {
+				clayArmorRaw = EnumHelper.addArmorMaterial(Util.prefix("clay_raw"), "cermamics:clay_raw", 1,
+						new int[]{1, 1, 1, 1}, 0, null, 0);
+				clayArmor.repairMaterial = new ItemStack(Items.CLAY_BALL);
+				clayHelmetRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.HEAD), "clay_helmet_raw");
+				clayChestplateRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.CHEST), "clay_chestplate_raw");
+				clayLeggingsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.LEGS), "clay_leggings_raw");
+				clayBootsRaw = registerItem(new ItemArmorClayRaw(EntityEquipmentSlot.FEET), "clay_boots_raw");
+			}
 
 			oredict(clayUnfired, UnfiredType.CLAY_PLATE_RAW.getMeta(), "plateClayRaw");
 			oredict(clayUnfired, UnfiredType.CLAY_PLATE.getMeta(), "plateClay", "plateBrick"); // plateBrick is because bricks are ingotBrick
@@ -381,34 +384,17 @@ public class Ceramics {
 
 			// if you would rather skip a step...
 			// this is kept partly because legacy, partly because two hit armor is kinda fun
+			if(Config.rawClayArmorEnabled) {
+				GameRegistry.addRecipe(new ItemStack(clayHelmetRaw), "ccc", "c c", 'c', Items.CLAY_BALL);
+				GameRegistry.addRecipe(new ItemStack(clayChestplateRaw), "c c", "ccc", "ccc", 'c', Items.CLAY_BALL);
+				GameRegistry.addRecipe(new ItemStack(clayLeggingsRaw), "ccc", "c c", "c c", 'c', Items.CLAY_BALL);
+				GameRegistry.addRecipe(new ItemStack(clayBootsRaw), "c c", "c c", 'c', Items.CLAY_BALL);
 
-			// if smelting armor, use plates for consistancy with above recipe as clay is pretty cheap
-			// normally I prefer the regular clay one as it fits the easter egg better
-			ItemStack rawArmorItem = Config.smeltClayArmor ? clayPlateRaw : new ItemStack(Items.CLAY_BALL);
-			GameRegistry.addRecipe(new ItemStack(clayHelmetRaw), "ccc", "c c", 'c', rawArmorItem);
-			GameRegistry.addRecipe(new ItemStack(clayChestplateRaw), "c c", "ccc", "ccc", 'c', rawArmorItem);
-			GameRegistry.addRecipe(new ItemStack(clayLeggingsRaw), "ccc", "c c", "c c", 'c', rawArmorItem);
-			GameRegistry.addRecipe(new ItemStack(clayBootsRaw), "c c", "c c", 'c', rawArmorItem);
-
-			// reverse the crafting in case of accidental crafting
-			ItemStack output = rawArmorItem.copy();
-			output.setCount(5);
-			GameRegistry.addShapelessRecipe(output, clayHelmetRaw);
-			output = output.copy();
-			output.setCount(8);
-			GameRegistry.addShapelessRecipe(output, clayChestplateRaw);
-			output = output.copy();
-			output.setCount(7);
-			GameRegistry.addShapelessRecipe(output, clayLeggingsRaw);
-			output = output.copy();
-			output.setCount(4);
-			GameRegistry.addShapelessRecipe(output, clayBootsRaw);
-
-			if(Config.smeltClayArmor) {
-				GameRegistry.addSmelting(clayHelmetRaw, new ItemStack(clayHelmet), 0.5f);
-				GameRegistry.addSmelting(clayChestplateRaw, new ItemStack(clayChestplate), 0.5f);
-				GameRegistry.addSmelting(clayLeggingsRaw, new ItemStack(clayLeggings), 0.5f);
-				GameRegistry.addSmelting(clayBootsRaw, new ItemStack(clayBoots), 0.5f);
+				// reverse the crafting in case of accidental crafting
+				GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 5), clayHelmetRaw);
+				GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 8), clayChestplateRaw);
+				GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 7), clayLeggingsRaw);
+				GameRegistry.addShapelessRecipe(new ItemStack(Items.CLAY_BALL, 4), clayBootsRaw);
 			}
 		}
 

@@ -17,7 +17,7 @@ public class Config {
 	public static boolean brickWallEnabled = true;
 	public static boolean porcelainFaucetEnabled = true;
 	public static boolean rainbowClayEnabled = true;
-	public static boolean smeltClayArmor = false;
+	public static boolean rawClayArmorEnabled = true;
 	public static boolean placeClayBucket = false;
 
 	public static int barrelClayCapacity = 4;
@@ -40,8 +40,8 @@ public class Config {
 
 		armorEnabled = configFile.getBoolean("armor", "enabled", true,
 				"Enables the clay armor, an early game alternative to leather");
-		smeltClayArmor = configFile.getBoolean("smeltClayArmor", "enabled", false,
-				"Allows clay armor to be created by smelting raw clay armor (old recipe). Switched to plates for more realism/nicer smelting recipes");
+		rawClayArmorEnabled = configFile.getBoolean("rawClayArmorEnabled", "enabled", true,
+				"Allows you to create armor out of clay directly which has one durability and terriable protection.") && armorEnabled;
 
 		barrelEnabled = configFile.getBoolean("barrel", "enabled", true,
 				"Enables the clay barrel, a liquid tank that can be expanded upwards");
