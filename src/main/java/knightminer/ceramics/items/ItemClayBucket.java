@@ -564,6 +564,17 @@ public class ItemClayBucket extends Item {
 		return false;
 	}
 
+	private ItemStack withFluid(Fluid fluid) {
+		ItemStack stack = new ItemStack(this, 1, 0);
+
+		// add fluid to NBT
+		NBTTagCompound tag = new NBTTagCompound();
+		tag.setTag(TAG_FLUIDS, new FluidStack(fluid, getCapacity()).writeToNBT(new NBTTagCompound()));
+		stack.setTagCompound(tag);
+
+		// return
+		return stack;
+	}
 
 	/**
 	 * @return the fuel burn time for this itemStack in a furnace.

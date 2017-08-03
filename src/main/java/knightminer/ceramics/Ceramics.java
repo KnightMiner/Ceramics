@@ -67,7 +67,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @Mod(modid = Ceramics.modID, version = Ceramics.version, name = Ceramics.name, dependencies =
-		"required-after:forge@[14.21.1.2394,);" )
+		"required-after:forge@[14.21.1.2394,);after:tconstruct" )
 public class Ceramics {
 	public static final String name = "Ceramics";
 	public static final String modID = "ceramics";
