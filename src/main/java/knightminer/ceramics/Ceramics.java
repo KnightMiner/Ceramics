@@ -116,9 +116,6 @@ public class Ceramics {
 	public static ItemClayBucket clayBucket;
 	public static Item clayShears;
 
-	// simplicity
-	private static ItemStack unfiredBucket;
-
 	// armor
 	public static ArmorMaterial clayArmor;
 	public static Item clayHelmet;
@@ -204,9 +201,6 @@ public class Ceramics {
 				ItemBlock clayBucket = new ItemBlock(new BlockClayBucket());
 				clayBucket.setMaxStackSize(16);
 				clayBucketBlock = registerBlock(clayBucket, "clay_bucket_block");
-				unfiredBucket = new ItemStack(clayBucketBlock);
-			} else {
-				unfiredBucket = new ItemStack(clayUnfired, 0, UnfiredType.BUCKET.getMeta());
 			}
 			tab.setIcon(new ItemStack(clayBucket));
 		}
@@ -330,7 +324,13 @@ public class Ceramics {
 
 		// bucket
 		if(Config.bucketEnabled) {
-			ItemStack raw = unfiredBucket;
+			ItemStack raw;
+			if(Config.placeClayBucket) {
+				raw = new ItemStack(clayBucketBlock);
+			} else {
+				raw = new ItemStack(clayUnfired, 1, UnfiredType.BUCKET.getMeta());
+			}
+
 			ItemStack milk = new ItemStack(clayBucket, 1, SpecialFluid.MILK.getMeta());
 			GameRegistry.addRecipe(raw.copy(), "c c", " c ", 'c', Items.CLAY_BALL);
 			// uncrafting
