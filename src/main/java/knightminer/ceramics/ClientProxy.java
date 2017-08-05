@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -176,7 +177,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	private void registerItemModel(Item item, final String variant) {
-		if(item != null) {
+		if(item != null && item != Items.AIR) {
 			final ResourceLocation location = item.getRegistryName();
 			// so all meta get the item model
 			ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
@@ -195,7 +196,7 @@ public class ClientProxy extends CommonProxy {
 	}
 
 	private void registerItemModel(Item item, int meta, String name) {
-		if(item != null) {
+		if(item != null && item != Items.AIR) {
 			// tell Minecraft which textures it has to load. This is resource-domain sensitive
 			final ResourceLocation location = item.getRegistryName();
 
