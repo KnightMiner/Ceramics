@@ -12,6 +12,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 public class BlockEnumWallBase<T extends Enum<T> & IStringSerializable & BlockEnumBase.IEnumMeta> extends BlockWall implements IBlockEnum<T>  {
 
@@ -99,11 +101,24 @@ public class BlockEnumWallBase<T extends Enum<T> & IStringSerializable & BlockEn
 		}
 	}
 
+	/**
+	 * Determines if a torch can be placed on the top surface of this block.
+	 * Useful for creating your own block that torches can be on, such as fences.
+	 *
+	 * @param state The current state
+	 * @param world The current world
+	 * @param pos Block position in world
+	 * @return True to allow the torch to be placed
+	 */
+	@Override
+	public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos) {
+		return true;
+	}
+
 	// yeah, it is what I have for the constructor
 	private static class BlockMaterial extends Block {
 		public BlockMaterial(Material material) {
 			super(material);
 		}
-
 	}
 }
