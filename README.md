@@ -1,4 +1,4 @@
-#[Ceramics](http://minecraft.curseforge.com/projects/ceramics)
+# [Ceramics](http://minecraft.curseforge.com/projects/ceramics)
 
 Ceramics is a mod designed to increase options early game using clay. Inspired by the clay bucket from Iguana Tinker Tweaks, this mod currently adds two features to the game:
 
