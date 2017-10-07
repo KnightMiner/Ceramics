@@ -191,7 +191,7 @@ ceramics.barrel.fluid.amount=内含：%smb %s
 
 # JEI Descriptions
 ceramics.jei.bucket=粘土桶主要用于还未获得铁桶时的早期游戏，与铁桶一致，它们可以运输流体，但是当倒出炽热的液体时，粘土桶会破碎。
-ceramics.jei.barrel.base=陶桶是一个简单的液体储罐，最多可以存储4桶液体。当被挖掘后，内部存储的液体会丢失。
-ceramics.jei.barrel.extension=延展桶可以放置在陶桶的上方用以扩充容量。一个延展桶增加4桶液体的储量。它们可以近乎无限的叠加。
+ceramics.jei.barrel.base=陶桶是一个简单的液体储罐，最多可以存储%s桶液体。当被挖掘后，内部存储的液体会丢失。
+ceramics.jei.barrel.extension=延展桶可以放置在陶桶的上方用以扩充容量。一个延展桶增加%s桶液体的储量。它们可以近乎无限的叠加。
 ceramics.jei.barrel.porcelain.base=陶瓷桶是陶桶的升级版，容量为%s桶。像陶桶一样，被打破时会失去里面的液体。
 ceramics.jei.barrel.porcelain.extension=延展陶瓷桶可用于延长增加陶瓷桶的容量。它的功能与延展陶桶完全相同，不过它增加%s桶容量。延展陶瓷桶和延展陶桶不能混用
