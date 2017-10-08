@@ -97,6 +97,9 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		for(int i = 0; i < 4; i++) {
 			if(isFlowing[i] > 0) {
 				isFlowing[i]--;
+				if(isFlowing[i] == 0) {
+					CeramicsNetwork.sendToAllAround(world, pos, new ChannelFlowPacket(pos, EnumFacing.getHorizontal(i), false));
+				}
 			}
 		}
 
