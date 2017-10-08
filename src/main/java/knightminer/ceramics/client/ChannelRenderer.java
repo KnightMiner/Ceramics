@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import org.lwjgl.opengl.GL11;
 
+import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockChannel;
 import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileChannel.ChannelConnection;
@@ -53,13 +54,28 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 
 		// sides
 		double x1 = 0, z1 = 0, x2 = 0, z2 = 0;
-		EnumFacing rotation, oneOutput = null;
+		double barrelOffset = 0;
+		EnumFacing rotation = null, oneOutput = null;
+		ChannelConnection connection;
+		BlockPos offsetPos;
 		int outputs = 0;
 		for(EnumFacing side : EnumFacing.HORIZONTALS) {
 			if(te.isFlowing(side)) {
-				ChannelConnection connection = te.getConnection(side);
+				connection = te.getConnection(side);
 				if(!ChannelConnection.canFlow(connection)) {
 					continue;
+				}
+
+				offsetPos = pos.offset(side);
+				if(connection == ChannelConnection.OUT && world.getBlockState(offsetPos).getBlock() instanceof BlockBarrel) {
+					barrelOffset = 0.0625;
+				} else {
+					barrelOffset = 0;
+
+					// only render the extra piece if no channel on this side
+					if(!(world.getBlockState(offsetPos).getBlock() instanceof BlockChannel)) {
+						RenderUtils.putTexturedQuad(renderer, flowing, x1, 0.375, z1, x2-x1, 0.09375, z2-z1, side, color, brightness, true);
+					}
 				}
 
 				// first, get location for side
@@ -67,7 +83,7 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 				switch(side) {
 					case NORTH:
 						x1 = 0.375;
-						z1 = 0;
+						z1 = 0 - barrelOffset;
 						x2 = 0.625;
 						z2 = 0.375;
 						break;
@@ -75,10 +91,10 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 						x1 = 0.375;
 						z1 = 0.625;
 						x2 = 0.625;
-						z2 = 1;
+						z2 = 1 + barrelOffset;
 						break;
 					case WEST:
-						x1 = 0;
+						x1 = 0 - barrelOffset;
 						z1 = 0.375;
 						x2 = 0.375;
 						z2 = 0.625;
@@ -86,7 +102,7 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 					case EAST:
 						x1 = 0.625;
 						z1 = 0.375;
-						x2 = 1;
+						x2 = 1 + barrelOffset;
 						z2 = 0.625;
 						break;
 				}
@@ -102,11 +118,6 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 				}
 
 				RenderUtils.putRotatedQuad(renderer, flowing, x1, 0.46875, z1, x2-x1, z2-z1, rotation, color, brightness, true);
-
-				// only render the extra piece if no channel on this side
-				if(!(world.getBlockState(pos.offset(side)).getBlock() instanceof BlockChannel)) {
-					RenderUtils.putTexturedQuad(renderer, flowing, x1, 0.375, z1, x2-x1, 0.09375, z2-z1, side, color, brightness, true);
-				}
 			} else {
 				// sides of main sliver
 				RenderUtils.putTexturedQuad(renderer, flowing, 0.375, 0.375, 0.375, 0.25, 0.09375, 0.25, side, color, brightness, true);

@@ -1,0 +1,40 @@
+{
+    "textures": {
+        "particle": "ceramics:blocks/porcelain",
+        "texture":  "ceramics:blocks/porcelain",
+        "top":      "ceramics:blocks/channel_out"
+    },
+    "elements": [
+        {
+            "name": "Base",
+            "from": [ 5, 4, -1 ], 
+            "to": [ 11, 6, 0 ], 
+            "faces": {
+                "east":  { "texture": "#texture", "uv": [  0, 10,  1, 12 ] },
+                "west":  { "texture": "#texture", "uv": [ 15, 10, 16, 12 ] },
+                "up":    { "texture": "#top",     "uv": [  5, 15, 11, 16 ] },
+                "down":  { "texture": "#texture", "uv": [  5, 15, 11, 16 ] }
+            }
+        },
+        {
+            "name": "West",
+            "from": [ 10, 6, -1 ], 
+            "to": [ 11, 8, 0 ], 
+            "faces": {
+                "east":  { "texture": "#texture", "uv": [  0,  8,  1, 10 ] },
+                "west":  { "texture": "#texture", "uv": [ 15,  8, 16, 10 ] },
+                "up":    { "texture": "#texture", "uv": [  5, 15,  6, 16 ] }
+            }
+        },
+        {
+            "name": "East",
+            "from": [ 5, 6, -1 ], 
+            "to": [ 6, 8, 0 ], 
+            "faces": {
+                "east":  { "texture": "#texture", "uv": [ 15,  8, 16, 10 ] },
+                "west":  { "texture": "#texture", "uv": [  0,  8,  1, 10 ] },
+                "up":    { "texture": "#texture", "uv": [ 10, 15, 11, 16 ] }
+            }
+        }
+    ]
+}

@@ -257,10 +257,8 @@ public class RenderUtils {
 		// textures
 		double xt1 = x1%1d;
 		double xt2 = xt1 + w;
-		while(xt2 > 1f) xt2 -= 1f;
 		double zt1 = z1%1d;
 		double zt2 = zt1 + d;
-		while(zt2 > 1f) zt2 -= 1f;
 
 		// when rotating by 90 or 270 the dimensions switch, so switch the U and V before hand
 		if(rotation.getAxis() == Axis.X) {

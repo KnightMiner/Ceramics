@@ -12,8 +12,11 @@
         {   "when": { "north": "in" },
             "apply": { "model": "ceramics:channel/side_in", "uvlock": true }
         },
-        {   "when": { "north": "out" },
+        {   "when": { "north": "out|barrel" },
             "apply": { "model": "ceramics:channel/side_out", "uvlock": true }
+        },
+        {   "when": { "north": "barrel" },
+            "apply": { "model": "ceramics:channel/side_barrel", "uvlock": true }
         },
         {   "when": { "east": "none" },
             "apply": { "model": "ceramics:channel/side", "y": 90, "uvlock": true }
@@ -21,8 +24,11 @@
         {   "when": { "east": "in" },
             "apply": { "model": "ceramics:channel/side_in", "y": 90, "uvlock": true }
         },
-        {   "when": { "east": "out" },
+        {   "when": { "east": "out|barrel" },
             "apply": { "model": "ceramics:channel/side_out", "y": 90, "uvlock": true }
+        },
+        {   "when": { "east": "barrel" },
+            "apply": { "model": "ceramics:channel/side_barrel", "y": 90, "uvlock": true }
         },
         {   "when": { "south": "none" },
             "apply": { "model": "ceramics:channel/side", "y": 180, "uvlock": true }
@@ -30,8 +36,11 @@
         {   "when": { "south": "in" },
             "apply": { "model": "ceramics:channel/side_in", "y": 180, "uvlock": true }
         },
-        {   "when": { "south": "out" },
+        {   "when": { "south": "out|barrel" },
             "apply": { "model": "ceramics:channel/side_out", "y": 180, "uvlock": true }
+        },
+        {   "when": { "south": "barrel" },
+            "apply": { "model": "ceramics:channel/side_barrel", "y": 180, "uvlock": true }
         },
         {   "when": { "west": "none" },
             "apply": { "model": "ceramics:channel/side", "y": 270, "uvlock": true }
@@ -39,8 +48,11 @@
         {   "when": { "west": "in" },
             "apply": { "model": "ceramics:channel/side_in", "y": 270, "uvlock": true }
         },
-        {   "when": { "west": "out" },
+        {   "when": { "west": "out|barrel" },
             "apply": { "model": "ceramics:channel/side_out", "y": 270, "uvlock": true }
+        },
+        {   "when": { "west": "barrel" },
+            "apply": { "model": "ceramics:channel/side_barrel", "y": 270, "uvlock": true }
         }
     ]
 }

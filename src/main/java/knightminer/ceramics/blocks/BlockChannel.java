@@ -2,6 +2,8 @@ package knightminer.ceramics.blocks;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,6 +32,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -46,10 +49,10 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	/** Properties for the channel */
 	public static final PropertyBool DOWN = PropertyBool.create("down");
 
-	public static final PropertyEnum<ChannelConnection> NORTH = PropertyEnum.create("north", ChannelConnection.class);
-	public static final PropertyEnum<ChannelConnection> SOUTH = PropertyEnum.create("south", ChannelConnection.class);
-	public static final PropertyEnum<ChannelConnection> WEST = PropertyEnum.create("west", ChannelConnection.class);
-	public static final PropertyEnum<ChannelConnection> EAST = PropertyEnum.create("east", ChannelConnection.class);
+	public static final PropertyEnum<ChannelConnectionState> NORTH = PropertyEnum.create("north", ChannelConnectionState.class);
+	public static final PropertyEnum<ChannelConnectionState> SOUTH = PropertyEnum.create("south", ChannelConnectionState.class);
+	public static final PropertyEnum<ChannelConnectionState> WEST = PropertyEnum.create("west", ChannelConnectionState.class);
+	public static final PropertyEnum<ChannelConnectionState> EAST = PropertyEnum.create("east", ChannelConnectionState.class);
 
 	public BlockChannel() {
 		super(Material.ROCK);
@@ -60,10 +63,10 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 		this.setSoundType(SoundType.METAL);
 		this.setDefaultState(this.getDefaultState()
 				.withProperty(DOWN, false)
-				.withProperty(NORTH, ChannelConnection.NONE)
-				.withProperty(SOUTH, ChannelConnection.NONE)
-				.withProperty(WEST, ChannelConnection.NONE)
-				.withProperty(EAST, ChannelConnection.NONE));
+				.withProperty(NORTH, ChannelConnectionState.NONE)
+				.withProperty(SOUTH, ChannelConnectionState.NONE)
+				.withProperty(WEST, ChannelConnectionState.NONE)
+				.withProperty(EAST, ChannelConnectionState.NONE));
 	}
 
 	@Nonnull
@@ -137,6 +140,26 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	@Override
 	@Deprecated
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		state = addTEData(state, world, pos);
+
+		state = addBarrel(state, world, pos, NORTH, EnumFacing.NORTH);
+		state = addBarrel(state, world, pos, SOUTH, EnumFacing.SOUTH);
+		state = addBarrel(state, world, pos, WEST, EnumFacing.WEST);
+		state = addBarrel(state, world, pos, EAST, EnumFacing.EAST);
+
+		return state;
+	}
+
+	private IBlockState addBarrel(IBlockState state, IBlockAccess world, BlockPos pos, PropertyEnum<ChannelConnectionState> prop, EnumFacing side) {
+		if(state.getValue(prop) == ChannelConnectionState.OUT
+				&& world.getBlockState(pos.offset(side)).getBlock() instanceof BlockBarrel) {
+			state = state.withProperty(prop, ChannelConnectionState.BARREL);
+		}
+
+		return state;
+	}
+
+	protected IBlockState addTEData(IBlockState state, IBlockAccess world, BlockPos pos) {
 		// needs to be a channel
 		TileEntity te = world.getTileEntity(pos);
 		if(!(te instanceof TileChannel)) {
@@ -146,10 +169,10 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 		// then just query the TE
 		TileChannel channel = (TileChannel) te;
 		return state.withProperty(DOWN, channel.isConnectedDown())
-				.withProperty(NORTH, channel.getConnection(EnumFacing.NORTH))
-				.withProperty(SOUTH, channel.getConnection(EnumFacing.SOUTH))
-				.withProperty(WEST, channel.getConnection(EnumFacing.WEST))
-				.withProperty(EAST, channel.getConnection(EnumFacing.EAST));
+				.withProperty(NORTH, ChannelConnectionState.fromConnection(channel.getConnection(EnumFacing.NORTH)))
+				.withProperty(SOUTH, ChannelConnectionState.fromConnection(channel.getConnection(EnumFacing.SOUTH)))
+				.withProperty(WEST, ChannelConnectionState.fromConnection(channel.getConnection(EnumFacing.WEST)))
+				.withProperty(EAST, ChannelConnectionState.fromConnection(channel.getConnection(EnumFacing.EAST)));
 	}
 
 	/* Bounds */
@@ -191,7 +214,7 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		// do a bit of bit math to determine the box to use, it seemed like the fastest solution
-		state = state.getActualState(source, pos);
+		state = addTEData(state, source, pos);
 		int index = (state.getValue(NORTH).canFlow() ? 8 : 0)
 				+ (state.getValue(SOUTH).canFlow() ? 4 : 0)
 				+ (state.getValue(WEST).canFlow() ? 2 : 0)
@@ -202,7 +225,7 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean p_185477_7_) {
-		state = state.getActualState(world, pos);
+		state = addTEData(state, world, pos);
 		// if downspout, used extended down
 		if(state.getValue(DOWN)) {
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUNDS_CENTER);
@@ -227,7 +250,7 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	@Deprecated
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
-		state = state.getActualState(world, pos);
+		state = addTEData(state, world, pos);
 
 		// basically the same BlockStairs does
 		// Raytrace through all included AABBs (sides) and return the nearest
@@ -301,6 +324,31 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> list) {
 		if(Config.faucetEnabled) {
 			list.add(new ItemStack(this));
+		}
+	}
+
+	public static enum ChannelConnectionState implements IStringSerializable {
+		NONE,
+		IN,
+		OUT,
+		BARREL;
+
+		byte index;
+		ChannelConnectionState() {
+			index = (byte)ordinal();
+		}
+
+		public static ChannelConnectionState fromConnection(ChannelConnection connection) {
+			return values()[connection.getIndex()];
+		}
+
+		@Override
+		public String getName() {
+			return this.toString().toLowerCase(Locale.US);
+		}
+
+		public boolean canFlow() {
+			return this != NONE;
 		}
 	}
 }
