@@ -1,0 +1,46 @@
+{
+    "multipart": [
+        {   "when": { "down": "false" },
+            "apply": { "model": "ceramics:channel/center" }
+        },
+        {   "when": { "down": "true" },
+            "apply": { "model": "ceramics:channel/center_out" }
+        },
+        {   "when": { "north": "none" },
+            "apply": { "model": "ceramics:channel/side", "uvlock": true }
+        },
+        {   "when": { "north": "in" },
+            "apply": { "model": "ceramics:channel/side_in", "uvlock": true }
+        },
+        {   "when": { "north": "out" },
+            "apply": { "model": "ceramics:channel/side_out", "uvlock": true }
+        },
+        {   "when": { "east": "none" },
+            "apply": { "model": "ceramics:channel/side", "y": 90, "uvlock": true }
+        },
+        {   "when": { "east": "in" },
+            "apply": { "model": "ceramics:channel/side_in", "y": 90, "uvlock": true }
+        },
+        {   "when": { "east": "out" },
+            "apply": { "model": "ceramics:channel/side_out", "y": 90, "uvlock": true }
+        },
+        {   "when": { "south": "none" },
+            "apply": { "model": "ceramics:channel/side", "y": 180, "uvlock": true }
+        },
+        {   "when": { "south": "in" },
+            "apply": { "model": "ceramics:channel/side_in", "y": 180, "uvlock": true }
+        },
+        {   "when": { "south": "out" },
+            "apply": { "model": "ceramics:channel/side_out", "y": 180, "uvlock": true }
+        },
+        {   "when": { "west": "none" },
+            "apply": { "model": "ceramics:channel/side", "y": 270, "uvlock": true }
+        },
+        {   "when": { "west": "in" },
+            "apply": { "model": "ceramics:channel/side_in", "y": 270, "uvlock": true }
+        },
+        {   "when": { "west": "out" },
+            "apply": { "model": "ceramics:channel/side_out", "y": 270, "uvlock": true }
+        }
+    ]
+}

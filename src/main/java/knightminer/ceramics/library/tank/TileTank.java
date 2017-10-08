@@ -1,25 +1,24 @@
-package knightminer.ceramics.library;
+package knightminer.ceramics.library.tank;
 
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.FluidUpdatePacket;
-import knightminer.ceramics.tileentity.TileBarrel;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-public class BarrelTank extends FluidTank {
+public class TileTank<T extends TileEntity> extends FluidTank {
 
-	private TileBarrel parent;
-	public int renderOffset;
+	protected T parent;
 
-	public BarrelTank(int capacity, TileBarrel parent) {
+	public TileTank(int capacity, T parent) {
 		super(capacity);
 		this.parent = parent;
 	}
 
 	@Override
-	public int fill(FluidStack resource, boolean doFill) {
-		int amount = super.fill(resource, doFill);
+	public int fillInternal(FluidStack resource, boolean doFill) {
+		int amount = super.fillInternal(resource, doFill);
 		if(amount > 0 && doFill) {
 			sendUpdate(amount);
 		}
@@ -27,17 +26,8 @@ public class BarrelTank extends FluidTank {
 	}
 
 	@Override
-	public FluidStack drain(FluidStack resource, boolean doDrain) {
-		FluidStack fluid = super.drain(resource, doDrain);
-		if(fluid != null && doDrain) {
-			sendUpdate(-fluid.amount);
-		}
-		return fluid;
-	}
-
-	@Override
-	public FluidStack drain(int maxDrain, boolean doDrain) {
-		FluidStack fluid = super.drain(maxDrain, doDrain);
+	public FluidStack drainInternal(int maxDrain, boolean doDrain) {
+		FluidStack fluid = super.drainInternal(maxDrain, doDrain);
 		if(fluid != null && doDrain) {
 			sendUpdate(-fluid.amount);
 		}
@@ -46,7 +36,6 @@ public class BarrelTank extends FluidTank {
 
 	protected void sendUpdate(int amount) {
 		if(amount != 0) {
-			renderOffset += amount;
 			World world = parent.getWorld();
 			if(!world.isRemote) {
 				CeramicsNetwork.sendToAllAround(world, parent.getPos(), new FluidUpdatePacket(parent.getPos(), this.getFluid()));
@@ -62,11 +51,5 @@ public class BarrelTank extends FluidTank {
 		if(this.fluid != null && this.fluid.amount > capacity) {
 			this.drain(this.fluid.amount - capacity, true);
 		}
-		renderOffset = 0; // don't render it lowering from a barrel above breaking, that looks dumb
-	}
-
-	@Override
-	public void onContentsChanged() {
-		parent.onTankContentsChanged();
 	}
 }

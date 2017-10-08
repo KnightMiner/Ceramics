@@ -4,7 +4,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import knightminer.ceramics.blocks.BlockBarrel;
-import knightminer.ceramics.library.BarrelTank;
+import knightminer.ceramics.library.tank.BarrelTank;
+import knightminer.ceramics.library.tank.IFluidUpdateReciever;
 import knightminer.ceramics.network.BarrelSizeChangedPacket;
 import knightminer.ceramics.network.CeramicsNetwork;
 import net.minecraft.block.state.IBlockState;
@@ -20,7 +21,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileBarrel extends TileBarrelBase {
+public class TileBarrel extends TileBarrelBase implements IFluidUpdateReciever {
 
 	private static final int BASE_CAPACITY = Fluid.BUCKET_VOLUME * 4;
 
@@ -139,7 +140,7 @@ public class TileBarrel extends TileBarrelBase {
 		return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, y, pos.getZ() + 1);
 	}
 
-	@SideOnly(Side.CLIENT)
+	@Override
 	public void updateFluidTo(FluidStack fluid) {
 		int oldAmount = tank.getFluidAmount();
 		tank.setFluid(fluid);

@@ -1,8 +1,7 @@
 package knightminer.ceramics.network;
 
 import io.netty.buffer.ByteBuf;
-import knightminer.ceramics.tileentity.TileBarrel;
-import knightminer.ceramics.tileentity.TileFaucet;
+import knightminer.ceramics.library.tank.IFluidUpdateReciever;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -46,15 +45,10 @@ public class FluidUpdatePacket extends PacketBase {
 
 		@Override
 		public IMessage onMessage(final FluidUpdatePacket message, MessageContext ctx) {
-			getMainThread(ctx).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
-					if(te instanceof TileBarrel) {
-						((TileBarrel) te).updateFluidTo(message.fluid);
-					} else if(te instanceof TileFaucet) {
-						((TileFaucet) te).onActivationPacket(message.fluid);
-					}
+			getMainThread(ctx).addScheduledTask(() -> {
+				TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
+				if(te instanceof IFluidUpdateReciever) {
+					((IFluidUpdateReciever) te).updateFluidTo(message.fluid);
 				}
 			});
 			return null;

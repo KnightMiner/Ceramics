@@ -2,7 +2,7 @@ package knightminer.ceramics.client;
 
 import javax.annotation.Nonnull;
 
-import knightminer.ceramics.library.BarrelTank;
+import knightminer.ceramics.library.tank.BarrelTank;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;

@@ -8,6 +8,7 @@ import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockBarrelPorcelain;
 import knightminer.ceramics.blocks.BlockBarrelStained;
 import knightminer.ceramics.blocks.BlockBarrelUnfired;
+import knightminer.ceramics.blocks.BlockChannel;
 import knightminer.ceramics.blocks.BlockClayBucket;
 import knightminer.ceramics.blocks.BlockClayHard;
 import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
@@ -23,6 +24,7 @@ import knightminer.ceramics.blocks.BlockStairsEnum;
 import knightminer.ceramics.items.ItemArmorClay;
 import knightminer.ceramics.items.ItemArmorClayRaw;
 import knightminer.ceramics.items.ItemBlockBarrel;
+import knightminer.ceramics.items.ItemBlockChannel;
 import knightminer.ceramics.items.ItemBlockEnum;
 import knightminer.ceramics.items.ItemBlockEnumSlab;
 import knightminer.ceramics.items.ItemClayBucket;
@@ -38,6 +40,7 @@ import knightminer.ceramics.plugin.bwm.BetterWithModsPlugin;
 import knightminer.ceramics.plugin.tconstruct.TConstructPlugin;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
+import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
@@ -80,20 +83,28 @@ public class Ceramics {
 
 	public static final Logger log = LogManager.getLogger(modID);
 
+	// functional
 	public static Block clayBarrel;
-	public static Block clayBarrelUnfired;
-	public static BlockClaySoft claySoft;
-	public static BlockClayHard clayHard;
-	public static BlockClaySlab claySlab;
-	public static BlockClayWall clayWall;
-	public static BlockClayRainbow rainbowClay;
 	public static Block porcelainBarrel;
 	public static Block porcelainBarrelExtension;
 	public static Block clayBarrelStained;
 	public static Block clayBarrelStainedExtension;
-	public static BlockStained porcelain;
+	public static Block faucet;
+	public static Block channel;
+
+	// materials
+	public static Block clayBarrelUnfired;
+	public static BlockClaySoft claySoft;
 	public static Block clayBucketBlock;
 
+	// building blocks
+	public static BlockClayHard clayHard;
+	public static BlockClaySlab claySlab;
+	public static BlockClayWall clayWall;
+	public static BlockStained porcelain;
+	public static BlockClayRainbow rainbowClay;
+
+	// stairs
 	public static Block stairsPorcelainBricks;
 	public static Block stairsDarkBricks;
 	public static Block stairsGoldenBricks;
@@ -102,13 +113,10 @@ public class Ceramics {
 	public static Block stairsLavaBricks;
 	public static Block stairsRainbowBricks;
 
+	// items
 	public static Item clayUnfired;
-
 	public static ItemClayBucket clayBucket;
 	public static Item clayShears;
-
-	// simplicity
-	private static ItemStack unfiredBucket;
 
 	// armor
 	public static ArmorMaterial clayArmor;
@@ -122,9 +130,6 @@ public class Ceramics {
 	public static Item clayChestplateRaw;
 	public static Item clayLeggingsRaw;
 	public static Item clayBootsRaw;
-
-	// tic support
-	public static Block faucet;
 
 	static {
 		FluidRegistry.enableUniversalBucket();
@@ -191,6 +196,10 @@ public class Ceramics {
 			// faucet
 			faucet = registerBlock(r, new BlockFaucet(), "faucet");
 			registerTE(TileFaucet.class, "faucet");
+
+			// channel
+			channel = registerBlock(r, new BlockChannel(), "channel");
+			registerTE(TileChannel.class, "channel");
 		}
 
 		@SubscribeEvent
@@ -257,6 +266,7 @@ public class Ceramics {
 
 			// faucet
 			registerItemBlock(r, faucet);
+			registerItemBlock(r, new ItemBlockChannel(channel));
 		}
 	}
 

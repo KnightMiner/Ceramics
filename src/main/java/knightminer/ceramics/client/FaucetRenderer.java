@@ -25,7 +25,7 @@ import slimeknights.tconstruct.library.smeltery.IFaucetDepth;
 
 public class FaucetRenderer extends TileEntitySpecialRenderer<TileFaucet> {
 
-	private static IDepthGetter depth;
+	static IDepthGetter depth;
 	static {
 		// if Tinkers Construct is loaded, pipe to its interface
 		if(Loader.isModLoaded(ModIDs.TINKERS)) {
@@ -136,7 +136,7 @@ public class FaucetRenderer extends TileEntitySpecialRenderer<TileFaucet> {
 		}
 	}
 
-	private static interface IDepthGetter {
+	static interface IDepthGetter {
 		float getDepth(World world, BlockPos pos, IBlockState state);
 	}
 }

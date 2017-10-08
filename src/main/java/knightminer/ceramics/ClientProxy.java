@@ -8,12 +8,14 @@ import knightminer.ceramics.blocks.BlockEnumSlabBase;
 import knightminer.ceramics.blocks.BlockStained;
 import knightminer.ceramics.blocks.IBlockEnum;
 import knightminer.ceramics.client.BarrelRenderer;
+import knightminer.ceramics.client.ChannelRenderer;
 import knightminer.ceramics.client.FaucetRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.PropertyStateMapper;
 import knightminer.ceramics.tileentity.TileBarrel;
+import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWall;
@@ -52,6 +54,7 @@ public class ClientProxy extends CommonProxy {
 		}
 		if(Config.faucetEnabled) {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileFaucet.class, new FaucetRenderer());
+			ClientRegistry.bindTileEntitySpecialRenderer(TileChannel.class, new ChannelRenderer());
 		}
 	}
 
@@ -127,6 +130,7 @@ public class ClientProxy extends CommonProxy {
 		}
 
 		registerItemModel(Ceramics.faucet);
+		registerItemModel(Ceramics.channel);
 	}
 
 	@Override

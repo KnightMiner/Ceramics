@@ -17,8 +17,15 @@ public class CeramicsNetwork {
 
 	private static int id = 0;
 	public static void registerPackets() {
+		// generic
 		INSTANCE.registerMessage(FluidUpdatePacket.FluidUpdateHandler.class, FluidUpdatePacket.class, id++, Side.CLIENT);
+
+		// barrel
 		INSTANCE.registerMessage(BarrelSizeChangedPacket.BarrelCapacityChangedHandler.class, BarrelSizeChangedPacket.class, id++, Side.CLIENT);
+
+		// channel
+		INSTANCE.registerMessage(ChannelConnectionPacket.ChannelConnectionsHandler.class, ChannelConnectionPacket.class, id++, Side.CLIENT);
+		INSTANCE.registerMessage(ChannelFlowPacket.ChannelConnectionsHandler.class, ChannelFlowPacket.class, id++, Side.CLIENT);
 	}
 
 	public static void sendToAllAround(World world, BlockPos pos, PacketBase message) {

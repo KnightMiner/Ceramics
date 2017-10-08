@@ -3,6 +3,7 @@ package knightminer.ceramics.tileentity;
 import javax.annotation.Nonnull;
 
 import knightminer.ceramics.blocks.BlockFaucet;
+import knightminer.ceramics.library.tank.IFluidUpdateReciever;
 import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.network.CeramicsNetwork;
 import net.minecraft.block.state.IBlockState;
@@ -18,10 +19,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public class TileFaucet extends TileEntity implements ITickable {
+public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateReciever {
 
 	public static final int LIQUID_TRANSFER = 6; // how much liquid is transferred per operation
-	public static final int TRANSACTION_AMOUNT = 100;
+	public static final int TRANSACTION_AMOUNT = 144;
 
 	// direction we're pulling liquid from. cached so we don't have to query the world every time. set on pour-begin
 	public EnumFacing direction; // used to continue draining and for rendering
@@ -201,7 +202,8 @@ public class TileFaucet extends TileEntity implements ITickable {
 		}
 	}
 
-	public void onActivationPacket(FluidStack fluid) {
+	@Override
+	public void updateFluidTo(FluidStack fluid) {
 		if(fluid == null) {
 			reset();
 		}
