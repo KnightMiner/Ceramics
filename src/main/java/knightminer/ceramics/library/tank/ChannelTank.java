@@ -57,6 +57,18 @@ public class ChannelTank extends TileTank<TileChannel> {
 	}
 
 	@Override
+	protected void sendUpdate(int amount) {
+		if(amount != 0) {
+			// if the fluid is null, we just removed fluid
+			// if the amounts matched, that means we had 0 before
+			FluidStack fluid = this.getFluid();
+			if(fluid == null || fluid.amount == amount) {
+				super.sendUpdate(amount);
+			}
+		}
+	}
+
+	@Override
 	public FluidTank readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 		this.locked = nbt.getInteger(TAG_LOCKED);

@@ -41,8 +41,6 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	/** Stores if the channel can connect downwards */
 	private boolean canConnectDown;
 
-	private boolean wasEmpty;
-
 
 	/** Stores if the channel is currently flowing, byte will determine for how long */
 	private byte[] isFlowing;
@@ -62,10 +60,9 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 
 		this.isFlowing = new byte[4];
 
-		this.tank = new ChannelTank(144, this);
+		this.tank = new ChannelTank(36, this);
 		this.sideTanks = new ChannelSideTank[4];
 		this.numOutputs = 0;
-		this.wasEmpty = true;
 	}
 
 	/* Flow */
@@ -228,10 +225,16 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	 * @param fromPos  Block that changed
 	 */
 	public void handleBlockUpdate(BlockPos fromPos) {
+		if(world.isRemote) {
+			return;
+		}
+
 		EnumFacing side = Util.facingFromNeighbor(this.pos, fromPos);
 		// we don't care about up as we don't connect on up
 		if(side != null && side != EnumFacing.UP) {
-			if(connectionValid(fromPos, side)) {
+			boolean wasValid = this.canConnect(side);
+			boolean isValid = connectionValid(fromPos, side);
+			if(isValid) {
 				this.setCanConnect(side, true);
 			} else {
 				// if we cannot connect, clear the connection type
@@ -239,9 +242,10 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 				this.setConnection(side, ChannelConnection.NONE);
 			}
 
-
-			// a regular block update seems to run 1 tick before the client receives the update, so send a pack that handles our update
-			CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, side, this.canConnect(side)));
+			if(isValid != wasValid) {
+				// a regular block update seems to run 1 tick before the client receives the update, so send a pack that handles our update
+				CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, side, this.canConnect(side)));
+			}
 		}
 	}
 
@@ -421,7 +425,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		} else {
 			int index = side.getHorizontalIndex();
 			wasFlowing = this.isFlowing[index] > 0;
-			this.isFlowing[index] = (byte) (isFlowing ? 5 : 0);
+			this.isFlowing[index] = (byte) (isFlowing ? 2 : 0);
 		}
 
 		return wasFlowing;
