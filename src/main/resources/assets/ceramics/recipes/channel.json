@@ -1,0 +1,22 @@
+{
+  "conditions": [
+    {
+      "type": "config",
+      "enabled": "faucet"
+    }
+  ],
+  "result": {
+    "item": "ceramics:channel"
+  },
+  "pattern": [
+    "C C",
+    "CCC"
+  ],
+  "type": "forge:ore_shaped",
+  "key": {
+    "C": {
+      "item": "ceramics:unfired_clay",
+      "data": 5
+    }
+  }
+}
