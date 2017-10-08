@@ -13,11 +13,14 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateReciever {
 
@@ -170,6 +173,14 @@ public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateRec
 		}
 		return null;
 	}
+
+	/* Rendering */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public AxisAlignedBB getRenderBoundingBox() {
+		return new AxisAlignedBB(pos.getX(), pos.getY() - 1, pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+	}
+
 
 	/* Load & Save */
 

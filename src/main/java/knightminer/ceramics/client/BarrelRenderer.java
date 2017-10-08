@@ -45,6 +45,5 @@ public class BarrelRenderer extends FastTESR<TileBarrel> {
 		int color = fluid.getFluid().getColor(fluid);
 		int brightness = mc.world.getCombinedLight(pos, fluid.getFluid().getLuminosity());
 		RenderUtils.putTexturedQuad(renderer, sprite, 0.125, height, 0.125, 0.75, 0, 0.75, EnumFacing.UP, color, brightness, false);
-		renderer.setTranslation(0, 0, 0);
 	}
 }

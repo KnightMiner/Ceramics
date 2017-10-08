@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -442,6 +443,19 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	private void updateBlock(BlockPos pos) {
 		IBlockState state = world.getBlockState(pos);
 		world.notifyBlockUpdate(pos, state, state, 2);
+	}
+
+
+	/* Rendering */
+	@Override
+	public boolean hasFastRenderer() {
+		return true;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public AxisAlignedBB getRenderBoundingBox() {
+		return new AxisAlignedBB(pos.getX(), pos.getY() - 1, pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
 	}
 
 

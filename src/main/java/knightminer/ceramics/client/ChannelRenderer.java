@@ -2,8 +2,6 @@ package knightminer.ceramics.client;
 
 import javax.annotation.Nonnull;
 
-import org.lwjgl.opengl.GL11;
-
 import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.blocks.BlockChannel;
 import knightminer.ceramics.tileentity.TileChannel;
@@ -11,22 +9,20 @@ import knightminer.ceramics.tileentity.TileChannel.ChannelConnection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
-public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
+public class ChannelRenderer extends FastTESR<TileChannel> {
 	private static Minecraft mc = Minecraft.getMinecraft();
 
 	@Override
-	public void render(@Nonnull TileChannel te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+	public void renderTileEntityFast(@Nonnull TileChannel te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder renderer) {
 		FluidStack fluidStack = te.getTank().getFluid();
 		if(fluidStack == null) {
 			return;
@@ -40,12 +36,8 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 		BlockPos pos = te.getPos();
 
 		// start with the center fluid
-		RenderUtils.pre(x, y, z);
+		renderer.setTranslation(x, y, z);
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder renderer = tessellator.getBuffer();
-		renderer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-		mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		int color = fluid.getColor(fluidStack);
 		int brightness = te.getWorld().getCombinedLight(te.getPos(), fluid.getLuminosity());
 		TextureMap map = mc.getTextureMapBlocks();
@@ -60,12 +52,12 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 		BlockPos offsetPos;
 		int outputs = 0;
 		for(EnumFacing side : EnumFacing.HORIZONTALS) {
-			if(te.isFlowing(side)) {
-				connection = te.getConnection(side);
-				if(!ChannelConnection.canFlow(connection)) {
-					continue;
-				}
+			connection = te.getConnection(side);
+			if(!ChannelConnection.canFlow(connection)) {
+				continue;
+			}
 
+			if(te.isFlowing(side)) {
 				offsetPos = pos.offset(side);
 				if(connection == ChannelConnection.OUT && world.getBlockState(offsetPos).getBlock() instanceof BlockBarrel) {
 					barrelOffset = 0.0625;
@@ -133,34 +125,39 @@ public class ChannelRenderer extends TileEntitySpecialRenderer<TileChannel> {
 		}
 
 		// downwards flow
-		if(te.isFlowing(EnumFacing.DOWN) && te.isConnectedDown()) {
-			// check how far into the 2nd block we want to render
-			BlockPos below = pos.down();
-			IBlockState state = world.getBlockState(below);
-			float yMin = -FaucetRenderer.depth.getDepth(world, below, state);
-
+		if(te.isConnectedDown()) {
 			double xz1 = 0.375;
-			double y1 = 0;
+			double y1;
 			double wd = 0.25;
-			double h = 0.25;
-			RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.NORTH, color, brightness, true);
-			RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.EAST,  color, brightness, true);
-			RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.SOUTH, color, brightness, true);
-			RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.WEST,  color, brightness, true);
+			double h;
+			if(te.isFlowing(EnumFacing.DOWN)) {
+				// check how far into the 2nd block we want to render
+				BlockPos below = pos.down();
+				IBlockState state = world.getBlockState(below);
+				float yMin = -FaucetRenderer.depth.getDepth(world, below, state);
 
-			if(yMin < 0) {
-				y1 = yMin;
-				h = -yMin;
+				y1 = 0;
+				h = 0.125;
 				RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.NORTH, color, brightness, true);
 				RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.EAST,  color, brightness, true);
 				RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.SOUTH, color, brightness, true);
 				RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.WEST,  color, brightness, true);
+
+				if(yMin < 0) {
+					y1 = yMin;
+					h = -yMin;
+					RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.NORTH, color, brightness, true);
+					RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.EAST,  color, brightness, true);
+					RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.SOUTH, color, brightness, true);
+					RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.WEST,  color, brightness, true);
+				}
+
+			} else {
+				y1 = 0.375;
+				h = 0;
 			}
 			// draw at current bottom
 			RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.DOWN,  color, brightness, true);
 		}
-
-		tessellator.draw();
-		RenderUtils.post();
 	}
 }
