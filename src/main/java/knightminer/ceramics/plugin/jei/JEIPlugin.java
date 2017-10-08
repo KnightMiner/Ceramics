@@ -53,5 +53,10 @@ public class JEIPlugin implements IModPlugin {
 				registry.addIngredientInfo(porcelainExtensions, ItemStack.class, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.porcelain.extension"), Config.barrelPorcelainCapacity));
 			}
 		}
+
+		if(Config.faucetEnabled) {
+			registry.addIngredientInfo(new ItemStack(Ceramics.faucet), ItemStack.class, Util.prefix("jei.faucet"));
+			registry.addIngredientInfo(new ItemStack(Ceramics.channel), ItemStack.class, Util.prefix("jei.channel"));
+		}
 	}
 }
