@@ -87,7 +87,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 				// otherwise, ensure we have a connection before pouring
 			} else if(numOutputs > 0) {
 				// we want to split the fluid if needed rather than favoring a side
-				int flowRate = Math.max(1, Math.min(tank.maxOutput() / numOutputs, TileFaucet.LIQUID_TRANSFER));
+				int flowRate = Math.max(1, Math.min(tank.usableFluid() / numOutputs, TileFaucet.LIQUID_TRANSFER));
 				// then just try each side
 				for(EnumFacing side : EnumFacing.HORIZONTALS) {
 					trySide(side, flowRate);
@@ -133,7 +133,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	}
 
 	protected void fill(EnumFacing side, @Nonnull IFluidHandler handler, int amount) {
-		FluidStack fluid = tank.getFluid().copy();
+		FluidStack fluid = tank.getUsableFluid();
 		// use the smaller of the rate or the amount divided by connections
 		fluid.amount = amount;
 		int filled = handler.fill(fluid, false);

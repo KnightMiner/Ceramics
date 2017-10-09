@@ -26,27 +26,23 @@ public class ChannelTank extends TileTank<TileChannel> {
 		this.locked = 0;
 	}
 
+	public FluidStack getUsableFluid() {
+		FluidStack stack = this.fluid.copy();
+		stack.amount = stack.amount - locked;
+
+		return stack;
+	}
+
 	/**
 	 * Returns the maximum fluid that can be extracted from this tank
 	 * @return  Max fluid that can be pulled
 	 */
-	public int maxOutput() {
+	public int usableFluid() {
 		if(fluid == null) {
 			return 0;
 		}
 
 		return fluid.amount - locked;
-	}
-
-	@Override
-	public FluidStack drainInternal(int maxDrain, boolean doDrain) {
-		int drained = maxDrain;
-		int allowed = maxOutput();
-		if (allowed < drained) {
-			drained = allowed;
-		}
-
-		return super.drainInternal(drained, doDrain);
 	}
 
 	@Override
