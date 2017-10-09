@@ -72,7 +72,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		}
 
 		FluidStack fluid = tank.getFluid();
-		if(fluid != null) {
+		if(fluid != null && fluid.amount > 0) {
 
 			// if we have down, use only that
 			if(isConnectedDown()) {
@@ -127,9 +127,9 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 
 	protected void fill(EnumFacing side, @Nonnull IFluidHandler handler, int amount) {
 		FluidStack fluid = tank.getUsableFluid();
-		// use the smaller of the rate or the amount divided by connections
-		fluid.amount = amount;
-		int filled = handler.fill(fluid, false);
+		// make sure we do not allow more than the fluid allows
+		fluid.amount = Math.min(fluid.amount, amount);
+		int filled = fluid.amount == 0 ? 0 : handler.fill(fluid, false);
 		if(filled > 0) {
 			setFlow(side, true);
 			filled = handler.fill(fluid, true);
@@ -413,6 +413,10 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		}
 
 		return false;
+	}
+
+	public boolean isFlowingDown() {
+		return isFlowingDown;
 	}
 
 	private void updateBlock(BlockPos pos) {

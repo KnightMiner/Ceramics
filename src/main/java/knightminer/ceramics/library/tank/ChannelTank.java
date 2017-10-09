@@ -27,8 +27,11 @@ public class ChannelTank extends TileTank<TileChannel> {
 	}
 
 	public FluidStack getUsableFluid() {
+		if(fluid == null) {
+			return null;
+		}
 		FluidStack stack = this.fluid.copy();
-		stack.amount = stack.amount - locked;
+		stack.amount -= locked;
 
 		return stack;
 	}
@@ -48,7 +51,9 @@ public class ChannelTank extends TileTank<TileChannel> {
 	@Override
 	public int fill(FluidStack resource, boolean doFill) {
 		int amount = super.fill(resource, doFill);
-		locked += amount;
+		if(doFill) {
+			locked += amount;
+		}
 		return amount;
 	}
 

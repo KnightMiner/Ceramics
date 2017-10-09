@@ -27,6 +27,7 @@ public class ChannelRenderer extends FastTESR<TileChannel> {
 		if(fluidStack == null) {
 			return;
 		}
+
 		Fluid fluid = fluidStack.getFluid();
 		if(fluid == null) {
 			return;
@@ -130,7 +131,7 @@ public class ChannelRenderer extends FastTESR<TileChannel> {
 			double y1;
 			double wd = 0.25;
 			double h;
-			if(te.isFlowing(EnumFacing.DOWN)) {
+			if(te.isFlowingDown()) {
 				// check how far into the 2nd block we want to render
 				BlockPos below = pos.down();
 				IBlockState state = world.getBlockState(below);
