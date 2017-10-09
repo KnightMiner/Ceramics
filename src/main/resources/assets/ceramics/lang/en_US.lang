@@ -190,6 +190,12 @@ item.ceramics.unfired.barrel_porcelain_extension.name=Unfired Porcelain Barrel E
 ceramics.barrel.fluid.empty=Barrel is empty
 ceramics.barrel.fluid.amount=Contains: %smb %s
 
+ceramics.channel.connected.in=Set side to flow inwards
+ceramics.channel.connected.out=Set side to flow outwards
+ceramics.channel.connected.none=Disallowed flowing on side
+ceramics.channel.connected_down.allow=Allowed flowing down
+ceramics.channel.connected_down.disallow=Disallowed flowing down
+
 # JEI Descriptions
 ceramics.jei.bucket=Clay buckets are an early game alternative to the standard iron bucket. Like their iron counterparts, they can be used to transport liquids, but will break after pouring out a hot liquid.
 ceramics.jei.barrel.base=Barrels are a simple fluid storage block, storing up to %s buckets. If broken, the barrel will lose its fluid.

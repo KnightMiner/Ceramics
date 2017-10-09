@@ -14,6 +14,7 @@ import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.ChannelConnectionPacket;
 import knightminer.ceramics.network.ChannelFlowPacket;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -23,6 +24,7 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -265,14 +267,16 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	 * Interacts with the tile entity, setting the side to show or hide
 	 * @param side  Side clicked
 	 */
-	public void interact(EnumFacing side, boolean sneak) {
+	public void interact(EntityPlayer player, EnumFacing side) {
 		// if down, just reverse the connection
+		String message;
 		if(side == EnumFacing.DOWN) {
 			this.connectedDown = !this.connectedDown;
 			this.updateBlock(pos);
+			message = this.connectedDown ? "channel.connected_down.allow" : "channel.connected_down.disallow";
 		} else {
 			// otherwise, we rotate though connections
-			ChannelConnection newConnect = this.getConnection(side).getNext(sneak);
+			ChannelConnection newConnect = this.getConnection(side).getNext(player.isSneaking());
 			this.setConnection(side, newConnect);
 
 			// if we have a neighbor, update them as well
@@ -284,7 +288,18 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			// block updates
 			this.updateBlock(pos);
 			this.updateBlock(offset);
+			switch(newConnect) {
+				case OUT:
+					message = "channel.connected.out";
+					break;
+				case IN:
+					message = "channel.connected.in";
+					break;
+				default:
+					message = "channel.connected.none";
+			}
 		}
+		player.sendStatusMessage(new TextComponentTranslation(Util.prefix(message)), true);
 	}
 
 	/* Helper methods */

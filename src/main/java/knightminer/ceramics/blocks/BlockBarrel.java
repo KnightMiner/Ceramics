@@ -6,6 +6,7 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.IFaucetDepthFallback;
 import knightminer.ceramics.library.ModIDs;
+import knightminer.ceramics.library.Util;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileBarrelBase;
 import knightminer.ceramics.tileentity.TileBarrelExtension;
@@ -108,10 +109,10 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 		if(!world.isRemote) {
 			FluidStack fluid = fluidHandler.getTankProperties()[0].getContents();
 			if(fluid == null) {
-				player.sendStatusMessage(new TextComponentTranslation("ceramics.barrel.fluid.empty"), true);
+				player.sendStatusMessage(new TextComponentTranslation(Util.prefix("barrel.fluid.empty")), true);
 			}
 			else {
-				player.sendStatusMessage(new TextComponentTranslation("ceramics.barrel.fluid.amount", new Object[] {
+				player.sendStatusMessage(new TextComponentTranslation(Util.prefix("barrel.fluid.amount"), new Object[] {
 						fluid.amount,
 						fluid.getLocalizedName()
 				}), true);

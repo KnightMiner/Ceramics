@@ -127,7 +127,7 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 			}
 
 			// then run the interaction
-			((TileChannel) te).interact(side, player.isSneaking());
+			((TileChannel) te).interact(player, side);
 			return true;
 		}
 		return super.onBlockActivated(worldIn, pos, state, player, hand, facing, hitX, hitY, hitZ);
