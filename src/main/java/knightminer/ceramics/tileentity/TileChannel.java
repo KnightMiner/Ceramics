@@ -156,21 +156,25 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 
 	/* Fluid interactions */
 	@Override
-	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			// we do not allow inserting from the bottom
-			return facing != null && facing != EnumFacing.DOWN;
+			// only allow inserting if the side is set to in
+			// basically, block out and none, along with sides that cannot be in
+			return side != null && getConnection(side) == ChannelConnection.IN;
 		}
-		return super.hasCapability(capability, facing);
+		return super.hasCapability(capability, side);
 	}
 
 	@Nonnull
 	@Override
-	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-			return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(getTank(facing));
+			// ensure we allow on that side
+			if(side != null && getConnection(side) == ChannelConnection.IN) {
+				return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(getTank(side));
+			}
 		}
-		return super.getCapability(capability, facing);
+		return super.getCapability(capability, side);
 	}
 
 
