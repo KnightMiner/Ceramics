@@ -269,8 +269,16 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			isChannel = true;
 			// otherwise ensure we can actually connect on that side
 		} else if(te == null || !te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite())) {
-			this.setConnection(side, ChannelConnection.NONE);
-			this.updateBlock(pos);
+			// if it is already none, no reason to set it back to none
+			if(this.getConnection(side) == ChannelConnection.NONE) {
+				// but for sides lets try again with the bottom connection
+				if(side != EnumFacing.DOWN) {
+					this.interact(player, EnumFacing.DOWN);
+				}
+			} else {
+				this.setConnection(side, ChannelConnection.NONE);
+				this.updateBlock(pos);
+			}
 			return;
 		}
 
