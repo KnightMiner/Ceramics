@@ -5,7 +5,6 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import knightminer.ceramics.library.TagUtil;
 import knightminer.ceramics.library.Util;
 import knightminer.ceramics.library.tank.ChannelSideTank;
 import knightminer.ceramics.library.tank.ChannelTank;
@@ -38,10 +37,6 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	private ChannelConnection[] connections;
 	/** Connection on the bottom as its boolean */
 	private boolean connectedDown;
-	/** Stores if the channel is capable of connecting on that side */
-	private boolean[] canConnect;
-	/** Stores if the channel can connect downwards */
-	private boolean canConnectDown;
 
 
 	/** Stores if the channel is currently flowing, byte will determine for how long */
@@ -57,8 +52,6 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	public TileChannel() {
 		this.connections = new ChannelConnection[4];
 		this.connectedDown = false;
-		this.canConnect = new boolean[4];
-		this.canConnectDown = false;
 
 		this.isFlowing = new byte[4];
 
@@ -188,48 +181,44 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	 */
 	public void onPlaceBlock(EnumFacing hit, boolean sneak) {
 		EnumFacing side = hit.getOpposite();
-		// start by setting down as it can skip a bit of the logic in the loop with raw connections
-		this.setCanConnect(EnumFacing.DOWN, connectionValid(pos.down(), EnumFacing.DOWN));
 
-		// first, set canConnects
-		for(EnumFacing facing : EnumFacing.HORIZONTALS) {
-			this.setCanConnect(facing, connectionValid(pos.offset(facing), facing.getOpposite()));
+		// if placed below a TE, update to connect to it
+		TileEntity te = world.getTileEntity(pos.offset(side));
+		if(te == null) {
+			return;
 		}
 
-		// if placed below a channel, connect it to us
 		if(side == EnumFacing.UP) {
-			TileEntity te = world.getTileEntity(pos.offset(side));
 			if(te instanceof TileChannel) {
 				((TileChannel)te).connectedDown = true;
 			}
 		}
 
-		// for the rest, go with our preset connection
-		else if(this.canConnect(side)) {
-			TileEntity te = world.getTileEntity(pos.offset(side));
+		// for the rest, try to connect to it
+		// if its a channel, connect to each other
+		else if(te instanceof TileChannel) {
 			// if its a channel, update ours and their connections to each other
-			if(te instanceof TileChannel) {
-				// if we hit the bottom of a channel, make it flow into us
-				if(side == EnumFacing.DOWN) {
-					this.connectedDown = true;
-				} else {
-					// default to out on click, but do in if sneaking
-					ChannelConnection connection = sneak ? ChannelConnection.IN : ChannelConnection.OUT;
-					this.setConnection(side, connection.getOpposite());
-					((TileChannel)te).setConnection(hit, connection);
-				}
+			// if we hit the bottom of a channel, make it flow into us
+			if(side == EnumFacing.DOWN) {
+				this.connectedDown = true;
 			} else {
-				// we already know we can connect, so just set out
-				this.setConnection(side, ChannelConnection.OUT);
+				// default to out on click, but do in if sneaking
+				ChannelConnection connection = sneak ? ChannelConnection.IN : ChannelConnection.OUT;
+				this.setConnection(side, connection.getOpposite());
+				((TileChannel)te).setConnection(hit, connection);
 			}
+			// if its another fluid container, just connect to it
+		} else if(te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite())) {
+			// we already know we can connect, so just set out
+			this.setConnection(side, ChannelConnection.OUT);
 		}
 	}
 
 	/**
 	 * Handles an update from another block to update the shape
-	 * @param fromPos  Block that changed
+	 * @param fromPos      BlockPos that changed
 	 */
-	public void handleBlockUpdate(BlockPos fromPos) {
+	public void handleBlockUpdate(BlockPos fromPos, boolean didPlace) {
 		if(world.isRemote) {
 			return;
 		}
@@ -237,30 +226,29 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		EnumFacing side = Util.facingFromNeighbor(this.pos, fromPos);
 		// we don't care about up as we don't connect on up
 		if(side != null && side != EnumFacing.UP) {
-			boolean wasValid = this.canConnect(side);
-			boolean isValid = connectionValid(fromPos, side);
-			if(isValid) {
-				this.setCanConnect(side, true);
-			} else {
-				// if we cannot connect, clear the connection type
-				this.setCanConnect(side, false);
+			boolean isValid = false;
+			boolean isChannel = false;
+			TileEntity te = world.getTileEntity(fromPos);
+			if(te instanceof TileChannel) {
+				isValid = true;
+				isChannel = true;
+			} else if(te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite())) {
+				isValid = true;
+			}
+
+
+			// if there is a connection and its no longer valid, clear it
+			ChannelConnection connection = this.getConnection(side);
+			if(connection != ChannelConnection.NONE && !isValid) {
 				this.setConnection(side, ChannelConnection.NONE);
-			}
-
-			if(isValid != wasValid) {
-				// a regular block update seems to run 1 tick before the client receives the update, so send a pack that handles our update
-				CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, side, this.canConnect(side)));
+				CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, side, false));
+				// if there is no connection and one can be formed, we might automatically add one on condition
+				// the new block must have been placed (not just updated) and must not be a channel
+			} else if(connection == ChannelConnection.NONE && isValid && !isChannel && didPlace) {
+				this.setConnection(side, ChannelConnection.OUT);
+				CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, side, true));
 			}
 		}
-	}
-
-	protected boolean connectionValid(BlockPos pos, EnumFacing side) {
-		TileEntity te = world.getTileEntity(pos);
-		if(te == null) {
-			return false;
-		}
-
-		return te instanceof TileChannel || te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
 	}
 
 	/**
@@ -268,6 +256,20 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	 * @param side  Side clicked
 	 */
 	public void interact(EntityPlayer player, EnumFacing side) {
+		// if placed below a channel, connect it to us
+		TileEntity te = world.getTileEntity(pos.offset(side));
+
+		// if the TE is a channel, note that for later
+		boolean isChannel = false;
+		if(te instanceof TileChannel) {
+			isChannel = true;
+			// otherwise ensure we can actually connect on that side
+		} else if(te == null || !te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite())) {
+			this.setConnection(side, ChannelConnection.NONE);
+			this.updateBlock(pos);
+			return;
+		}
+
 		// if down, just reverse the connection
 		String message;
 		if(side == EnumFacing.DOWN) {
@@ -281,9 +283,8 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 
 			// if we have a neighbor, update them as well
 			BlockPos offset = this.pos.offset(side);
-			TileEntity te = world.getTileEntity(offset);
-			if(te instanceof TileChannel) {
-				((TileChannel) te).setConnection(side.getOpposite(), newConnect.getOpposite());
+			if(isChannel) {
+				((TileChannel)te).setConnection(side.getOpposite(), newConnect.getOpposite());
 			}
 			// block updates
 			this.updateBlock(pos);
@@ -326,52 +327,22 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	}
 
 	/**
-	 * Checks if a channel can connect on the specified side
-	 * @param side  Side to check
-	 * @return  True if the channel can connect
-	 */
-	public boolean canConnect(@Nonnull EnumFacing side) {
-		// special case down
-		if(side == EnumFacing.DOWN) {
-			return canConnectDown;
-		}
-
-		int index = side.getHorizontalIndex();
-		if(index < 0) {
-			return false;
-		}
-
-		return canConnect[index];
-	}
-
-	/**
-	 * Sets if the channel can connect on the side
-	 * @param side        Side to set
-	 * @param canConnect  New status
-	 */
-	public void setCanConnect(@Nonnull EnumFacing side, boolean canConnect) {
-		if(side == EnumFacing.DOWN) {
-			this.canConnectDown = canConnect;
-			return;
-		}
-
-		int index = side.getHorizontalIndex();
-		if(index >= 0) {
-			this.canConnect[index] = canConnect;
-		}
-	}
-
-	/**
-	 * Gets the raw connection for a horizontal
+	 * Gets the connection for a side
 	 * @param side  Side to query
-	 * @return  Connection for the horzontal without taking canConnect into account
+	 * @return  Connection on the specified side
 	 */
 	@Nonnull
-	public ChannelConnection getConnectionRaw(@Nonnull EnumFacing side) {
+	public ChannelConnection getConnection(@Nonnull EnumFacing side) {
+		// just always return in for up, thats fine
+		if(side == EnumFacing.UP) {
+			return ChannelConnection.IN;
+		}
+		// down should ask the boolean, might be out
 		if(side == EnumFacing.DOWN) {
 			return this.connectedDown ? ChannelConnection.OUT : ChannelConnection.NONE;
 		}
 
+		// the other four use an array index
 		int index = side.getHorizontalIndex();
 		if(index < 0) {
 			return null;
@@ -382,26 +353,8 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		return connection == null ? ChannelConnection.NONE : connection;
 	}
 
-	/**
-	 * Gets the functional connection for a side
-	 * @param side  Side to query
-	 * @return  Connection taking if the channel can connect into account
-	 */
-	@Nonnull
-	public ChannelConnection getConnection(@Nonnull EnumFacing side) {
-		if(side == EnumFacing.UP) {
-			return ChannelConnection.IN;
-		}
-
-		if(!canConnect(side)) {
-			return ChannelConnection.NONE;
-		}
-
-		return getConnectionRaw(side);
-	}
-
 	public boolean isConnectedDown() {
-		return canConnectDown && connectedDown;
+		return connectedDown;
 	}
 
 	public void setConnection(@Nonnull EnumFacing side, @Nonnull ChannelConnection connection) {
@@ -484,8 +437,6 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	/* NBT */
 	private static final String TAG_CONNECTIONS = "connections";
 	private static final String TAG_CONNECTED_DOWN = "connected_down";
-	private static final String TAG_CAN_CONNECT = "can_connect";
-	private static final String TAG_CAN_CONNECT_DOWN = "can_connect_down";
 	private static final String TAG_IS_FLOWING = "is_flowing";
 	private static final String TAG_IS_FLOWING_DOWN = "is_flowing_down";
 	private static final String TAG_TANK = "tank";
@@ -504,8 +455,6 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		}
 		nbt.setByteArray(TAG_CONNECTIONS, bytes);
 		nbt.setBoolean(TAG_CONNECTED_DOWN, connectedDown);
-		nbt.setByteArray(TAG_CAN_CONNECT, TagUtil.toByteArray(canConnect));
-		nbt.setBoolean(TAG_CAN_CONNECT_DOWN, canConnectDown);
 		nbt.setByteArray(TAG_IS_FLOWING, isFlowing);
 		nbt.setBoolean(TAG_IS_FLOWING_DOWN, isFlowingDown);
 		nbt.setTag(TAG_TANK, tank.writeToNBT(new NBTTagCompound()));
@@ -533,12 +482,6 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		}
 		this.connectedDown = nbt.getBoolean(TAG_CONNECTED_DOWN);
 
-		// can connect
-		if(nbt.hasKey(TAG_CAN_CONNECT)) {
-			this.canConnect = TagUtil.toBoolArray(nbt.getByteArray(TAG_CAN_CONNECT));
-		}
-		this.canConnectDown = nbt.getBoolean(TAG_CAN_CONNECT_DOWN);
-
 		// isFlowing
 		if(nbt.hasKey(TAG_IS_FLOWING)) {
 			this.isFlowing = nbt.getByteArray(TAG_IS_FLOWING);
@@ -559,11 +502,8 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void updateCanConnect(EnumFacing side, boolean canConnect) {
-		this.setCanConnect(side, canConnect);
-		if(!canConnect) {
-			this.setConnection(side, ChannelConnection.NONE);
-		}
+	public void updateConnection(EnumFacing side, boolean connect) {
+		this.setConnection(side, connect ? ChannelConnection.OUT : ChannelConnection.NONE);
 		this.updateBlock(pos);
 	}
 

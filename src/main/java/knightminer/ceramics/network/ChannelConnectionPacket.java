@@ -13,29 +13,28 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class ChannelConnectionPacket extends PacketBase {
 	protected BlockPos pos;
 	protected EnumFacing side;
-	protected boolean canConnect;
+	protected boolean connect;
 
 	public ChannelConnectionPacket() {}
 
-	public ChannelConnectionPacket(BlockPos pos, EnumFacing side, boolean canConnect) {
+	public ChannelConnectionPacket(BlockPos pos, EnumFacing side, boolean connect) {
 		this.pos = pos;
 		this.side = side;
-		this.canConnect = canConnect;
-
+		this.connect = connect;
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		pos = readPos(buf);
 		side = EnumFacing.getFront(buf.readByte());
-		canConnect = buf.readBoolean();
+		connect = buf.readBoolean();
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf) {
 		writePos(pos, buf);
 		buf.writeByte(side.getIndex());
-		buf.writeBoolean(canConnect);
+		buf.writeBoolean(connect);
 	}
 
 	public static class ChannelConnectionsHandler implements IMessageHandler<ChannelConnectionPacket, IMessage> {
@@ -44,7 +43,7 @@ public class ChannelConnectionPacket extends PacketBase {
 			getMainThread(ctx).addScheduledTask(() -> {
 				TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
 				if(te instanceof TileChannel) {
-					((TileChannel) te).updateCanConnect(message.side, message.canConnect);
+					((TileChannel) te).updateConnection(message.side, message.connect);
 				}
 			});
 			return null;

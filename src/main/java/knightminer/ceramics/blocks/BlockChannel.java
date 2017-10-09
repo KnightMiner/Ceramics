@@ -26,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -94,10 +95,11 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 
 	// Update the shape when a neighbor is added
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos neighbor) {
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block oldBlock, BlockPos neighbor) {
+		// ignore if the block did not change
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileChannel) {
-			((TileChannel) te).handleBlockUpdate(neighbor);
+			((TileChannel) te).handleBlockUpdate(neighbor, oldBlock == Blocks.AIR);
 		}
 	}
 
