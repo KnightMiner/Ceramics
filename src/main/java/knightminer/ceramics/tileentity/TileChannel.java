@@ -75,10 +75,12 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		if(fluid != null && fluid.amount > 0) {
 
 			// if we have down, use only that
+			boolean hasFlown = false;
 			if(isConnectedDown()) {
-				trySide(EnumFacing.DOWN, TileFaucet.LIQUID_TRANSFER);
+				hasFlown = trySide(EnumFacing.DOWN, TileFaucet.LIQUID_TRANSFER);
 				// otherwise, ensure we have a connection before pouring
-			} else if(numOutputs > 0) {
+			}
+			if(!hasFlown && numOutputs > 0) {
 				// we want to split the fluid if needed rather than favoring a side
 				int flowRate = Math.max(1, Math.min(tank.usableFluid() / numOutputs, TileFaucet.LIQUID_TRANSFER));
 				// then just try each side
@@ -101,9 +103,9 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		tank.freeFluid();
 	}
 
-	protected void trySide(@Nonnull EnumFacing side, int flowRate) {
+	protected boolean trySide(@Nonnull EnumFacing side, int flowRate) {
 		if(tank.getFluid() == null || this.getConnection(side) != ChannelConnection.OUT) {
-			return;
+			return false;
 		}
 
 		// what are we flowing into
@@ -114,18 +116,20 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			// only flow if the other channel is receiving
 			EnumFacing opposite = side.getOpposite();
 			if(channel.getConnection(opposite) == ChannelConnection.IN) {
-				fill(side, channel.getTank(opposite), flowRate);
+				return fill(side, channel.getTank(opposite), flowRate);
 			}
 		}
 		else {
 			IFluidHandler toFill = getFluidHandler(te, side.getOpposite());
 			if(toFill != null) {
-				fill(side, toFill, flowRate);
+				return fill(side, toFill, flowRate);
 			}
 		}
+
+		return false;
 	}
 
-	protected void fill(EnumFacing side, @Nonnull IFluidHandler handler, int amount) {
+	protected boolean fill(EnumFacing side, @Nonnull IFluidHandler handler, int amount) {
 		FluidStack fluid = tank.getUsableFluid();
 		// make sure we do not allow more than the fluid allows
 		fluid.amount = Math.min(fluid.amount, amount);
@@ -134,9 +138,11 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			setFlow(side, true);
 			filled = handler.fill(fluid, true);
 			tank.drainInternal(filled, true);
-		} else {
-			setFlow(side, false);
+			return true;
 		}
+
+		setFlow(side, false);
+		return false;
 	}
 
 	protected TileChannel getChannel(BlockPos pos) {
