@@ -15,7 +15,9 @@ import knightminer.ceramics.library.Util;
 import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileChannel.ChannelConnection;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockLever;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -35,6 +37,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -96,10 +99,15 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	// Update the shape when a neighbor is added
 	@Override
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block oldBlock, BlockPos neighbor) {
+		// only run on server
+		if(world.isRemote) {
+			return;
+		}
+
 		// ignore if the block did not change
 		TileEntity te = world.getTileEntity(pos);
 		if(te instanceof TileChannel) {
-			((TileChannel) te).handleBlockUpdate(neighbor, oldBlock == Blocks.AIR);
+			((TileChannel) te).handleBlockUpdate(neighbor, oldBlock == Blocks.AIR, world.isBlockPowered(pos));
 		}
 	}
 
@@ -144,18 +152,25 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		state = addTEData(state, world, pos);
 
-		state = addBarrel(state, world, pos, NORTH, EnumFacing.NORTH);
-		state = addBarrel(state, world, pos, SOUTH, EnumFacing.SOUTH);
-		state = addBarrel(state, world, pos, WEST, EnumFacing.WEST);
-		state = addBarrel(state, world, pos, EAST, EnumFacing.EAST);
+		state = addExtra(state, world, pos, NORTH, EnumFacing.NORTH);
+		state = addExtra(state, world, pos, SOUTH, EnumFacing.SOUTH);
+		state = addExtra(state, world, pos, WEST, EnumFacing.WEST);
+		state = addExtra(state, world, pos, EAST, EnumFacing.EAST);
 
 		return state;
 	}
 
-	private IBlockState addBarrel(IBlockState state, IBlockAccess world, BlockPos pos, PropertyEnum<ChannelConnectionState> prop, EnumFacing side) {
-		if(state.getValue(prop) == ChannelConnectionState.OUT
-				&& world.getBlockState(pos.offset(side)).getBlock() instanceof BlockBarrel) {
+	private IBlockState addExtra(IBlockState state, IBlockAccess world, BlockPos pos, PropertyEnum<ChannelConnectionState> prop, EnumFacing side) {
+		ChannelConnectionState connection = state.getValue(prop);
+		IBlockState offsetState = world.getBlockState(pos.offset(side));
+		Block block = offsetState.getBlock();
+		if(connection == ChannelConnectionState.OUT
+				&& block instanceof BlockBarrel) {
 			state = state.withProperty(prop, ChannelConnectionState.BARREL);
+		} else if(connection == ChannelConnectionState.NONE
+				&& (block instanceof BlockLever && offsetState.getValue(BlockLever.FACING).getFacing() == side
+				|| block instanceof BlockButton && offsetState.getValue(BlockButton.FACING) == side)) {
+			state = state.withProperty(prop, ChannelConnectionState.LEVER);
 		}
 
 		return state;
@@ -216,7 +231,7 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		// do a bit of bit math to determine the box to use, it seemed like the fastest solution
-		state = addTEData(state, source, pos);
+		state = state.getActualState(source, pos);
 		int index = (state.getValue(NORTH).canFlow() ? 8 : 0)
 				+ (state.getValue(SOUTH).canFlow() ? 4 : 0)
 				+ (state.getValue(WEST).canFlow() ? 2 : 0)
@@ -227,7 +242,7 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean p_185477_7_) {
-		state = addTEData(state, world, pos);
+		state = state.getActualState(world, pos);
 		// if downspout, used extended down
 		if(state.getValue(DOWN)) {
 			addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUNDS_CENTER);
@@ -252,7 +267,7 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	@Deprecated
 	@Override
 	public RayTraceResult collisionRayTrace(IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull Vec3d start, @Nonnull Vec3d end) {
-		state = addTEData(state, world, pos);
+		state = state.getActualState(world, pos);
 
 		// basically the same BlockStairs does
 		// Raytrace through all included AABBs (sides) and return the nearest
@@ -300,8 +315,8 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	@Override
 	@Deprecated
 	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
-		// nothing touches the edges for the most part
-		return BlockFaceShape.UNDEFINED;
+		// allows placing levers on the sides
+		return side.getAxis() == Axis.Y ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
 	}
 
 	@Override
@@ -333,7 +348,8 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 		NONE,
 		IN,
 		OUT,
-		BARREL;
+		BARREL,
+		LEVER;
 
 		byte index;
 		ChannelConnectionState() {

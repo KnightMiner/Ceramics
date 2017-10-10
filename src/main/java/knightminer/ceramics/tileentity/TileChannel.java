@@ -44,6 +44,9 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	/** Stores if the channel is currently flowing down */
 	private boolean isFlowingDown;
 
+	/** Stores if the block was powered last update */
+	private boolean wasPowered;
+
 	private int numOutputs;
 
 	private ChannelTank tank;
@@ -222,13 +225,15 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			// we already know we can connect, so just set out
 			this.setConnection(side, ChannelConnection.OUT);
 		}
+
+		this.wasPowered = world.isBlockPowered(pos);
 	}
 
 	/**
 	 * Handles an update from another block to update the shape
 	 * @param fromPos      BlockPos that changed
 	 */
-	public void handleBlockUpdate(BlockPos fromPos, boolean didPlace) {
+	public void handleBlockUpdate(BlockPos fromPos, boolean didPlace, boolean isPowered) {
 		if(world.isRemote) {
 			return;
 		}
@@ -237,13 +242,14 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		// we don't care about up as we don't connect on up
 		if(side != null && side != EnumFacing.UP) {
 			boolean isValid = false;
-			boolean isChannel = false;
+			boolean shouldOutput = false;
 			TileEntity te = world.getTileEntity(fromPos);
 			if(te instanceof TileChannel) {
 				isValid = true;
-				isChannel = true;
 			} else if(te != null && te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite())) {
 				isValid = true;
+				// if we placed it and are not a channel, set the output state
+				shouldOutput = didPlace;
 			}
 
 
@@ -254,10 +260,20 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 				CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, side, false));
 				// if there is no connection and one can be formed, we might automatically add one on condition
 				// the new block must have been placed (not just updated) and must not be a channel
-			} else if(connection == ChannelConnection.NONE && isValid && !isChannel && didPlace) {
+			} else if(shouldOutput && connection == ChannelConnection.NONE && isValid) {
 				this.setConnection(side, ChannelConnection.OUT);
 				CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, side, true));
 			}
+		}
+
+		// redstone power
+		if(isPowered != wasPowered && side != EnumFacing.DOWN) {
+			TileEntity te = world.getTileEntity(pos.down());
+			boolean isValid2 = te != null && (te instanceof TileChannel || te.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()));
+			this.connectedDown = isValid2 && isPowered;
+
+			CeramicsNetwork.sendToAllAround(world, pos, new ChannelConnectionPacket(pos, EnumFacing.DOWN, this.connectedDown));
+			wasPowered = isPowered;
 		}
 	}
 
@@ -461,6 +477,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	private static final String TAG_CONNECTED_DOWN = "connected_down";
 	private static final String TAG_IS_FLOWING = "is_flowing";
 	private static final String TAG_IS_FLOWING_DOWN = "is_flowing_down";
+	private static final String TAG_WAS_POWERED = "was_powered";
 	private static final String TAG_TANK = "tank";
 
 	// load and save
@@ -479,6 +496,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		nbt.setBoolean(TAG_CONNECTED_DOWN, connectedDown);
 		nbt.setByteArray(TAG_IS_FLOWING, isFlowing);
 		nbt.setBoolean(TAG_IS_FLOWING_DOWN, isFlowingDown);
+		nbt.setBoolean(TAG_WAS_POWERED, wasPowered);
 		nbt.setTag(TAG_TANK, tank.writeToNBT(new NBTTagCompound()));
 
 		return nbt;
@@ -509,6 +527,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			this.isFlowing = nbt.getByteArray(TAG_IS_FLOWING);
 		}
 		this.isFlowingDown = nbt.getBoolean(TAG_IS_FLOWING_DOWN);
+		this.wasPowered = nbt.getBoolean(TAG_WAS_POWERED);
 
 		// tank
 		NBTTagCompound tankTag = nbt.getCompoundTag(TAG_TANK);
