@@ -13,12 +13,12 @@ import knightminer.ceramics.client.FaucetRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
-import knightminer.ceramics.library.PropertyStateMapper;
+import knightminer.ceramics.library.client.IgnoreAllStateMapper;
+import knightminer.ceramics.library.client.PropertyStateMapper;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockWall;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -62,8 +62,11 @@ public class ClientProxy extends CommonProxy {
 	public void registerModels(ModelRegistryEvent event) {
 		// color is handled by tinting
 		ignoreProperty(BlockStained.COLOR, Ceramics.porcelain, Ceramics.porcelainBarrel, Ceramics.porcelainBarrelExtension);
-		// separate all walls to their own file
-		ModelLoader.setCustomStateMapper(Ceramics.clayWall, new PropertyStateMapper("clay_wall", BlockClayWall.TYPE, BlockWall.VARIANT));
+		// separate all walls to their own file, and ignore all properties as we use multipart and it makes duplicate models otherwise
+		ModelLoader.setCustomStateMapper(Ceramics.clayWall, new PropertyStateMapper("clay_wall", BlockClayWall.TYPE, true));
+
+		// also ignore all propeties on the channel to reduce ram
+		ModelLoader.setCustomStateMapper(Ceramics.channel, IgnoreAllStateMapper.INSTANCE);
 
 		// base blocks
 		registerItemModels(Ceramics.claySoft);

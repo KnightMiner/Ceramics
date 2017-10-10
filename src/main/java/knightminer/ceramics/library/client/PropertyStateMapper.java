@@ -1,4 +1,4 @@
-package knightminer.ceramics.library;
+package knightminer.ceramics.library.client;
 
 import java.util.LinkedHashMap;
 
@@ -6,7 +6,6 @@ import javax.annotation.Nonnull;
 
 import com.google.common.collect.Maps;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -21,25 +20,39 @@ public class PropertyStateMapper extends StateMapperBase {
 
 	private final PropertyEnum<?> prop;
 	private final IProperty<?>[] ignore;
+	private boolean ignoreAll;
 
 	private String name;
 
 	public PropertyStateMapper(String name, PropertyEnum<?> prop, IProperty<?>... ignore) {
 		this.name = name + "_";
 		this.prop = prop;
+		this.ignoreAll = false;
 		this.ignore = ignore;
+	}
+
+	public PropertyStateMapper(String name, PropertyEnum<?> prop, boolean ignoreAll) {
+		this.name = name + "_";
+		this.prop = prop;
+		this.ignoreAll = ignoreAll;
+		this.ignore = new IProperty<?>[0];
 	}
 
 	@Nonnull
 	@Override
 	protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+		ResourceLocation res = new ResourceLocation(state.getBlock().getRegistryName().getResourceDomain(), name + state.getValue(prop).getName());
+
+		// if we ignore all properites, just use normal
+		if(ignoreAll) {
+			return new ModelResourceLocation(res, "normal");
+		}
+
 		LinkedHashMap<IProperty<?>, Comparable<?>> map = Maps.newLinkedHashMap(state.getProperties());
 		map.remove(prop);
 		for(IProperty<?> ignored : ignore) {
 			map.remove(ignored);
 		}
-		ResourceLocation res = new ResourceLocation(Block.REGISTRY.getNameForObject(state.getBlock()).getResourceDomain(), name + state.getValue(prop).getName());
-
 		return new ModelResourceLocation(res, this.getPropertyString(map));
 	}
 
