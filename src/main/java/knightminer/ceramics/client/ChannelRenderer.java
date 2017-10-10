@@ -158,7 +158,7 @@ public class ChannelRenderer extends FastTESR<TileChannel> {
 				h = 0;
 			}
 			// draw at current bottom
-			RenderUtils.putTexturedQuad(renderer, flowing, xz1, y1, xz1, wd, h, wd, EnumFacing.DOWN,  color, brightness, true);
+			RenderUtils.putTexturedQuad(renderer, still, xz1, y1, xz1, wd, h, wd, EnumFacing.DOWN,  color, brightness, false);
 		}
 	}
 }
