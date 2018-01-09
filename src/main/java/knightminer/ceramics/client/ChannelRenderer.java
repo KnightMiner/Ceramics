@@ -64,11 +64,6 @@ public class ChannelRenderer extends FastTESR<TileChannel> {
 					barrelOffset = 0.0625;
 				} else {
 					barrelOffset = 0;
-
-					// only render the extra piece if no channel on this side
-					if(!(world.getBlockState(offsetPos).getBlock() instanceof BlockChannel)) {
-						RenderUtils.putTexturedQuad(renderer, flowing, x1, 0.375, z1, x2-x1, 0.09375, z2-z1, side, color, brightness, true);
-					}
 				}
 
 				// first, get location for side
@@ -98,6 +93,11 @@ public class ChannelRenderer extends FastTESR<TileChannel> {
 						x2 = 1 + barrelOffset;
 						z2 = 0.625;
 						break;
+				}
+
+				// only render the extra piece if no channel on this side
+				if(!(world.getBlockState(offsetPos).getBlock() instanceof BlockChannel)) {
+					RenderUtils.putTexturedQuad(renderer, flowing, x1, 0.375, z1, x2-x1, 0.09375, z2-z1, side, color, brightness, true);
 				}
 
 				// next, direction of flow

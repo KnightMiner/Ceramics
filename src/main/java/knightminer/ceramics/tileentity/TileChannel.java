@@ -169,7 +169,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			// only allow inserting if the side is set to in
 			// basically, block out and none, along with sides that cannot be in
-			return side != null && getConnection(side) == ChannelConnection.IN;
+			return side == null || getConnection(side) == ChannelConnection.IN;
 		}
 		return super.hasCapability(capability, side);
 	}
@@ -179,7 +179,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side) {
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
 			// ensure we allow on that side
-			if(side != null && getConnection(side) == ChannelConnection.IN) {
+			if(side == null || getConnection(side) == ChannelConnection.IN) {
 				return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(getTank(side));
 			}
 		}
@@ -280,8 +280,9 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 	/**
 	 * Interacts with the tile entity, setting the side to show or hide
 	 * @param side  Side clicked
+	 * @return
 	 */
-	public void interact(EntityPlayer player, EnumFacing side) {
+	public boolean interact(EntityPlayer player, EnumFacing side) {
 		// if placed below a channel, connect it to us
 		TileEntity te = world.getTileEntity(pos.offset(side));
 
@@ -295,13 +296,13 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			if(this.getConnection(side) == ChannelConnection.NONE) {
 				// but for sides lets try again with the bottom connection
 				if(side != EnumFacing.DOWN) {
-					this.interact(player, EnumFacing.DOWN);
+					return this.interact(player, EnumFacing.DOWN);
 				}
 			} else {
 				this.setConnection(side, ChannelConnection.NONE);
 				this.updateBlock(pos);
 			}
-			return;
+			return false;
 		}
 
 		// if down, just reverse the connection
@@ -335,6 +336,7 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 			}
 		}
 		player.sendStatusMessage(new TextComponentTranslation(Util.prefix(message)), true);
+		return true;
 	}
 
 	/* Helper methods */
@@ -343,8 +345,8 @@ public class TileChannel extends TileEntity implements ITickable, IFluidUpdateRe
 		return this.tank;
 	}
 
-	protected IFluidHandler getTank(@Nonnull EnumFacing side) {
-		if(side == EnumFacing.UP) {
+	protected IFluidHandler getTank(@Nullable EnumFacing side) {
+		if(side == null || side == EnumFacing.UP) {
 			return tank;
 		}
 
