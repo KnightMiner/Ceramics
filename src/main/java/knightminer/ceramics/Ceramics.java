@@ -285,7 +285,7 @@ public class Ceramics {
 
 			// fallback if oredict recipe is diabled
 			if(!Config.porcelainOredictSmelting) {
-				GameRegistry.addSmelting(new ItemStack(clayUnfired, UnfiredType.PORCELAIN.getMeta()),
+				GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta()),
 						new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta()), 0.1f);
 			}
 		}
