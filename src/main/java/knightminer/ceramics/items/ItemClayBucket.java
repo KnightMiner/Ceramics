@@ -601,9 +601,9 @@ public class ItemClayBucket extends Item {
 
 			// add all fluids that the bucket can be filled with
 			for(Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-				// skip milk if registered since we add it manually whether it is a
-				// fluid or not
-				if(!fluid.getName().equals("milk")) {
+				// skip milk if registered since we add it manually whether it is a fluid or not
+				// also skip hot fluids if hot pickup is disabled
+				if(!fluid.getName().equals("milk") && (Config.bucketHotFluids || fluid.getTemperature() < 450)) {
 					FluidStack fs = new FluidStack(fluid, getCapacity());
 					ItemStack stack = new ItemStack(this);
 					if(fill(stack, fs, true) == fs.amount) {

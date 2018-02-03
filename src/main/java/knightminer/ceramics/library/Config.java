@@ -17,6 +17,8 @@ public class Config {
 
 	public static boolean bucketEnabled = true;
 	public static boolean bucketSand = true;
+	public static boolean placeClayBucket = false;
+	public static boolean bucketHotFluids = true;
 	public static boolean shearsEnabled = true;
 	public static boolean armorEnabled = true;
 	public static boolean barrelEnabled = true;
@@ -27,7 +29,6 @@ public class Config {
 	public static boolean faucetEnabled = true;
 	public static boolean rainbowClayEnabled = true;
 	public static boolean rawClayArmorEnabled = true;
-	public static boolean placeClayBucket = false;
 
 	public static int barrelClayCapacity = 4;
 	public static int barrelPorcelainCapacity = 6;
@@ -37,13 +38,19 @@ public class Config {
 	public static void load(FMLPreInitializationEvent event) {
 		configFile = new Configuration(event.getSuggestedConfigurationFile(), "0.1", false);
 
+		// buckets
 		bucketEnabled = configFile.getBoolean("bucket", "enabled", true,
 				"Enables the clay bucket, an alternative to the iron bucket that breaks from hot liquids");
-		bucketSand = configFile.getBoolean("bucketSand", "enabled", true,
-				"Allows the clay bucket to pick up sand and gravel, because why not?");
-		placeClayBucket = configFile.getBoolean("placeClayBucket", "enabled", false,
+		configFile.moveProperty("enabled", "bucketSand", "bucket");
+		configFile.renameProperty("bucket", "bucketSand", "sand");
+		bucketSand = configFile.getBoolean("sand", "bucket", true, "Allows the clay bucket to pick up sand and gravel, because why not?");
+		configFile.moveProperty("enabled", "placeClayBucket", "bucket");
+		placeClayBucket = configFile.getBoolean("placeClayBucket", "bucket", false,
 				"Allows the unfired clay bucket to be placed in the world, for the sake of block based kilns. Normal clay buckets remain unplaceable");
+		bucketHotFluids = configFile.getBoolean("hotFluids", "bucket", true,
+				"If true, the clay bucket can hold hot fluids and breaks when emptying. If false they cannot be picked up at all");
 
+		// tools
 		shearsEnabled = configFile.getBoolean("shears", "enabled", true,
 				"Enables the clay shears, faster than iron shears but less duribility");
 
@@ -55,6 +62,7 @@ public class Config {
 		barrelEnabled = configFile.getBoolean("barrel", "enabled", true,
 				"Enables the clay barrel, a liquid tank that can be expanded upwards");
 
+		// decoration
 		porcelainEnabled = configFile.getBoolean("porcelain", "enabled", true,
 				"Enables porcelain, a whiter clay that produces true colors when dyed");
 		porcelainOredictSmelting = configFile.getBoolean("oredictSmelting", "porcelain", porcelainOredictSmelting, "Pulls recipes from the oredict for smelting porcelain bricks. If disabled just adds one static recipe using ceramics porcelain");
@@ -65,6 +73,7 @@ public class Config {
 		brickWallEnabled = configFile.getBoolean("brickWall", "enabled", true,
 				"Enables walls made of vanilla bricks. Mainly here if another mod provides this feature (e.g. Quark)");
 
+		// fluids
 		faucetEnabled = configFile.getBoolean("porcelainFaucet", "enabled", true,
 				"Enables porcelain faucets and channels for moving fluids. Requires porcelain") && porcelainEnabled;
 

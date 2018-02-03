@@ -47,4 +47,12 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 
 		return Fluid.BUCKET_VOLUME;
 	}
+
+	@Override
+	public boolean canFillFluidType(FluidStack fluid) {
+		if(!Config.bucketHotFluids && fluid.getFluid().getTemperature() >= 450) {
+			return false;
+		}
+		return super.canFillFluidType(fluid);
+	}
 }
