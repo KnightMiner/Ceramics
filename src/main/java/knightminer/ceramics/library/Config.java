@@ -21,6 +21,7 @@ public class Config {
 	public static boolean armorEnabled = true;
 	public static boolean barrelEnabled = true;
 	public static boolean porcelainEnabled = true;
+	public static boolean porcelainOredictSmelting = true;
 	public static boolean fancyBricksEnabled = true;
 	public static boolean brickWallEnabled = true;
 	public static boolean faucetEnabled = true;
@@ -56,6 +57,7 @@ public class Config {
 
 		porcelainEnabled = configFile.getBoolean("porcelain", "enabled", true,
 				"Enables porcelain, a whiter clay that produces true colors when dyed");
+		porcelainOredictSmelting = configFile.getBoolean("oredictSmelting", "porcelain", porcelainOredictSmelting, "Pulls recipes from the oredict for smelting porcelain bricks. If disabled just adds one static recipe using ceramics porcelain");
 		fancyBricksEnabled = configFile.getBoolean("fancyBricks", "enabled", true,
 				"Enables four additional decorative bricks");
 		rainbowClayEnabled = configFile.getBoolean("rainbowClay", "enabled", true,

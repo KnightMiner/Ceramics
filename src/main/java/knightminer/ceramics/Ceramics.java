@@ -282,6 +282,12 @@ public class Ceramics {
 			// smelt raw porcelain blocks into porcelain
 			GameRegistry.addSmelting(new ItemStack(claySoft, 1, ClayTypeSoft.PORCELAIN.getMeta()),
 					new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata()), 0.1f);
+
+			// fallback if oredict recipe is diabled
+			if(!Config.porcelainOredictSmelting) {
+				GameRegistry.addSmelting(new ItemStack(clayUnfired, UnfiredType.PORCELAIN.getMeta()),
+						new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta()), 0.1f);
+			}
 		}
 
 		// bucket
@@ -338,7 +344,7 @@ public class Ceramics {
 		}
 
 		// add recipes using all stacks in the oredictionary for bricks
-		if(Config.porcelainEnabled) {
+		if(Config.porcelainEnabled && Config.porcelainOredictSmelting) {
 			List<ItemStack> porcelains = OreDictionary.getOres("clayPorcelain", false);
 			for(ItemStack porcelain : porcelains) {
 				ItemStack brick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
