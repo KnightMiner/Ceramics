@@ -6,7 +6,8 @@
     }
   ],
   "result": {
-    "item": "ceramics:channel"
+    "item": "ceramics:channel",
+    "count": 3
   },
   "pattern": [
     "C C",
