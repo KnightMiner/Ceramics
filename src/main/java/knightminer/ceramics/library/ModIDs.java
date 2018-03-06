@@ -5,6 +5,7 @@ public interface ModIDs {
 	String TINKERS = "tconstruct";
 	public interface Tinkers {
 		String cast = TINKERS + ":cast_custom";
+		int castIngotMeta = 0;
 		int castPlateMeta = 3;
 	}
 }

@@ -18,6 +18,14 @@ import slimeknights.tconstruct.smeltery.TinkerSmeltery;
 
 public class TConstructPlugin {
 	public static void postInit() {
+		if(Config.porcelainEnabled) {
+			ItemStack castIngot = GameRegistry.makeItemStack(ModIDs.Tinkers.cast, ModIDs.Tinkers.castIngotMeta, 1, null);
+			for(FluidStack fluid : TinkerSmeltery.castCreationFluids) {
+				TinkerRegistry.registerTableCasting(new CastingRecipe(castIngot,
+						RecipeMatch.of(new ItemStack(Ceramics.clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta())), fluid, true, true));
+			}
+		}
+
 		if(Config.bucketEnabled) {
 			// let our bucket be filled in a casting table
 			TinkerRegistry.registerTableCasting(new BucketCastingRecipe(Ceramics.clayBucket) {
