@@ -44,6 +44,7 @@ import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -141,10 +142,10 @@ public class Ceramics {
 
 		// create armor materials
 		clayArmor = EnumHelper.addArmorMaterial(Util.prefix("clay"), "cermamics:clay", 4,
-				new int[]{1, 2, 3, 1}, 7, null, 0);
+				new int[]{1, 2, 3, 1}, 7, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC, 0);
 		clayArmor.repairMaterial = new ItemStack(Items.BRICK);
 		clayArmorRaw = EnumHelper.addArmorMaterial(Util.prefix("clay_raw"), "cermamics:clay_raw", 1,
-				new int[]{1, 1, 1, 1}, 0, null, 0);
+				new int[]{1, 1, 1, 1}, 0, SoundEvents.BLOCK_GRAVEL_PLACE, 0);
 		clayArmor.repairMaterial = new ItemStack(Items.CLAY_BALL);
 
 		CeramicsNetwork.registerPackets();
