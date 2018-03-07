@@ -1,6 +1,5 @@
 package knightminer.ceramics;
 
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -284,8 +283,14 @@ public class Ceramics {
 			GameRegistry.addSmelting(new ItemStack(claySoft, 1, ClayTypeSoft.PORCELAIN.getMeta()),
 					new ItemStack(porcelain, 1, EnumDyeColor.WHITE.getMetadata()), 0.1f);
 
-			// fallback if oredict recipe is diabled
-			if(!Config.porcelainOredictSmelting) {
+			// if enabled, register all porcelain smelting from the oredict, and add an event for later registrations
+			if(Config.porcelainOredictSmelting) {
+				for(ItemStack porcelain : OreDictionary.getOres("clayPorcelain")) {
+					GameRegistry.addSmelting(porcelain, new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta()), 0.1f);
+				}
+				MinecraftForge.EVENT_BUS.register(FurnaceOredictRecipeHandler.class);
+			} else {
+				// otherwise just add a static recipe
 				GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN.getMeta()),
 						new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta()), 0.1f);
 			}
@@ -310,8 +315,6 @@ public class Ceramics {
 			// fire the plates
 			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE_RAW.getMeta()),
 					new ItemStack(clayUnfired, 1, UnfiredType.CLAY_PLATE.getMeta()), 0.5f);
-
-
 		}
 
 		// barrels
@@ -335,6 +338,20 @@ public class Ceramics {
 		proxy.init();
 	}
 
+	/**
+	 * Event handler for porcelain oredicted after init to get furnace recipes.
+	 * Used since adding recipes during postInit messes with mod compatibility and recipes cannot be gaurneteed by init
+	 */
+	public static class FurnaceOredictRecipeHandler {
+		@SubscribeEvent
+		public static void onOredictRegister(OreDictionary.OreRegisterEvent event) {
+			// if enabled and someone just oredicted a porcelain, add a furnace recipe
+			if("clayPorcelain".equals(event.getName())) {
+				GameRegistry.addSmelting(event.getOre(), new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta()), 0.1f);
+			}
+		}
+	}
+
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 		if(Config.bucketEnabled) {
@@ -344,14 +361,6 @@ public class Ceramics {
 			MinecraftForge.EVENT_BUS.register(clayShears);
 		}
 
-		// add recipes using all stacks in the oredictionary for bricks
-		if(Config.porcelainEnabled && Config.porcelainOredictSmelting) {
-			List<ItemStack> porcelains = OreDictionary.getOres("clayPorcelain", false);
-			for(ItemStack porcelain : porcelains) {
-				ItemStack brick = new ItemStack(clayUnfired, 1, UnfiredType.PORCELAIN_BRICK.getMeta());
-				GameRegistry.addSmelting(porcelain, brick, 0.1f);
-			}
-		}
 		// load plugins
 		if(Loader.isModLoaded(ModIDs.TINKERS)) {
 			TConstructPlugin.postInit();
