@@ -3,6 +3,13 @@
     {
       "type": "config",
       "enabled": "rainbow_clay"
+    },
+    {
+      "type": "forge:not",
+      "value": {
+        "type": "forge:mod_loaded",
+        "modid": "primitivemobs"
+      }
     }
   ],
   "result": {

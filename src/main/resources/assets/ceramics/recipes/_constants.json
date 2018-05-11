@@ -168,5 +168,18 @@
       "item": "ceramics:clay_hard",
       "data": 0
     }
+  },
+  
+  {
+    "conditions": [
+      {
+        "type": "forge:mod_loaded",
+        "modid": "primitivemobs"
+      }
+    ],
+    "name": "CAMO_DYE",
+    "ingredient": {
+      "item": "primitivemobs:camouflage_dye"
+    }
   }
 ]
