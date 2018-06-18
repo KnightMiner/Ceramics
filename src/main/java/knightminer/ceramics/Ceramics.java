@@ -30,6 +30,7 @@ import knightminer.ceramics.items.ItemClayBucket;
 import knightminer.ceramics.items.ItemClayShears;
 import knightminer.ceramics.items.ItemClayUnfired;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
+import knightminer.ceramics.legacy.TileEntityRenamer;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.CreativeTab;
 import knightminer.ceramics.library.ModIDs;
@@ -53,10 +54,13 @@ import net.minecraft.item.ItemCloth;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.datafix.FixTypes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.common.util.ModFixs;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -150,6 +154,10 @@ public class Ceramics {
 		CeramicsNetwork.registerPackets();
 
 		proxy.preInit();
+
+		// fix tile entities registering under the minecraft domain
+		ModFixs fixer = FMLCommonHandler.instance().getDataFixer().init(modID, 1);
+		fixer.registerFix(FixTypes.BLOCK_ENTITY, new TileEntityRenamer());
 	}
 
 	@Mod.EventBusSubscriber(modid=modID)
@@ -408,7 +416,7 @@ public class Ceramics {
 
 
 	protected static void registerTE(Class<? extends TileEntity> teClazz, String name) {
-		GameRegistry.registerTileEntity(teClazz, Util.prefix(name));
+		GameRegistry.registerTileEntity(teClazz, Util.resource(name));
 	}
 
 
