@@ -29,7 +29,7 @@ public class TileEntityRenamer implements IFixableData {
 	public NBTTagCompound fixTagCompound(NBTTagCompound tags) {
 		String id = tags.getString("id");
 		// all bad names start with "minecraft:ceramics."
-		if(id.startsWith("minecraft:" + Ceramics.modID)) {
+		if(id.startsWith(PREFIX)) {
 			// so check if its one of ours after the prefix
 			id = id.substring(PREFIX_LEN);
 			if(NAMES_TO_UPDATE.contains(id)) {
