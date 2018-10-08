@@ -5,12 +5,6 @@
       "enabled": "fancy_bricks"
     }
   ],
-  "conditions": [
-    {
-      "type": "config",
-      "enabled": "fancy_bricks"
-    }
-  ],
   "result": {
     "item": "ceramics:clay_hard",
     "data": 1,
