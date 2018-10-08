@@ -16,13 +16,8 @@ import net.minecraftforge.fluids.DispenseFluidContainer;
 
 public class DispenseClayBucket extends BehaviorDefaultDispenseItem {
 
-	private static final DispenseClayBucket INSTANCE = new DispenseClayBucket();
+	public static final DispenseClayBucket INSTANCE = new DispenseClayBucket();
 	private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
-
-	public static DispenseClayBucket getInstance()
-	{
-		return INSTANCE;
-	}
 
 	private DispenseClayBucket() {}
 
@@ -39,71 +34,55 @@ public class DispenseClayBucket extends BehaviorDefaultDispenseItem {
 
 		// if we have a special fluid and its a block, try placing it
 		SpecialFluid fluid = Ceramics.clayBucket.getSpecialFluid(stack);
-		if(fluid.isBlock()) {
+		IBlockState fluidState = fluid.getState();
+		if(fluidState != null) {
 			// if the block in front is replaceable
 			if(state.getBlock().isReplaceable(world, pos)) {
 				// place the fluid there
-				IBlockState fluidState = fluid.getState();
 				if(!world.isRemote) {
 					world.setBlockState(pos, fluidState);
 				}
 
 				// sound
-				world.playSound(null, pos,
-						fluidState.getBlock().getSoundType(fluidState, world, pos, null).getPlaceSound(),
-						SoundCategory.BLOCKS, 1.0F, 0.8F);
+				world.playSound(null, pos, fluidState.getBlock().getSoundType(fluidState, world, pos, null).getPlaceSound(), SoundCategory.BLOCKS, 1.0F, 0.8F);
 
-				// empty the bucket
-				Ceramics.clayBucket.setSpecialFluid(stack, SpecialFluid.EMPTY);
+				// and return the empty stack
+				return new ItemStack(Ceramics.clayBucket);
+			}
 
-				// and return the stack
+			// otherwise, drop the item, we already know it is a block type
+			return this.dispenseBehavior.dispense(source, stack);
+		}
+
+		// if empty, try filling with a block
+		if(!Ceramics.clayBucket.hasFluid(stack)) {
+			SpecialFluid newFluid = SpecialFluid.fromState(state);
+			if(newFluid != null) {
+				// sound
+				world.playSound(null, pos, state.getBlock().getSoundType(state, world, pos, null).getBreakSound(), SoundCategory.BLOCKS, 1.0F, 0.8F);
+
+				// remove the sand/gravel
+				if(!world.isRemote) {
+					world.setBlockToAir(pos);
+				}
+
+				ItemStack filled = Ceramics.clayBucket.withSpecialFluid(newFluid);
+				stack.shrink(1);
+
+				if(stack.isEmpty()) {
+					return filled;
+				}
+
+				// try adding the copy to the dispenser
+				if (((TileEntityDispenser)source.getBlockTileEntity()).addItemStack(filled) < 0) {
+					this.dispenseBehavior.dispense(source, filled);
+				}
+
 				return stack;
 			}
-			else {
-				// otherwise, drop the item, we already know it is a block type
-				return this.dispenseBehavior.dispense(source, stack);
-			}
 		}
-		// empty and fluids
-		else {
-			// if empty, try filling with a block
-			if(!Ceramics.clayBucket.hasFluid(stack)) {
-				SpecialFluid newFluid = SpecialFluid.fromState(state);
-				if(newFluid != null) {
-					// sound
-					world.playSound(null, pos,
-							state.getBlock().getSoundType(state, world, pos, null).getBreakSound(),
-							SoundCategory.BLOCKS, 1.0F, 0.8F);
 
-					// remove the sand/gravel
-					if(!world.isRemote) {
-						world.setBlockToAir(pos);
-					}
-
-					// if the stack size is 1, change the stack
-					if(stack.getCount() == 1) {
-						Ceramics.clayBucket.setSpecialFluid(stack, newFluid);
-					}
-					// if bigger than 1, fill a copy
-					else {
-						ItemStack copy = stack.copy();
-						copy.setCount(1);
-						stack.shrink(1);
-						Ceramics.clayBucket.setSpecialFluid(copy, newFluid);
-
-						// try adding the copy to the dispenser
-						if (((TileEntityDispenser)source.getBlockTileEntity()).addItemStack(copy) < 0) {
-							this.dispenseBehavior.dispense(source, copy);
-						}
-					}
-
-					// and return the stack
-					return stack;
-				}
-			}
-
-			// if we cannot fill with a block or have a fluid, use standard bucket code
-			return DispenseFluidContainer.getInstance().dispenseStack(source, stack);
-		}
+		// if we cannot fill with a block or have a fluid, use standard bucket code
+		return DispenseFluidContainer.getInstance().dispenseStack(source, stack);
 	}
 }

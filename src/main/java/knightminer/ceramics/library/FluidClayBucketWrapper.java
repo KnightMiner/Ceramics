@@ -5,7 +5,6 @@ import javax.annotation.Nullable;
 import knightminer.ceramics.Ceramics;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
@@ -24,14 +23,9 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 	@Override
 	protected void setFluid(FluidStack stack) {
 		if(stack == null) {
-			Ceramics.clayBucket.drain(container, 1000, true);
-			return;
-		}
-
-		Fluid fluid = stack.getFluid();
-		if(FluidRegistry.getBucketFluids().contains(fluid) || fluid == FluidRegistry.LAVA
-				|| fluid == FluidRegistry.WATER || fluid.getName().equals("milk")) {
-			Ceramics.clayBucket.fill(container, new FluidStack(stack, Fluid.BUCKET_VOLUME), true);
+			container = new ItemStack(Ceramics.clayBucket);
+		} else {
+			container = Ceramics.clayBucket.withFluid(stack.getFluid());
 		}
 	}
 
