@@ -16,6 +16,7 @@ import knightminer.ceramics.blocks.BlockClaySlab;
 import knightminer.ceramics.blocks.BlockClaySoft;
 import knightminer.ceramics.blocks.BlockClaySoft.ClayTypeSoft;
 import knightminer.ceramics.blocks.BlockClayWall;
+import knightminer.ceramics.blocks.BlockClayWall.ClayWallType;
 import knightminer.ceramics.blocks.BlockEnumBase;
 import knightminer.ceramics.blocks.BlockFaucet;
 import knightminer.ceramics.blocks.BlockStained;
@@ -43,6 +44,8 @@ import knightminer.ceramics.tileentity.TileBarrelExtension;
 import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileFaucet;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStoneSlab;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -116,6 +119,7 @@ public class Ceramics {
 	public static Block stairsDragonBricks;
 	public static Block stairsLavaBricks;
 	public static Block stairsRainbowBricks;
+	public static Block stairsMonochromeBricks;
 
 	// items
 	public static Item clayUnfired;
@@ -186,6 +190,7 @@ public class Ceramics {
 			stairsMarineBricks = registerStairsFrom(r, clayHard, ClayTypeHard.MARINE_BRICKS, "marine_bricks_stairs");
 			stairsDragonBricks = registerStairsFrom(r, clayHard, ClayTypeHard.DRAGON_BRICKS, "dragon_bricks_stairs");
 			stairsLavaBricks = registerStairsFrom(r, clayHard, ClayTypeHard.LAVA_BRICKS, "lava_bricks_stairs");
+			stairsMonochromeBricks = registerStairsFrom(r, clayHard, ClayTypeHard.MONOCHROME_BRICKS, "monochrome_bricks_stairs");
 
 			// barrels
 			clayBarrelUnfired = registerBlock(r, new BlockBarrelUnfired(), "clay_barrel_unfired");
@@ -263,6 +268,7 @@ public class Ceramics {
 			registerItemBlock(r, stairsMarineBricks);
 			registerItemBlock(r, stairsDragonBricks);
 			registerItemBlock(r, stairsLavaBricks);
+			registerItemBlock(r, stairsMonochromeBricks);
 
 			// barrels
 			registerItemBlock(r, new ItemBlockBarrel(clayBarrelUnfired, "clay", "clay_extension", "porcelain", "porcelain_extension"));
@@ -282,6 +288,17 @@ public class Ceramics {
 	public void init(FMLInitializationEvent event) {
 		oredict(clayUnfired, UnfiredType.CLAY_PLATE_RAW.getMeta(), "plateClayRaw");
 		oredict(clayUnfired, UnfiredType.CLAY_PLATE.getMeta(), "plateClay", "plateBrick"); // plateBrick is because bricks are ingotBrick
+
+		// dark bricks
+		if(Config.fancyBricksEnabled) {
+			GameRegistry.addSmelting(Blocks.BRICK_BLOCK,
+					new ItemStack(clayHard, 1, ClayTypeHard.DARK_BRICKS.getMeta()), 0.1f);
+			GameRegistry.addSmelting(new ItemStack(Blocks.STONE_SLAB, 1, BlockStoneSlab.EnumType.BRICK.getMetadata()),
+					new ItemStack(claySlab, 1, ClayTypeHard.DARK_BRICKS.getMeta()), 0.1f);
+			GameRegistry.addSmelting(new ItemStack(clayWall, 1, ClayWallType.BRICKS.getMeta()),
+					new ItemStack(clayWall, 1, ClayWallType.DARK_BRICKS.getMeta()), 0.1f);
+			GameRegistry.addSmelting(Blocks.BRICK_STAIRS, new ItemStack(stairsDarkBricks), 0.1f);
+		}
 
 		// porcelain
 		if(Config.porcelainEnabled) {

@@ -83,6 +83,7 @@ public class ClientProxy extends CommonProxy {
 		registerItemModel(Ceramics.stairsDragonBricks);
 		registerItemModel(Ceramics.stairsLavaBricks);
 		registerItemModel(Ceramics.stairsRainbowBricks);
+		registerItemModel(Ceramics.stairsMonochromeBricks);
 
 		// porcelain
 		registerItemModel(Ceramics.porcelain);

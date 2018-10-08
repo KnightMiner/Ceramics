@@ -1,0 +1,6 @@
+{
+    "parent": "block/wall_side",
+    "textures": {
+        "wall": "ceramics:blocks/monochrome_bricks/3"
+    }
+}

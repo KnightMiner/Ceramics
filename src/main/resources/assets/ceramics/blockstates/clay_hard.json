@@ -30,6 +30,13 @@
       { "textures": { "all": "ceramics:blocks/dragon_bricks/2" }},
       { "textures": { "all": "ceramics:blocks/dragon_bricks/3" }},
       { "textures": { "all": "ceramics:blocks/dragon_bricks/4" }}
+    ],
+    "type=monochrome_bricks": [
+      { "textures": { "all": "ceramics:blocks/monochrome_bricks/1" }},
+      { "textures": { "all": "ceramics:blocks/monochrome_bricks/2" }},
+      { "textures": { "all": "ceramics:blocks/monochrome_bricks/3" }},
+      { "textures": { "all": "ceramics:blocks/monochrome_bricks/4" }},
+      { "textures": { "all": "ceramics:blocks/monochrome_bricks/5" }}
     ]
   }
 }

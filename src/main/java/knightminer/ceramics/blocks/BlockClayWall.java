@@ -29,7 +29,8 @@ public class BlockClayWall extends BlockEnumWallBase<BlockClayWall.ClayWallType>
 		GOLDEN_BRICKS,
 		DRAGON_BRICKS,
 		LAVA_BRICKS,
-		RAINBOW_BRICKS;
+		RAINBOW_BRICKS,
+		MONOCHROME_BRICKS;
 
 		private int meta;
 
