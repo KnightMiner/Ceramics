@@ -55,7 +55,7 @@ public class DispenseClayBucket extends BehaviorDefaultDispenseItem {
 		}
 
 		// if empty, try filling with a block
-		if(!Ceramics.clayBucket.hasFluid(stack)) {
+		if(!Ceramics.clayBucket.hasFluid(stack) && Config.bucketSand) {
 			SpecialFluid newFluid = SpecialFluid.fromState(state);
 			if(newFluid != null) {
 				// sound

@@ -166,6 +166,11 @@ public class ItemClayBucket extends Item {
 			return result.getResult();
 		}
 
+		// if bucket sand is disabled, skip
+		if(!Config.bucketSand) {
+			return null;
+		}
+
 		// otherwise try gravel and sand
 		SpecialFluid fluid = SpecialFluid.fromState(state);
 		if(fluid != null) {
