@@ -401,7 +401,7 @@ public class ItemClayBucket extends Item {
 			for(Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
 				// skip milk if registered since we add it manually whether it is a fluid or not
 				// also skip hot fluids if hot pickup is disabled
-				if(!fluid.getName().equals("milk") && (Config.bucketHotFluids || fluid.getTemperature() < 450)) {
+				if(!fluid.getName().equals("milk") && (Config.bucketHotFluids || !doesBreak(fluid))) {
 					subItems.add(withFluid(fluid));
 				}
 			}
@@ -502,15 +502,28 @@ public class ItemClayBucket extends Item {
 	 * @param stack  Bucket to check
 	 * @return  True if it breaks
 	 */
-	private boolean doesBreak(ItemStack stack) {
+	public boolean doesBreak(ItemStack stack) {
 		// special fluids never breaks
-		if(hasSpecialFluid(stack)) {
-			return false;
-		}
+		return !hasSpecialFluid(stack) && doesBreak(getFluid(stack));
+	}
 
+	/**
+	 * Returns true if the fluid breaks the bucket
+	 * @param fluid  Fluid to test
+	 * @return true if it breaks the bucket
+	 */
+	public boolean doesBreak(FluidStack fluid) {
+		return fluid != null && doesBreak(fluid.getFluid());
+	}
+
+	/**
+	 * Returns true if the fluid breaks the bucket
+	 * @param fluid  Fluid to test
+	 * @return true if it breaks the bucket
+	 */
+	protected boolean doesBreak(Fluid fluid) {
 		// other fluids break if hot
-		FluidStack fluid = getFluid(stack);
-		if(fluid != null && fluid.getFluid().getTemperature() >= 450) {
+		if(fluid != null && fluid.getTemperature() >= 450) {
 			return true;
 		}
 

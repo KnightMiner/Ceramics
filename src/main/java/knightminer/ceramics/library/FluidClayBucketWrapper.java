@@ -23,7 +23,12 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 	@Override
 	protected void setFluid(FluidStack stack) {
 		if(stack == null) {
-			container = new ItemStack(Ceramics.clayBucket);
+			// if the current fluid breaks, return empty
+			if (Ceramics.clayBucket.doesBreak(container)) {
+				container = ItemStack.EMPTY;
+			} else {
+				container = new ItemStack(Ceramics.clayBucket);
+			}
 		} else {
 			container = Ceramics.clayBucket.withFluid(stack.getFluid());
 		}
@@ -44,7 +49,7 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 
 	@Override
 	public boolean canFillFluidType(FluidStack fluid) {
-		if(!Config.bucketHotFluids && fluid.getFluid().getTemperature() >= 450) {
+		if(!Config.bucketHotFluids && Ceramics.clayBucket.doesBreak(fluid)) {
 			return false;
 		}
 		return super.canFillFluidType(fluid);
