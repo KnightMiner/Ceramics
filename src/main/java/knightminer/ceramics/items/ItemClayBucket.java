@@ -477,6 +477,10 @@ public class ItemClayBucket extends Item {
 	 * @return  Clay bucket containing the given fluid
 	 */
 	public ItemStack withFluid(Fluid fluid) {
+		// special case milk: returns the metadata version
+		if ("milk".equals(fluid.getName())) {
+			return new ItemStack(this, 1, SpecialFluid.MILK.getMeta());
+		}
 		ItemStack stack = new ItemStack(this, 1, 0);
 
 		// add fluid to NBT
