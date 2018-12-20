@@ -11,7 +11,7 @@
   },
   "pattern": [
     "c c",
-    "ccc",
+    "c c",
     " c "
   ],
   "type": "forge:ore_shaped",
