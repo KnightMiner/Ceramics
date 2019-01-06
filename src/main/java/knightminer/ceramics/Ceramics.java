@@ -355,6 +355,12 @@ public class Ceramics {
 			}
 		}
 
+		// faucet and channel
+		if(Config.faucetEnabled) {
+			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.FAUCET.getMeta()), new ItemStack(faucet, 1), 0.5f);
+			GameRegistry.addSmelting(new ItemStack(clayUnfired, 1, UnfiredType.CHANNEL.getMeta()), new ItemStack(channel, 1), 0.5f);
+		}
+
 		// load plugins
 		if(Loader.isModLoaded(ModIDs.BWM)) {
 			BetterWithModsPlugin.init();

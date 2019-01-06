@@ -60,8 +60,8 @@ public class ItemClayUnfired extends Item {
 		BARREL_EXTENSION,
 		PORCELAIN,
 		PORCELAIN_BRICK,
-		BARREL_PORCELAIN,
-		BARREL_PORCELAIN_EXTENSION,
+		FAUCET,
+		CHANNEL,
 		CLAY_PLATE_RAW,
 		CLAY_PLATE;
 
@@ -100,13 +100,15 @@ public class ItemClayUnfired extends Item {
 
 				case BARREL:
 				case BARREL_EXTENSION:
-				case BARREL_PORCELAIN:
-				case BARREL_PORCELAIN_EXTENSION:
 					return false; // moved to clayBarrelUnfired, here until I add more items
 
 				case CLAY_PLATE:
 				case CLAY_PLATE_RAW:
 					return Config.armorEnabled;
+
+				case FAUCET:
+				case CHANNEL:
+					return Config.faucetEnabled;
 			}
 			// fallback incase it was missed
 			return true;

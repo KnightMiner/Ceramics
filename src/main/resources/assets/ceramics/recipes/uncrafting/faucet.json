@@ -1,0 +1,10 @@
+{
+  "conditions": [{ "type": "config", "enabled": "faucet" }],
+  "result": {
+    "item": "ceramics:unfired_clay",
+    "data": 4,
+    "count": 3
+  },
+  "ingredients": [{ "item": "ceramics:unfired_clay", "data": 6 }],
+  "type": "forge:ore_shapeless"
+}

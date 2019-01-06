@@ -172,6 +172,9 @@ item.ceramics.clay_shears.name=Clay Shears
 item.ceramics.unfired.porcelain.name=Unfired Porcelain
 item.ceramics.unfired.porcelain_brick.name=Porcelain Brick
 
+item.ceramics.unfired.faucet.name=Unfired Faucet
+item.ceramics.unfired.channel.name=Unfired Channel
+
 item.ceramics.unfired.clay_plate.name=Clay Plate
 item.ceramics.unfired.clay_plate_raw.name=Unfired Clay Plate
 
@@ -186,8 +189,6 @@ item.ceramics.clay_boots.name=Clay Boots
 
 item.ceramics.unfired.barrel.name=Unfired Clay Barrel
 item.ceramics.unfired.barrel_extension.name=Unfired Clay Barrel Extension
-item.ceramics.unfired.barrel_porcelain.name=Unfired Porcelain Barrel
-item.ceramics.unfired.barrel_porcelain_extension.name=Unfired Porcelain Barrel Extension
 
 # Messages
 ceramics.barrel.fluid.empty=Barrel is empty

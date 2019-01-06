@@ -6,7 +6,8 @@
     }
   ],
   "result": {
-    "item": "ceramics:channel",
+    "item": "ceramics:unfired_clay",
+    "data": 7,
     "count": 3
   },
   "pattern": [
@@ -15,9 +16,6 @@
   ],
   "type": "forge:ore_shaped",
   "key": {
-    "C": {
-      "item": "ceramics:unfired_clay",
-      "data": 5
-    }
+    "C": {"type": "forge:ore_dict", "ore": "clayPorcelain"}
   }
 }

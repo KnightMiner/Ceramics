@@ -11,33 +11,31 @@
     "porcelain_brick": [{ "textures": { "layer0": "ceramics:items/porcelain_brick" }}],
     "clay_plate": [{ "textures": { "layer0": "ceramics:items/clay_plate" }}],
     "clay_plate_raw": [{ "textures": { "layer0": "ceramics:items/clay_plate_raw" }}],
-	
-	
+    
     "barrel": {
       "transform": "forge:default-block",
       "model": "ceramics:barrel",
       "textures": {
         "texture": "blocks/clay"
       }
-	},
-	"barrel_extension": {
+    },
+    "barrel_extension": {
       "model": "ceramics:barrel_extension",
       "textures": {
         "texture": "blocks/clay"
       }
-	},
-	"barrel_porcelain": {
-      "transform": "forge:default-block",
-      "model": "ceramics:barrel",
+    },
+    "faucet": {
+      "model": "ceramics:faucet",
       "textures": {
-        "texture": "ceramics:blocks/porcelain_raw"
+        "tex": "blocks/clay"
       }
-	},
-	"barrel_porcelain_extension": {
-      "model": "ceramics:barrel_extension",
+    },
+    "channel": {
+      "model": "ceramics:channel/inventory",
       "textures": {
-        "texture": "ceramics:blocks/porcelain_raw"
+        "texture": "blocks/clay"
       }
-	}
+    }
   }
 }
