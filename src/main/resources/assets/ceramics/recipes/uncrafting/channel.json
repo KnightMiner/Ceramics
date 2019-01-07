@@ -5,6 +5,10 @@
     "data": 4,
     "count": 5
   },
-  "ingredients": [{ "item": "ceramics:unfired_clay", "data": 7 }],
+  "ingredients": [
+    { "item": "ceramics:unfired_clay", "data": 7 },
+    { "item": "ceramics:unfired_clay", "data": 7 },
+    { "item": "ceramics:unfired_clay", "data": 7 }
+  ],
   "type": "forge:ore_shapeless"
 }
