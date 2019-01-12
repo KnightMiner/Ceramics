@@ -17,7 +17,10 @@ import knightminer.ceramics.tileentity.TileChannel.ChannelConnection;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockLever;
+import net.minecraft.block.BlockPane;
+import net.minecraft.block.BlockWall;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -314,8 +317,13 @@ public class BlockChannel extends BlockContainer implements IFaucetDepth, IFauce
 	@Override
 	@Deprecated
 	public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing side) {
-		// allows placing levers on the sides
-		return side.getAxis() == Axis.Y ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
+		if(side.getAxis() == Axis.Y) {
+			return BlockFaceShape.UNDEFINED;
+		}
+
+		IBlockState offsetState = world.getBlockState(pos.offset(side));
+		Block block = offsetState.getBlock();
+		return block instanceof BlockWall || block instanceof BlockFence || block instanceof BlockPane ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
 	}
 
 	@Override
