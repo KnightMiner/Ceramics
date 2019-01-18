@@ -1,11 +1,14 @@
 package knightminer.ceramics.plugin.tconstruct;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.blocks.BlockClayHard.ClayTypeHard;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
 import knightminer.ceramics.library.ModIDs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import slimeknights.mantle.util.RecipeMatch;
@@ -49,6 +52,11 @@ public class TConstructPlugin {
 			} else {
 				Ceramics.log.error("Failed to find Tinkers Construct cast item");
 			}
+		}
+		if(Config.fancyBricksEnabled) {
+			// make lava bricks by casting
+			TinkerRegistry.registerBasinCasting(new CastingRecipe(new ItemStack(Ceramics.clayHard, 1, ClayTypeHard.LAVA_BRICKS.getMeta()),
+					RecipeMatch.of(Blocks.BRICK_BLOCK), FluidRegistry.LAVA, Fluid.BUCKET_VOLUME / 8, true, false));
 		}
 	}
 }
