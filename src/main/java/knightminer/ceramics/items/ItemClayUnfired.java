@@ -129,6 +129,13 @@ public class ItemClayUnfired extends Item {
 		public String getName() {
 			return this.name().toLowerCase(Locale.US);
 		}
-	}
 
+		public String getTextureName() {
+			String name = getName();
+			if (!Config.porcelainEnabled && (this == FAUCET || this == CHANNEL)) {
+				name += "_clay";
+			}
+			return name;
+		}
+	}
 }

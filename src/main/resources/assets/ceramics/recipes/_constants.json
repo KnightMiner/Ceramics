@@ -1,185 +1,98 @@
 [
   {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "barrel"
-      }
-    ],
-    "name": "CLAY_BARREL",
-    "ingredient": [
-      {
-        "item": "ceramics:clay_barrel",
-        "data": 0
-      },
-      {
-        "item": "ceramics:clay_barrel_stained",
-        "data": 32767
-      }
-    ]
-  },
-  {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "barrel"
-      }
-    ],
-    "name": "CLAY_EXTENSION",
-    "ingredient": [
-      {
-        "item": "ceramics:clay_barrel",
-        "data": 1
-      },
-      {
-        "item": "ceramics:clay_barrel_stained_extension",
-        "data": 32767
-      }
-    ]
-  },
-  {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "porcelain"
-      }
-    ],
     "name": "PORCELAIN",
-    "ingredient": {
-      "item": "ceramics:porcelain",
-      "data": 32767
-    }
+    "conditions": [{ "type": "config", "enabled": "porcelain" }],
+    "ingredient": { "item": "ceramics:porcelain", "data": 32767 }
+  },
+  
+  {
+    "name": "RAW_PORCELAIN",
+    "ingredient": { "item": "minecraft:clay_ball" }
   },
   {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "barrel"
-      },
-      {
-        "type": "config",
-        "enabled": "porcelain"
-      }
-    ],
+    "name": "RAW_PORCELAIN",
+    "conditions": [{ "type": "config", "enabled": "porcelain" }],
+    "ingredient": { "type": "forge:ore_dict", "ore": "clayPorcelain" }
+  },
+  {
+    "name": "WHITE_PORCELAIN",
+    "ingredient": { "item": "minecraft:hardened_clay" }
+  },
+  {
+    "name": "WHITE_PORCELAIN",
+    "conditions": [{ "type": "config", "enabled": "porcelain" }],
+    "ingredient": { "item": "ceramics:porcelain", "data": 0 }
+  },
+  {
+    "name": "PORCELAIN_BRICK",
+    "ingredient": { "item": "minecraft:brick" }
+  },
+  {
+    "name": "PORCELAIN_BRICK",
+    "conditions": [{ "type": "config", "enabled": "porcelain" }],
+    "ingredient": { "item": "ceramics:unfired_clay", "data": 5 }
+  },
+  {
+    "name": "PORCELAIN_BRICK_BLOCK",
+    "ingredient": { "item": "minecraft:brick_block" }
+  },
+  {
+    "conditions": [{ "type": "config", "enabled": "porcelain" }],
+    "name": "PORCELAIN_BRICK_BLOCK",
+    "ingredient": { "item": "ceramics:clay_hard", "data": 0 }
+  },
+
+  {
+    "name": "CLAY_BARREL",
+    "conditions": [{ "type": "config", "enabled": "barrel" }],
+    "ingredient": [
+      { "item": "ceramics:clay_barrel", "data": 0 },
+      { "item": "ceramics:clay_barrel_stained", "data": 32767 }
+    ]
+  },
+  {
+    "name": "CLAY_EXTENSION",
+    "conditions": [{ "type": "config", "enabled": "barrel" }],
+    "ingredient": [
+      { "item": "ceramics:clay_barrel", "data": 1 },
+      { "item": "ceramics:clay_barrel_stained_extension", "data": 32767 }
+    ]
+  },
+  {
     "name": "PORCELAIN_BARREL",
-    "ingredient": {
-      "item": "ceramics:porcelain_barrel",
-      "data": 32767
-    }
+    "conditions": [
+      { "type": "config", "enabled": "barrel" },
+      { "type": "config", "enabled": "porcelain" }
+    ],
+    "ingredient": { "item": "ceramics:porcelain_barrel", "data": 32767 }
   },
   {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "barrel"
-      },
-      {
-        "type": "config",
-        "enabled": "porcelain"
-      }
-    ],
     "name": "PORCELAIN_EXTENSION",
-    "ingredient": {
-      "item": "ceramics:porcelain_barrel_extension",
-      "data": 32767
-    }
+    "conditions": [
+      { "type": "config", "enabled": "barrel" },
+      { "type": "config", "enabled": "porcelain" }
+    ],
+    "ingredient": { "item": "ceramics:porcelain_barrel_extension", "data": 32767 }
   },
   
   {
     "name": "LAVA_BUCKET",
-    "ingredient": {
-      "item": "minecraft:lava_bucket"
-    }
+    "ingredient": { "item": "minecraft:lava_bucket" }
   },
   {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "bucket"
-      }
-    ],
     "name": "LAVA_BUCKET",
+    "conditions": [{ "type": "config", "enabled": "bucket" }],
     "ingredient": [
-      {
-        "item": "minecraft:lava_bucket"
-      },
-      {
-        "type": "minecraft:item_nbt",
-        "item": "ceramics:clay_bucket",
-        "data": 0,
+      { "item": "minecraft:lava_bucket" },
+      { "type": "minecraft:item_nbt", "item": "ceramics:clay_bucket", "data": 0,
         "nbt": {"fluids": {"FluidName": "lava", "Amount": 1000}}
       }
     ]
   },
   
   {
-    "name": "WHITE_PORCELAIN",
-    "ingredient": {
-      "item": "minecraft:hardened_clay"
-    }
-  },
-  {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "porcelain"
-      }
-    ],
-    "name": "WHITE_PORCELAIN",
-    "ingredient": {
-      "item": "ceramics:porcelain",
-      "data": 0
-    }
-  },
-  {
-    "name": "PORCELAIN_BRICK",
-    "ingredient": {
-      "item": "minecraft:brick"
-    }
-  },
-  {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "porcelain"
-      }
-    ],
-    "name": "PORCELAIN_BRICK",
-    "ingredient": {
-      "item": "ceramics:unfired_clay",
-      "data": 5
-    }
-  },
-  {
-    "name": "PORCELAIN_BRICK_BLOCK",
-    "ingredient": {
-      "item": "minecraft:brick_block"
-    }
-  },
-  {
-    "conditions": [
-      {
-        "type": "config",
-        "enabled": "porcelain"
-      }
-    ],
-    "name": "PORCELAIN_BRICK_BLOCK",
-    "ingredient": {
-      "item": "ceramics:clay_hard",
-      "data": 0
-    }
-  },
-  
-  {
-    "conditions": [
-      {
-        "type": "forge:mod_loaded",
-        "modid": "primitivemobs"
-      }
-    ],
     "name": "CAMO_DYE",
-    "ingredient": {
-      "item": "primitivemobs:camouflage_dye"
-    }
+    "conditions": [{ "type": "forge:mod_loaded", "modid": "primitivemobs" }],
+    "ingredient": { "item": "primitivemobs:camouflage_dye" }
   }
 ]

@@ -1,0 +1,8 @@
+{
+    "parent": "ceramics:block/channel/porcelain/side_in",
+    "textures": {
+        "particle": "blocks/hardened_clay",
+        "texture":  "blocks/hardened_clay",
+        "top": "ceramics:blocks/channel_clay_in"
+    }
+}

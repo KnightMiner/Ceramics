@@ -1,8 +1,7 @@
 {
   "comment": "Model is facing South (as in: the block it's connected to is south of it)",
   "textures": {
-      "tex": "ceramics:blocks/porcelain",
-      "particle": "ceramics:blocks/porcelain"
+    "particle": "#tex"
   },
   "elements": [
     {

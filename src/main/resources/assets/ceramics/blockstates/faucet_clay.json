@@ -3,7 +3,7 @@
     "defaults": {
         "model": "ceramics:faucet",
         "textures": {
-          "tex": "ceramics:blocks/porcelain"
+          "tex": "blocks/hardened_clay"
         }
     },
     "variants": {

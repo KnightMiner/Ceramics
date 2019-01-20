@@ -1,10 +1,5 @@
 {
-  "conditions": [
-    {
-      "type": "config",
-      "enabled": "faucet"
-    }
-  ],
+  "conditions": [{ "type": "config", "enabled": "faucet" }],
   "result": {
     "item": "ceramics:unfired_clay",
     "data": 6
@@ -15,6 +10,6 @@
   ],
   "type": "forge:ore_shaped",
   "key": {
-    "C": {"type": "forge:ore_dict", "ore": "clayPorcelain"}
+    "C": { "item": "#RAW_PORCELAIN" }
   }
 }

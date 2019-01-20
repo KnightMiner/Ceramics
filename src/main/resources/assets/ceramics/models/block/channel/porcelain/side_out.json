@@ -1,5 +1,5 @@
 {
-    "parent": "ceramics:block/channel/side_in",
+    "parent": "ceramics:block/channel/porcelain/side_in",
     "textures": {
         "top": "ceramics:blocks/channel_out"
     }

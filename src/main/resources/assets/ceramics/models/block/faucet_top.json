@@ -1,7 +1,6 @@
 {
     "textures": {
-        "tex": "ceramics:blocks/porcelain",
-        "particle": "ceramics:blocks/porcelain"
+        "particle": "#tex"
     },
     "elements": [
         {

@@ -213,6 +213,12 @@ public class Ceramics {
 			// channel
 			channel = registerBlock(r, new BlockChannel(), "channel");
 			registerTE(TileChannel.class, "channel");
+
+			// rename if no porcelain
+			if (!Config.porcelainEnabled) {
+				channel.setUnlocalizedName(Util.prefix("channel_clay"));
+				faucet.setUnlocalizedName(Util.prefix("faucet_clay"));
+			}
 		}
 
 		@SubscribeEvent

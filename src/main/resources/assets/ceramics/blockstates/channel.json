@@ -1,78 +1,78 @@
 {
     "multipart": [
         {   "when": { "down": "false" },
-            "apply": { "model": "ceramics:channel/center" }
+            "apply": { "model": "ceramics:channel/porcelain/center" }
         },
         {   "when": { "down": "true" },
-            "apply": { "model": "ceramics:channel/center_out" }
+            "apply": { "model": "ceramics:channel/porcelain/center_out" }
         },
         
         {   "when": { "north": "none" },
-            "apply": { "model": "ceramics:channel/side", "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side", "uvlock": true }
         },
         {   "when": { "north": "lever" },
-            "apply": { "model": "ceramics:channel/side_lever", "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_lever", "uvlock": true }
         },
         {   "when": { "north": "in" },
-            "apply": { "model": "ceramics:channel/side_in", "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_in", "uvlock": true }
         },
         {   "when": { "north": "out|barrel" },
-            "apply": { "model": "ceramics:channel/side_out", "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_out", "uvlock": true }
         },
         {   "when": { "north": "barrel" },
-            "apply": { "model": "ceramics:channel/side_barrel", "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_barrel", "uvlock": true }
         },
         
         {   "when": { "east": "none" },
-            "apply": { "model": "ceramics:channel/side", "y": 90, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side", "y": 90, "uvlock": true }
         },
         {   "when": { "east": "lever" },
-            "apply": { "model": "ceramics:channel/side_lever", "y": 90, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_lever", "y": 90, "uvlock": true }
         },
         {   "when": { "east": "in" },
-            "apply": { "model": "ceramics:channel/side_in", "y": 90, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_in", "y": 90, "uvlock": true }
         },
         {   "when": { "east": "out|barrel" },
-            "apply": { "model": "ceramics:channel/side_out", "y": 90, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_out", "y": 90, "uvlock": true }
         },
         {   "when": { "east": "barrel" },
-            "apply": { "model": "ceramics:channel/side_barrel", "y": 90, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_barrel", "y": 90, "uvlock": true }
         },
         
         {   "when": { "south": "none" },
-            "apply": { "model": "ceramics:channel/side", "y": 180, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side", "y": 180, "uvlock": true }
         },
         {   "when": { "south": "lever" },
-            "apply": { "model": "ceramics:channel/side_lever", "y": 180, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_lever", "y": 180, "uvlock": true }
         },
         {   "when": { "south": "in" },
-            "apply": { "model": "ceramics:channel/side_in", "y": 180, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_in", "y": 180, "uvlock": true }
         },
         {   "when": { "south": "out|barrel" },
-            "apply": { "model": "ceramics:channel/side_out", "y": 180, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_out", "y": 180, "uvlock": true }
         },
         {   "when": { "south": "barrel" },
-            "apply": { "model": "ceramics:channel/side_barrel", "y": 180, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_barrel", "y": 180, "uvlock": true }
         },
         
         {   "when": { "west": "none" },
-            "apply": { "model": "ceramics:channel/side", "y": 270, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side", "y": 270, "uvlock": true }
         },
         {   "when": { "west": "lever" },
-            "apply": { "model": "ceramics:channel/side_lever", "y": 270, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_lever", "y": 270, "uvlock": true }
         },
         {   "when": { "west": "in" },
-            "apply": { "model": "ceramics:channel/side_in", "y": 270, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_in", "y": 270, "uvlock": true }
         },
         {   "when": { "west": "out|barrel" },
-            "apply": { "model": "ceramics:channel/side_out", "y": 270, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_out", "y": 270, "uvlock": true }
         },
         {   "when": { "west": "barrel" },
-            "apply": { "model": "ceramics:channel/side_barrel", "y": 270, "uvlock": true }
+            "apply": { "model": "ceramics:channel/porcelain/side_barrel", "y": 270, "uvlock": true }
         },
         
         {   "when": { "OR": [{ "north": "lever" }, { "south": "lever" }, { "west": "lever"}, { "east": "lever" }]},
-            "apply": { "model": "ceramics:channel/center_lever" }
+            "apply": { "model": "ceramics:channel/porcelain/center_lever" }
         }
     ]
 }

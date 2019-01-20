@@ -13,8 +13,10 @@ import knightminer.ceramics.client.FaucetRenderer;
 import knightminer.ceramics.items.ItemClayBucket.SpecialFluid;
 import knightminer.ceramics.items.ItemClayUnfired.UnfiredType;
 import knightminer.ceramics.library.Config;
+import knightminer.ceramics.library.Util;
 import knightminer.ceramics.library.client.IgnoreAllStateMapper;
 import knightminer.ceramics.library.client.PropertyStateMapper;
+import knightminer.ceramics.library.client.RenameStateMapper;
 import knightminer.ceramics.tileentity.TileBarrel;
 import knightminer.ceramics.tileentity.TileChannel;
 import knightminer.ceramics.tileentity.TileFaucet;
@@ -44,6 +46,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class ClientProxy extends CommonProxy {
 
 	public static Minecraft minecraft = Minecraft.getMinecraft();
+	private static final ResourceLocation FAUCET_CLAY = Util.getResource("faucet_clay");
+	private static final ResourceLocation CHANNEL_CLAY = Util.getResource("channel_clay");
 
 	@Override
 	public void preInit() {
@@ -65,8 +69,18 @@ public class ClientProxy extends CommonProxy {
 		// separate all walls to their own file, and ignore all properties as we use multipart and it makes duplicate models otherwise
 		ModelLoader.setCustomStateMapper(Ceramics.clayWall, new PropertyStateMapper("clay_wall", BlockClayWall.TYPE, true));
 
-		// also ignore all propeties on the channel to reduce ram
-		ModelLoader.setCustomStateMapper(Ceramics.channel, IgnoreAllStateMapper.INSTANCE);
+		// if not using porcelain, register the normal clay variants
+		if(Config.porcelainEnabled) {
+			registerItemModel(Ceramics.faucet);
+			registerItemModel(Ceramics.channel);
+			// ignore all propeties on the channel to reduce ram
+			ModelLoader.setCustomStateMapper(Ceramics.channel, IgnoreAllStateMapper.INSTANCE);
+		} else {
+			registerItemModel(Ceramics.faucet, FAUCET_CLAY);
+			registerItemModel(Ceramics.channel, CHANNEL_CLAY);
+			ModelLoader.setCustomStateMapper(Ceramics.faucet, new RenameStateMapper(FAUCET_CLAY));
+			ModelLoader.setCustomStateMapper(Ceramics.channel, new IgnoreAllStateMapper(CHANNEL_CLAY));
+		}
 
 		// base blocks
 		registerItemModels(Ceramics.claySoft);
@@ -115,7 +129,7 @@ public class ClientProxy extends CommonProxy {
 
 		// unfired clay items are done using a block state
 		for(UnfiredType type : UnfiredType.values()) {
-			registerItemModel(Ceramics.clayUnfired, type.getMeta(), type.getName());
+			registerItemModel(Ceramics.clayUnfired, type.getMeta(), type.getTextureName());
 		}
 
 		// barrels
@@ -132,9 +146,6 @@ public class ClientProxy extends CommonProxy {
 			registerItemModel(Ceramics.clayBarrelStained, type.getMetadata(), "color=" + type.getName());
 			registerItemModel(Ceramics.clayBarrelStainedExtension, type.getMetadata(), "color=" + type.getName());
 		}
-
-		registerItemModel(Ceramics.faucet);
-		registerItemModel(Ceramics.channel);
 	}
 
 	@Override
@@ -163,30 +174,31 @@ public class ClientProxy extends CommonProxy {
 	/* Helper methods */
 
 	private void registerItemModel(Item item) {
-		registerItemModel(item, "inventory");
+		if (item != null && item != Items.AIR) {
+			registerItemModel(item, item.getRegistryName());
+		}
 	}
 
 	private void registerItemModel(Block block) {
 		registerItemModel(Item.getItemFromBlock(block));
 	}
 
-	private void registerItemModel(Item item, final String variant) {
+	private void registerItemModel(Block block, ResourceLocation location) {
+		registerItemModel(Item.getItemFromBlock(block), location);
+	}
+
+	private void registerItemModel(Item item, final ResourceLocation location) {
 		if(item != null && item != Items.AIR) {
-			final ResourceLocation location = item.getRegistryName();
 			// so all meta get the item model
 			ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition() {
 				@Nonnull
 				@Override
 				public ModelResourceLocation getModelLocation(@Nonnull ItemStack stack) {
-					return new ModelResourceLocation(location, variant);
+					return new ModelResourceLocation(location, "inventory");
 				}
 			});
 			ModelLoader.registerItemVariants(item, location);
 		}
-	}
-
-	private void registerItemModel(Block block, final String variant) {
-		registerItemModel(Item.getItemFromBlock(block), variant);
 	}
 
 	private void registerItemModel(Item item, int meta, String name) {

@@ -75,7 +75,7 @@ public class Config {
 
 		// fluids
 		faucetEnabled = configFile.getBoolean("porcelainFaucet", "enabled", true,
-				"Enables porcelain faucets and channels for moving fluids. Requires porcelain") && porcelainEnabled;
+				"Enables faucets and channels for moving fluids. If porcelain is not enabled, they will be made from normal clay instead of porcelain.");
 
 		barrelClayCapacity = configFile.getInt("capacityClay", "barrel", 4, 1, 100,
 				"Storage capacity for clay barrels in buckets. This determines the base and the amount each extension adds. Changing this will require breaking and replacing the barrel to update.");

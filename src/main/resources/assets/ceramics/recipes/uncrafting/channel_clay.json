@@ -1,11 +1,10 @@
 {
   "conditions": [
     { "type": "config", "enabled": "faucet" },
-    { "type": "config", "enabled": "porcelain" }
+    { "type": "forge:not", "value": { "type": "config", "enabled": "porcelain" }}
   ],
   "result": {
-    "item": "ceramics:unfired_clay",
-    "data": 4,
+    "item": "minecraft:clay_ball",
     "count": 5
   },
   "ingredients": [

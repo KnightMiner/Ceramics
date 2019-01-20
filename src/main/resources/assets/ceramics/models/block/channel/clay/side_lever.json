@@ -1,0 +1,7 @@
+{
+    "parent": "ceramics:block/channel/porcelain/side_lever",
+    "textures": {
+        "particle": "blocks/hardened_clay",
+        "texture":  "blocks/hardened_clay"
+    }
+}
