@@ -46,7 +46,7 @@ public class Config {
 		bucketSand = configFile.getBoolean("sand", "bucket", true, "Allows the clay bucket to pick up sand and gravel, because why not?");
 		configFile.moveProperty("enabled", "placeClayBucket", "bucket");
 		placeClayBucket = configFile.getBoolean("placeClayBucket", "bucket", false,
-				"Allows the unfired clay bucket to be placed in the world, for the sake of block based kilns. Normal clay buckets remain unplaceable");
+				"Allows the unfired clay bucket to be placed in the world, for the sake of block based kilns. Normal clay buckets remain unplaceable") && bucketEnabled;
 		bucketHotFluids = configFile.getBoolean("hotFluids", "bucket", true,
 				"If true, the clay bucket can hold hot fluids and breaks when emptying. If false they cannot be picked up at all");
 

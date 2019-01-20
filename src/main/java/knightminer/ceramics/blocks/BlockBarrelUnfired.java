@@ -64,8 +64,10 @@ public class BlockBarrelUnfired extends BlockBarrelBase {
 		if(Config.barrelEnabled) {
 			list.add(new ItemStack(this, 1, 0));
 			list.add(new ItemStack(this, 1, 1));
-			list.add(new ItemStack(this, 1, 2));
-			list.add(new ItemStack(this, 1, 3));
+			if (Config.porcelainEnabled) {
+				list.add(new ItemStack(this, 1, 2));
+				list.add(new ItemStack(this, 1, 3));
+			}
 		}
 	}
 
@@ -81,19 +83,6 @@ public class BlockBarrelUnfired extends BlockBarrelBase {
 
 		public int getMeta() {
 			return meta;
-		}
-
-		/**
-		 * Determines if the unfired item is enabled
-		 */
-		public boolean shouldDisplay() {
-			// defined as a switch as we cannot pass along a boolean reference in a constructor easily
-			switch(this) {
-				case PORCELAIN:
-					return Config.porcelainEnabled;
-			}
-			// fallback incase it was missed
-			return true;
 		}
 
 		public static UnfiredType fromMeta(int meta) {

@@ -141,31 +141,22 @@ public class ClientProxy extends CommonProxy {
 	public void init() {
 		final BlockColors blockColors = minecraft.getBlockColors();
 		// porcelain colors
-		if(Config.porcelainEnabled) {
-			Block[] blocks;
-			if(Config.barrelEnabled) {
-				blocks = new Block[]{
-						Ceramics.porcelain,
-						Ceramics.porcelainBarrel,
-						Ceramics.porcelainBarrelExtension
-				};
-			}
-			else {
-				blocks = new Block[]{ Ceramics.porcelain };
-			}
-			blockColors.registerBlockColorHandler(
-					(state, access, pos, tintIndex) -> state.getValue(BlockStained.COLOR).getColor(),
-					blocks);
+		Block[] blocks = {
+				Ceramics.porcelain,
+				Ceramics.porcelainBarrel,
+				Ceramics.porcelainBarrelExtension
+		};
+		blockColors.registerBlockColorHandler(
+				(state, access, pos, tintIndex) -> state.getValue(BlockStained.COLOR).getColor(),
+				blocks);
 
-			minecraft.getItemColors().registerItemColorHandler(
-					(stack, tintIndex) -> {
-						@SuppressWarnings("deprecation")
-						IBlockState iblockstate = ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata());
-						return blockColors.colorMultiplier(iblockstate, null, null, tintIndex);
-					},
-					blocks);
-
-		}
+		minecraft.getItemColors().registerItemColorHandler(
+				(stack, tintIndex) -> {
+					@SuppressWarnings("deprecation")
+					IBlockState iblockstate = ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata());
+					return blockColors.colorMultiplier(iblockstate, null, null, tintIndex);
+				},
+				blocks);
 	}
 
 
