@@ -3,6 +3,7 @@ package knightminer.ceramics.tileentity;
 import javax.annotation.Nonnull;
 
 import knightminer.ceramics.blocks.BlockFaucet;
+import knightminer.ceramics.library.tank.IFastMarkDirty;
 import knightminer.ceramics.library.tank.IFluidUpdateReciever;
 import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.network.CeramicsNetwork;
@@ -22,7 +23,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateReciever {
+public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateReciever, IFastMarkDirty {
 
 	public static final int LIQUID_TRANSFER = 6; // how much liquid is transferred per operation
 	public static final int TRANSACTION_AMOUNT = 144;
@@ -119,6 +120,7 @@ public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateRec
 						CeramicsNetwork.sendToClients((WorldServer) getWorld(), pos, new FluidUpdatePacket(pos, drained));
 					}
 
+					this.markDirtyFast();
 					return;
 				}
 			}
@@ -145,6 +147,7 @@ public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateRec
 				this.drained.amount -= filled;
 				fillStack.amount = filled;
 				toFill.fill(fillStack, true);
+				this.markDirtyFast();
 			}
 		}
 		else {
@@ -163,6 +166,7 @@ public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateRec
 		// sync to clients
 		if(getWorld() != null && !getWorld().isRemote && getWorld() instanceof WorldServer) {
 			CeramicsNetwork.sendToClients((WorldServer) getWorld(), pos, new FluidUpdatePacket(pos, null));
+			this.markDirtyFast();
 		}
 	}
 

@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-public class TileTank<T extends TileEntity> extends FluidTank {
+public class TileTank<T extends TileEntity & IFastMarkDirty> extends FluidTank {
 
 	protected T parent;
 
@@ -51,5 +51,10 @@ public class TileTank<T extends TileEntity> extends FluidTank {
 		if(this.fluid != null && this.fluid.amount > capacity) {
 			this.drain(this.fluid.amount - capacity, true);
 		}
+	}
+
+	@Override
+	protected void onContentsChanged() {
+		parent.markDirtyFast();
 	}
 }

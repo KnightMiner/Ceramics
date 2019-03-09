@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import knightminer.ceramics.blocks.BlockBarrel;
 import knightminer.ceramics.library.tank.BarrelTank;
+import knightminer.ceramics.library.tank.IFastMarkDirty;
 import knightminer.ceramics.library.tank.IFluidUpdateReciever;
 import knightminer.ceramics.network.BarrelSizeChangedPacket;
 import knightminer.ceramics.network.CeramicsNetwork;
@@ -21,7 +22,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileBarrel extends TileBarrelBase implements IFluidUpdateReciever {
+public class TileBarrel extends TileBarrelBase implements IFluidUpdateReciever, IFastMarkDirty {
 
 	private static final int BASE_CAPACITY = Fluid.BUCKET_VOLUME * 4;
 

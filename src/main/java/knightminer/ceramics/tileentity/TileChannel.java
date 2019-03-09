@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import knightminer.ceramics.library.Util;
 import knightminer.ceramics.library.tank.ChannelSideTank;
 import knightminer.ceramics.library.tank.ChannelTank;
+import knightminer.ceramics.library.tank.IFastMarkDirty;
 import knightminer.ceramics.library.tank.IFluidUpdateReciever;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.ChannelConnectionPacket;
@@ -31,7 +32,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TileChannel extends TileEntity implements ITickable, IFluidUpdateReciever {
+public class TileChannel extends TileEntity implements ITickable, IFluidUpdateReciever, IFastMarkDirty {
 
 	/** Stores if the channel can be connected on the side */
 	private ChannelConnection[] connections;
