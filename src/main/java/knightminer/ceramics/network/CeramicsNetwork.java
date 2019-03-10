@@ -29,6 +29,7 @@ public class CeramicsNetwork {
 
 		// barrel
 		INSTANCE.registerMessage(handler, BarrelSizeChangedPacket.class, id++, Side.CLIENT);
+		INSTANCE.registerMessage(handler, ExtensionMasterUpdatePacket.class, id++, Side.CLIENT);
 
 		// channel
 		INSTANCE.registerMessage(handler, ChannelConnectionPacket.class, id++, Side.CLIENT);

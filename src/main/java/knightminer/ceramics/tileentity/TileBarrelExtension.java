@@ -3,6 +3,8 @@ package knightminer.ceramics.tileentity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import knightminer.ceramics.network.CeramicsNetwork;
+import knightminer.ceramics.network.ExtensionMasterUpdatePacket;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -14,7 +16,16 @@ public class TileBarrelExtension extends TileBarrelBase {
 	private BlockPos masterPos;
 
 	public void setMaster(BlockPos pos) {
-		this.masterPos = pos;
+		// ensure it actually changed
+		if (pos != masterPos || pos != null && !pos.equals(masterPos)) {
+			masterPos = pos;
+
+			// update clients
+			if(!world.isRemote) {
+				world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
+				CeramicsNetwork.sendToAllAround(world, this.pos, new ExtensionMasterUpdatePacket(this.pos, pos));
+			}
+		}
 	}
 
 	public BlockPos getMasterPos() {
@@ -39,6 +50,19 @@ public class TileBarrelExtension extends TileBarrelBase {
 		TileBarrel master = getMaster();
 		if(master != null) {
 			master.checkBarrelStructure();
+		}
+	}
+
+	/**
+	 * Clears the master of this barrel and all above it
+	 */
+	public void clearMaster() {
+		if (!world.isRemote && this.masterPos != null) {
+			this.setMaster(null);
+			TileEntity above = world.getTileEntity(pos.up());
+			if (above instanceof TileBarrelExtension) {
+				((TileBarrelExtension)above).clearMaster();
+			}
 		}
 	}
 

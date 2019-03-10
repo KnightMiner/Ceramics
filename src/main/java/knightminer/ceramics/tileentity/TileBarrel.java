@@ -9,7 +9,7 @@ import knightminer.ceramics.library.tank.IFastMarkDirty;
 import knightminer.ceramics.library.tank.IFluidUpdateReciever;
 import knightminer.ceramics.network.BarrelSizeChangedPacket;
 import knightminer.ceramics.network.CeramicsNetwork;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -75,11 +75,11 @@ public class TileBarrel extends TileBarrelBase implements IFluidUpdateReciever, 
 			return;
 		}
 
-		IBlockState barrelState = world.getBlockState(this.pos);
-		if(!(barrelState.getBlock() instanceof BlockBarrel)) {
+		Block teBlock = this.getBlockType();
+		if(!(teBlock instanceof BlockBarrel)) {
 			return; // safety check, not sure if error handing is needed
 		}
-		BlockBarrel barrel = (BlockBarrel) barrelState.getBlock();
+		BlockBarrel barrel = (BlockBarrel) teBlock;
 
 		BlockPos topPos = this.pos.up();
 		while(barrel.isValidExtension(world.getBlockState(topPos))) {

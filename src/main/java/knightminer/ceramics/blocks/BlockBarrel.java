@@ -68,14 +68,15 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 	// check structure
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		TileEntity te = world.getTileEntity(pos);
 		// only bases are relevant on placement to check structures since non-bases cannot possibly have a master
-		if(te instanceof TileBarrel) {
-			((TileBarrel) te).checkBarrelStructure();
-		}
-		// if we are not a base, try the block below us for either type of barrel
-		else {
-			te = world.getTileEntity(pos.down());
+		if(!isExtension(state)) {
+			TileEntity te = world.getTileEntity(pos);
+			if (te instanceof TileBarrel) {
+				((TileBarrel) te).checkBarrelStructure();
+			}
+		} else {
+			// if we are not a base, try the block below us for either type of barrel
+			TileEntity te = world.getTileEntity(pos.down());
 			if(te instanceof TileBarrelBase) {
 				((TileBarrelBase) te).checkBarrelStructure();
 			}
@@ -85,12 +86,19 @@ public class BlockBarrel extends BlockBarrelBase implements ITileEntityProvider,
 	// Extensions have to additionally check when broken to tell the master
 	@Override
 	public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-		TileEntity te = worldIn.getTileEntity(pos);
+		// ensure the barrel above knows its no longer valid
+		TileEntity te = worldIn.getTileEntity(pos.up());
+		if(te instanceof TileBarrelExtension) {
+			((TileBarrelExtension) te).clearMaster();
+		}
+
+		// tell the master barrel to recheck the sturcture
+		te = worldIn.getTileEntity(pos);
 		if(te instanceof TileBarrelExtension) {
 			((TileBarrelExtension) te).checkBarrelStructure();
 		}
 
-		super.breakBlock(worldIn, pos, state);
+		// remove the TE
 		worldIn.removeTileEntity(pos);
 	}
 
