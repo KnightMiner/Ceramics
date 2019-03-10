@@ -3,20 +3,16 @@ package knightminer.ceramics.network;
 import io.netty.buffer.ByteBuf;
 import knightminer.ceramics.tileentity.TileChannel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ChannelConnectionPacket extends PacketBase {
-	protected BlockPos pos;
-	protected EnumFacing side;
-	protected boolean connect;
-
+	private BlockPos pos;
+	private EnumFacing side;
+	private boolean connect;
 	public ChannelConnectionPacket() {}
-
 	public ChannelConnectionPacket(BlockPos pos, EnumFacing side, boolean connect) {
 		this.pos = pos;
 		this.side = side;
@@ -37,17 +33,11 @@ public class ChannelConnectionPacket extends PacketBase {
 		buf.writeBoolean(connect);
 	}
 
-	public static class ChannelConnectionsHandler implements IMessageHandler<ChannelConnectionPacket, IMessage> {
-		@Override
-		public IMessage onMessage(final ChannelConnectionPacket message, MessageContext ctx) {
-			getMainThread(ctx).addScheduledTask(() -> {
-				TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
-				if(te instanceof TileChannel) {
-					((TileChannel) te).updateConnection(message.side, message.connect);
-				}
-			});
-			return null;
+	@Override
+	public void handleClient(NetHandlerPlayClient handler) {
+		TileEntity te = Minecraft.getMinecraft().world.getTileEntity(pos);
+		if(te instanceof TileChannel) {
+			((TileChannel) te).updateConnection(side, connect);
 		}
-
 	}
 }

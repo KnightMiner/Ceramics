@@ -3,19 +3,15 @@ package knightminer.ceramics.network;
 import io.netty.buffer.ByteBuf;
 import knightminer.ceramics.tileentity.TileBarrel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class BarrelSizeChangedPacket extends PacketBase {
 
-	public BlockPos pos;
-	public int capacity, height;
-
+	private BlockPos pos;
+	private int capacity, height;
 	public BarrelSizeChangedPacket() {}
-
 	public BarrelSizeChangedPacket(BlockPos pos, int capacity, int height) {
 		this.pos = pos;
 		this.capacity = capacity;
@@ -36,21 +32,11 @@ public class BarrelSizeChangedPacket extends PacketBase {
 		buf.writeInt(height);
 	}
 
-	public static class BarrelCapacityChangedHandler implements IMessageHandler<BarrelSizeChangedPacket, IMessage> {
-
-		@Override
-		public IMessage onMessage(final BarrelSizeChangedPacket message, MessageContext ctx) {
-			getMainThread(ctx).addScheduledTask(new Runnable() {
-				@Override
-				public void run() {
-					TileEntity te = Minecraft.getMinecraft().world.getTileEntity(message.pos);
-					if(te instanceof TileBarrel) {
-						((TileBarrel) te).updateSize(message.capacity, message.height);
-					}
-				}
-			});
-			return null;
+	@Override
+	public void handleClient(NetHandlerPlayClient handler) {
+		TileEntity te = Minecraft.getMinecraft().world.getTileEntity(pos);
+		if(te instanceof TileBarrel) {
+			((TileBarrel) te).updateSize(capacity, height);
 		}
-
 	}
 }
