@@ -59,8 +59,8 @@ tile.ceramics.rainbow_clay.magenta.tooltip=Начинается с пурпур�
 
 tile.ceramics.faucet.name=Фарфоровый кран
 tile.ceramics.channel.name=Фарфоровый жёлоб
-tile.ceramics.faucet_clay.name=Clay Faucet
-tile.ceramics.channel_clay.name=Clay Channel
+tile.ceramics.faucet_clay.name=Глиняный кран
+tile.ceramics.channel_clay.name=Глиняный жёлоб
 tile.ceramics.clay_bucket_block.name=Необожжённое глиняное ведро
 
 # porcelain
