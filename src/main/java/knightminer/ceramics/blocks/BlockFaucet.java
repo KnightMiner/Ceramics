@@ -34,6 +34,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.Random;
+
 public class BlockFaucet extends BlockContainer {
 
 	// Facing == input, can be any side except bottom, because down always is output direction
@@ -131,6 +133,14 @@ public class BlockFaucet extends BlockContainer {
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof TileFaucet) {
 			((TileFaucet) te).handleRedstone(worldIn.isBlockPowered(pos));
+		}
+	}
+
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+		TileEntity te = world.getTileEntity(pos);
+		if(te instanceof TileFaucet) {
+			((TileFaucet) te).activate();
 		}
 	}
 
