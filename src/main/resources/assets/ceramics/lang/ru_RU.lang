@@ -9,6 +9,7 @@ tile.ceramics.clay_hard.dragon_bricks.name=Кирпичи дракона
 tile.ceramics.clay_hard.lava_bricks.name=Лавовые кирпичи
 tile.ceramics.clay_hard.rainbow_bricks.name=Радужные кирпичи
 tile.ceramics.clay_hard.iron_bricks.name=Железные кирпичи
+tile.ceramics.clay_hard.monochrome_bricks.name=Монохромные кирпичи
 
 tile.ceramics.clay_soft.porcelain.name=Необожжённый фарфор
 
@@ -19,6 +20,7 @@ tile.ceramics.clay_slab.golden_bricks.name=Плита из золотых кир
 tile.ceramics.clay_slab.dragon_bricks.name=Плита из кирпичей дракона
 tile.ceramics.clay_slab.lava_bricks.name=Плита из лавовых кирпичей
 tile.ceramics.clay_slab.rainbow_bricks.name=Плита из радужных кирпичей
+tile.ceramics.clay_slab.monochrome_bricks.name=Плита из монохромных кирпичей
 
 tile.ceramics.porcelain_bricks_stairs.name=Ступеньки из фарфоровых кирпичей
 tile.ceramics.dark_bricks_stairs.name=Ступеньки из тёмных кирпичей
@@ -36,6 +38,7 @@ tile.ceramics.clay_wall.golden_bricks.name=Ограда из золотых ки
 tile.ceramics.clay_wall.dragon_bricks.name=Ограда из кирпичей дракона
 tile.ceramics.clay_wall.lava_bricks.name=Ограда из лавовых кирпичей
 tile.ceramics.clay_wall.rainbow_bricks.name=Ограда из радужных кирпичей
+tile.ceramics.monochrome_bricks_stairs.name=Ограда из монохромных кирпичей
 
 tile.ceramics.rainbow_clay.red.name=Радужный фарфор
 tile.ceramics.rainbow_clay.red.tooltip=Начинается с красного цвета
@@ -56,6 +59,8 @@ tile.ceramics.rainbow_clay.magenta.tooltip=Начинается с пурпур�
 
 tile.ceramics.faucet.name=Фарфоровый кран
 tile.ceramics.channel.name=Фарфоровый жёлоб
+tile.ceramics.faucet_clay.name=Глиняный кран
+tile.ceramics.channel_clay.name=Глиняный жёлоб
 tile.ceramics.clay_bucket_block.name=Необожжённое глиняное ведро
 
 # porcelain
@@ -168,6 +173,9 @@ item.ceramics.clay_shears.name=Глиняные ножницы
 
 item.ceramics.unfired.porcelain.name=Необожжённый фарфор
 item.ceramics.unfired.porcelain_brick.name=Фарфоровый кирпич
+
+item.ceramics.unfired.faucet.name=Необожжённый кран 
+item.ceramics.unfired.channel.name=Необожжённый жёлоб
 
 item.ceramics.unfired.clay_plate.name=Глиняная пластина
 item.ceramics.unfired.clay_plate_raw.name=Необожжённая глиняная пластина
