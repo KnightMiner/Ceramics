@@ -62,7 +62,7 @@ public class TileFaucet extends TileEntity implements ITickable, IFluidUpdateRec
 		if(hasSignal != lastRedstoneState) {
 			lastRedstoneState = hasSignal;
 			if(hasSignal) {
-				activate();
+				world.scheduleUpdate(pos, this.getBlockType(), 2);
 			}
 		}
 	}
