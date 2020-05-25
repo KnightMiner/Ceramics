@@ -1,6 +1,7 @@
 package knightminer.ceramics.datagen;
 
 import knightminer.ceramics.Registration;
+import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.registration.EnumBlockObject;
 import net.minecraft.block.Block;
@@ -37,6 +38,7 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
     this.getBuilder(BlockTags.ENDERMAN_HOLDABLE).add(Registration.UNFIRED_PORCELAIN_BLOCK.get());
     this.getBuilder(CeramicsTags.Blocks.COLORED_PORCELAIN).add(getList(Registration.PORCELAIN_BLOCK, COLORED_DYES));
     this.getBuilder(CeramicsTags.Blocks.PORCELAIN).add(Registration.PORCELAIN_BLOCK.getBlock(DyeColor.WHITE)).add(CeramicsTags.Blocks.COLORED_PORCELAIN);
+    this.getBuilder(CeramicsTags.Blocks.RAINBOW_PORCELAIN).add(getList(Registration.RAINBOW_PORCELAIN, RainbowPorcelain.values()));
   }
 
   private static <T extends Enum<T>> Block[] getList(EnumBlockObject<T,?> blocks, T[] values) {

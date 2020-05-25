@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "ceramics:red_rainbow_porcelain",
+    "ceramics:orange_rainbow_porcelain",
+    "ceramics:yellow_rainbow_porcelain",
+    "ceramics:green_rainbow_porcelain",
+    "ceramics:cyan_rainbow_porcelain",
+    "ceramics:blue_rainbow_porcelain",
+    "ceramics:purple_rainbow_porcelain",
+    "ceramics:magenta_rainbow_porcelain"
+  ]
+}

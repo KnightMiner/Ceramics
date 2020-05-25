@@ -1,5 +1,7 @@
 package knightminer.ceramics;
 
+import knightminer.ceramics.blocks.RainbowPorcelain;
+import knightminer.ceramics.blocks.TooltipBlock;
 import knightminer.ceramics.registration.BlockDeferredRegister;
 import knightminer.ceramics.registration.BlockItemObject;
 import knightminer.ceramics.registration.EnumBlockObject;
@@ -72,6 +74,10 @@ public class Registration {
 
   // porcelain
   public static final EnumBlockObject<DyeColor,Block> PORCELAIN_BLOCK = BLOCK_REGISTRY.registerEnum(DyeColor.values(), "porcelain", (color) -> new Block(Block.Properties.from(TERRACOTTA.getBlock(color))), GROUP_PROPS);
+  public static final EnumBlockObject<RainbowPorcelain,Block> RAINBOW_PORCELAIN = BLOCK_REGISTRY.registerEnum(
+      RainbowPorcelain.values(), "rainbow_porcelain",
+      (color) -> new TooltipBlock(Block.Properties.create(Material.ROCK, color.getColor()).hardnessAndResistance(2.0F, 6.0F)),
+      GROUP_PROPS);
 
 
   /* items */

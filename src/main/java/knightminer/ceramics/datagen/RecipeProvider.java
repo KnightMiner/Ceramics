@@ -2,6 +2,7 @@ package knightminer.ceramics.datagen;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
+import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.registration.BuildingBlockObject;
 import knightminer.ceramics.registration.EnumBlockObject;
@@ -94,6 +95,25 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .patternLine("BBB")
                          .addCriterion("has_porcelain", porcelainCriteria)
                          .build(consumer);
+    });
+    // rainbow porcelain
+    CookingRecipeBuilder.smeltingRecipe(
+        Ingredient.fromTag(CeramicsTags.Items.COLORED_PORCELAIN),
+        Registration.RAINBOW_PORCELAIN.asItem(RainbowPorcelain.RED),
+        0.1f, 200)
+                        .addCriterion("has_porcelain", hasItem(
+                            ItemPredicate.Builder.create()
+                                                 .tag(CeramicsTags.Items.COLORED_PORCELAIN)
+                                                 .build()))
+                        .build(consumer, location("rainbow_porcelain"));
+    // smelt for full rainbow
+    ICriterionInstance hasTheRainbow = hasItem(CeramicsTags.Items.RAINBOW_PORCELAIN);
+    eachEnum(Registration.RAINBOW_PORCELAIN, RainbowPorcelain.values(), (item, color) -> {
+      SingleItemRecipeBuilder.stonecuttingRecipe(
+          Ingredient.fromTag(CeramicsTags.Items.RAINBOW_PORCELAIN),
+          item)
+                             .addCriterion("has_the_rainbow", hasTheRainbow)
+                             .build(consumer, item.getRegistryName());
     });
 
     // clay uncrafting

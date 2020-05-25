@@ -21,5 +21,6 @@ public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
     // porcelain
     this.copy(Blocks.PORCELAIN, Items.PORCELAIN);
     this.copy(Blocks.COLORED_PORCELAIN, Items.COLORED_PORCELAIN);
+    this.copy(Blocks.RAINBOW_PORCELAIN, Items.RAINBOW_PORCELAIN);
   }
 }
