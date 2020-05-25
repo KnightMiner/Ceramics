@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "": [
+            { "model": "ceramics:block/dark_bricks/1" },
+            { "model": "ceramics:block/dark_bricks/2" },
+            { "model": "ceramics:block/dark_bricks/3" },
+            { "model": "ceramics:block/dark_bricks/4" }
+        ]
+    }
+}

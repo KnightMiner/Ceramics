@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "ceramics:block/rainbow_bricks/slab_bottom" },
+        "type=top":    { "model": "ceramics:block/rainbow_bricks/slab_top" },
+        "type=double": { "model": "ceramics:block/rainbow_bricks/block" }
+    }
+}

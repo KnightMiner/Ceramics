@@ -1,0 +1,8 @@
+{
+    "parent": "block/inner_stairs",
+    "textures": {
+        "bottom": "ceramics:block/dragon_bricks/2",
+        "top": "ceramics:block/dragon_bricks/2",
+        "side": "ceramics:block/dragon_bricks/2"
+    }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "ceramics:lava_bricks",
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "i": {
+      "item": "minecraft:lava_bucket"
+    }
+  },
+  "result": {
+    "item": "ceramics:lava_bricks",
+    "count": 8
+  }
+}

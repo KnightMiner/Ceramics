@@ -1,0 +1,6 @@
+{
+    "parent": "block/wall_inventory",
+    "textures": {
+        "wall": "ceramics:block/golden_bricks/1"
+    }
+}

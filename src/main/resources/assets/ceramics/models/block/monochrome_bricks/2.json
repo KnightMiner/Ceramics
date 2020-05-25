@@ -1,0 +1,6 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "ceramics:block/monochrome_bricks/2"
+    }
+}

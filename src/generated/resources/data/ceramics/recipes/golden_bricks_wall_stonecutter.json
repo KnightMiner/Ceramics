@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "ceramics:golden_bricks"
+  },
+  "result": "ceramics:golden_bricks_wall",
+  "count": 1
+}

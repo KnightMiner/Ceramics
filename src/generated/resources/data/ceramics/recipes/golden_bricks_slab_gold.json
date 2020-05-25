@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "ceramics:golden_bricks_slab",
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "ceramics:porcelain_bricks_slab"
+    },
+    "i": {
+      "item": "minecraft:gold_nugget"
+    }
+  },
+  "result": {
+    "item": "ceramics:golden_bricks_slab",
+    "count": 8
+  }
+}

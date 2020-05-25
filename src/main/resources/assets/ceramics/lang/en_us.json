@@ -11,6 +11,46 @@
     
     "block.ceramics.unfired_porcelain_block": "Unfired Porcelain",
     
+    "block.ceramics.dark_bricks":        "Dark Bricks",
+    "block.ceramics.dark_bricks_stairs": "Dark Brick Stairs",
+    "block.ceramics.dark_bricks_slab":   "Dark Brick Slab",
+    "block.ceramics.dark_bricks_wall":   "Dark Brick Wall",
+    
+    "block.ceramics.lava_bricks":        "Lava Bricks",
+    "block.ceramics.lava_bricks_stairs": "Lava Brick Stairs",
+    "block.ceramics.lava_bricks_slab":   "Lava Brick Slab",
+    "block.ceramics.lava_bricks_wall":   "Lava Brick Wall",
+    
+    "block.ceramics.dragon_bricks":        "Dragon Bricks",
+    "block.ceramics.dragon_bricks_stairs": "Dragon Brick Stairs",
+    "block.ceramics.dragon_bricks_slab":   "Dragon Brick Slab",
+    "block.ceramics.dragon_bricks_wall":   "Dragon Brick Wall",
+    
+    "block.ceramics.porcelain_bricks":        "Porcelain Bricks",
+    "block.ceramics.porcelain_bricks_stairs": "Porcelain Brick Stairs",
+    "block.ceramics.porcelain_bricks_slab":   "Porcelain Brick Slab",
+    "block.ceramics.porcelain_bricks_wall":   "Porcelain Brick Wall",
+    
+    "block.ceramics.monochrome_bricks":        "Monochrome Bricks",
+    "block.ceramics.monochrome_bricks_stairs": "Monochrome Brick Stairs",
+    "block.ceramics.monochrome_bricks_slab":   "Monochrome Brick Slab",
+    "block.ceramics.monochrome_bricks_wall":   "Monochrome Brick Wall",
+    
+    "block.ceramics.golden_bricks":        "Golden Bricks",
+    "block.ceramics.golden_bricks_stairs": "Golden Brick Stairs",
+    "block.ceramics.golden_bricks_slab":   "Golden Brick Slab",
+    "block.ceramics.golden_bricks_wall":   "Golden Brick Wall",
+    
+    "block.ceramics.marine_bricks":        "Marine Bricks",
+    "block.ceramics.marine_bricks_stairs": "Marine Brick Stairs",
+    "block.ceramics.marine_bricks_slab":   "Marine Brick Slab",
+    "block.ceramics.marine_bricks_wall":   "Marine Brick Wall",
+    
+    "block.ceramics.rainbow_bricks":        "Rainbow Bricks",
+    "block.ceramics.rainbow_bricks_stairs": "Rainbow Brick Stairs",
+    "block.ceramics.rainbow_bricks_slab":   "Rainbow Brick Slab",
+    "block.ceramics.rainbow_bricks_wall":   "Rainbow Brick Wall",
+    
     "block.ceramics.white_porcelain": "White Porcelain",
     "block.ceramics.orange_porcelain": "Orange Porcelain",
     "block.ceramics.magenta_porcelain": "Magenta Porcelain",
@@ -49,5 +89,6 @@
     "_comment": "# Items #",
     "_comment": "#########",
     
-    "item.ceramics.unfired_porcelain": "Unfired Porcelain"
+    "item.ceramics.unfired_porcelain": "Unfired Porcelain",
+    "item.ceramics.porcelain_brick": "Porcelain Brick"
 }

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "ceramics:dragon_bricks_wall",
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:brick_wall"
+    },
+    "i": {
+      "item": "minecraft:dragon_breath"
+    }
+  },
+  "result": {
+    "item": "ceramics:dragon_bricks_wall",
+    "count": 8
+  }
+}

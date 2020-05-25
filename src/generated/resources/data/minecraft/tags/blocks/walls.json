@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "ceramics:dark_bricks_wall",
+    "ceramics:dragon_bricks_wall",
+    "ceramics:lava_bricks_wall",
+    "ceramics:porcelain_bricks_wall",
+    "ceramics:golden_bricks_wall",
+    "ceramics:marine_bricks_wall",
+    "ceramics:monochrome_bricks_wall",
+    "ceramics:rainbow_bricks_wall"
+  ]
+}

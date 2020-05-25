@@ -1,0 +1,49 @@
+{
+    "multipart": [
+        {   "when": { "up": "true" },
+            "apply": [
+                { "model": "ceramics:block/monochrome_bricks/wall/post_1" },
+                { "model": "ceramics:block/monochrome_bricks/wall/post_2" },
+                { "model": "ceramics:block/monochrome_bricks/wall/post_3" },
+                { "model": "ceramics:block/monochrome_bricks/wall/post_4" },
+                { "model": "ceramics:block/monochrome_bricks/wall/post_5" }
+            ]
+        },
+        {   "when": { "north": "true" },
+            "apply": [
+                { "model": "ceramics:block/monochrome_bricks/wall/side_1", "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_2", "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_3", "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_4", "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_5", "uvlock": true }
+            ]
+        },
+        {   "when": { "east": "true" },
+            "apply": [
+                { "model": "ceramics:block/monochrome_bricks/wall/side_1", "y": 90, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_2", "y": 90, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_3", "y": 90, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_4", "y": 90, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_5", "y": 90, "uvlock": true }
+            ]
+        },
+        {   "when": { "south": "true" },
+            "apply": [
+                { "model": "ceramics:block/monochrome_bricks/wall/side_1", "y": 180, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_2", "y": 180, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_3", "y": 180, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_4", "y": 180, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_5", "y": 180, "uvlock": true }
+            ]
+        },
+        {   "when": { "west": "true" },
+            "apply": [
+                { "model": "ceramics:block/monochrome_bricks/wall/side_1", "y": 270, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_2", "y": 270, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_3", "y": 270, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_4", "y": 270, "uvlock": true },
+                { "model": "ceramics:block/monochrome_bricks/wall/side_5", "y": 270, "uvlock": true }
+            ]
+        }
+    ]
+}

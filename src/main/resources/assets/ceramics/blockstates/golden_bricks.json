@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "": [
+            { "model": "ceramics:block/golden_bricks/1" },
+            { "model": "ceramics:block/golden_bricks/2" },
+            { "model": "ceramics:block/golden_bricks/3" },
+            { "model": "ceramics:block/golden_bricks/4" }
+        ]
+    }
+}

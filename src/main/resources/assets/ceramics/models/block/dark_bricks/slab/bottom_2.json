@@ -1,0 +1,8 @@
+{
+    "parent": "block/slab",
+    "textures": {
+        "bottom": "ceramics:block/dark_bricks/2",
+        "top": "ceramics:block/dark_bricks/2",
+        "side": "ceramics:block/dark_bricks/2"
+    }
+}

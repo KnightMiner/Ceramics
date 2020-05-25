@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "": { "model": "ceramics:block/lava_bricks/block" }
+    }
+}

@@ -116,6 +116,105 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                              .build(consumer, item.getRegistryName());
     });
 
+    // bricks
+    // vanilla brick block shortcuts
+    ICriterionInstance hasClayBrick = hasItem(Items.BRICK);
+    ShapedRecipeBuilder.shapedRecipe(Items.BRICK_SLAB)
+                       .key('b', Items.BRICK)
+                       .patternLine("bb")
+                       .addCriterion("has_bricks", hasClayBrick)
+                       .setGroup(Items.BRICK_SLAB.getRegistryName().getPath())
+                       .build(consumer, location("brick_slab_from_bricks"));
+    // stairs shortcut
+    ShapedRecipeBuilder.shapedRecipe(Items.BRICK_STAIRS)
+                       .key('b', Items.BRICK)
+                       .patternLine("b  ")
+                       .patternLine("bb ")
+                       .patternLine("bbb")
+                       .addCriterion("has_bricks", hasClayBrick)
+                       .setGroup(Items.BRICK_STAIRS.getRegistryName().getPath())
+                       .build(consumer, location("brick_stairs_from_bricks"));
+    // block from slab
+    ShapedRecipeBuilder.shapedRecipe(Items.BRICKS)
+                       .key('B', Items.BRICK_SLAB)
+                       .patternLine("B")
+                       .patternLine("B")
+                       .addCriterion("has_item", hasItem(Items.BRICK_SLAB))
+                       .setGroup(Items.BRICKS.getRegistryName().getPath())
+                       .build(consumer, location("bricks_from_slab"));
+
+    // dark bricks from smelting bricks
+    eachBuilding(BRICKS, Registration.DARK_BRICKS, (input, output) -> {
+      CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(input), output, 0.1f, 200)
+                          .addCriterion("has_item", hasItem(input))
+                          .build(consumer, suffix(output, "_smelting"));
+    });
+    registerSlabStairWall(consumer, Registration.DARK_BRICKS);
+
+    // magma bricks from lava bucket
+    ICriterionInstance hasLava = hasItem(Items.LAVA_BUCKET);
+    addBrickRecipe(consumer, BRICKS, Items.LAVA_BUCKET, Registration.LAVA_BRICKS, "lava");
+    registerSlabStairWall(consumer, Registration.LAVA_BRICKS);
+
+    // dragon bricks from dragon's breath
+    addBrickRecipe(consumer, BRICKS, Items.DRAGON_BREATH, Registration.DRAGON_BRICKS, "dragon");
+    registerSlabStairWall(consumer, Registration.DRAGON_BRICKS);
+
+    // porcelain bricks
+    CookingRecipeBuilder.smeltingRecipe(
+        Ingredient.fromItems(Registration.UNFIRED_PORCELAIN),
+        Registration.PORCELAIN_BRICK,
+        0.1f, 200)
+                        .addCriterion("has_item", hasItem(Registration.UNFIRED_PORCELAIN))
+                        .build(consumer);
+    ICriterionInstance hasBricks = hasItem(Registration.PORCELAIN_BRICK);
+    ShapedRecipeBuilder.shapedRecipe(Registration.PORCELAIN_BRICKS)
+                       .key('b', Registration.PORCELAIN_BRICK)
+                       .patternLine("bb")
+                       .patternLine("bb")
+                       .addCriterion("has_bricks", hasBricks)
+                       .setGroup(Registration.PORCELAIN_BRICK.getRegistryName().toString())
+                       .build(consumer);
+    // slab shortcut
+    Item porcelainSlab = Registration.PORCELAIN_BRICKS.getSlabItem();
+    ShapedRecipeBuilder.shapedRecipe(porcelainSlab)
+                       .key('b', Registration.PORCELAIN_BRICK)
+                       .patternLine("bb")
+                       .addCriterion("has_bricks", hasBricks)
+                       .setGroup(porcelainSlab.getRegistryName().toString())
+                       .build(consumer, suffix(porcelainSlab, "_from_bricks"));
+    // stairs shortcut
+    Item porcelainStairs = Registration.PORCELAIN_BRICKS.getStairsItem();
+    ShapedRecipeBuilder.shapedRecipe(porcelainStairs)
+                       .key('b', Registration.PORCELAIN_BRICK)
+                       .patternLine("b  ")
+                       .patternLine("bb ")
+                       .patternLine("bbb")
+                       .addCriterion("has_bricks", hasBricks)
+                       .setGroup(porcelainStairs.getRegistryName().toString())
+                       .build(consumer, suffix(porcelainStairs, "_from_bricks"));
+    registerSlabStairWall(consumer, Registration.PORCELAIN_BRICKS);
+
+    // golden bricks
+    addBrickRecipe(consumer, Registration.PORCELAIN_BRICKS, Items.GOLD_NUGGET, Registration.GOLDEN_BRICKS, "gold");
+    registerSlabStairWall(consumer, Registration.GOLDEN_BRICKS);
+
+    // marine bricks
+    addBrickRecipe(consumer, Registration.PORCELAIN_BRICKS, Items.PRISMARINE_SHARD, Registration.MARINE_BRICKS, "prismarine");
+    registerSlabStairWall(consumer, Registration.MARINE_BRICKS);
+
+    // monochrome uses ink, not black dye intentionally
+    addBrickRecipe(consumer, Registration.PORCELAIN_BRICKS, Items.INK_SAC, Registration.MONOCHROME_BRICKS, "ink");
+    registerSlabStairWall(consumer, Registration.MONOCHROME_BRICKS);
+
+    // rainbow
+    eachBuilding(Registration.PORCELAIN_BRICKS, Registration.RAINBOW_BRICKS, (input, output) -> {
+      CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(input), output, 0.1f, 200)
+                          .addCriterion("has_item", hasItem(input))
+                          .build(consumer, suffix(output, "_smelting"));
+    });
+    registerSlabStairWall(consumer, Registration.RAINBOW_BRICKS);
+
     // clay uncrafting
     ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 4)
                           .addIngredient(Items.CLAY)

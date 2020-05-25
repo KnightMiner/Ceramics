@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "ceramics:lava_bricks"
+  },
+  "result": "ceramics:lava_bricks_stairs",
+  "count": 1
+}

@@ -1,0 +1,22 @@
+{
+    "variants": {
+        "type=bottom": [
+            { "model": "ceramics:block/dragon_bricks/slab/bottom_1" },
+            { "model": "ceramics:block/dragon_bricks/slab/bottom_2" },
+            { "model": "ceramics:block/dragon_bricks/slab/bottom_3" },
+            { "model": "ceramics:block/dragon_bricks/slab/bottom_4" }
+        ],
+        "type=top": [
+            { "model": "ceramics:block/dragon_bricks/slab/top_1" },
+            { "model": "ceramics:block/dragon_bricks/slab/top_2" },
+            { "model": "ceramics:block/dragon_bricks/slab/top_3" },
+            { "model": "ceramics:block/dragon_bricks/slab/top_4" }
+        ],
+        "type=double": [
+            { "model": "ceramics:block/dragon_bricks/1" },
+            { "model": "ceramics:block/dragon_bricks/2" },
+            { "model": "ceramics:block/dragon_bricks/3" },
+            { "model": "ceramics:block/dragon_bricks/4" }
+        ]
+    }
+}

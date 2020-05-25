@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bricks",
+    "ceramics:dark_bricks",
+    "ceramics:dragon_bricks",
+    "ceramics:lava_bricks",
+    "ceramics:porcelain_bricks",
+    "ceramics:golden_bricks",
+    "ceramics:marine_bricks",
+    "ceramics:monochrome_bricks",
+    "ceramics:rainbow_bricks"
+  ]
+}

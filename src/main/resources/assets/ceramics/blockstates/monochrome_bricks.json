@@ -1,0 +1,11 @@
+{
+    "variants": {
+        "": [
+            { "model": "ceramics:block/monochrome_bricks/1" },
+            { "model": "ceramics:block/monochrome_bricks/2" },
+            { "model": "ceramics:block/monochrome_bricks/3" },
+            { "model": "ceramics:block/monochrome_bricks/4" },
+            { "model": "ceramics:block/monochrome_bricks/5" }
+        ]
+    }
+}

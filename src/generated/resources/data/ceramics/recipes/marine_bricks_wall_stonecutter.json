@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "ceramics:marine_bricks"
+  },
+  "result": "ceramics:marine_bricks_wall",
+  "count": 1
+}

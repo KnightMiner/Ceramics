@@ -4,6 +4,7 @@ import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.blocks.TooltipBlock;
 import knightminer.ceramics.registration.BlockDeferredRegister;
 import knightminer.ceramics.registration.BlockItemObject;
+import knightminer.ceramics.registration.BuildingBlockObject;
 import knightminer.ceramics.registration.EnumBlockObject;
 import knightminer.ceramics.registration.ItemDeferredRegsister;
 import knightminer.ceramics.registration.ItemObject;
@@ -11,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
@@ -41,7 +43,7 @@ public class Registration {
     @Override
     @OnlyIn(Dist.CLIENT)
     public ItemStack createIcon() {
-      return new ItemStack(UNFIRED_PORCELAIN);
+      return new ItemStack(PORCELAIN_BRICK);
     }
   };
   private static final Item.Properties GROUP_PROPS = new Item.Properties().group(GROUP);
@@ -79,7 +81,20 @@ public class Registration {
       (color) -> new TooltipBlock(Block.Properties.create(Material.ROCK, color.getColor()).hardnessAndResistance(2.0F, 6.0F)),
       GROUP_PROPS);
 
+  // clay bricks
+  public static final BuildingBlockObject DARK_BRICKS   = BLOCK_REGISTRY.registerBuilding("dark_bricks", Block.Properties.create(Material.ROCK, MaterialColor.RED).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+  public static final BuildingBlockObject LAVA_BRICKS   = BLOCK_REGISTRY.registerBuilding("lava_bricks", Block.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+  public static final BuildingBlockObject DRAGON_BRICKS = BLOCK_REGISTRY.registerBuilding("dragon_bricks", Block.Properties.create(Material.ROCK, MaterialColor.OBSIDIAN).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+
+  // porcelain bricks
+  public static final BuildingBlockObject PORCELAIN_BRICKS  = BLOCK_REGISTRY.registerBuilding("porcelain_bricks", Block.Properties.create(Material.SNOW, MaterialColor.RED).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+  public static final BuildingBlockObject MONOCHROME_BRICKS = BLOCK_REGISTRY.registerBuilding("monochrome_bricks", Block.Properties.create(Material.ROCK, MaterialColor.STONE).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+  public static final BuildingBlockObject GOLDEN_BRICKS     = BLOCK_REGISTRY.registerBuilding("golden_bricks", Block.Properties.create(Material.ROCK, MaterialColor.YELLOW).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+  public static final BuildingBlockObject MARINE_BRICKS     = BLOCK_REGISTRY.registerBuilding("marine_bricks", Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_BLUE).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+  public static final BuildingBlockObject RAINBOW_BRICKS    = BLOCK_REGISTRY.registerBuilding("rainbow_bricks", Block.Properties.create(Material.ROCK, MaterialColor.GREEN).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+
 
   /* items */
   public static final ItemObject<Item> UNFIRED_PORCELAIN = ITEM_REGISTRY.register("unfired_porcelain", GROUP_PROPS);
+  public static final ItemObject<Item> PORCELAIN_BRICK = ITEM_REGISTRY.register("porcelain_brick", GROUP_PROPS);
 }

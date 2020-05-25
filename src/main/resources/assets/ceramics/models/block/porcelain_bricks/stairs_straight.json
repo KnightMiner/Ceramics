@@ -1,0 +1,8 @@
+{
+    "parent": "block/stairs",
+    "textures": {
+        "bottom": "ceramics:block/porcelain_bricks",
+        "top": "ceramics:block/porcelain_bricks",
+        "side": "ceramics:block/porcelain_bricks"
+    }
+}

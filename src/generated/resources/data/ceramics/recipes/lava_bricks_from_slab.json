@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "ceramics:lava_bricks",
+  "pattern": [
+    "B",
+    "B"
+  ],
+  "key": {
+    "B": {
+      "item": "ceramics:lava_bricks_slab"
+    }
+  },
+  "result": {
+    "item": "ceramics:lava_bricks"
+  }
+}

@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "type=bottom": { "model": "ceramics:block/porcelain_bricks/slab_bottom" },
+        "type=top":    { "model": "ceramics:block/porcelain_bricks/slab_top" },
+        "type=double": { "model": "ceramics:block/porcelain_bricks/block" }
+    }
+}

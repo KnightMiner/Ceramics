@@ -1,0 +1,6 @@
+{
+    "parent": "block/wall_inventory",
+    "textures": {
+        "wall": "ceramics:block/monochrome_bricks/1"
+    }
+}
