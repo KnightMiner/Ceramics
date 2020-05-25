@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "ceramics:clay_uncrafting"
+    ]
+  },
+  "criteria": {
+    "has_unfired": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:clay"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "ceramics:clay_uncrafting"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_unfired",
+      "has_the_recipe"
+    ]
+  ]
+}

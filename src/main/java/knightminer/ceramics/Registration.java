@@ -1,15 +1,19 @@
 package knightminer.ceramics;
 
 import knightminer.ceramics.registration.BlockDeferredRegister;
+import knightminer.ceramics.registration.BlockItemObject;
 import knightminer.ceramics.registration.EnumBlockObject;
 import knightminer.ceramics.registration.ItemDeferredRegsister;
+import knightminer.ceramics.registration.ItemObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod;
@@ -35,7 +39,7 @@ public class Registration {
     @Override
     @OnlyIn(Dist.CLIENT)
     public ItemStack createIcon() {
-      return new ItemStack(Items.BRICK);
+      return new ItemStack(UNFIRED_PORCELAIN);
     }
   };
   private static final Item.Properties GROUP_PROPS = new Item.Properties().group(GROUP);
@@ -62,4 +66,14 @@ public class Registration {
     map.put(DyeColor.BLACK,      Blocks.BLACK_TERRACOTTA.delegate);
     TERRACOTTA = new EnumBlockObject<>(map);
   }
+
+  /* Building blocks */
+  public static final BlockItemObject<Block,BlockItem> UNFIRED_PORCELAIN_BLOCK = BLOCK_REGISTRY.register("unfired_porcelain_block", Block.Properties.create(Material.CLAY).hardnessAndResistance(0.6F).sound(SoundType.GROUND), GROUP_PROPS);
+
+  // porcelain
+  public static final EnumBlockObject<DyeColor,Block> PORCELAIN_BLOCK = BLOCK_REGISTRY.registerEnum(DyeColor.values(), "porcelain", (color) -> new Block(Block.Properties.from(TERRACOTTA.getBlock(color))), GROUP_PROPS);
+
+
+  /* items */
+  public static final ItemObject<Item> UNFIRED_PORCELAIN = ITEM_REGISTRY.register("unfired_porcelain", GROUP_PROPS);
 }

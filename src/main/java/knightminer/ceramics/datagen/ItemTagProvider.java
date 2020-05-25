@@ -1,5 +1,7 @@
 package knightminer.ceramics.datagen;
 
+import knightminer.ceramics.recipe.CeramicsTags.Blocks;
+import knightminer.ceramics.recipe.CeramicsTags.Items;
 import net.minecraft.data.DataGenerator;
 
 public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
@@ -14,5 +16,10 @@ public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
 
   @Override
   protected void registerTags() {
+    this.copy(Blocks.COLORED_TERRACOTTA, Items.COLORED_TERRACOTTA);
+
+    // porcelain
+    this.copy(Blocks.PORCELAIN, Items.PORCELAIN);
+    this.copy(Blocks.COLORED_PORCELAIN, Items.COLORED_PORCELAIN);
   }
 }

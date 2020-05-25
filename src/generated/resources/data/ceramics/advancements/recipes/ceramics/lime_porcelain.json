@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "ceramics:lime_porcelain"
+    ]
+  },
+  "criteria": {
+    "has_porcelain": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "ceramics:white_porcelain"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "ceramics:lime_porcelain"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_porcelain",
+      "has_the_recipe"
+    ]
+  ]
+}

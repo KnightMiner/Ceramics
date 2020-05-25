@@ -1,20 +1,27 @@
 package knightminer.ceramics.datagen;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.Registration;
+import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.registration.BuildingBlockObject;
 import knightminer.ceramics.registration.EnumBlockObject;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.data.ShapedRecipeBuilder;
+import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.data.SingleItemRecipeBuilder;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
@@ -38,6 +45,69 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
 
   @Override
   protected void registerRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
+    // recoloring terracotta
+    ICriterionInstance terracottaCriteria = hasItem(CeramicsTags.Items.COLORED_TERRACOTTA);
+    eachEnum(Registration.TERRACOTTA, DyeColor.values(), (item, color) -> {
+      ShapedRecipeBuilder.shapedRecipe(item, 8)
+                         .key('B', CeramicsTags.Items.COLORED_TERRACOTTA)
+                         .key('D', color.getTag())
+                         .setGroup("stained_terracotta")
+                         .patternLine("BBB")
+                         .patternLine("BDB")
+                         .patternLine("BBB")
+                         .addCriterion("has_terracotta", terracottaCriteria)
+                         .build(consumer, location(item.getRegistryName().getPath() + "_recolor"));
+    });
+
+    // crafting porcelain
+    ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
+                          .addIngredient(Tags.Items.GEMS_QUARTZ)
+                          .addIngredient(Items.CLAY_BALL)
+                          .addIngredient(Items.CLAY_BALL)
+                          .addIngredient(Items.CLAY_BALL)
+                          .addCriterion("has_quartz", hasItem(Tags.Items.GEMS_QUARTZ))
+                          .build(consumer);
+
+    // unfired porcelain
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_PORCELAIN_BLOCK)
+                       .key('b', Registration.UNFIRED_PORCELAIN)
+                       .patternLine("bb")
+                       .patternLine("bb")
+                       .addCriterion("has_item", hasItem(Registration.UNFIRED_PORCELAIN))
+                       .build(consumer);
+    // smelting porcelain
+    Item porcelainBlock = Registration.PORCELAIN_BLOCK.asItem(DyeColor.WHITE);
+    CookingRecipeBuilder.smeltingRecipe(
+        Ingredient.fromItems(Registration.UNFIRED_PORCELAIN_BLOCK),
+        porcelainBlock, 0.1f, 200)
+                        .addCriterion("has_item", hasItem(Registration.UNFIRED_PORCELAIN_BLOCK))
+                        .build(consumer, suffix(porcelainBlock, "_smelting"));
+    // colored porcelain
+    ICriterionInstance porcelainCriteria = hasItem(Registration.PORCELAIN_BLOCK.asItem(DyeColor.WHITE));
+    eachEnum(Registration.PORCELAIN_BLOCK, DyeColor.values(), (item, color) -> {
+      ShapedRecipeBuilder.shapedRecipe(item, 8)
+                         .key('B', CeramicsTags.Items.PORCELAIN)
+                         .key('D', color.getTag())
+                         .setGroup(locationString("dye_porcelain"))
+                         .patternLine("BBB")
+                         .patternLine("BDB")
+                         .patternLine("BBB")
+                         .addCriterion("has_porcelain", porcelainCriteria)
+                         .build(consumer);
+    });
+
+    // clay uncrafting
+    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 4)
+                          .addIngredient(Items.CLAY)
+                          .addCriterion("has_unfired", hasItem(Items.CLAY))
+                          .setGroup(locationString("clay_uncrafting"))
+                          .build(consumer, location("clay_uncrafting"));
+    // porcelain uncrafting
+    ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
+                          .addIngredient(Registration.UNFIRED_PORCELAIN_BLOCK)
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_PORCELAIN_BLOCK))
+                          .setGroup(locationString("porcelain_uncrafting"))
+                          .build(consumer, suffix(Registration.UNFIRED_PORCELAIN_BLOCK, "_uncrafting"));
   }
 
 

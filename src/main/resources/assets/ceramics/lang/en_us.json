@@ -1,0 +1,36 @@
+{
+    "_comment": "###########",
+    "_comment": "# General #",
+    "_comment": "###########",
+    
+    "itemGroup.ceramics": "Ceramics",
+    
+    "_comment": "##########",
+    "_comment": "# Blocks #",
+    "_comment": "##########",
+    
+    "block.ceramics.unfired_porcelain_block": "Unfired Porcelain",
+    
+    "block.ceramics.white_porcelain": "White Porcelain",
+    "block.ceramics.orange_porcelain": "Orange Porcelain",
+    "block.ceramics.magenta_porcelain": "Magenta Porcelain",
+    "block.ceramics.light_blue_porcelain": "Light Blue Porcelain",
+    "block.ceramics.yellow_porcelain": "Yellow Porcelain",
+    "block.ceramics.lime_porcelain": "Lime Porcelain",
+    "block.ceramics.pink_porcelain": "Pink Porcelain",
+    "block.ceramics.gray_porcelain": "Gray Porcelain",
+    "block.ceramics.light_gray_porcelain": "Light Gray Porcelain",
+    "block.ceramics.cyan_porcelain": "Cyan Porcelain",
+    "block.ceramics.purple_porcelain": "Purple Porcelain",
+    "block.ceramics.blue_porcelain": "Blue Porcelain",
+    "block.ceramics.brown_porcelain": "Brown Porcelain",
+    "block.ceramics.green_porcelain": "Green Porcelain",
+    "block.ceramics.red_porcelain": "Red Porcelain",
+    "block.ceramics.black_porcelain": "Black Porcelain",
+    
+    "_comment": "#########",
+    "_comment": "# Items #",
+    "_comment": "#########",
+    
+    "item.ceramics.unfired_porcelain": "Unfired Porcelain"
+}
