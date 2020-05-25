@@ -215,12 +215,62 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     });
     registerSlabStairWall(consumer, Registration.RAINBOW_BRICKS);
 
+    // armor
+    // clay plates
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_PLATE)
+                       .key('c', Items.CLAY_BALL)
+                       .patternLine("cc")
+                       .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
+                       .build(consumer);
+    CookingRecipeBuilder.smeltingRecipe(
+        Ingredient.fromItems(Registration.UNFIRED_CLAY_PLATE),
+        Registration.CLAY_PLATE,
+        0.1f, 200)
+                        .addCriterion("has_clay_plate", hasItem(Registration.UNFIRED_CLAY_PLATE))
+                        .build(consumer);
+    // helmet
+    ICriterionInstance hasClayPlate = hasItem(Registration.CLAY_PLATE);
+    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_HELMET)
+                       .key('c', Registration.CLAY_PLATE)
+                       .patternLine("ccc")
+                       .patternLine("c c")
+                       .addCriterion("has_plate", hasClayPlate)
+                       .build(consumer);
+    // chestplate
+    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CHESTPLATE)
+                       .key('c', Registration.CLAY_PLATE)
+                       .patternLine("c c")
+                       .patternLine("ccc")
+                       .patternLine("ccc")
+                       .addCriterion("has_plate", hasClayPlate)
+                       .build(consumer);
+    // leggings
+    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_LEGGINGS)
+                       .key('c', Registration.CLAY_PLATE)
+                       .patternLine("ccc")
+                       .patternLine("c c")
+                       .patternLine("c c")
+                       .addCriterion("has_plate", hasClayPlate)
+                       .build(consumer);
+    // boots
+    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_BOOTS)
+                       .key('c', Registration.CLAY_PLATE)
+                       .patternLine("c c")
+                       .patternLine("c c")
+                       .addCriterion("has_plate", hasClayPlate)
+                       .build(consumer);
+
     // clay uncrafting
     ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 4)
                           .addIngredient(Items.CLAY)
                           .addCriterion("has_unfired", hasItem(Items.CLAY))
                           .setGroup(locationString("clay_uncrafting"))
                           .build(consumer, location("clay_uncrafting"));
+    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 2)
+                          .addIngredient(Registration.UNFIRED_CLAY_PLATE)
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_PLATE))
+                          .setGroup(locationString("clay_uncrafting"))
+                          .build(consumer, suffix(Registration.UNFIRED_CLAY_PLATE, "_uncrafting"));
     // porcelain uncrafting
     ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
                           .addIngredient(Registration.UNFIRED_PORCELAIN_BLOCK)

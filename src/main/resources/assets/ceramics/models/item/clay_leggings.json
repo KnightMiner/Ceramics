@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "ceramics:items/clay_leggings"
+        "layer0": "ceramics:item/clay_leggings"
     }
 }

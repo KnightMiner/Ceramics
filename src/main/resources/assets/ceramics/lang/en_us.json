@@ -90,5 +90,12 @@
     "_comment": "#########",
     
     "item.ceramics.unfired_porcelain": "Unfired Porcelain",
-    "item.ceramics.porcelain_brick": "Porcelain Brick"
+    "item.ceramics.porcelain_brick": "Porcelain Brick",
+
+    "item.ceramics.unfired_clay_plate": "Unfired Clay Plate",
+    "item.ceramics.clay_plate": "Clay Plate",
+    "item.ceramics.clay_helmet": "Clay Plate Helmet",
+    "item.ceramics.clay_chestplate": "Clay Plate Chestplate",
+    "item.ceramics.clay_leggings": "Clay Plate Leggings",
+    "item.ceramics.clay_boots": "Clay Plate Boots"
 }

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ccc",
+    "c c",
+    "c c"
+  ],
+  "key": {
+    "c": {
+      "item": "ceramics:clay_plate"
+    }
+  },
+  "result": {
+    "item": "ceramics:clay_leggings"
+  }
+}

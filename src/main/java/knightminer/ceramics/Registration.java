@@ -2,6 +2,7 @@ package knightminer.ceramics;
 
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.blocks.TooltipBlock;
+import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.registration.BlockDeferredRegister;
 import knightminer.ceramics.registration.BlockItemObject;
 import knightminer.ceramics.registration.BuildingBlockObject;
@@ -13,6 +14,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
@@ -97,4 +100,12 @@ public class Registration {
   /* items */
   public static final ItemObject<Item> UNFIRED_PORCELAIN = ITEM_REGISTRY.register("unfired_porcelain", GROUP_PROPS);
   public static final ItemObject<Item> PORCELAIN_BRICK = ITEM_REGISTRY.register("porcelain_brick", GROUP_PROPS);
+  
+  // armor
+  public static final ItemObject<Item> UNFIRED_CLAY_PLATE = ITEM_REGISTRY.register("unfired_clay_plate", GROUP_PROPS);
+  public static final ItemObject<Item> CLAY_PLATE = ITEM_REGISTRY.register("clay_plate", GROUP_PROPS);
+  public static final ItemObject<ArmorItem> CLAY_HELMET     = ITEM_REGISTRY.register("clay_helmet",     () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.HEAD,  GROUP_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_CHESTPLATE = ITEM_REGISTRY.register("clay_chestplate", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.CHEST, GROUP_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_LEGGINGS   = ITEM_REGISTRY.register("clay_leggings",   () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.LEGS,  GROUP_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEM_REGISTRY.register("clay_boots",      () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.FEET,  GROUP_PROPS));
 }
