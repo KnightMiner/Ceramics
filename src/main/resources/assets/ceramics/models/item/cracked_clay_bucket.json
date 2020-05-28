@@ -1,0 +1,10 @@
+{
+  "loader": "ceramics:bucket",
+  "parent": "forge:item/default",
+  "textures": {
+    "particle": "ceramics:item/clay_bucket/cracked_inner",
+    "base": "ceramics:item/clay_bucket/cracked_cover",
+    "inner": "ceramics:item/clay_bucket/cracked_inner",
+    "fluid": "ceramics:item/clay_bucket/cracked_fluid"
+  }
+}

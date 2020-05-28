@@ -215,6 +215,19 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     });
     registerSlabStairWall(consumer, Registration.RAINBOW_BRICKS);
 
+    // buckets
+    // unfired
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_BUCKET)
+                       .key('c', Items.CLAY_BALL)
+                       .patternLine("c c")
+                       .patternLine(" c ")
+                       .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
+                       .build(consumer);
+    // fired
+    CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(Registration.UNFIRED_CLAY_BUCKET), Registration.CLAY_BUCKET, 0.3f, 200)
+                        .addCriterion("has_clay", hasItem(Registration.UNFIRED_CLAY_BUCKET))
+                        .build(consumer);
+
     // armor
     // clay plates
     ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_PLATE)
@@ -266,6 +279,11 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .addCriterion("has_unfired", hasItem(Items.CLAY))
                           .setGroup(locationString("clay_uncrafting"))
                           .build(consumer, location("clay_uncrafting"));
+    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 3)
+                          .addIngredient(Registration.UNFIRED_CLAY_BUCKET)
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_BUCKET))
+                          .setGroup(locationString("clay_uncrafting"))
+                          .build(consumer, suffix(Registration.UNFIRED_CLAY_BUCKET, "_uncrafting"));
     ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 2)
                           .addIngredient(Registration.UNFIRED_CLAY_PLATE)
                           .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_PLATE))
@@ -277,6 +295,17 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .addCriterion("has_unfired", hasItem(Registration.UNFIRED_PORCELAIN_BLOCK))
                           .setGroup(locationString("porcelain_uncrafting"))
                           .build(consumer, suffix(Registration.UNFIRED_PORCELAIN_BLOCK, "_uncrafting"));
+    // compat, wish there was a better way to do this
+    ShapedRecipeBuilder.shapedRecipe(Blocks.CAKE)
+                       .key('M', CeramicsTags.Items.MILK_BUCKETS)
+                       .key('S', Items.SUGAR)
+                       .key('W', Items.WHEAT)
+                       .key('E', Items.EGG)
+                       .patternLine("MMM")
+                       .patternLine("SES")
+                       .patternLine("WWW")
+                       .addCriterion("has_egg", this.hasItem(Items.EGG))
+                       .build(consumer, location("cake"));
   }
 
 

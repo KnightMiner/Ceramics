@@ -1,0 +1,10 @@
+{
+  "loader": "ceramics:bucket",
+  "parent": "forge:item/default",
+  "textures": {
+    "particle": "ceramics:item/clay_bucket/normal_inner",
+    "base": "ceramics:item/clay_bucket/normal_cover",
+    "inner": "ceramics:item/clay_bucket/normal_inner",
+    "fluid": "ceramics:item/clay_bucket/normal_fluid"
+  }
+}

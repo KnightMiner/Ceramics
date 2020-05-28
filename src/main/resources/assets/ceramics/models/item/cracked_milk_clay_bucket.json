@@ -1,0 +1,6 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "ceramics:item/clay_bucket/cracked_milk"
+    }
+}

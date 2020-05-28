@@ -3,6 +3,8 @@ package knightminer.ceramics;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.blocks.TooltipBlock;
 import knightminer.ceramics.items.ArmorMaterials;
+import knightminer.ceramics.items.ClayBucketItem;
+import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.registration.BlockDeferredRegister;
 import knightminer.ceramics.registration.BlockItemObject;
 import knightminer.ceramics.registration.BuildingBlockObject;
@@ -50,6 +52,7 @@ public class Registration {
     }
   };
   private static final Item.Properties GROUP_PROPS = new Item.Properties().group(GROUP);
+  private static final Item.Properties UNSTACKABLE_PROPS = new Item.Properties().maxStackSize(1).group(GROUP);
 
   /** Mapping for terracotta to make registration easier */
   public static final EnumBlockObject<DyeColor,Block> TERRACOTTA;
@@ -100,12 +103,19 @@ public class Registration {
   /* items */
   public static final ItemObject<Item> UNFIRED_PORCELAIN = ITEM_REGISTRY.register("unfired_porcelain", GROUP_PROPS);
   public static final ItemObject<Item> PORCELAIN_BRICK = ITEM_REGISTRY.register("porcelain_brick", GROUP_PROPS);
-  
+
+  // tools
+  public static final ItemObject<Item> UNFIRED_CLAY_BUCKET           = ITEM_REGISTRY.register("unfired_clay_bucket", new Item.Properties().maxStackSize(16).group(GROUP));
+  public static final ItemObject<ClayBucketItem> CLAY_BUCKET         = ITEM_REGISTRY.register("clay_bucket", () -> new ClayBucketItem(false, GROUP_PROPS));
+  public static final ItemObject<ClayBucketItem> CRACKED_CLAY_BUCKET = ITEM_REGISTRY.register("cracked_clay_bucket", () -> new ClayBucketItem(true, GROUP_PROPS));
+  public static final ItemObject<Item> MILK_CLAY_BUCKET              = ITEM_REGISTRY.register("milk_clay_bucket", () -> new MilkClayBucketItem(false, UNSTACKABLE_PROPS));
+  public static final ItemObject<Item> CRACKED_MILK_CLAY_BUCKET      = ITEM_REGISTRY.register("cracked_milk_clay_bucket", () -> new MilkClayBucketItem(true, UNSTACKABLE_PROPS));
+
   // armor
   public static final ItemObject<Item> UNFIRED_CLAY_PLATE = ITEM_REGISTRY.register("unfired_clay_plate", GROUP_PROPS);
   public static final ItemObject<Item> CLAY_PLATE = ITEM_REGISTRY.register("clay_plate", GROUP_PROPS);
-  public static final ItemObject<ArmorItem> CLAY_HELMET     = ITEM_REGISTRY.register("clay_helmet",     () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.HEAD,  GROUP_PROPS));
-  public static final ItemObject<ArmorItem> CLAY_CHESTPLATE = ITEM_REGISTRY.register("clay_chestplate", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.CHEST, GROUP_PROPS));
-  public static final ItemObject<ArmorItem> CLAY_LEGGINGS   = ITEM_REGISTRY.register("clay_leggings",   () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.LEGS,  GROUP_PROPS));
-  public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEM_REGISTRY.register("clay_boots",      () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.FEET,  GROUP_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_HELMET     = ITEM_REGISTRY.register("clay_helmet",     () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.HEAD,  UNSTACKABLE_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_CHESTPLATE = ITEM_REGISTRY.register("clay_chestplate", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.CHEST, UNSTACKABLE_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_LEGGINGS   = ITEM_REGISTRY.register("clay_leggings",   () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.LEGS,  UNSTACKABLE_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEM_REGISTRY.register("clay_boots",      () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.FEET,  UNSTACKABLE_PROPS));
 }

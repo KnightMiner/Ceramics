@@ -2,8 +2,10 @@ package knightminer.ceramics.recipe;
 
 import knightminer.ceramics.Ceramics;
 import net.minecraft.block.Block;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
@@ -26,10 +28,13 @@ public class CeramicsTags {
     public static final Tag<Item> COLORED_PORCELAIN = makeWrapperTag("colored_porcelain");
     public static final Tag<Item> RAINBOW_PORCELAIN = makeWrapperTag("rainbow_porcelain");
     public static final Tag<Item> BRICKS = makeWrapperTag("bricks");
+    public static final Tag<Item> MILK_BUCKETS = new ItemTags.Wrapper(new ResourceLocation("forge:buckets/milk"));
 
     private static Tag<Item> makeWrapperTag(String id) {
       return new ItemTags.Wrapper(new ResourceLocation(Ceramics.MOD_ID, id));
     }
   }
-
+  public static class Fluids {
+    public static final Tag<Fluid> MILK = new FluidTags.Wrapper(new ResourceLocation("forge:milk"));
+  }
 }

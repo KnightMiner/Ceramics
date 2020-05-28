@@ -1,8 +1,10 @@
 package knightminer.ceramics.datagen;
 
+import knightminer.ceramics.Registration;
+import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.CeramicsTags.Blocks;
-import knightminer.ceramics.recipe.CeramicsTags.Items;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.Items;
 
 public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
   public ItemTagProvider(DataGenerator gen) {
@@ -16,14 +18,15 @@ public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
 
   @Override
   protected void registerTags() {
-    this.copy(Blocks.COLORED_TERRACOTTA, Items.COLORED_TERRACOTTA);
-
+    this.copy(Blocks.COLORED_TERRACOTTA, CeramicsTags.Items.COLORED_TERRACOTTA);
     // porcelain
-    this.copy(Blocks.PORCELAIN, Items.PORCELAIN);
-    this.copy(Blocks.COLORED_PORCELAIN, Items.COLORED_PORCELAIN);
-    this.copy(Blocks.RAINBOW_PORCELAIN, Items.RAINBOW_PORCELAIN);
-
+    this.copy(Blocks.PORCELAIN, CeramicsTags.Items.PORCELAIN);
+    this.copy(Blocks.COLORED_PORCELAIN, CeramicsTags.Items.COLORED_PORCELAIN);
+    this.copy(Blocks.RAINBOW_PORCELAIN, CeramicsTags.Items.RAINBOW_PORCELAIN);
     // bricks
-    this.copy(Blocks.BRICKS, Items.BRICKS);
+    this.copy(Blocks.BRICKS, CeramicsTags.Items.BRICKS);
+
+    // item unique tags
+    this.getBuilder(CeramicsTags.Items.MILK_BUCKETS).add(Items.MILK_BUCKET, Registration.MILK_CLAY_BUCKET.get(), Registration.CRACKED_MILK_CLAY_BUCKET.get());
   }
 }

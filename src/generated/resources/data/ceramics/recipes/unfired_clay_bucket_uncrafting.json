@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "ceramics:clay_uncrafting",
+  "ingredients": [
+    {
+      "item": "ceramics:unfired_clay_bucket"
+    }
+  ],
+  "result": {
+    "item": "minecraft:clay_ball",
+    "count": 3
+  }
+}
