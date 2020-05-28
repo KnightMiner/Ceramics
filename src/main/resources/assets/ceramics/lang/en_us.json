@@ -98,7 +98,9 @@
     "item.ceramics.milk_clay_bucket": "Milk Bucket",
     "item.ceramics.cracked_clay_bucket": "Cracked Bucket",
     "item.ceramics.cracked_clay_bucket.filled": "%s Bucket",
+    "item.ceramics.cracked_clay_bucket.tooltip": "Bucket will break when emptying",
     "item.ceramics.cracked_milk_clay_bucket": "Milk Bucket",
+    "item.ceramics.cracked_milk_clay_bucket.tooltip": "Bucket will break when emptying",
 
     "item.ceramics.unfired_clay_plate": "Unfired Clay Plate",
     "item.ceramics.clay_plate": "Clay Plate",
