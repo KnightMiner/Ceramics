@@ -93,7 +93,7 @@ public class Registration {
   public static final BuildingBlockObject DRAGON_BRICKS = BLOCK_REGISTRY.registerBuilding("dragon_bricks", Block.Properties.create(Material.ROCK, MaterialColor.OBSIDIAN).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
 
   // porcelain bricks
-  public static final BuildingBlockObject PORCELAIN_BRICKS  = BLOCK_REGISTRY.registerBuilding("porcelain_bricks", Block.Properties.create(Material.SNOW, MaterialColor.RED).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
+  public static final BuildingBlockObject PORCELAIN_BRICKS  = BLOCK_REGISTRY.registerBuilding("porcelain_bricks", Block.Properties.create(Material.ROCK, MaterialColor.SNOW).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
   public static final BuildingBlockObject MONOCHROME_BRICKS = BLOCK_REGISTRY.registerBuilding("monochrome_bricks", Block.Properties.create(Material.ROCK, MaterialColor.STONE).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
   public static final BuildingBlockObject GOLDEN_BRICKS     = BLOCK_REGISTRY.registerBuilding("golden_bricks", Block.Properties.create(Material.ROCK, MaterialColor.YELLOW).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
   public static final BuildingBlockObject MARINE_BRICKS     = BLOCK_REGISTRY.registerBuilding("marine_bricks", Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_BLUE).hardnessAndResistance(2.0F, 6.0F), GROUP_PROPS);
