@@ -206,6 +206,16 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		world.playSound(player, pos, sound, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
 
+	/**
+	 * Interacts with a cauldron block
+	 * @param world   World instance
+	 * @param pos     Position of the cauldron
+	 * @param state   Cauldron state
+	 * @param player  Interacting player
+	 * @param stack   Bucket stack
+	 * @param fluid   Contained fluid
+	 * @return  Action result from interaction, pass means failed to interact with a cauldron
+	 */
 	private ActionResult<ItemStack> interactWithCauldron(World world, BlockPos pos, BlockState state, @Nullable PlayerEntity player, ItemStack stack, Fluid fluid) {
 		// if the bucket is empty, try filling from the cauldron
 		int level = state.get(CauldronBlock.LEVEL);
@@ -267,6 +277,11 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	public int getItemStackLimit(ItemStack stack) {
 		// empty stacks to 16
 		return hasFluid(stack) ? 1 : 16;
+	}
+
+	@Override
+	public int getBurnTime(ItemStack stack) {
+		return getFluid(stack) == Fluids.LAVA ? 20000 : 0;
 	}
 
 	@Nonnull
