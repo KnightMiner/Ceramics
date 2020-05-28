@@ -18,6 +18,7 @@ import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.data.SingleItemRecipeBuilder;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.IItemProvider;
@@ -226,6 +227,10 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     // fired
     CookingRecipeBuilder.smeltingRecipe(Ingredient.fromItems(Registration.UNFIRED_CLAY_BUCKET), Registration.CLAY_BUCKET, 0.3f, 200)
                         .addCriterion("has_clay", hasItem(Registration.UNFIRED_CLAY_BUCKET))
+                        .build(consumer);
+    // cracked
+    CookingRecipeBuilder.smeltingRecipe(new NBTIngredient(new ItemStack(Registration.CLAY_BUCKET)), Registration.CRACKED_CLAY_BUCKET, 0.2f, 200)
+                        .addCriterion("has_bucket", hasItem(Registration.CLAY_BUCKET))
                         .build(consumer);
 
     // armor
@@ -457,5 +462,12 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .setGroup(output.getRegistryName().toString())
                          .build(consumer, suffix(output, "_" + name));
     });
+  }
+
+  /** Extend the Forge class as the constructor is protected */
+  private static class NBTIngredient extends net.minecraftforge.common.crafting.NBTIngredient {
+    protected NBTIngredient(ItemStack stack) {
+      super(stack);
+    }
   }
 }

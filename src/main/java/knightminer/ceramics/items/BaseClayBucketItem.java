@@ -3,6 +3,7 @@ package knightminer.ceramics.items;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.util.FluidClayBucketWrapper;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
@@ -14,14 +15,20 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Random;
 
 public abstract class BaseClayBucketItem extends Item {
@@ -45,6 +52,14 @@ public abstract class BaseClayBucketItem extends Item {
   @Override
   public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
     return new FluidClayBucketWrapper(stack);
+  }
+
+  @Override
+  @OnlyIn(Dist.CLIENT)
+  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    if (isCracked) {
+      tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip").applyTextStyle(TextFormatting.GRAY));
+    }
   }
 
   /**
