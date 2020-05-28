@@ -1,62 +1,39 @@
 package knightminer.ceramics.plugin.jei;
 
-import java.util.ArrayList;
-
 import knightminer.ceramics.Ceramics;
-import knightminer.ceramics.library.Config;
-import knightminer.ceramics.library.Util;
+import knightminer.ceramics.Registration;
+import knightminer.ceramics.items.BaseClayBucketItem;
 import mezz.jei.api.IModPlugin;
-import mezz.jei.api.IModRegistry;
-import net.minecraft.item.EnumDyeColor;
+import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 
-@SuppressWarnings("deprecation")
-@mezz.jei.api.JEIPlugin
+@JeiPlugin
 public class JEIPlugin implements IModPlugin {
+  @Override
+  public ResourceLocation getPluginUid() {
+    return new ResourceLocation(Ceramics.MOD_ID, "jei_plugin");
+  }
 
-	@Override
-	public void register(IModRegistry registry) {
-		// descriptions
+  @Override
+  public void registerItemSubtypes(ISubtypeRegistration registration) {
+    ISubtypeInterpreter bucketInterpreter = BaseClayBucketItem::getSubtype;
+    registration.registerSubtypeInterpreter(Registration.CLAY_BUCKET.get(), bucketInterpreter);
+    registration.registerSubtypeInterpreter(Registration.CRACKED_CLAY_BUCKET.get(), bucketInterpreter);
+  }
 
-		if(Config.bucketEnabled) {
-			registry.addIngredientInfo(new ItemStack(Ceramics.clayBucket), ItemStack.class, Util.prefix("jei.bucket"));
-		}
-
-		if(Config.barrelEnabled) {
-			ArrayList<ItemStack> barrels = new ArrayList<>();
-			ArrayList<ItemStack> extensions = new ArrayList<>();
-
-			// basic barrels
-			barrels.add(new ItemStack(Ceramics.clayBarrel, 1, 0));
-			extensions.add(new ItemStack(Ceramics.clayBarrel, 1, 1));
-
-			// stained barrels
-			for(EnumDyeColor color : EnumDyeColor.values()) {
-				barrels.add(new ItemStack(Ceramics.clayBarrelStained, 1, color.getMetadata()));
-				extensions.add(new ItemStack(Ceramics.clayBarrelStainedExtension, 1, color.getMetadata()));
-			}
-
-			registry.addIngredientInfo(barrels, ItemStack.class, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.base"), Config.barrelClayCapacity));
-			registry.addIngredientInfo(extensions, ItemStack.class, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.extension"), Config.barrelClayCapacity));
-
-			// porcelain ones, have a larger capacity so a separate entry
-			if(Config.porcelainEnabled) {
-				ArrayList<ItemStack> porcelainBarrels = new ArrayList<>();
-				ArrayList<ItemStack> porcelainExtensions = new ArrayList<>();
-				for(EnumDyeColor color : EnumDyeColor.values()) {
-					porcelainBarrels.add(new ItemStack(Ceramics.porcelainBarrel, 1, color.getMetadata()));
-					porcelainExtensions.add(new ItemStack(Ceramics.porcelainBarrelExtension, 1, color.getMetadata()));
-				}
-
-				registry.addIngredientInfo(porcelainBarrels, ItemStack.class, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.porcelain.base"), Config.barrelPorcelainCapacity));
-				registry.addIngredientInfo(porcelainExtensions, ItemStack.class, I18n.translateToLocalFormatted(Util.prefix("jei.barrel.porcelain.extension"), Config.barrelPorcelainCapacity));
-			}
-		}
-
-		if(Config.faucetEnabled) {
-			registry.addIngredientInfo(new ItemStack(Ceramics.faucet), ItemStack.class, Util.prefix("jei.faucet"));
-			registry.addIngredientInfo(new ItemStack(Ceramics.channel), ItemStack.class, Util.prefix("jei.channel"));
-		}
-	}
+  @Override
+  public void onRuntimeAvailable(IJeiRuntime runtime) {
+    // add buckets to the ingredient list since JEI fills that list too soon
+    NonNullList<ItemStack> buckets = NonNullList.create();
+    Registration.CLAY_BUCKET.get().fillItemGroup(ItemGroup.SEARCH, buckets);
+    Registration.CRACKED_CLAY_BUCKET.get().fillItemGroup(ItemGroup.SEARCH, buckets);
+    runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM, buckets);
+  }
 }

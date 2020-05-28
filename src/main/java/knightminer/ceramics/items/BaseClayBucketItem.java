@@ -33,7 +33,7 @@ import java.util.Random;
 
 public abstract class BaseClayBucketItem extends Item {
   /** Tag name for fluid in a bucket */
-  private static final String TAG_FLUIDS = "fluid";
+  private static final String TAG_FLUID = "fluid";
   /** Constant used in rendering items breaking */
   private static final float DEGREE_TO_RAD = (float) Math.PI / 180f;
 
@@ -183,7 +183,7 @@ public abstract class BaseClayBucketItem extends Item {
   public Fluid getFluid(ItemStack stack) {
     CompoundNBT tags = stack.getTag();
     if(tags != null) {
-      Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(tags.getString(TAG_FLUIDS)));
+      Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(tags.getString(TAG_FLUID)));
       return fluid == null ? Fluids.EMPTY : fluid;
     }
 
@@ -229,7 +229,19 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  Modified stack
    */
   protected static ItemStack setFluid(ItemStack stack, Fluid fluid) {
-    stack.getOrCreateTag().putString(TAG_FLUIDS, fluid.getRegistryName().toString());
+    stack.getOrCreateTag().putString(TAG_FLUID, fluid.getRegistryName().toString());
     return stack;
+  }
+
+  /**
+   * Gets a string variant name for the given stack
+   * @param stack  Stack instance to check
+   * @return  String variant name
+   */
+  public static String getSubtype(ItemStack stack) {
+    if (stack.hasTag()) {
+      return stack.getTag().getString(TAG_FLUID);
+    }
+    return "";
   }
 }
