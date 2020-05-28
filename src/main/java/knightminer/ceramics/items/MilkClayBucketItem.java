@@ -8,6 +8,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.UseAction;
@@ -15,6 +16,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -99,5 +101,12 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
       milk = CeramicsTags.Fluids.MILK.getRandomElement(random);
     }
     return milk;
+  }
+
+  @Override
+  public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> subItems) {
+    if (/*Config.bucketEnabled && */this.isInGroup(tab) && !isCracked) {
+      subItems.add(new ItemStack(this));
+    }
   }
 }
