@@ -2,6 +2,7 @@ package knightminer.ceramics;
 
 import knightminer.ceramics.datagen.BlockTagProvider;
 import knightminer.ceramics.datagen.ItemTagProvider;
+import knightminer.ceramics.datagen.LootTableProvider;
 import knightminer.ceramics.datagen.RecipeProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,6 +29,7 @@ public class Ceramics {
 			gen.addProvider(new BlockTagProvider(gen));
 			gen.addProvider(new ItemTagProvider(gen));
 			gen.addProvider(new RecipeProvider(gen));
+			gen.addProvider(new LootTableProvider(gen));
 		}
 	}
 }
