@@ -84,6 +84,8 @@
     "block.ceramics.purple_rainbow_porcelain.tooltip": "Starts on purple",
     "block.ceramics.magenta_rainbow_porcelain": "Rainbow Porcelain",
     "block.ceramics.magenta_rainbow_porcelain.tooltip": "Starts on magenta",
+    
+    "block.ceramics.kiln": "Kiln",
    
     "_comment": "#########",
     "_comment": "# Items #",
@@ -107,5 +109,12 @@
     "item.ceramics.clay_helmet": "Clay Plate Helmet",
     "item.ceramics.clay_chestplate": "Clay Plate Chestplate",
     "item.ceramics.clay_leggings": "Clay Plate Leggings",
-    "item.ceramics.clay_boots": "Clay Plate Boots"
+    "item.ceramics.clay_boots": "Clay Plate Boots",
+    
+    "_comment": "#############",
+    "_comment": "# Container #",
+    "_comment": "#############",
+    
+    "container.ceramics.kiln": "Kiln",
+    "gui.recipebook.toggleRecipes.ceramics.kiln": "Showing cookable"
 }

@@ -1,0 +1,9 @@
+{
+  "type": "ceramics:kiln",
+  "ingredient": {
+    "item": "minecraft:cobblestone_slab"
+  },
+  "result": "minecraft:stone_slab",
+  "experience": 0.1,
+  "cookingtime": 100
+}

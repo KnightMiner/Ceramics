@@ -1,0 +1,9 @@
+{
+    "parent": "block/orientable_with_bottom",
+    "textures": {
+        "top": "ceramics:block/kiln_top",
+        "front": "ceramics:block/kiln_front_on",
+        "side": "ceramics:block/kiln_side",
+        "bottom": "ceramics:block/kiln_bottom"
+    }
+}

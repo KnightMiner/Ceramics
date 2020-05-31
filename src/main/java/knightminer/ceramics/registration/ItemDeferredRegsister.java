@@ -1,7 +1,7 @@
 package knightminer.ceramics.registration;
 
 import net.minecraft.item.Item;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -17,8 +17,8 @@ public class ItemDeferredRegsister {
   /**
    * Initializes this registry wrapper. Needs to be called during mod construction
    */
-  public void init() {
-    itemRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+  public void register(IEventBus bus) {
+    itemRegistry.register(bus);
   }
 
   /**

@@ -1,0 +1,9 @@
+{
+  "type": "ceramics:kiln",
+  "ingredient": {
+    "item": "minecraft:sandstone_stairs"
+  },
+  "result": "minecraft:smooth_sandstone_stairs",
+  "experience": 0.1,
+  "cookingtime": 100
+}

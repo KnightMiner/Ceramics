@@ -1,32 +1,46 @@
 package knightminer.ceramics;
 
+import knightminer.ceramics.blocks.KilnBlock;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.blocks.TooltipBlock;
+import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.items.ClayBucketItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
+import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.registration.BlockDeferredRegister;
 import knightminer.ceramics.registration.BlockItemObject;
 import knightminer.ceramics.registration.BuildingBlockObject;
 import knightminer.ceramics.registration.EnumBlockObject;
 import knightminer.ceramics.registration.ItemDeferredRegsister;
 import knightminer.ceramics.registration.ItemObject;
+import knightminer.ceramics.tileentity.KilnTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.MaterialColor;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CookingRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.EnumMap;
 import java.util.function.Supplier;
@@ -37,10 +51,17 @@ public class Registration {
   /** Registers blocks */
   private static final BlockDeferredRegister BLOCK_REGISTRY = new BlockDeferredRegister(Ceramics.MOD_ID);
   private static final ItemDeferredRegsister ITEM_REGISTRY = new ItemDeferredRegsister(Ceramics.MOD_ID);
+  private static final DeferredRegister<ContainerType<?>> CONTAINER_REGISTRY = new DeferredRegister<>(ForgeRegistries.CONTAINERS, Ceramics.MOD_ID);
+  private static final DeferredRegister<TileEntityType<?>> TILE_ENTITY_REGISTER = new DeferredRegister<>(ForgeRegistries.TILE_ENTITIES, Ceramics.MOD_ID);
+  private static final DeferredRegister<IRecipeSerializer<?>> SERIALIZER_REGISTER = new DeferredRegister<>(ForgeRegistries.RECIPE_SERIALIZERS, Ceramics.MOD_ID);
 
   public static void init() {
-    BLOCK_REGISTRY.init();
-    ITEM_REGISTRY.init();
+    IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+    BLOCK_REGISTRY.register(bus);
+    ITEM_REGISTRY.register(bus);
+    CONTAINER_REGISTRY.register(bus);
+    TILE_ENTITY_REGISTER.register(bus);
+    SERIALIZER_REGISTER.register(bus);
   }
 
   /** Creative tab for all of Ceramics */
@@ -118,4 +139,13 @@ public class Registration {
   public static final ItemObject<ArmorItem> CLAY_CHESTPLATE = ITEM_REGISTRY.register("clay_chestplate", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.CHEST, UNSTACKABLE_PROPS));
   public static final ItemObject<ArmorItem> CLAY_LEGGINGS   = ITEM_REGISTRY.register("clay_leggings",   () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.LEGS,  UNSTACKABLE_PROPS));
   public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEM_REGISTRY.register("clay_boots",      () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.FEET,  UNSTACKABLE_PROPS));
+
+  // kiln block
+  public static final BlockItemObject<KilnBlock, BlockItem> KILN = BLOCK_REGISTRY.register("kiln", () -> new KilnBlock(Block.Properties.create(Material.ROCK).hardnessAndResistance(3.5F).lightValue(13)), GROUP_PROPS);
+  public static final RegistryObject<ContainerType<KilnContainer>> KILN_CONTAINER = CONTAINER_REGISTRY.register("kiln", () -> new ContainerType<>(KilnContainer::new));
+  // TODO: data fixer?
+  public static final RegistryObject<TileEntityType<KilnTileEntity>> KILN_TILE_ENTITY = TILE_ENTITY_REGISTER.register("kiln", () -> TileEntityType.Builder.create(KilnTileEntity::new, KILN.get()).build(null));
+  // kiln recipes
+  public static final IRecipeType<KilnRecipe> KILN_RECIPE = IRecipeType.register("ceramics:kiln");
+  public static final RegistryObject<CookingRecipeSerializer<KilnRecipe>> KILN_SERIALIZER = SERIALIZER_REGISTER.register("kiln", () -> new CookingRecipeSerializer<>(KilnRecipe::new, 100));
 }

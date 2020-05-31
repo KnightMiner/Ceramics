@@ -1,0 +1,9 @@
+{
+  "type": "ceramics:kiln",
+  "ingredient": {
+    "item": "minecraft:stone_slab"
+  },
+  "result": "minecraft:smooth_stone_slab",
+  "experience": 0.1,
+  "cookingtime": 100
+}

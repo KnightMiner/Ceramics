@@ -1,0 +1,9 @@
+{
+  "type": "ceramics:kiln",
+  "ingredient": {
+    "tag": "ceramics:colored_porcelain"
+  },
+  "result": "ceramics:red_rainbow_porcelain",
+  "experience": 0.1,
+  "cookingtime": 100
+}

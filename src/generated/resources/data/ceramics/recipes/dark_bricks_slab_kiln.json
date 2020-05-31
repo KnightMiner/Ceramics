@@ -1,0 +1,9 @@
+{
+  "type": "ceramics:kiln",
+  "ingredient": {
+    "item": "minecraft:brick_slab"
+  },
+  "result": "ceramics:dark_bricks_slab",
+  "experience": 0.1,
+  "cookingtime": 100
+}

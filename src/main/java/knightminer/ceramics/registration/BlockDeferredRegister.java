@@ -8,7 +8,6 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -28,8 +27,7 @@ public class BlockDeferredRegister {
   /**
    * Initializes this registry wrapper. Needs to be called during mod construction
    */
-  public void init() {
-    IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+  public void register(IEventBus bus) {
     blockRegistry.register(bus);
     itemRegistry.register(bus);
   }

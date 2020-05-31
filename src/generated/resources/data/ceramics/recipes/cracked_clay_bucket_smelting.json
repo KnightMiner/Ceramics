@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "ceramics:clay_bucket"
+  },
+  "result": "ceramics:cracked_clay_bucket",
+  "experience": 0.2,
+  "cookingtime": 200
+}

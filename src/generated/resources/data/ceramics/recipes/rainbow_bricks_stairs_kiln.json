@@ -1,0 +1,9 @@
+{
+  "type": "ceramics:kiln",
+  "ingredient": {
+    "item": "ceramics:porcelain_bricks_stairs"
+  },
+  "result": "ceramics:rainbow_bricks_stairs",
+  "experience": 0.1,
+  "cookingtime": 100
+}

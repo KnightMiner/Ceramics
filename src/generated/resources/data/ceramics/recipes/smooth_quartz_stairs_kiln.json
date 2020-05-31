@@ -1,0 +1,9 @@
+{
+  "type": "ceramics:kiln",
+  "ingredient": {
+    "item": "minecraft:quartz_stairs"
+  },
+  "result": "minecraft:smooth_quartz_stairs",
+  "experience": 0.1,
+  "cookingtime": 100
+}
