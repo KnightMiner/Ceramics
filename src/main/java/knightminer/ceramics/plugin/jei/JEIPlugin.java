@@ -2,19 +2,39 @@ package knightminer.ceramics.plugin.jei;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
+import knightminer.ceramics.client.gui.KilnScreen;
+import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.BaseClayBucketItem;
+import knightminer.ceramics.recipe.KilnRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.MethodsReturnNonnullByDefault;
+import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @JeiPlugin
+@MethodsReturnNonnullByDefault
 public class JEIPlugin implements IModPlugin {
   @Override
   public ResourceLocation getPluginUid() {
@@ -26,6 +46,61 @@ public class JEIPlugin implements IModPlugin {
     ISubtypeInterpreter bucketInterpreter = BaseClayBucketItem::getSubtype;
     registration.registerSubtypeInterpreter(Registration.CLAY_BUCKET.get(), bucketInterpreter);
     registration.registerSubtypeInterpreter(Registration.CRACKED_CLAY_BUCKET.get(), bucketInterpreter);
+  }
+
+  @Override
+  public void registerCategories(IRecipeCategoryRegistration registration) {
+    registration.addRecipeCategories(new KilnCategory(registration.getJeiHelpers().getGuiHelper()));
+  }
+
+  @Override
+  public void registerRecipes(IRecipeRegistration registration) {
+    ClientWorld world = Minecraft.getInstance().world;
+    RecipeManager recipeManager = world.getRecipeManager();
+    List<KilnRecipe> results = new ArrayList<>();
+    for (IRecipe<IInventory> recipe : recipeManager.getRecipes(Registration.KILN_RECIPE).values()) {
+      // ignore dynamic
+      if (recipe.isDynamic()) {
+        continue;
+      }
+
+      // validate output
+      ItemStack output = recipe.getRecipeOutput();
+      if (output.isEmpty()) {
+        Ceramics.LOG.error("Invalid kiln recipe {}, no output", recipe.getId());
+        continue;
+      }
+      List<Ingredient> ingredients = recipe.getIngredients();
+      if (ingredients.size() != 1) {
+        Ceramics.LOG.error("Invalid kiln recipe {}, wrong number of inputs", recipe.getId());
+        continue;
+      }
+
+      // recipe type
+      if (!(recipe instanceof KilnRecipe)) {
+        Ceramics.LOG.error("Invalid kiln recipe {}, wrong class", recipe.getId());
+        continue;
+      }
+      // add to list
+      results.add((KilnRecipe)recipe);
+    }
+    registration.addRecipes(results, KilnCategory.UID);
+  }
+
+  @Override
+  public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+    registration.addRecipeClickArea(KilnScreen.class, 78, 32, 28, 23, KilnCategory.UID, VanillaRecipeCategoryUid.FUEL);
+  }
+
+  @Override
+  public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+    registration.addRecipeTransferHandler(KilnContainer.class, KilnCategory.UID,              KilnCategory.INPUT_SLOT, 1, 3, 36);
+    registration.addRecipeTransferHandler(KilnContainer.class, VanillaRecipeCategoryUid.FUEL, KilnCategory.FUEL_SLOT,  1, 3, 36);
+  }
+
+  @Override
+  public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+    registration.addRecipeCatalyst(new ItemStack(Registration.KILN), KilnCategory.UID, VanillaRecipeCategoryUid.FUEL);
   }
 
   @Override

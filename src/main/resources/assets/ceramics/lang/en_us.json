@@ -116,5 +116,6 @@
     "_comment": "#############",
     
     "container.ceramics.kiln": "Kiln",
-    "gui.recipebook.toggleRecipes.ceramics.kiln": "Showing cookable"
+    "gui.recipebook.toggleRecipes.ceramics.kiln": "Showing cookable",
+    "gui.jei.category.ceramics.kiln": "Kiln"
 }
