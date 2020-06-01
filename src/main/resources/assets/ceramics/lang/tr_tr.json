@@ -1,0 +1,123 @@
+{
+    "_comment": "###########",
+    "_comment": "# Genel #",
+    "_comment": "###########",
+    
+    "itemGroup.ceramics": "Ceramics",
+    
+    "_comment": "##########",
+    "_comment": "# Bloklar #",
+    "_comment": "##########",
+    
+    "block.ceramics.unfired_porcelain_block": "Fırınlanmamış Porselen",
+    
+    "block.ceramics.dark_bricks":        "Kara Tuğla",
+    "block.ceramics.dark_bricks_stairs": "Kara Tuğla Merdiveni",
+    "block.ceramics.dark_bricks_slab":   "Kara Tuğla Basamağı",
+    "block.ceramics.dark_bricks_wall":   "Kara Tuğla Duvar",
+    
+    "block.ceramics.lava_bricks":        "Lavlı Tuğla",
+    "block.ceramics.lava_bricks_stairs": "Lavlı Tuğla Merdiveni",
+    "block.ceramics.lava_bricks_slab":   "Lavlı Tuğla Basamağı",
+    "block.ceramics.lava_bricks_wall":   "Lavlı Tuğla Duvarı",
+    
+    "block.ceramics.dragon_bricks":        "Ejder Tuğlası",
+    "block.ceramics.dragon_bricks_stairs": "Ejder Tuğlası Merdiveni",
+    "block.ceramics.dragon_bricks_slab":   "Ejder Tuğlası Basamağı",
+    "block.ceramics.dragon_bricks_wall":   "Ejder Tuğlası Duvarı",
+    
+    "block.ceramics.porcelain_bricks":        "Porselen Tuğla",
+    "block.ceramics.porcelain_bricks_stairs": "Porselen Tuğla Merdiven",
+    "block.ceramics.porcelain_bricks_slab":   "Porselen Tuğla Basamak",
+    "block.ceramics.porcelain_bricks_wall":   "Porselen Tuğla Duvar",
+    
+    "block.ceramics.monochrome_bricks":        "Monokrom Tuğla",
+    "block.ceramics.monochrome_bricks_stairs": "Monokrom Tuğla Merdiven",
+    "block.ceramics.monochrome_bricks_slab":   "Monokrom Tuğla Basamak",
+    "block.ceramics.monochrome_bricks_wall":   "Monokrom Tuğla Duvar",
+    
+    "block.ceramics.golden_bricks":        "Altın Tuğla",
+    "block.ceramics.golden_bricks_stairs": "Altın Tuğla Merdiven",
+    "block.ceramics.golden_bricks_slab":   "Altın Tuğla Basamak",
+    "block.ceramics.golden_bricks_wall":   "Altın Tuğla Duvar",
+    
+    "block.ceramics.marine_bricks":        "Deniz Tuğlası",
+    "block.ceramics.marine_bricks_stairs": "Deniz Tuğlası Merdiven",
+    "block.ceramics.marine_bricks_slab":   "Deniz Tuğlası Basamak",
+    "block.ceramics.marine_bricks_wall":   "Deniz Tuğlası Duvar",
+    
+    "block.ceramics.rainbow_bricks":        "Rengarenk Tuğla",
+    "block.ceramics.rainbow_bricks_stairs": "Rengarenk Tuğla Merdiven",
+    "block.ceramics.rainbow_bricks_slab":   "Rengarenk Tuğla Basamak",
+    "block.ceramics.rainbow_bricks_wall":   "Rengarenk Tuğla Duvar",
+    
+    "block.ceramics.white_porcelain": "Beyaz Porselen",
+    "block.ceramics.orange_porcelain": "Turuncu Porselen",
+    "block.ceramics.magenta_porcelain": "Eflatun Porselen",
+    "block.ceramics.light_blue_porcelain": "Açık Mavi Porselen",
+    "block.ceramics.yellow_porcelain": "Sarı Porselen",
+    "block.ceramics.lime_porcelain": "Kireç Yeşili Porselen",
+    "block.ceramics.pink_porcelain": "Pembe Porselen",
+    "block.ceramics.gray_porcelain": "Gri Porselen",
+    "block.ceramics.light_gray_porcelain": "Açık Gri Porselen",
+    "block.ceramics.cyan_porcelain": "Camgöbeği Porselen",
+    "block.ceramics.purple_porcelain": "Mor Porselen",
+    "block.ceramics.blue_porcelain": "Lacivert Porselen",
+    "block.ceramics.brown_porcelain": "Kahverengi Porselen",
+    "block.ceramics.green_porcelain": "Yeşil Porselen",
+    "block.ceramics.red_porcelain": "Kırmızı Porselen",
+    "block.ceramics.black_porcelain": "Siyah Porselen",
+    
+    "block.ceramics.red_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.red_rainbow_porcelain.tooltip": "Kırmızı ile başlar",
+    "block.ceramics.orange_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.orange_rainbow_porcelain.tooltip": "Turuncu ile başlar",
+    "block.ceramics.yellow_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.yellow_rainbow_porcelain.tooltip": "Sarı ile başlar",
+    "block.ceramics.green_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.green_rainbow_porcelain.tooltip": "Yeşil ile başlar",
+    "block.ceramics.cyan_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.cyan_rainbow_porcelain.tooltip": "Camgöbeği ile başlar",
+    "block.ceramics.blue_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.blue_rainbow_porcelain.tooltip": "Lacivert ile başlar",
+    "block.ceramics.purple_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.purple_rainbow_porcelain.tooltip": "Mor ile başlar",
+    "block.ceramics.magenta_rainbow_porcelain": "Rengarenk Porselen",
+    "block.ceramics.magenta_rainbow_porcelain.tooltip": "Eflatun ile başlar",
+    
+    "block.ceramics.kiln": "Tuğla Ocağı",
+   
+    "_comment": "#########",
+    "_comment": "# Eşyalar #",
+    "_comment": "#########",
+    
+    "item.ceramics.unfired_porcelain": "Fırınlanmamış Porselen",
+    "item.ceramics.porcelain_brick": "Porselen Tuğla",
+    
+    "item.ceramics.unfired_clay_bucket": "Fırınlanmamış Kova",
+    "item.ceramics.clay_bucket": "Kova",
+    "item.ceramics.clay_bucket.filled": "%s Kovası",
+    "item.ceramics.milk_clay_bucket": "Süt Kovası",
+    "item.ceramics.cracked_clay_bucket": "Çatlamış Kova",
+    "item.ceramics.cracked_clay_bucket.filled": "%s Kovası",
+    "item.ceramics.cracked_clay_bucket.tooltip": "Kovayı boşalttığında kova kırılacak",
+    "item.ceramics.cracked_milk_clay_bucket": "Süt Kovası",
+    "item.ceramics.cracked_milk_clay_bucket.tooltip": "Kovayı boşalttığında kova kırılacak",
+    
+    "item.ceramics.unfired_shears": "Fırınlanmamış Makas",
+
+    "item.ceramics.unfired_clay_plate": "Fırınlanmamış Kil Levha",
+    "item.ceramics.clay_plate": "Kil Levha",
+    "item.ceramics.clay_helmet": "Kil Levha Kask",
+    "item.ceramics.clay_chestplate": "Kil Levha Göğüslük",
+    "item.ceramics.clay_leggings": "Kil Levha Pantolon",
+    "item.ceramics.clay_boots": "Kil Levha Botlar",
+    
+    "_comment": "#############",
+    "_comment": "# İçerik #",
+    "_comment": "#############",
+    
+    "container.ceramics.kiln": "Tuğla Ocağı",
+    "gui.recipebook.toggleRecipes.ceramics.kiln": "Pişirilebilenler gösteriliyor",
+    "gui.jei.category.ceramics.kiln": "Tuğla Ocağı"
+}
