@@ -3,8 +3,8 @@ package knightminer.ceramics.datagen;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
-import knightminer.ceramics.registration.BuildingBlockObject;
-import knightminer.ceramics.registration.EnumBlockObject;
+import knightminer.ceramics.registration.object.EnumObject;
+import knightminer.ceramics.registration.object.WallBuildingBlockObject;
 import net.minecraft.block.Block;
 import net.minecraft.item.DyeColor;
 import net.minecraft.world.storage.loot.ConstantRange;
@@ -51,9 +51,9 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
                             * @param values     Values list
                             * @param <T>        Block value type
                             */
-  private <T extends Enum<T>> void registerEnumLootTables(EnumBlockObject<T, ? extends Block> enumBlock, T[] values) {
+  private <T extends Enum<T>, B extends Block> void registerEnumLootTables(EnumObject<T,B> enumBlock, T[] values) {
     for (T value : values) {
-      registerDropSelfLootTable(enumBlock.getBlock(value));
+      registerDropSelfLootTable(enumBlock.get(value));
     }
   }
 
@@ -61,7 +61,7 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
    * Registers self loot tables for block, slab, stairs, and wall
    * @param building  Building block object
    */
-  private void registerBuildingLootTable(BuildingBlockObject building) {
+  private void registerBuildingLootTable(WallBuildingBlockObject building) {
     registerDropSelfLootTable(building.get());
     registerDropSelfLootTable(building.getSlab());
     registerDropSelfLootTable(building.getStairs());

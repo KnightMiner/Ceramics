@@ -3,7 +3,7 @@ package knightminer.ceramics.datagen;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.registration.EnumBlockObject;
+import knightminer.ceramics.registration.object.EnumObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
@@ -38,7 +38,7 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
     // porcelain
     this.getBuilder(BlockTags.ENDERMAN_HOLDABLE).add(Registration.UNFIRED_PORCELAIN_BLOCK.get());
     this.getBuilder(CeramicsTags.Blocks.COLORED_PORCELAIN).add(getList(Registration.PORCELAIN_BLOCK, COLORED_DYES));
-    this.getBuilder(CeramicsTags.Blocks.PORCELAIN).add(Registration.PORCELAIN_BLOCK.getBlock(DyeColor.WHITE)).add(CeramicsTags.Blocks.COLORED_PORCELAIN);
+    this.getBuilder(CeramicsTags.Blocks.PORCELAIN).add(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE)).add(CeramicsTags.Blocks.COLORED_PORCELAIN);
     this.getBuilder(CeramicsTags.Blocks.RAINBOW_PORCELAIN).add(getList(Registration.RAINBOW_PORCELAIN, RainbowPorcelain.values()));
 
     // bricks
@@ -69,9 +69,9 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
     );
   }
 
-  private static <T extends Enum<T>> Block[] getList(EnumBlockObject<T,?> blocks, T[] values) {
+  private static <T extends Enum<T>> Block[] getList(EnumObject<T,? extends Block> blocks, T[] values) {
     return Arrays.stream(values)
-                 .map(blocks::getBlock)
+                 .map(blocks::get)
                  .toArray(Block[]::new);
   }
 }

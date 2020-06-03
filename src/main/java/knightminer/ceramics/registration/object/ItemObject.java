@@ -1,4 +1,4 @@
-package knightminer.ceramics.registration;
+package knightminer.ceramics.registration.object;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
@@ -7,7 +7,7 @@ import net.minecraftforge.fml.RegistryObject;
 
 import java.util.function.Supplier;
 
-public class ItemObject<I extends Item> implements Supplier<Item>, IItemProvider {
+public class ItemObject<I extends Item> implements Supplier<I>, IItemProvider {
   private RegistryObject<I> item;
 
   public ItemObject(RegistryObject<I> item) {
