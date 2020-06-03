@@ -34,7 +34,7 @@ Mod adding additional early game and vanilla-like tools made of clay. Includes f
     versionRange="[31.1.0,)" #mandatory
     ordering="AFTER"
     side="BOTH"
-[[dependencies.inspirations]]
+[[dependencies.ceramics]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.15.2,]"
