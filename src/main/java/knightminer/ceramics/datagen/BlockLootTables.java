@@ -63,7 +63,7 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
    */
   private void registerBuildingLootTable(WallBuildingBlockObject building) {
     registerDropSelfLootTable(building.get());
-    registerDropSelfLootTable(building.getSlab());
+    registerLootTable(building.getSlab(), BlockLootTables::droppingSlab);
     registerDropSelfLootTable(building.getStairs());
     registerDropSelfLootTable(building.getWall());
   }
