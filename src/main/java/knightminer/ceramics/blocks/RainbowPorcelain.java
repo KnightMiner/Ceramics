@@ -1,10 +1,11 @@
 package knightminer.ceramics.blocks;
 
 import net.minecraft.block.material.MaterialColor;
+import net.minecraft.util.IStringSerializable;
 
 import java.util.Locale;
 
-public enum RainbowPorcelain {
+public enum RainbowPorcelain implements IStringSerializable {
   RED(MaterialColor.RED),
   ORANGE(MaterialColor.ADOBE),
   YELLOW(MaterialColor.YELLOW),
@@ -31,6 +32,11 @@ public enum RainbowPorcelain {
 
   @Override
   public String toString() {
+    return name;
+  }
+
+  @Override
+  public String getName() {
     return name;
   }
 }
