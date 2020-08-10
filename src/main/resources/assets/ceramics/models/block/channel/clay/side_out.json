@@ -1,6 +1,0 @@
-{
-    "parent": "ceramics:block/channel/clay/side_in",
-    "textures": {
-        "top": "ceramics:blocks/channel_clay_out"
-    }
-}

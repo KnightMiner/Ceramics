@@ -1,7 +1,0 @@
-{
-    "parent": "ceramics:block/channel/porcelain/center_out",
-    "textures": {
-        "particle": "blocks/hardened_clay",
-        "texture":  "blocks/hardened_clay"
-    }
-}
