@@ -7,15 +7,14 @@ import net.minecraft.loot.ConstantRange;
 import net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
-import javax.annotation.Nonnull;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
-  @Nonnull
   @Override
   protected Iterable<Block> getKnownBlocks() {
     return ForgeRegistries.BLOCKS.getValues().stream()
-                                 .filter((block) -> Ceramics.MOD_ID.equals(block.getRegistryName().getNamespace()))
+                                 .filter((block) -> Ceramics.MOD_ID.equals(Objects.requireNonNull(block.getRegistryName()).getNamespace()))
                                  .collect(Collectors.toList());
   }
 

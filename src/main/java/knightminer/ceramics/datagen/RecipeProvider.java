@@ -16,7 +16,6 @@ import net.minecraft.data.ShapelessRecipeBuilder;
 import net.minecraft.data.SingleItemRecipeBuilder;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
@@ -27,7 +26,6 @@ import net.minecraftforge.common.Tags;
 import slimeknights.mantle.registration.object.BuildingBlockObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
-import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -43,14 +41,13 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     super(gen);
   }
 
-  @Nonnull
   @Override
   public String getName() {
     return "Ceramics Recipes";
   }
 
   @Override
-  protected void registerRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
+  protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
     // recoloring terracotta
     ICriterionInstance terracottaCriteria = hasItem(CeramicsTags.Items.COLORED_TERRACOTTA);
     Registration.TERRACOTTA.forEach((color, item) ->
@@ -415,7 +412,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param consumer  Recipe consumer
    * @param building  Building object instance
    */
-  private void registerSlabStairWall(@Nonnull Consumer<IFinishedRecipe> consumer, WallBuildingBlockObject building) {
+  private void registerSlabStairWall(Consumer<IFinishedRecipe> consumer, WallBuildingBlockObject building) {
     Item item = building.asItem();
     ResourceLocation location = item.getRegistryName();
     ICriterionInstance hasBuilding = hasItem(ItemPredicate.Builder.create().item(item).build());
@@ -477,7 +474,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param to          Output bricks
    * @param name        Recipe name
    */
-  private void addBrickRecipe(@Nonnull Consumer<IFinishedRecipe> consumer, WallBuildingBlockObject from, Item ingredient, WallBuildingBlockObject to, String name) {
+  private void addBrickRecipe(Consumer<IFinishedRecipe> consumer, WallBuildingBlockObject from, Item ingredient, WallBuildingBlockObject to, String name) {
     ICriterionInstance criteria = hasItem(ingredient);
     eachBuilding(from, to, (input, output) ->
       ShapedRecipeBuilder.shapedRecipe(output, 8)
@@ -491,14 +488,6 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .build(consumer, suffix(output, "_" + name))
     );
   }
-
-  /** Extend the Forge class as the constructor is protected */
-  private static class NBTIngredient extends net.minecraftforge.common.crafting.NBTIngredient {
-    protected NBTIngredient(ItemStack stack) {
-      super(stack);
-    }
-  }
-
 
   /* Kiln recipes */
 

@@ -9,18 +9,7 @@ import net.minecraft.data.TagsProvider;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tags.BlockTags;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-;
-
 public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
-  /** Array of all dyes except white */
-  private static final DyeColor[] COLORED_DYES = Arrays.stream(DyeColor.values())
-                                                       .filter((color) -> color != DyeColor.WHITE)
-                                                       .sorted(Comparator.comparingInt(DyeColor::getId))
-                                                       .toArray(DyeColor[]::new);
-
   public BlockTagProvider(DataGenerator gen) {
     super(gen);
   }

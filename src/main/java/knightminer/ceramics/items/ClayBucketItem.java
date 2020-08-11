@@ -47,12 +47,12 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Set;
 
-@ParametersAreNonnullByDefault
+/**
+ * Clay bucket that holds arbitrary fluids
+ */
 public class ClayBucketItem extends BaseClayBucketItem {
 
 	private static final Set<Fluid> FLUID_BLACKLIST = ImmutableSet.of(Fluids.EMPTY, Fluids.FLOWING_WATER, Fluids.FLOWING_LAVA);
@@ -64,7 +64,6 @@ public class ClayBucketItem extends BaseClayBucketItem {
 
 	/* Bucket behavior */
 
-	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
 		ItemStack stack = player.getHeldItem(hand);
@@ -281,7 +280,6 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		return getFluid(stack) == Fluids.LAVA ? 20000 : 0;
 	}
 
-	@Nonnull
 	@Override
 	public ITextComponent getDisplayName(ItemStack stack) {
 		Fluid fluid = getFluid(stack);
@@ -292,6 +290,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			// if the specific fluid is translatable, use that
 			String key = this.getTranslationKey(stack);
 			ResourceLocation location = fluid.getRegistryName();
+			assert location != null;
 			String fluidKey = String.format("%s.%s.%s", key, location.getNamespace(), location.getPath());
 			if (ForgeI18n.getPattern(fluidKey).equals(fluidKey)) {
 				component = new TranslationTextComponent(key + ".filled", new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME).getDisplayName());

@@ -51,7 +51,7 @@ public class Registration {
   private static final DeferredRegister<IRecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Ceramics.MOD_ID);
 
   /** Initializes the registries with the forge mod bus */
-  public static void init() {
+  static void init() {
     IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
     BLOCKS.register(bus);
     ITEMS.register(bus);
@@ -68,10 +68,14 @@ public class Registration {
       return new ItemStack(PORCELAIN_BRICK);
     }
   };
+  /** Item properties with the group set */
   private static final Item.Properties GROUP_PROPS = new Item.Properties().group(GROUP);
-  private static final Function<Block,BlockItem> DEFAULT_BLOCK_ITEM = (block) -> new BlockItem(block, GROUP_PROPS);
-  private static final Function<Block,BlockItem> TOOLTIP_BLOCK_ITEM = (block) -> new BlockTooltipItem(block, GROUP_PROPS);
+  /** Item properties with the group set and a stack size of 1 */
   private static final Item.Properties UNSTACKABLE_PROPS = new Item.Properties().maxStackSize(1).group(GROUP);
+  /** Item block function that sets the group props */
+  private static final Function<Block,BlockItem> DEFAULT_BLOCK_ITEM = (block) -> new BlockItem(block, GROUP_PROPS);
+  /** Item block function using {@link BlockTooltipItem} */
+  private static final Function<Block,BlockItem> TOOLTIP_BLOCK_ITEM = (block) -> new BlockTooltipItem(block, GROUP_PROPS);
 
   /** Mapping for terracotta to make registration easier */
   public static final EnumObject<DyeColor,Block> TERRACOTTA = new EnumObject.Builder<DyeColor,Block>(DyeColor.class)

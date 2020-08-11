@@ -8,7 +8,6 @@ import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.recipe.KilnRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.MethodsReturnNonnullByDefault;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
@@ -33,8 +32,8 @@ import net.minecraft.util.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @JeiPlugin
-@MethodsReturnNonnullByDefault
 public class JEIPlugin implements IModPlugin {
   @Override
   public ResourceLocation getPluginUid() {
@@ -56,6 +55,7 @@ public class JEIPlugin implements IModPlugin {
   @Override
   public void registerRecipes(IRecipeRegistration registration) {
     ClientWorld world = Minecraft.getInstance().world;
+    assert world != null;
     RecipeManager recipeManager = world.getRecipeManager();
     List<KilnRecipe> results = new ArrayList<>();
     for (IRecipe<IInventory> recipe : recipeManager.getRecipes(Registration.KILN_RECIPE).values()) {

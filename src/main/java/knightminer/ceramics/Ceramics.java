@@ -7,13 +7,14 @@ import knightminer.ceramics.datagen.RecipeProvider;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@SuppressWarnings("WeakerAccess")
 @Mod(Ceramics.MOD_ID)
 public class Ceramics {
 	public static final String MOD_ID = "ceramics";
@@ -21,11 +22,11 @@ public class Ceramics {
 
 	public Ceramics() {
 	  Registration.init();
-		FMLJavaModLoadingContext.get().getModEventBus().register(this);
+		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		bus.addListener(this::gatherData);
 	}
 
-  @SubscribeEvent
-	public void gatherData(GatherDataEvent event) {
+	private void gatherData(GatherDataEvent event) {
 		DataGenerator gen = event.getGenerator();
 		if (event.includeServer()) {
 			BlockTagsProvider blockTags = new BlockTagProvider(gen);

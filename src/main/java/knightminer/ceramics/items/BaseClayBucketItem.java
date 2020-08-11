@@ -29,8 +29,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
+/**
+ * Shared logic between the milk and fluid filled clay buckets
+ */
+@SuppressWarnings("WeakerAccess")
 public abstract class BaseClayBucketItem extends Item {
   /** Tag name for fluid in a bucket */
   private static final String TAG_FLUID = "fluid";
@@ -38,7 +43,7 @@ public abstract class BaseClayBucketItem extends Item {
   private static final float DEGREE_TO_RAD = (float) Math.PI / 180f;
 
   protected boolean isCracked;
-  public BaseClayBucketItem(boolean isCracked, Properties props) {
+  protected BaseClayBucketItem(boolean isCracked, Properties props) {
     super(props);
     this.isCracked = isCracked;
     if (isCracked) {
@@ -238,7 +243,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  Modified stack
    */
   protected static ItemStack setFluid(ItemStack stack, Fluid fluid) {
-    stack.getOrCreateTag().putString(TAG_FLUID, fluid.getRegistryName().toString());
+    stack.getOrCreateTag().putString(TAG_FLUID, Objects.requireNonNull(fluid.getRegistryName()).toString());
     return stack;
   }
 
@@ -249,6 +254,7 @@ public abstract class BaseClayBucketItem extends Item {
    */
   public static String getSubtype(ItemStack stack) {
     if (stack.hasTag()) {
+      assert stack.getTag() != null;
       return stack.getTag().getString(TAG_FLUID);
     }
     return "";

@@ -1,26 +1,25 @@
 package knightminer.ceramics.util;
 
-import knightminer.ceramics.items.ClayBucketItem;
+import knightminer.ceramics.items.BaseClayBucketItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
-import javax.annotation.Nullable;
-
+/**
+ * Wrapper around a clay bucket to get the fluid stored
+ */
 public class FluidClayBucketWrapper extends FluidBucketWrapper {
-
   public FluidClayBucketWrapper(ItemStack container) {
     super(container);
   }
 
   @Override
-  @Nullable
   public FluidStack getFluid() {
     Item item = container.getItem();
-    if (item instanceof ClayBucketItem) {
-      return new FluidStack(((ClayBucketItem)item).getFluid(container), FluidAttributes.BUCKET_VOLUME);
+    if (item instanceof BaseClayBucketItem) {
+      return new FluidStack(((BaseClayBucketItem)item).getFluid(container), FluidAttributes.BUCKET_VOLUME);
     }
     return FluidStack.EMPTY;
   }
@@ -31,8 +30,8 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
       container = container.getContainerItem();
     } else {
       Item item = container.getItem();
-      if (item instanceof ClayBucketItem) {
-        container = ((ClayBucketItem)item).withFluid(stack.getFluid());
+      if (item instanceof BaseClayBucketItem) {
+        container = ((BaseClayBucketItem)item).withFluid(stack.getFluid());
       } else {
         container = ItemStack.EMPTY;
       }

@@ -38,6 +38,7 @@ public class CeramicsTags {
     }
   }
   public static class Fluids {
+    @SuppressWarnings("WeakerAccess")
     public static final ResourceLocation MILK_ID = new ResourceLocation("forge:milk");
 
     /**

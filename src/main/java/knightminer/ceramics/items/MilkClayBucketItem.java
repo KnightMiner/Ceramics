@@ -1,7 +1,6 @@
 package knightminer.ceramics.items;
 
 import knightminer.ceramics.recipe.CeramicsTags;
-import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,11 +20,9 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+/**
+ * Clay bucket holding milk
+ */
 public class MilkClayBucketItem extends BaseClayBucketItem {
   private static final ItemStack MILK_STACK = new ItemStack(Items.MILK_BUCKET);
   public MilkClayBucketItem(boolean isCracked, Properties props) {
@@ -71,7 +68,6 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
     return stack;
   }
 
-  @Nonnull
   @Override
   public ITextComponent getDisplayName(ItemStack stack) {
     return super.getDisplayName(stack).copyRaw().mergeStyle(TextFormatting.RED);

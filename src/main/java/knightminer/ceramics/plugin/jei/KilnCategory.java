@@ -24,11 +24,11 @@ import net.minecraftforge.fml.ForgeI18n;
 
 @MethodsReturnNonnullByDefault
 public class KilnCategory implements IRecipeCategory<KilnRecipe> {
-  public static final ResourceLocation UID = new ResourceLocation(Ceramics.MOD_ID, "kiln");
+  static final ResourceLocation UID = new ResourceLocation(Ceramics.MOD_ID, "kiln");
   private static final ResourceLocation RECIPE_GUI_VANILLA = new ResourceLocation("jei", "textures/gui/gui_vanilla.png");
   // slots
-  public static final int INPUT_SLOT = 0;
-  public static final int FUEL_SLOT = 1;
+  static final int INPUT_SLOT = 0;
+  static final int FUEL_SLOT = 1;
   private static final int OUTPUT_SLOT = 2;
   // elements
   private final IDrawable background;
@@ -37,7 +37,7 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   private final IDrawableAnimated arrow;
   private final String localizedName;
 
-  public KilnCategory(IGuiHelper guiHelper) {
+  KilnCategory(IGuiHelper guiHelper) {
     // elements
     this.background = guiHelper.createDrawable(RECIPE_GUI_VANILLA, 0, 114, 82, 54);
     this.icon = guiHelper.createDrawableIngredient(new ItemStack(Registration.KILN));

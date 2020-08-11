@@ -5,6 +5,9 @@ import net.minecraft.util.IStringSerializable;
 
 import java.util.Locale;
 
+/**
+ * Enum for all the different rainbow porcelain colors
+ */
 public enum RainbowPorcelain implements IStringSerializable {
   RED(MaterialColor.RED),
   ORANGE(MaterialColor.ADOBE),

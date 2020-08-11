@@ -12,6 +12,7 @@ import net.minecraft.util.IIntArray;
 import java.util.List;
 
 public class KilnContainer extends AbstractFurnaceContainer {
+  @SuppressWarnings("unused")
   public KilnContainer(int id, PlayerInventory inventory, PacketBuffer buffer) {
     super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE, id, inventory);
   }

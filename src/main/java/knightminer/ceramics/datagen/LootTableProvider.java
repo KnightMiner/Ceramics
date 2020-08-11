@@ -11,7 +11,6 @@ import net.minecraft.loot.LootTableManager;
 import net.minecraft.loot.ValidationTracker;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -29,7 +28,6 @@ public class LootTableProvider extends net.minecraft.data.LootTableProvider {
     return "Ceramics Loot Tables";
   }
 
-  @Nonnull
   @Override
   protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>,LootParameterSet>> getTables() {
     return ImmutableList.of(Pair.of(BlockLootTables::new, LootParameterSets.BLOCK));

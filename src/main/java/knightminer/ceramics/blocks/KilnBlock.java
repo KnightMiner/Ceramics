@@ -25,9 +25,17 @@ public class KilnBlock extends AbstractFurnaceBlock {
     super(props);
   }
 
+  /** @deprecated  Only added to fully implement interface in {@link net.minecraft.block.AbstractFurnaceBlock} */
+  @Deprecated
   @Nullable
   @Override
-  public TileEntity createNewTileEntity(IBlockReader worldIn) {
+  public TileEntity createNewTileEntity(IBlockReader world) {
+    return new KilnTileEntity();
+  }
+
+  @Override
+  @Nullable
+  public TileEntity createTileEntity(BlockState state, IBlockReader world) {
     return new KilnTileEntity();
   }
 
