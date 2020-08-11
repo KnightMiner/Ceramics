@@ -2,7 +2,7 @@
 name: 1.15 Bug report
 about: Describe an issue from versions for Minecraft 1.15
 title: ''
-labels: bug, 1.15
+labels: 1.15, bug
 assignees: ''
 
 ---

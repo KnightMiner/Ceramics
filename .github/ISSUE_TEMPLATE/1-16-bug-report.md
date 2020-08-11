@@ -1,8 +1,8 @@
 ---
-name: 1.12 Bug report
-about: Describe an issue from versions for Minecraft 1.12
+name: 1.16 Bug report
+about: Describe an issue from versions for Minecraft 1.16
 title: ''
-labels: 1.12, bug
+labels: 1.16, bug
 assignees: ''
 
 ---
@@ -14,7 +14,7 @@ A clear and concise description of what the bug is, including expected behavior.
 If applicable, add screenshots to help explain your problem.
 
 **Versions (please complete the following information):**
- - Minecraft: 1.12.2
+ - Minecraft: 1.16.1
  - Ceramics: 
 
 **Other mods required**
