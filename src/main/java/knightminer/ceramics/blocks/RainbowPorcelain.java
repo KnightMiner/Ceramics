@@ -36,7 +36,7 @@ public enum RainbowPorcelain implements IStringSerializable {
   }
 
   @Override
-  public String getName() {
+  public String getString() {
     return name;
   }
 }

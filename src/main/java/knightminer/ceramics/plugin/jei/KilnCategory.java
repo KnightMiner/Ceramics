@@ -1,5 +1,6 @@
 package knightminer.ceramics.plugin.jei;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.KilnRecipe;
@@ -93,16 +94,16 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   }
 
   @Override
-  public void draw(KilnRecipe recipe, double mouseX, double mouseY) {
-    this.animatedFlame.draw(1, 20);
-    this.arrow.draw(24, 18);
+  public void draw(KilnRecipe recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
+    this.animatedFlame.draw(matrixStack, 1, 20);
+    this.arrow.draw(matrixStack, 24, 18);
 
     float experience = recipe.getExperience();
     if (experience > 0.0F) {
       String experienceString = I18n.format("gui.jei.category.smelting.experience", experience);
       FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
       int stringWidth = fontRenderer.getStringWidth(experienceString);
-      fontRenderer.drawString(experienceString, (float)(this.background.getWidth() - stringWidth), 0, 0xFF808080);
+      fontRenderer.drawString(matrixStack, experienceString, (float)(this.background.getWidth() - stringWidth), 0, 0xFF808080);
     }
   }
 }

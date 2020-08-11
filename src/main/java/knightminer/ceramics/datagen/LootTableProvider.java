@@ -4,13 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import knightminer.ceramics.Ceramics;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.loot.LootParameterSet;
+import net.minecraft.loot.LootParameterSets;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
+import net.minecraft.loot.ValidationTracker;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.loot.LootParameterSet;
-import net.minecraft.world.storage.loot.LootParameterSets;
-import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootTable.Builder;
-import net.minecraft.world.storage.loot.LootTableManager;
-import net.minecraft.world.storage.loot.ValidationTracker;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -32,7 +31,7 @@ public class LootTableProvider extends net.minecraft.data.LootTableProvider {
 
   @Nonnull
   @Override
-  protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, Builder>>>,LootParameterSet>> getTables() {
+  protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>,LootParameterSet>> getTables() {
     return ImmutableList.of(Pair.of(BlockLootTables::new, LootParameterSets.BLOCK));
   }
   

@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public enum ArmorMaterials implements IArmorMaterial {
   // name, durability, protection, enchantability, toughness
-  CLAY("clay", 4, new int[]{1, 2, 3, 1}, 7, 0.0f, () -> Ingredient.fromItems(Registration.CLAY_PLATE));
+  CLAY("clay", 4, new int[]{1, 2, 3, 1}, 7, 0.0f, 0.0f, () -> Ingredient.fromItems(Registration.CLAY_PLATE));
 
   // borrowed from vanilla
   private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
@@ -26,14 +26,16 @@ public enum ArmorMaterials implements IArmorMaterial {
   private final int[] protection;
   private final int enchantability;
   private final float toughness;
+  private final float knockbackResistance;
   private final LazyValue<Ingredient> repairMaterial;
 
-  ArmorMaterials(String name, int durabilityFactor, int[] protection, int enchantability, float toughness, Supplier<Ingredient> ingredient) {
+  ArmorMaterials(String name, int durabilityFactor, int[] protection, int enchantability, float toughness, float knockbackResistance, Supplier<Ingredient> ingredient) {
     this.name = Ceramics.MOD_ID + ":" + name;
     this.durabilityFactor = durabilityFactor;
     this.protection = protection;
     this.enchantability = enchantability;
     this.toughness = toughness;
+    this.knockbackResistance = knockbackResistance;
     repairMaterial = new LazyValue<>(ingredient);
   }
 
@@ -71,5 +73,10 @@ public enum ArmorMaterials implements IArmorMaterial {
   @Override
   public float getToughness() {
     return this.toughness;
+  }
+
+  @Override
+  public float getKnockbackResistance() {
+    return knockbackResistance;
   }
 }

@@ -93,7 +93,7 @@ compileJava {
 }
 
 repositories {
-  // JEI
+  // JEI and Mantle
   maven {
     name 'DVS1 Maven FS'
     url 'http://dvs1.progwml6.com/files/maven'
@@ -102,16 +102,28 @@ repositories {
 
 dependencies {
   minecraft "net.minecraftforge:forge:${config.minecraft_version}-${config.forge_version}"
+  compile fg.deobf("slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}")
     
   // compile against the JEI API but do not include it at runtime
   compileOnly fg.deobf("mezz.jei:jei-${config.minecraft_version}:${config.jei_version}:api")
   // at runtime, use the full JEI jar
   runtimeOnly fg.deobf("mezz.jei:jei-${config.minecraft_version}:${config.jei_version}")
-    
-  //compile fg.deobf("slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}")
-  //compile fg.deobf("slimeknights:TConstruct:${config.minecraft_version}-${config.tinkers_version}")
 }
 
+// replace properties in mods.toml with properties from config
+processResources {
+  inputs.property "version", config.mod_version
+  inputs.property "minecraft_version", config.minecraft_version
+
+  from(sourceSets.main.resources.srcDirs) {
+    include 'META-INF/mods.toml'
+    expand 'version': config.mod_version, 'minecraft_version': config.minecraft_version, 'forge_version': config.forge_version_min, 'mantle_version': config.mantle_version
+  }
+
+  from(sourceSets.main.resources.srcDirs) {
+    exclude 'META-INF/mods.toml'
+  }
+}
 
 jar {
   manifest {

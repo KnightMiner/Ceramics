@@ -4,8 +4,6 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.registration.object.EnumObject;
-import knightminer.ceramics.registration.object.WallBuildingBlockObject;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.block.Block;
@@ -21,12 +19,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import slimeknights.mantle.registration.object.BuildingBlockObject;
+import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
 import javax.annotation.Nonnull;
 import java.util.EnumMap;
@@ -38,7 +37,7 @@ import java.util.function.Consumer;
 public class RecipeProvider extends net.minecraft.data.RecipeProvider {
 
   /** Vanilla bricks as a building block object */
-  private static final WallBuildingBlockObject BRICKS = WallBuildingBlockObject.fromBlocks(Blocks.BRICKS, Blocks.BRICK_SLAB, Blocks.BRICK_STAIRS, Blocks.BRICK_WALL);
+  private static final WallBuildingBlockObject BRICKS = new WallBuildingBlockObject(new BuildingBlockObject(Blocks.BRICKS, Blocks.BRICK_SLAB, Blocks.BRICK_STAIRS), Blocks.BRICK_WALL);
 
   public RecipeProvider(DataGenerator gen) {
     super(gen);
@@ -54,7 +53,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
   protected void registerRecipes(@Nonnull Consumer<IFinishedRecipe> consumer) {
     // recoloring terracotta
     ICriterionInstance terracottaCriteria = hasItem(CeramicsTags.Items.COLORED_TERRACOTTA);
-    eachEnum(Registration.TERRACOTTA, DyeColor.values(), (item, color) -> {
+    Registration.TERRACOTTA.forEach((color, item) ->
       ShapedRecipeBuilder.shapedRecipe(item, 8)
                          .key('B', CeramicsTags.Items.COLORED_TERRACOTTA)
                          .key('D', color.getTag())
@@ -63,8 +62,8 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .patternLine("BDB")
                          .patternLine("BBB")
                          .addCriterion("has_terracotta", terracottaCriteria)
-                         .build(consumer, location(item.getRegistryName().getPath() + "_recolor"));
-    });
+                         .build(consumer, location(item.getRegistryName().getPath() + "_recolor"))
+    );
 
     // crafting porcelain
     ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
@@ -87,7 +86,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
 
     // colored porcelain
     ICriterionInstance porcelainCriteria = hasItem(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE));
-    eachEnum(Registration.PORCELAIN_BLOCK, DyeColor.values(), (item, color) -> {
+    Registration.PORCELAIN_BLOCK.forEach((color, item) ->
       ShapedRecipeBuilder.shapedRecipe(item, 8)
                          .key('B', CeramicsTags.Items.PORCELAIN)
                          .key('D', color.getTag())
@@ -96,20 +95,18 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .patternLine("BDB")
                          .patternLine("BBB")
                          .addCriterion("has_porcelain", porcelainCriteria)
-                         .build(consumer);
-    });
+                         .build(consumer)
+    );
     // rainbow porcelain
     kilnFurnaceRecipe(consumer, CeramicsTags.Items.COLORED_PORCELAIN, Registration.RAINBOW_PORCELAIN.get(RainbowPorcelain.RED), 0.1f, location("rainbow_porcelain"));
 
     // smelt for full rainbow
     ICriterionInstance hasTheRainbow = hasItem(CeramicsTags.Items.RAINBOW_PORCELAIN);
-    eachEnum(Registration.RAINBOW_PORCELAIN, RainbowPorcelain.values(), (item, color) -> {
-      SingleItemRecipeBuilder.stonecuttingRecipe(
-          Ingredient.fromTag(CeramicsTags.Items.RAINBOW_PORCELAIN),
-          item)
+    Registration.RAINBOW_PORCELAIN.forEach((color, item) ->
+      SingleItemRecipeBuilder.stonecuttingRecipe(Ingredient.fromTag(CeramicsTags.Items.RAINBOW_PORCELAIN), item)
                              .addCriterion("has_the_rainbow", hasTheRainbow)
-                             .build(consumer, item.getRegistryName());
-    });
+                             .build(consumer, item.getRegistryName())
+    );
 
     // bricks
     // vanilla brick block shortcuts
@@ -139,13 +136,12 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .build(consumer, location("bricks_from_slab"));
 
     // dark bricks from smelting bricks
-    eachBuilding(BRICKS, Registration.DARK_BRICKS, (input, output) -> {
-      kilnFurnaceRecipe(consumer, input, output, 0.1f);
-    });
+    eachBuilding(BRICKS, Registration.DARK_BRICKS, (input, output) ->
+      kilnFurnaceRecipe(consumer, input, output, 0.1f)
+    );
     registerSlabStairWall(consumer, Registration.DARK_BRICKS);
 
     // magma bricks from lava bucket
-    ICriterionInstance hasLava = hasItem(Items.LAVA_BUCKET);
     addBrickRecipe(consumer, BRICKS, Items.LAVA_BUCKET, Registration.LAVA_BRICKS, "lava");
     registerSlabStairWall(consumer, Registration.LAVA_BRICKS);
 
@@ -165,22 +161,22 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .setGroup(Registration.PORCELAIN_BRICK.getRegistryName().toString())
                        .build(consumer);
     // slab shortcut
-    Item porcelainSlab = Registration.PORCELAIN_BRICKS.getSlabItem();
+    IItemProvider porcelainSlab = Registration.PORCELAIN_BRICKS.getSlab();
     ShapedRecipeBuilder.shapedRecipe(porcelainSlab)
                        .key('b', Registration.PORCELAIN_BRICK)
                        .patternLine("bb")
                        .addCriterion("has_bricks", hasBricks)
-                       .setGroup(porcelainSlab.getRegistryName().toString())
+                       .setGroup(porcelainSlab.asItem().getRegistryName().toString())
                        .build(consumer, suffix(porcelainSlab, "_from_bricks"));
     // stairs shortcut
-    Item porcelainStairs = Registration.PORCELAIN_BRICKS.getStairsItem();
+    IItemProvider porcelainStairs = Registration.PORCELAIN_BRICKS.getStairs();
     ShapedRecipeBuilder.shapedRecipe(porcelainStairs)
                        .key('b', Registration.PORCELAIN_BRICK)
                        .patternLine("b  ")
                        .patternLine("bb ")
                        .patternLine("bbb")
                        .addCriterion("has_bricks", hasBricks)
-                       .setGroup(porcelainStairs.getRegistryName().toString())
+                       .setGroup(porcelainStairs.asItem().getRegistryName().toString())
                        .build(consumer, suffix(porcelainStairs, "_from_bricks"));
     registerSlabStairWall(consumer, Registration.PORCELAIN_BRICKS);
 
@@ -197,9 +193,9 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     registerSlabStairWall(consumer, Registration.MONOCHROME_BRICKS);
 
     // rainbow
-    eachBuilding(Registration.PORCELAIN_BRICKS, Registration.RAINBOW_BRICKS, (input, output) -> {
-      kilnFurnaceRecipe(consumer, input, output, 0.1f);
-    });
+    eachBuilding(Registration.PORCELAIN_BRICKS, Registration.RAINBOW_BRICKS, (input, output) ->
+      kilnFurnaceRecipe(consumer, input, output, 0.1f)
+    );
     registerSlabStairWall(consumer, Registration.RAINBOW_BRICKS);
 
     // buckets
@@ -287,7 +283,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .patternLine("MMM")
                        .patternLine("SES")
                        .patternLine("WWW")
-                       .addCriterion("has_egg", this.hasItem(Items.EGG))
+                       .addCriterion("has_egg", hasItem(Items.EGG))
                        .build(consumer, location("cake"));
 
     // kiln - crafting
@@ -305,9 +301,9 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     // clay
     kilnRecipe(consumer, Items.CLAY_BALL, Items.BRICK, 0.3f);
     kilnRecipe(consumer, Blocks.CLAY, Blocks.TERRACOTTA, 0.3f);
-    eachEnum(Registration.TERRACOTTA, DyeColor.values(), (input, color) -> {
-      kilnRecipe(consumer, input, GLAZED_TERRACOTTA.get(color), 0.1f);
-    });
+    Registration.TERRACOTTA.forEach((color, input) ->
+      kilnRecipe(consumer, input, GLAZED_TERRACOTTA.get(color), 0.1f)
+    );
     // sand and glass
     kilnRecipe(consumer, ItemTags.SAND, Blocks.GLASS, 0.1f);
     kilnRecipe(consumer, Blocks.SANDSTONE, Blocks.SMOOTH_SANDSTONE, 0.1f);
@@ -402,29 +398,16 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
   /* Iteration helpers */
 
   /**
-   * Loops over values in an enum
-   * @param enumBlock  Enum block instance
-   * @param values     List of values to iterate
-   * @param consumer   Logic to run for each recipe, with item as a parameter
-   * @param <T>        Enum type
-   */
-  private <T extends Enum<T>, I extends IItemProvider & IForgeRegistryEntry<? super I>> void eachEnum(EnumObject<T,? extends I> enumBlock, T[] values, BiConsumer<Item,T> consumer) {
-    for(T value : values) {
-      consumer.accept(enumBlock.get(value).asItem(), value);
-    }
-  }
-
-  /**
    * Runs the consumer once for each of block, slab, stairs, and wall
    * @param input      Recipe input for consumer
    * @param output     Recipe output for consumer
    * @param consumer   Consumer to create recipes
    */
-  private void eachBuilding(WallBuildingBlockObject input, WallBuildingBlockObject output, BiConsumer<Item,Item> consumer) {
+  private void eachBuilding(WallBuildingBlockObject input, WallBuildingBlockObject output, BiConsumer<IItemProvider,IItemProvider> consumer) {
     consumer.accept(input.asItem(), output.asItem());
-    consumer.accept(input.getSlabItem(), output.getSlabItem());
-    consumer.accept(input.getStairsItem(), output.getStairsItem());
-    consumer.accept(input.getWallItem(), output.getWallItem());
+    consumer.accept(input.getSlab(), output.getSlab());
+    consumer.accept(input.getStairs(), output.getStairs());
+    consumer.accept(input.getWall(), output.getWall());
   }
 
   /**
@@ -439,39 +422,40 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     Ingredient ingredient = Ingredient.fromItems(item);
 
     // slab
-    Item slab = building.getSlabItem();
+    IItemProvider slab = building.getSlab();
     ShapedRecipeBuilder.shapedRecipe(slab, 6)
         .key('B', item)
         .patternLine("BBB")
         .addCriterion("has_item", hasBuilding)
-        .setGroup(slab.getRegistryName().toString())
+        .setGroup(slab.asItem().getRegistryName().toString())
         .build(consumer, suffix(location, "_slab_crafting"));
     SingleItemRecipeBuilder.stonecuttingRecipe(ingredient, slab, 2)
                            .addCriterion("has_item", hasBuilding)
                            .build(consumer, suffix(location, "_slab_stonecutter"));
 
     // stairs
-    Item stairs = building.getStairsItem();
+    IItemProvider stairs = building.getStairs();
     ShapedRecipeBuilder.shapedRecipe(stairs, 4)
         .key('B', item)
         .patternLine("B  ")
         .patternLine("BB ")
         .patternLine("BBB")
         .addCriterion("has_item", hasBuilding)
-        .setGroup(stairs.getRegistryName().toString())
+        .setGroup(stairs.asItem().getRegistryName().toString())
         .build(consumer, suffix(location, "_stairs_crafting"));
     SingleItemRecipeBuilder.stonecuttingRecipe(ingredient, stairs)
                            .addCriterion("has_item", hasBuilding)
                            .build(consumer, suffix(location, "_stairs_stonecutter"));
 
     // wall
-    ShapedRecipeBuilder.shapedRecipe(building.getWallItem(), 6)
+    IItemProvider wall = building.getWall();
+    ShapedRecipeBuilder.shapedRecipe(wall, 6)
         .key('B', item)
         .patternLine("BBB")
         .patternLine("BBB")
         .addCriterion("has_item", hasBuilding)
         .build(consumer, suffix(location, "_wall_crafting"));
-    SingleItemRecipeBuilder.stonecuttingRecipe(ingredient, building.getWallItem())
+    SingleItemRecipeBuilder.stonecuttingRecipe(ingredient, wall)
                            .addCriterion("has_item", hasBuilding)
                            .build(consumer, suffix(location, "_wall_stonecutter"));
 
@@ -495,7 +479,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    */
   private void addBrickRecipe(@Nonnull Consumer<IFinishedRecipe> consumer, WallBuildingBlockObject from, Item ingredient, WallBuildingBlockObject to, String name) {
     ICriterionInstance criteria = hasItem(ingredient);
-    eachBuilding(from, to, (input, output) -> {
+    eachBuilding(from, to, (input, output) ->
       ShapedRecipeBuilder.shapedRecipe(output, 8)
                          .key('B', input)
                          .key('i', ingredient)
@@ -503,9 +487,9 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .patternLine("BiB")
                          .patternLine("BBB")
                          .addCriterion("has_" + name, criteria)
-                         .setGroup(output.getRegistryName().toString())
-                         .build(consumer, suffix(output, "_" + name));
-    });
+                         .setGroup(output.asItem().getRegistryName().toString())
+                         .build(consumer, suffix(output, "_" + name))
+    );
   }
 
   /** Extend the Forge class as the constructor is protected */
@@ -563,7 +547,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param output      Recipe output
    * @param experience  Experience earned
    */
-  private void kilnRecipe(Consumer<IFinishedRecipe> consumer, Tag<Item> input, IItemProvider output, float experience) {
+  private void kilnRecipe(Consumer<IFinishedRecipe> consumer, ITag<Item> input, IItemProvider output, float experience) {
     kilnRecipe(consumer, Ingredient.fromTag(input), hasItem(input), output, experience, location(output.asItem().getRegistryName().getPath() + "_kiln"));
   }
 
@@ -614,18 +598,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param experience  Experience earned
    * @param name        Recipe name
    */
-  private void kilnFurnaceRecipe(Consumer<IFinishedRecipe> consumer, Tag<Item> input, IItemProvider output, float experience, ResourceLocation name) {
+  private void kilnFurnaceRecipe(Consumer<IFinishedRecipe> consumer, ITag<Item> input, IItemProvider output, float experience, ResourceLocation name) {
     kilnFurnaceRecipe(consumer, Ingredient.fromTag(input), hasItem(input), output, experience, name);
-  }
-
-  /**
-   * Adds a new recipe to both the kiln and the furnace using the output's registry name to name the recipe
-   * @param consumer    Recipe consumer
-   * @param input       Recipe tag input
-   * @param output      Recipe output
-   * @param experience  Experience earned
-   */
-  private void kilnFurnaceRecipe(Consumer<IFinishedRecipe> consumer, Tag<Item> input, IItemProvider output, float experience) {
-    kilnFurnaceRecipe(consumer, input, output, experience, location(output.asItem().getRegistryName().getPath()));
   }
 }

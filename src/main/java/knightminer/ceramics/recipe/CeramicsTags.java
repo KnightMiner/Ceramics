@@ -6,35 +6,47 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.Optional;
 
 public class CeramicsTags {
   public static class Blocks {
-    public static final Tag<Block> COLORED_TERRACOTTA = makeWrapperTag("colored_terracotta");
-    public static final Tag<Block> PORCELAIN = makeWrapperTag("porcelain_block");
-    public static final Tag<Block> COLORED_PORCELAIN = makeWrapperTag("colored_porcelain");
-    public static final Tag<Block> RAINBOW_PORCELAIN = makeWrapperTag("rainbow_porcelain");
-    public static final Tag<Block> BRICKS = makeWrapperTag("bricks");
+    public static final INamedTag<Block> COLORED_TERRACOTTA = makeWrapperTag("colored_terracotta");
+    public static final INamedTag<Block> PORCELAIN = makeWrapperTag("porcelain_block");
+    public static final INamedTag<Block> COLORED_PORCELAIN = makeWrapperTag("colored_porcelain");
+    public static final INamedTag<Block> RAINBOW_PORCELAIN = makeWrapperTag("rainbow_porcelain");
+    public static final INamedTag<Block> BRICKS = makeWrapperTag("bricks");
 
-    private static Tag<Block> makeWrapperTag(String id) {
-      return new BlockTags.Wrapper(new ResourceLocation(Ceramics.MOD_ID, id));
+    private static INamedTag<Block> makeWrapperTag(String id) {
+      return BlockTags.makeWrapperTag(Ceramics.locationName(id));
     }
   }
   public static class Items {
-    public static final Tag<Item> COLORED_TERRACOTTA = makeWrapperTag("colored_terracotta");
-    public static final Tag<Item> PORCELAIN = makeWrapperTag("porcelain_block");
-    public static final Tag<Item> COLORED_PORCELAIN = makeWrapperTag("colored_porcelain");
-    public static final Tag<Item> RAINBOW_PORCELAIN = makeWrapperTag("rainbow_porcelain");
-    public static final Tag<Item> BRICKS = makeWrapperTag("bricks");
-    public static final Tag<Item> MILK_BUCKETS = new ItemTags.Wrapper(new ResourceLocation("forge:buckets/milk"));
+    public static final INamedTag<Item> COLORED_TERRACOTTA = makeWrapperTag("colored_terracotta");
+    public static final INamedTag<Item> PORCELAIN = makeWrapperTag("porcelain_block");
+    public static final INamedTag<Item> COLORED_PORCELAIN = makeWrapperTag("colored_porcelain");
+    public static final INamedTag<Item> RAINBOW_PORCELAIN = makeWrapperTag("rainbow_porcelain");
+    public static final INamedTag<Item> BRICKS = makeWrapperTag("bricks");
+    public static final INamedTag<Item> MILK_BUCKETS = ItemTags.makeWrapperTag("forge:buckets/milk");
 
-    private static Tag<Item> makeWrapperTag(String id) {
-      return new ItemTags.Wrapper(new ResourceLocation(Ceramics.MOD_ID, id));
+    private static INamedTag<Item> makeWrapperTag(String id) {
+      return ItemTags.makeWrapperTag(Ceramics.locationName(id));
     }
   }
   public static class Fluids {
-    public static final Tag<Fluid> MILK = new FluidTags.Wrapper(new ResourceLocation("forge:milk"));
+    public static final ResourceLocation MILK_ID = new ResourceLocation("forge:milk");
+
+    /**
+     * Gets the milk tag safely
+     * @return  Milk tag, empty if no tag or the tag is empty
+     */
+    public static Optional<ITag<Fluid>> getMilk() {
+      return Optional.ofNullable(FluidTags.getCollection().getTagMap().get(MILK_ID))
+                     .filter(tag -> !tag.getAllElements().isEmpty());
+    }
   }
 }

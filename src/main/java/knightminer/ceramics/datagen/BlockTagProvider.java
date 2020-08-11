@@ -1,12 +1,11 @@
 package knightminer.ceramics.datagen;
 
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.registration.object.EnumObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.TagsProvider;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tags.BlockTags;
 
@@ -34,15 +33,27 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
   @Override
   protected void registerTags() {
     // vanilla colored terracotta
-    this.getBuilder(CeramicsTags.Blocks.COLORED_TERRACOTTA).add(getList(Registration.TERRACOTTA, DyeColor.values()));
+    TagsProvider.Builder<Block> coloredTerracotta = this.getOrCreateBuilder(CeramicsTags.Blocks.COLORED_TERRACOTTA);
+    Registration.TERRACOTTA.values().forEach(coloredTerracotta::add);
+
     // porcelain
-    this.getBuilder(BlockTags.ENDERMAN_HOLDABLE).add(Registration.UNFIRED_PORCELAIN_BLOCK.get());
-    this.getBuilder(CeramicsTags.Blocks.COLORED_PORCELAIN).add(getList(Registration.PORCELAIN_BLOCK, COLORED_DYES));
-    this.getBuilder(CeramicsTags.Blocks.PORCELAIN).add(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE)).add(CeramicsTags.Blocks.COLORED_PORCELAIN);
-    this.getBuilder(CeramicsTags.Blocks.RAINBOW_PORCELAIN).add(getList(Registration.RAINBOW_PORCELAIN, RainbowPorcelain.values()));
+    this.getOrCreateBuilder(BlockTags.ENDERMAN_HOLDABLE).add(Registration.UNFIRED_PORCELAIN_BLOCK.get());
+    TagsProvider.Builder<Block> coloredPorcelain = this.getOrCreateBuilder(CeramicsTags.Blocks.COLORED_PORCELAIN);
+    Registration.PORCELAIN_BLOCK.forEach((color, block) -> {
+      if (color != DyeColor.WHITE) {
+        coloredPorcelain.add(block);
+      }
+    });
+    this.getOrCreateBuilder(CeramicsTags.Blocks.PORCELAIN)
+        .add(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE))
+        .addTag(CeramicsTags.Blocks.COLORED_PORCELAIN);
+
+    // rainbow porcelain
+    TagsProvider.Builder<Block> rainbow = this.getOrCreateBuilder(CeramicsTags.Blocks.RAINBOW_PORCELAIN);
+    Registration.RAINBOW_PORCELAIN.values().forEach(rainbow::add);
 
     // bricks
-    this.getBuilder(CeramicsTags.Blocks.BRICKS).add(
+    this.getOrCreateBuilder(CeramicsTags.Blocks.BRICKS).add(
         // clay
         Blocks.BRICKS,
         Registration.DARK_BRICKS.get(),
@@ -55,7 +66,7 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
         Registration.MONOCHROME_BRICKS.get(),
         Registration.RAINBOW_BRICKS.get()
     );
-    this.getBuilder(BlockTags.WALLS).add(
+    this.getOrCreateBuilder(BlockTags.WALLS).add(
         // clay
         Registration.DARK_BRICKS.getWall(),
         Registration.DRAGON_BRICKS.getWall(),
@@ -67,11 +78,5 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
         Registration.MONOCHROME_BRICKS.getWall(),
         Registration.RAINBOW_BRICKS.getWall()
     );
-  }
-
-  private static <T extends Enum<T>> Block[] getList(EnumObject<T,? extends Block> blocks, T[] values) {
-    return Arrays.stream(values)
-                 .map(blocks::get)
-                 .toArray(Block[]::new);
   }
 }

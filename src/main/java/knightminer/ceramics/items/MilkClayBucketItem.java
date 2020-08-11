@@ -74,7 +74,7 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   @Nonnull
   @Override
   public ITextComponent getDisplayName(ItemStack stack) {
-    return super.getDisplayName(stack).applyTextStyle(TextFormatting.RED);
+    return super.getDisplayName(stack).copyRaw().mergeStyle(TextFormatting.RED);
   }
 
   /* Fluids */
@@ -93,13 +93,8 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
     if (milk != null) {
       return milk;
     }
-    // if no milk, choose empty
-    if (CeramicsTags.Fluids.MILK.getAllElements().isEmpty()) {
-      milk = Fluids.EMPTY;
-    } else {
-      // just get any old milk
-      milk = CeramicsTags.Fluids.MILK.getRandomElement(random);
-    }
+    // if the tag is empty, return empty, otherwise get a random element
+    milk = CeramicsTags.Fluids.getMilk().map(tag -> tag.getRandomElement(random)).orElse(Fluids.EMPTY);
     return milk;
   }
 

@@ -14,7 +14,7 @@ import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -58,7 +58,7 @@ public abstract class BaseClayBucketItem extends Item {
   @OnlyIn(Dist.CLIENT)
   public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     if (isCracked) {
-      tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip").applyTextStyle(TextFormatting.GRAY));
+      tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip").mergeStyle(TextFormatting.GRAY));
     }
   }
 
@@ -86,10 +86,10 @@ public abstract class BaseClayBucketItem extends Item {
     Random rand = player.getRNG();
     ItemParticleData particle = new ItemParticleData(ParticleTypes.ITEM, stack);
     for(int i = 0; i < 5; ++i) {
-      Vec3d offset = new Vec3d((rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
+      Vector3d offset = new Vector3d((rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
       offset = offset.rotatePitch(-player.rotationPitch * DEGREE_TO_RAD);
       offset = offset.rotateYaw(-player.rotationYaw * DEGREE_TO_RAD);
-      Vec3d pos = new Vec3d((rand.nextFloat() - 0.5D) * 0.3D, -rand.nextFloat() * 0.6D - 0.3D, 0.6D);
+      Vector3d pos = new Vector3d((rand.nextFloat() - 0.5D) * 0.3D, -rand.nextFloat() * 0.6D - 0.3D, 0.6D);
       pos = pos.rotatePitch(-player.rotationPitch * DEGREE_TO_RAD);
       pos = pos.rotateYaw(-player.rotationYaw * DEGREE_TO_RAD);
       pos = pos.add(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
@@ -197,12 +197,21 @@ public abstract class BaseClayBucketItem extends Item {
    */
   public ItemStack withFluid(Fluid fluid) {
     // special case milk: returns the metadata version
-    if (fluid.isIn(CeramicsTags.Fluids.MILK)) {
+    if (isMilk(fluid)) {
       return withMilk();
     }
 
     // return
     return setFluid(new ItemStack(isCracked || doesCrack(fluid) ? Registration.CRACKED_CLAY_BUCKET : Registration.CLAY_BUCKET), fluid);
+  }
+
+  /**
+   * Checks if the given fluid is milk. May give inaccurate results before tags are loaded.
+   * @param fluid  Fluid to check
+   * @return  True if the fluid is milk
+   */
+  protected static boolean isMilk(Fluid fluid) {
+    return CeramicsTags.Fluids.getMilk().map(tag -> tag.contains(fluid)).orElse(false);
   }
 
   /**

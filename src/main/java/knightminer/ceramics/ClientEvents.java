@@ -21,6 +21,6 @@ public class ClientEvents {
 
   @SubscribeEvent
   public static void registerModels(ModelRegistryEvent event) {
-    ModelLoaderRegistry.registerLoader(new ResourceLocation("ceramics", "bucket"), ClayBucketModel.Loader.INSTANCE);
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("bucket"), ClayBucketModel.Loader.INSTANCE);
   }
 }

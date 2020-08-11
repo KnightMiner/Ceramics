@@ -2,13 +2,10 @@ package knightminer.ceramics.datagen;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.blocks.RainbowPorcelain;
-import knightminer.ceramics.registration.object.EnumObject;
-import knightminer.ceramics.registration.object.WallBuildingBlockObject;
 import net.minecraft.block.Block;
-import net.minecraft.item.DyeColor;
-import net.minecraft.world.storage.loot.ConstantRange;
+import net.minecraft.loot.ConstantRange;
 import net.minecraftforge.registries.ForgeRegistries;
+import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
 import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
@@ -25,11 +22,10 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
   @Override
   protected void addTables() {
     // unfired porcelain drops 4 of the item form
-    this.registerLootTable(Registration.UNFIRED_PORCELAIN_BLOCK.get(), (block) -> {
-      return droppingWithSilkTouchOrRandomly(block, Registration.UNFIRED_PORCELAIN, ConstantRange.of(4));
-    });
-    registerEnumLootTables(Registration.PORCELAIN_BLOCK, DyeColor.values());
-    registerEnumLootTables(Registration.RAINBOW_PORCELAIN, RainbowPorcelain.values());
+    this.registerLootTable(Registration.UNFIRED_PORCELAIN_BLOCK.get(), (block) ->
+        droppingWithSilkTouchOrRandomly(block, Registration.UNFIRED_PORCELAIN, ConstantRange.of(4)));
+    Registration.PORCELAIN_BLOCK.forEach(this::registerDropSelfLootTable);
+    Registration.RAINBOW_PORCELAIN.forEach(this::registerDropSelfLootTable);
 
     // bricks - clay
     registerBuildingLootTable(Registration.DARK_BRICKS);
@@ -43,18 +39,6 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
     registerBuildingLootTable(Registration.RAINBOW_BRICKS);
     // kiln
     registerDropSelfLootTable(Registration.KILN.get());
-  }
-
-                           /**
-                            * Registers self drops for an enum block
-                            * @param enumBlock  Block instance
-                            * @param values     Values list
-                            * @param <T>        Block value type
-                            */
-  private <T extends Enum<T>, B extends Block> void registerEnumLootTables(EnumObject<T,B> enumBlock, T[] values) {
-    for (T value : values) {
-      registerDropSelfLootTable(enumBlock.get(value));
-    }
   }
 
   /**

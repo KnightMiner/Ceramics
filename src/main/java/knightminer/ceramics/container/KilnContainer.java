@@ -6,13 +6,13 @@ import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.AbstractFurnaceContainer;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IIntArray;
 
 import java.util.List;
 
 public class KilnContainer extends AbstractFurnaceContainer {
-  public KilnContainer(int id, PlayerInventory inventory) {
-    // TODO: recipe type
+  public KilnContainer(int id, PlayerInventory inventory, PacketBuffer buffer) {
     super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE, id, inventory);
   }
 

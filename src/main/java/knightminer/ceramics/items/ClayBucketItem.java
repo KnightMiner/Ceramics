@@ -1,7 +1,6 @@
 package knightminer.ceramics.items;
 
 import com.google.common.collect.ImmutableSet;
-import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -36,7 +35,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceContext.FluidMode;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -71,7 +69,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
 		ItemStack stack = player.getHeldItem(hand);
 		Fluid fluid = this.getFluid(stack);
-		RayTraceResult trace = rayTrace(world, player, fluid == Fluids.EMPTY ? FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
+		BlockRayTraceResult trace = rayTrace(world, player, fluid == Fluids.EMPTY ? FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
 
 		// fire Forge event for bucket use
 		ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
@@ -85,9 +83,8 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		}
 
 		// normal fluid logic
-		BlockRayTraceResult blockTrace = (BlockRayTraceResult)trace;
-		BlockPos pos = blockTrace.getPos();
-		Direction direction = blockTrace.getFace();
+		BlockPos pos = trace.getPos();
+		Direction direction = trace.getFace();
 		BlockPos offset = pos.offset(direction);
 
 		// ensure we can place a fluid there
@@ -123,7 +120,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 				}
 			} else {
 				BlockPos fluidPos = state.getBlock() instanceof ILiquidContainer && fluid == Fluids.WATER ? pos : offset;
-				if (this.tryPlaceContainedLiquid(player, world, fluidPos, stack, blockTrace)) {
+				if (this.tryPlaceContainedLiquid(player, world, fluidPos, stack, trace)) {
 					onLiquidPlaced(fluid, world, stack, fluidPos);
 					if (player instanceof ServerPlayerEntity) {
 						CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity)player, fluidPos, stack);
@@ -164,7 +161,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		Block block = state.getBlock();
 		boolean replaceable = state.isReplaceable(fluid);
 		if (state.isAir(world, pos) || replaceable || block instanceof ILiquidContainer && ((ILiquidContainer)block).canContainFluid(world, pos, state, fluid)) {
-			if (world.dimension.doesWaterVaporize() && fluid.isIn(FluidTags.WATER)) {
+			if (world.func_230315_m_().func_236040_e_() && fluid.isIn(FluidTags.WATER)) {
 				world.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
 
 				for(int l = 0; l < 8; ++l) {
@@ -255,7 +252,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	}
 
 	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
+	public ActionResultType itemInteractionForEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
 		// only work if the bucket is empty and right clicking a cow
 		if(!player.isCreative() && !hasFluid(stack) && target instanceof CowEntity && !target.isChild()) {
 			// sound
@@ -264,9 +261,9 @@ public class ClayBucketItem extends BaseClayBucketItem {
 				addItem(player, withMilk());
 				stack.shrink(1);
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}
-		return false;
+		return ActionResultType.PASS;
 	}
 
 
@@ -303,7 +300,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			}
 		}
 		// display name in red
-		return component.applyTextStyle(TextFormatting.RED);
+		return component.copyRaw().mergeStyle(TextFormatting.RED);
 	}
 
 	@Override
@@ -317,7 +314,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			for(Fluid fluid : ForgeRegistries.FLUIDS.getValues()) {
 				// skip flowing fluids (we have still) and milks
 				// include cracked if cracked, non-cracked if not cracked
-				if (!FLUID_BLACKLIST.contains(fluid) && !fluid.isIn(CeramicsTags.Fluids.MILK) && isCracked == doesCrack(fluid)) {
+				if (!FLUID_BLACKLIST.contains(fluid) && !isMilk(fluid) && isCracked == doesCrack(fluid)) {
 					subItems.add(setFluid(new ItemStack(this), fluid));
 				}
 			}
