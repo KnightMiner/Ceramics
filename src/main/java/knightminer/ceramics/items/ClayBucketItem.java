@@ -1,6 +1,5 @@
 package knightminer.ceramics.items;
 
-import com.google.common.collect.ImmutableSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -48,15 +47,11 @@ import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.Set;
 
 /**
  * Clay bucket that holds arbitrary fluids
  */
 public class ClayBucketItem extends BaseClayBucketItem {
-
-	private static final Set<Fluid> FLUID_BLACKLIST = ImmutableSet.of(Fluids.EMPTY, Fluids.FLOWING_WATER, Fluids.FLOWING_LAVA);
-
 	public ClayBucketItem(boolean isCracked, Properties props) {
 		super(isCracked, props);
 	}
@@ -313,10 +308,23 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			for(Fluid fluid : ForgeRegistries.FLUIDS.getValues()) {
 				// skip flowing fluids (we have still) and milks
 				// include cracked if cracked, non-cracked if not cracked
-				if (!FLUID_BLACKLIST.contains(fluid) && !isMilk(fluid) && isCracked == doesCrack(fluid)) {
+				if (isVisible(fluid) && isCracked == doesCrack(fluid)) {
 					subItems.add(setFluid(new ItemStack(this), fluid));
 				}
 			}
 		}
+	}
+
+	/**
+	 * Checks if the given fluid is visible in creative
+	 * @param fluid  Fluid to check
+	 * @return  True if its visible
+	 */
+	private static boolean isVisible(Fluid fluid) {
+		// hide empty and milk (milk shows in its own bucket
+		if (fluid == Fluids.EMPTY || isMilk(fluid)) {
+			return false;
+		}
+		return fluid.getDefaultState().isSource();
 	}
 }
