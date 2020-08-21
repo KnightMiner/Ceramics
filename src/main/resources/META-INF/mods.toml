@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[27,)"
 issueTrackerURL="https://github.com/KnightMiner/Ceramics/issues/"
+license="MIT"
 [[mods]]
 modId="ceramics"
 version="${version}"

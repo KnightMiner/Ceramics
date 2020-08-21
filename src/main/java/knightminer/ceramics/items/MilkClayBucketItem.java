@@ -19,6 +19,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.IRegistryDelegate;
 
 /**
  * Clay bucket holding milk
@@ -81,17 +82,18 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   /** Cached milk type */
-  private static Fluid milk = null;
+  private static IRegistryDelegate<Fluid> milk = null;
 
   @Override
   public Fluid getFluid(ItemStack stack) {
     // TODO: store this value in config, instead of a static variable
     if (milk != null) {
-      return milk;
+      return milk.get();
     }
     // if the tag is empty, return empty, otherwise get a random element
-    milk = CeramicsTags.Fluids.getMilk().map(tag -> tag.getRandomElement(random)).orElse(Fluids.EMPTY);
-    return milk;
+    Fluid newMilk = CeramicsTags.Fluids.MILK.getAllElements().isEmpty() ? Fluids.EMPTY : CeramicsTags.Fluids.MILK.getRandomElement(random);
+    milk = newMilk.delegate;
+    return newMilk;
   }
 
   @Override

@@ -6,12 +6,10 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITag.INamedTag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.Optional;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 
 public class CeramicsTags {
   public static class Blocks {
@@ -39,15 +37,6 @@ public class CeramicsTags {
   }
   public static class Fluids {
     @SuppressWarnings("WeakerAccess")
-    public static final ResourceLocation MILK_ID = new ResourceLocation("forge:milk");
-
-    /**
-     * Gets the milk tag safely
-     * @return  Milk tag, empty if no tag or the tag is empty
-     */
-    public static Optional<ITag<Fluid>> getMilk() {
-      return Optional.ofNullable(FluidTags.getCollection().getTagMap().get(MILK_ID))
-                     .filter(tag -> !tag.getAllElements().isEmpty());
-    }
+    public static final IOptionalNamedTag<Fluid> MILK = FluidTags.createOptional(new ResourceLocation("forge:milk"));
   }
 }
