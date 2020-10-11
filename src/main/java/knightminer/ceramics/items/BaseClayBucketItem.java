@@ -216,7 +216,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  True if the fluid is milk
    */
   protected static boolean isMilk(Fluid fluid) {
-    return CeramicsTags.Fluids.MILK.contains(fluid);
+    return CeramicsTags.tagsLoaded() && CeramicsTags.Fluids.MILK.contains(fluid);
   }
 
   /**

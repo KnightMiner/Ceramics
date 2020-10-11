@@ -217,7 +217,7 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
     }
 
     @Override
-    public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity) {
+    public IBakedModel getOverrideModel(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity) {
       return FluidUtil.getFluidContained(stack).map(fluidStack -> {
         BakedModel model = (BakedModel)originalModel;
 

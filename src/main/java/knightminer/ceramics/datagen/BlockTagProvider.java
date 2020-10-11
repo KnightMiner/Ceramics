@@ -1,5 +1,6 @@
 package knightminer.ceramics.datagen;
 
+import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.block.Block;
@@ -8,10 +9,11 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.TagsProvider;
 import net.minecraft.item.DyeColor;
 import net.minecraft.tags.BlockTags;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
-  public BlockTagProvider(DataGenerator gen) {
-    super(gen);
+  public BlockTagProvider(DataGenerator gen, ExistingFileHelper helper) {
+    super(gen, Ceramics.MOD_ID, helper);
   }
 
   @Override

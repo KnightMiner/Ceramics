@@ -1,15 +1,17 @@
 package knightminer.ceramics.datagen;
 
+import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.CeramicsTags.Blocks;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Items;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
-  public ItemTagProvider(DataGenerator gen, BlockTagsProvider blockTags) {
-    super(gen, blockTags);
+  public ItemTagProvider(DataGenerator gen, BlockTagsProvider blockTags, ExistingFileHelper helper) {
+    super(gen, blockTags, Ceramics.MOD_ID, helper);
   }
 
   @Override

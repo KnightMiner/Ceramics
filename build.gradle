@@ -15,33 +15,18 @@ apply plugin: 'maven-publish'
 group = "knightminer"
 archivesBaseName = "Ceramics"
 
-// External properties
-ext.configFile = file "build.properties"
-configFile.withReader {
-  // Load config.  It shall from now be referenced as simply config or project.config
-  def prop = new Properties()
-  prop.load(it)
-  project.ext.config = new ConfigSlurper().parse prop
-}
 configurations {
     deployerJars
 }
 
-version = "${config.minecraft_version}-${config.mod_version}"
+version = "${minecraft_version}-${mod_version}"
 
 sourceSets {
-  main {
-    resources {
-      srcDirs = [
-        "$rootDir/src/main/resources",
-        "$rootDir/src/generated/resources"
-      ]
-    }
-  }
+  main { resources { srcDirs "$rootDir/src/generated/resources" } }
 }
 
 minecraft {
-  mappings channel: 'snapshot', version: config.mappings_version
+  mappings channel: 'snapshot', version: mappings_version
   accessTransformer project.file("src/main/resources/META-INF/accesstransformer.cfg")
   runs {
     client {
@@ -101,23 +86,25 @@ repositories {
 }
 
 dependencies {
-  minecraft "net.minecraftforge:forge:${config.minecraft_version}-${config.forge_version}"
-  compile fg.deobf("slimeknights.mantle:Mantle:${config.minecraft_version}-${config.mantle_version}")
+  minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+  compile fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_version}")
     
   // compile against the JEI API but do not include it at runtime
-  compileOnly fg.deobf("mezz.jei:jei-${config.minecraft_version}:${config.jei_version}:api")
+  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
   // at runtime, use the full JEI jar
-  runtimeOnly fg.deobf("mezz.jei:jei-${config.minecraft_version}:${config.jei_version}")
+  runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
 }
 
 // replace properties in mods.toml with properties from config
 processResources {
-  inputs.property "version", config.mod_version
-  inputs.property "minecraft_version", config.minecraft_version
+  inputs.property "version", mod_version
+  inputs.property "minecraft_version", minecraft_version
 
   from(sourceSets.main.resources.srcDirs) {
     include 'META-INF/mods.toml'
-    expand 'version': config.mod_version, 'minecraft_version': config.minecraft_version, 'forge_version': config.forge_version_min, 'mantle_version': config.mantle_version
+    expand 'version': mod_version, 'javafml': javafml_min,
+        'minecraft_version': minecraft_version, 'minecraft_min': minecraft_min,
+        'forge_version': forge_min, 'mantle_version': mantle_version
   }
 
   from(sourceSets.main.resources.srcDirs) {

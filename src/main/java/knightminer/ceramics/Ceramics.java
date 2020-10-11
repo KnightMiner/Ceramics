@@ -4,9 +4,11 @@ import knightminer.ceramics.datagen.BlockTagProvider;
 import knightminer.ceramics.datagen.ItemTagProvider;
 import knightminer.ceramics.datagen.LootTableProvider;
 import knightminer.ceramics.datagen.RecipeProvider;
+import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -22,16 +24,18 @@ public class Ceramics {
 
 	public Ceramics() {
 	  Registration.init();
+		CeramicsTags.init();
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::gatherData);
 	}
 
 	private void gatherData(GatherDataEvent event) {
-		DataGenerator gen = event.getGenerator();
 		if (event.includeServer()) {
-			BlockTagsProvider blockTags = new BlockTagProvider(gen);
+			DataGenerator gen = event.getGenerator();
+			ExistingFileHelper helper = event.getExistingFileHelper();
+			BlockTagsProvider blockTags = new BlockTagProvider(gen, helper);
 			gen.addProvider(blockTags);
-			gen.addProvider(new ItemTagProvider(gen, blockTags));
+			gen.addProvider(new ItemTagProvider(gen, blockTags, helper));
 			gen.addProvider(new RecipeProvider(gen));
 			gen.addProvider(new LootTableProvider(gen));
 		}

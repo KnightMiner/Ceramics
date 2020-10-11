@@ -144,6 +144,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	}
 
 	// TODO: possibly migrate to the Forge method
+	@SuppressWarnings("deprecation")
 	private boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, World world, BlockPos pos, ItemStack stack, @Nullable BlockRayTraceResult trace) {
 		Fluid fluidStack = this.getFluid(stack);
 		Fluid fluid = fluidStack.getFluid();
@@ -155,7 +156,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		Block block = state.getBlock();
 		boolean replaceable = state.isReplaceable(fluid);
 		if (state.isAir(world, pos) || replaceable || block instanceof ILiquidContainer && ((ILiquidContainer)block).canContainFluid(world, pos, state, fluid)) {
-			if (world.func_230315_m_().func_236040_e_() && fluid.isIn(FluidTags.WATER)) {
+			if (world.getDimensionType().isUltrawarm() && fluid.isIn(FluidTags.WATER)) {
 				world.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
 
 				for(int l = 0; l < 8; ++l) {
