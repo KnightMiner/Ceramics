@@ -107,7 +107,7 @@ def modsTomlSpec = copySpec{
             'loader_range': loader_range,
             'minecraft_range': minecraft_range,
             'forge_range': forge_range,
-            'mantle_version': mantle_version
+            'mantle_range': mantle_range
   }
 }
 // need to copy into each build directory, unfortunately does not seem easy to do this automatically

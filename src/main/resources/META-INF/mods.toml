@@ -28,6 +28,6 @@ Mod adding additional early game and vanilla-like tools made of clay. Includes f
 [[dependencies.ceramics]]
     modId="mantle"
     mandatory=true
-    versionRange="[${mantle_version},]"
+    versionRange="${mantle_range}"
     ordering="NONE"
     side="BOTH"
