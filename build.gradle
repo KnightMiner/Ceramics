@@ -22,7 +22,11 @@ configurations {
 version = "${minecraft_version}-${mod_version}"
 
 sourceSets {
-  main { resources { srcDirs "$rootDir/src/generated/resources" } }
+  main { resources {
+    srcDirs "$rootDir/src/generated/resources"
+    //But exclude the cache of the generated data from what gets built
+    exclude '.cache'
+  } }
 }
 
 minecraft {
@@ -90,26 +94,51 @@ dependencies {
   compile fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_version}")
     
   // compile against the JEI API but do not include it at runtime
-  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+  compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
   // at runtime, use the full JEI jar
-  runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+  // runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 }
 
-// replace properties in mods.toml with properties from config
-processResources {
-  inputs.property "version", mod_version
-  inputs.property "minecraft_version", minecraft_version
-
-  from(sourceSets.main.resources.srcDirs) {
+// process mods.toml to inject variables
+def modsTomlSpec = copySpec{
+  from(sourceSets.main.resources) {
     include 'META-INF/mods.toml'
-    expand 'version': mod_version, 'javafml': javafml_min,
-        'minecraft_version': minecraft_version, 'minecraft_min': minecraft_min,
-        'forge_version': forge_min, 'mantle_version': mantle_version
+    expand 'version': mod_version,
+            'loader_range': loader_range,
+            'minecraft_range': minecraft_range,
+            'forge_range': forge_range,
+            'mantle_version': mantle_version
   }
+}
+// need to copy into each build directory, unfortunately does not seem easy to do this automatically
+def buildPaths = [
+        "$rootDir/out/production/resources", // IDEA
+        "$rootDir/bin", // Eclipse
+]
 
-  from(sourceSets.main.resources.srcDirs) {
-    exclude 'META-INF/mods.toml'
+// task to add mods.toml to all relevant folders
+task replaceResources {
+  // copy for gradle
+  copy {
+    outputs.upToDateWhen { false }
+    with modsTomlSpec
+    into processResources.destinationDir
   }
+  // copy for IDEs
+  buildPaths.each { path ->
+    if (new File(path).exists()) {
+      copy {
+        outputs.upToDateWhen { false }
+        with modsTomlSpec
+        into path
+      }
+    }
+  }
+}
+
+processResources {
+  exclude 'META-INF/mods.toml'
+  finalizedBy replaceResources
 }
 
 jar {

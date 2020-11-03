@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[${javafml},)"
+loaderVersion="${loader_range}"
 issueTrackerURL="https://github.com/KnightMiner/Ceramics/issues/"
 license="MIT"
 [[mods]]
@@ -16,13 +16,13 @@ Mod adding additional early game and vanilla-like tools made of clay. Includes f
 [[dependencies.ceramics]] 
     modId="forge"
     mandatory=true
-    versionRange="[${forge_version},)" #mandatory
+    versionRange="${forge_range}"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.ceramics]]
     modId="minecraft"
     mandatory=true
-    versionRange="[${minecraft_min},${minecraft_version}]"
+    versionRange="${minecraft_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.ceramics]]
