@@ -1,5 +1,6 @@
 package knightminer.ceramics;
 
+import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.blocks.KilnBlock;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
@@ -8,6 +9,7 @@ import knightminer.ceramics.items.ClayBucketItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.tileentity.KilnTileEntity;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
@@ -27,6 +29,7 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -144,4 +147,8 @@ public class Registration {
   // kiln recipes
   public static final IRecipeType<KilnRecipe> KILN_RECIPE = IRecipeType.register("ceramics:kiln");
   public static final RegistryObject<CookingRecipeSerializer<KilnRecipe>> KILN_SERIALIZER = SERIALIZERS.register("kiln", () -> new CookingRecipeSerializer<>(KilnRecipe::new, 100));
+
+  // fluid
+  public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND)), DEFAULT_BLOCK_ITEM);
+  public static final ItemObject<CisternBlock> CISTERN = BLOCKS.register("cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(1.25F, 4.2F)), DEFAULT_BLOCK_ITEM);
 }

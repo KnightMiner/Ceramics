@@ -38,6 +38,9 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
     registerBuildingLootTable(Registration.RAINBOW_BRICKS);
     // kiln
     registerDropSelfLootTable(Registration.KILN.get());
+    // cistern
+    registerDropSelfLootTable(Registration.CISTERN.get());
+    registerDropSelfLootTable(Registration.UNFIRED_CISTERN.get());
   }
 
   /**

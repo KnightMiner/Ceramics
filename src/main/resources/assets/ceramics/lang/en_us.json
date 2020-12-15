@@ -86,6 +86,8 @@
     "block.ceramics.magenta_rainbow_porcelain.tooltip": "Starts on magenta",
     
     "block.ceramics.kiln": "Kiln",
+    "block.ceramics.unfired_cistern": "Unfired Cistern",
+    "block.ceramics.cistern": "Cistern",
    
     "_comment": "#########",
     "_comment": "# Items #",

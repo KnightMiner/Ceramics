@@ -69,5 +69,10 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
         Registration.MONOCHROME_BRICKS.getWall(),
         Registration.RAINBOW_BRICKS.getWall()
     );
+
+    // blocks that barrels connect to
+    this.getOrCreateBuilder(CeramicsTags.Blocks.BARREL_CONNECTIONS)
+        .add(Blocks.LEVER, Blocks.WALL_TORCH, Blocks.REDSTONE_WALL_TORCH)
+        .addTag(BlockTags.BUTTONS);
   }
 }

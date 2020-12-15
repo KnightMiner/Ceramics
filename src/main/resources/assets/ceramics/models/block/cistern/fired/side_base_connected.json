@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/cistern/side_base_connected",
+    "textures": {
+        "texture": "block/terracotta"
+    }
+}

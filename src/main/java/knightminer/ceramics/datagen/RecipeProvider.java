@@ -208,6 +208,17 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     // cracked
     kilnFurnaceRecipe(consumer, Registration.CLAY_BUCKET, Registration.CRACKED_CLAY_BUCKET, 0.2f);
 
+    // cistern
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CISTERN)
+                       .key('c', Items.CLAY_BALL)
+                       .patternLine("c c")
+                       .patternLine("c c")
+                       .patternLine("c c")
+                       .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
+                       .build(consumer);
+    // fired
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.CISTERN, 0.3f);
+
     // armor
     // clay plates
     ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_PLATE)
@@ -265,6 +276,11 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_PLATE))
                           .setGroup(locationString("clay_uncrafting"))
                           .build(consumer, suffix(Registration.UNFIRED_CLAY_PLATE, "_uncrafting"));
+    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 6)
+                          .addIngredient(Registration.UNFIRED_CISTERN)
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CISTERN))
+                          .setGroup(locationString("clay_uncrafting"))
+                          .build(consumer, suffix(Registration.UNFIRED_CISTERN, "_uncrafting"));
     // porcelain uncrafting
     ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
                           .addIngredient(Registration.UNFIRED_PORCELAIN_BLOCK)
