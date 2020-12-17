@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "ceramics:terracotta_cistern",
+    "ceramics:white_terracotta_cistern",
+    "ceramics:orange_terracotta_cistern",
+    "ceramics:magenta_terracotta_cistern",
+    "ceramics:light_blue_terracotta_cistern",
+    "ceramics:yellow_terracotta_cistern",
+    "ceramics:lime_terracotta_cistern",
+    "ceramics:pink_terracotta_cistern",
+    "ceramics:gray_terracotta_cistern",
+    "ceramics:light_gray_terracotta_cistern",
+    "ceramics:cyan_terracotta_cistern",
+    "ceramics:purple_terracotta_cistern",
+    "ceramics:blue_terracotta_cistern",
+    "ceramics:brown_terracotta_cistern",
+    "ceramics:green_terracotta_cistern",
+    "ceramics:red_terracotta_cistern",
+    "ceramics:black_terracotta_cistern"
+  ]
+}

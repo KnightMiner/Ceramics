@@ -73,5 +73,9 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
     // blocks that cisterns connect to
     this.getOrCreateBuilder(CeramicsTags.Blocks.CISTERN_CONNECTIONS)
         .add(Registration.GAUGE.get());
+    // list of all terracotta cisterns
+    TagsProvider.Builder<Block> terracottaCisterns = this.getOrCreateBuilder(CeramicsTags.Blocks.TERRACOTTA_CISTERNS)
+                                                         .add(Registration.TERRACOTTA_CISTERN.get());
+    Registration.COLORED_CISTERN.forEach(block -> terracottaCisterns.add(block));
   }
 }

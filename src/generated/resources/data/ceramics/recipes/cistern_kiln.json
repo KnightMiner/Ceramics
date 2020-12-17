@@ -1,9 +1,0 @@
-{
-  "type": "ceramics:kiln",
-  "ingredient": {
-    "item": "ceramics:unfired_cistern"
-  },
-  "result": "ceramics:cistern",
-  "experience": 0.3,
-  "cookingtime": 100
-}

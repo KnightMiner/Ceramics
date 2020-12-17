@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "ceramics:colored_cisterns",
+  "pattern": [
+    " c ",
+    "cdc",
+    " c "
+  ],
+  "key": {
+    "c": {
+      "tag": "ceramics:terracotta_cisterns"
+    },
+    "d": {
+      "tag": "forge:dyes/white"
+    }
+  },
+  "result": {
+    "item": "ceramics:white_terracotta_cistern",
+    "count": 4
+  }
+}

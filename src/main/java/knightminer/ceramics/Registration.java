@@ -8,6 +8,7 @@ import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.items.ClayBucketItem;
+import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.tileentity.CisternTileEntity;
@@ -82,6 +83,8 @@ public class Registration {
   private static final Function<Block,BlockItem> DEFAULT_BLOCK_ITEM = (block) -> new BlockItem(block, GROUP_PROPS);
   /** Item block function using {@link BlockTooltipItem} */
   private static final Function<Block,BlockItem> TOOLTIP_BLOCK_ITEM = (block) -> new BlockTooltipItem(block, GROUP_PROPS);
+  /** Item block function for cistern tooltips */
+  private static final Function<Block,BlockItem> CISTERN_BLOCK_ITEM = (block) -> new FixedTooltipBlockItem(block, GROUP_PROPS, "cistern.tooltip");
 
   /** Mapping for terracotta to make registration easier */
   public static final EnumObject<DyeColor,Block> TERRACOTTA = new EnumObject.Builder<DyeColor,Block>(DyeColor.class)
@@ -144,7 +147,7 @@ public class Registration {
   public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEMS.register("clay_boots", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.FEET, UNSTACKABLE_PROPS));
 
   // kiln block
-  public static final ItemObject<KilnBlock> KILN = BLOCKS.register("kiln", () -> new KilnBlock(Block.Properties.create(Material.ROCK).hardnessAndResistance(3.5F).setLightLevel(s -> s.get(KilnBlock.LIT) ? 13 : 0)), DEFAULT_BLOCK_ITEM);
+  public static final ItemObject<KilnBlock> KILN = BLOCKS.register("kiln", () -> new KilnBlock(terracottaProps(MaterialColor.ADOBE).setLightLevel(s -> s.get(KilnBlock.LIT) ? 13 : 0)), DEFAULT_BLOCK_ITEM);
   public static final RegistryObject<ContainerType<KilnContainer>> KILN_CONTAINER = CONTAINERS.register("kiln", KilnContainer::new);
   public static final RegistryObject<TileEntityType<KilnTileEntity>> KILN_TILE_ENTITY = TILE_ENTIITES.register("kiln", KilnTileEntity::new, KILN);
   // kiln recipes
@@ -154,6 +157,47 @@ public class Registration {
   // fluid handling
   public static final ItemObject<GaugeBlock> GAUGE = BLOCKS.register("gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).harvestTool(ToolType.SHOVEL).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), TOOLTIP_BLOCK_ITEM);
   public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid()), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<FluidCisternBlock> CISTERN = BLOCKS.register("cistern", () -> new FluidCisternBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(1.25F, 4.2F).notSolid()), TOOLTIP_BLOCK_ITEM);
-  public static final RegistryObject<TileEntityType<CisternTileEntity>> CISTERN_TILE_ENTITY = TILE_ENTIITES.register("cistern", CisternTileEntity::new, CISTERN);
+  public static final ItemObject<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MaterialColor.ADOBE).notSolid()), CISTERN_BLOCK_ITEM);
+  public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color))), CISTERN_BLOCK_ITEM);
+  public static final RegistryObject<TileEntityType<CisternTileEntity>> CISTERN_TILE_ENTITY = TILE_ENTIITES.register("cistern", CisternTileEntity::new, builder -> {
+    builder.add(TERRACOTTA_CISTERN.get());
+    builder.addAll(COLORED_CISTERN.values());
+  });
+
+
+  /**
+   * Standard hardened clay properties
+   * @param color  Map color of block
+   * @return  Block properties
+   */
+  private static AbstractBlock.Properties terracottaProps(MaterialColor color) {
+    return AbstractBlock.Properties.create(Material.ROCK, color).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(1.25F, 4.2F);
+  }
+
+  /**
+   * Gets the terracotta map color for the given dye color
+   * @param color  Dye color
+   * @return  Material color
+   */
+  private static MaterialColor getTerracottaColor(DyeColor color) {
+    switch (color) {
+      default:
+      case WHITE:      return MaterialColor.WHITE_TERRACOTTA;
+      case ORANGE:     return MaterialColor.ORANGE_TERRACOTTA;
+      case MAGENTA:    return MaterialColor.MAGENTA_TERRACOTTA;
+      case LIGHT_BLUE: return MaterialColor.LIGHT_BLUE_TERRACOTTA;
+      case YELLOW:     return MaterialColor.YELLOW_TERRACOTTA;
+      case LIME:       return MaterialColor.LIME_TERRACOTTA;
+      case PINK:       return MaterialColor.PINK_TERRACOTTA;
+      case GRAY:       return MaterialColor.GRAY_TERRACOTTA;
+      case LIGHT_GRAY: return MaterialColor.LIGHT_GRAY_TERRACOTTA;
+      case CYAN:       return MaterialColor.CYAN_TERRACOTTA;
+      case PURPLE:     return MaterialColor.PURPLE_TERRACOTTA;
+      case BLUE:       return MaterialColor.BLUE_TERRACOTTA;
+      case BROWN:      return MaterialColor.BROWN_TERRACOTTA;
+      case GREEN:      return MaterialColor.GREEN_TERRACOTTA;
+      case RED:        return MaterialColor.RED_TERRACOTTA;
+      case BLACK:      return MaterialColor.BLACK_TERRACOTTA;
+    }
+  }
 }

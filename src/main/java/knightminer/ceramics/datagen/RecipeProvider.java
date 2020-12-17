@@ -217,7 +217,19 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
                        .build(consumer);
     // fired
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.CISTERN, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.TERRACOTTA_CISTERN, 0.3f);
+    // colored
+    Registration.COLORED_CISTERN.forEach((color, block) -> {
+      ShapedRecipeBuilder.shapedRecipe(block, 4)
+                         .key('c', CeramicsTags.Items.TERRACOTTA_CISTERNS)
+                         .key('d', color.getTag())
+                         .patternLine(" c ")
+                         .patternLine("cdc")
+                         .patternLine(" c ")
+                         .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
+                         .setGroup(Ceramics.locationName("colored_cisterns"))
+                         .build(consumer);
+    });
     // gauge
     ShapedRecipeBuilder.shapedRecipe(Registration.GAUGE, 4)
                        .key('b', Items.BRICK)
@@ -225,7 +237,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .patternLine(" b ")
                        .patternLine("bpb")
                        .patternLine(" b ")
-                       .addCriterion("has_cistern", hasItem(Registration.CISTERN))
+                       .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
 
     // armor

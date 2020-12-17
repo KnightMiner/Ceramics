@@ -1,0 +1,59 @@
+{
+    "multipart": [
+        {   "when": { "extension": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/base" }
+        },
+        
+        {   "when": { "extension": "false", "north": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_unconnected" }
+        },
+        {   "when": { "extension": "false", "north": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_connected" }
+        },
+        {   "when": { "extension": "true", "north": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_unconnected" }
+        },
+        {   "when": { "extension": "true", "north": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_connected" }
+        },
+        
+        {   "when": { "extension": "false", "east": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_unconnected", "y": 90, "uvlock": true }
+        },
+        {   "when": { "extension": "false", "east": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_connected", "y": 90, "uvlock": true }
+        },
+        {   "when": { "extension": "true", "east": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_unconnected", "y": 90, "uvlock": true }
+        },
+        {   "when": { "extension": "true", "east": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_connected", "y": 90, "uvlock": true }
+        },
+        
+        {   "when": { "extension": "false", "south": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_unconnected", "y": 180, "uvlock": true }
+        },
+        {   "when": { "extension": "false", "south": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_connected", "y": 180, "uvlock": true }
+        },
+        {   "when": { "extension": "true", "south": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_unconnected", "y": 180, "uvlock": true }
+        },
+        {   "when": { "extension": "true", "south": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_connected", "y": 180, "uvlock": true }
+        },
+        
+        {   "when": { "extension": "false", "west": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_unconnected", "y": 270, "uvlock": true }
+        },
+        {   "when": { "extension": "false", "west": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_base_connected", "y": 270, "uvlock": true }
+        },
+        {   "when": { "extension": "true", "west": "false" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_unconnected", "y": 270, "uvlock": true }
+        },
+        {   "when": { "extension": "true", "west": "true" },
+            "apply": { "model": "ceramics:block/cistern/terracotta/magenta/side_full_connected", "y": 270, "uvlock": true }
+        }
+    ]
+}

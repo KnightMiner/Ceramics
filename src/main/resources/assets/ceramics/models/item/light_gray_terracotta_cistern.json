@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/cistern/item",
+    "textures": {
+        "texture": "block/light_gray_terracotta"
+    }
+}

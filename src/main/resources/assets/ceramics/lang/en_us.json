@@ -87,14 +87,32 @@
     
     "block.ceramics.kiln": "Kiln",
     
-    "block.ceramics.unfired_cistern": "Unfired Cistern",
     "block.ceramics.gauge": "Gauge",
     "block.ceramics.gauge.tooltip": "Place on a tank to read the contained fluid level",
     "block.ceramics.gauge.empty": "Cistern is empty",
     "block.ceramics.gauge.contents": "Contains: %smb %s",
 
-    "block.ceramics.cistern": "Cistern",
-    "block.ceramics.cistern.tooltip": "Stack vertically to extend the fluid capacity",
+    "block.ceramics.unfired_cistern": "Unfired Cistern",
+    "block.ceramics.terracotta_cistern": "Terracotta Cistern",
+    "block.ceramics.cistern.tooltip": "Stack vertically with the same color to extend the fluid capacity",
+    
+    "block.ceramics.white_terracotta_cistern": "White Terracotta Cistern",
+    "block.ceramics.orange_terracotta_cistern": "Orange Terracotta Cistern",
+    "block.ceramics.magenta_terracotta_cistern": "Magenta Terracotta Cistern",
+    "block.ceramics.light_blue_terracotta_cistern": "Light Blue Terracotta Cistern",
+    "block.ceramics.yellow_terracotta_cistern": "Yellow Terracotta Cistern",
+    "block.ceramics.lime_terracotta_cistern": "Lime Terracotta Cistern",
+    "block.ceramics.pink_terracotta_cistern": "Pink Terracotta Cistern",
+    "block.ceramics.gray_terracotta_cistern": "Gray Terracotta Cistern",
+    "block.ceramics.light_gray_terracotta_cistern": "Light Gray Terracotta Cistern",
+    "block.ceramics.cyan_terracotta_cistern": "Cyan Terracotta Cistern",
+    "block.ceramics.purple_terracotta_cistern": "Purple Terracotta Cistern",
+    "block.ceramics.blue_terracotta_cistern": "Blue Terracotta Cistern",
+    "block.ceramics.brown_terracotta_cistern": "Brown Terracotta Cistern",
+    "block.ceramics.green_terracotta_cistern": "Green Terracotta Cistern",
+    "block.ceramics.red_terracotta_cistern": "Red Terracotta Cistern",
+    "block.ceramics.black_terracotta_cistern": "Black Terracotta Cistern",
+   
    
     "_comment": "#########",
     "_comment": "# Items #",
