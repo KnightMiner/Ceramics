@@ -180,26 +180,6 @@ public class CisternTileEntity extends MantleTileEntity {
   /* Extension behavior */
 
   /**
-   * Gets the fluid handler from a parent cistern
-   * @param parent  Parent cistern
-   * @return  Parent handler
-   */
-  private LazyOptional<IFluidHandler> getParentFluidHandler(CisternTileEntity parent) {
-    // invalidate existing handlers
-    invalidateHandlers();
-    internalHandler = parent.getInternalHandler();
-    // add the invalidation listener to the parent's public handler, means it will properly chain both if the parent is broken and if anything along the chain is broken
-    parent.getPublicHandler().addListener(invalidationListener);
-
-    // create a public handler to proxy to the parent, so we can invalidate separately
-    publicHandler = LazyOptional.of(() -> internalHandler.orElse(EmptyFluidHandler.INSTANCE));
-    // render index is below + 1, nifty trick
-    renderIndex = parent.getRenderIndex() + 1;
-    // return the internal handler
-    return internalHandler;
-  }
-
-  /**
    * Gets the internal fluid handler for this cistern. This handler should only be used by other cisterns, prevents a long recursive chain every fluid interaction
    * @return  Fluid handler optional
    */
@@ -229,7 +209,8 @@ public class CisternTileEntity extends MantleTileEntity {
 
           // return the internal handler
           return internalHandler;
-        } else {
+        } else if (!world.isRemote()) {
+          // render thread often has a few ticks with no cistern for an extension the base is broken
           Ceramics.LOG.error("Missing cistern tile entity below cistern extension");
         }
       } else {
