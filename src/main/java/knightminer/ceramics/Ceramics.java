@@ -4,6 +4,7 @@ import knightminer.ceramics.datagen.BlockTagProvider;
 import knightminer.ceramics.datagen.ItemTagProvider;
 import knightminer.ceramics.datagen.LootTableProvider;
 import knightminer.ceramics.datagen.RecipeProvider;
+import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
@@ -25,6 +26,7 @@ public class Ceramics {
 	public Ceramics() {
 	  Registration.init();
 		CeramicsTags.init();
+		CeramicsNetwork.init();
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::gatherData);
 	}

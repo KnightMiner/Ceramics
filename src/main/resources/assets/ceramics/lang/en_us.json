@@ -86,8 +86,10 @@
     "block.ceramics.magenta_rainbow_porcelain.tooltip": "Starts on magenta",
     
     "block.ceramics.kiln": "Kiln",
+    
     "block.ceramics.unfired_cistern": "Unfired Cistern",
     "block.ceramics.cistern": "Cistern",
+    "block.ceramics.cistern.tooltip": "Stack vertically to extend the fluid capacity",
    
     "_comment": "#########",
     "_comment": "# Items #",

@@ -1,6 +1,7 @@
 package knightminer.ceramics;
 
 import knightminer.ceramics.blocks.CisternBlock;
+import knightminer.ceramics.blocks.FluidCisternBlock;
 import knightminer.ceramics.blocks.KilnBlock;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
@@ -8,6 +9,7 @@ import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.items.ClayBucketItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.KilnRecipe;
+import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -148,7 +150,8 @@ public class Registration {
   public static final IRecipeType<KilnRecipe> KILN_RECIPE = IRecipeType.register("ceramics:kiln");
   public static final RegistryObject<CookingRecipeSerializer<KilnRecipe>> KILN_SERIALIZER = SERIALIZERS.register("kiln", () -> new CookingRecipeSerializer<>(KilnRecipe::new, 100));
 
-  // fluid
-  public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND)), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<CisternBlock> CISTERN = BLOCKS.register("cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(1.25F, 4.2F)), DEFAULT_BLOCK_ITEM);
+  // fluid handling
+  public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid()), DEFAULT_BLOCK_ITEM);
+  public static final ItemObject<FluidCisternBlock> CISTERN = BLOCKS.register("cistern", () -> new FluidCisternBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(1.25F, 4.2F).notSolid()), TOOLTIP_BLOCK_ITEM);
+  public static final RegistryObject<TileEntityType<CisternTileEntity>> CISTERN_TILE_ENTITY = TILE_ENTIITES.register("cistern", CisternTileEntity::new, CISTERN);
 }

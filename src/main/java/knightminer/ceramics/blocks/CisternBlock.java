@@ -36,7 +36,7 @@ import static net.minecraft.state.properties.BlockStateProperties.WEST;
  */
 public class CisternBlock extends Block {
   /** Block state properties for each of the four connection directions */
-  private static final Map<Direction,BooleanProperty> CONNECTIONS = Util.make(new EnumMap<>(Direction.class), map -> {
+  public static final Map<Direction,BooleanProperty> CONNECTIONS = Util.make(new EnumMap<>(Direction.class), map -> {
     map.put(Direction.NORTH, NORTH);
     map.put(Direction.SOUTH, SOUTH);
     map.put(Direction.WEST, WEST);
@@ -49,11 +49,11 @@ public class CisternBlock extends Block {
   private static final VoxelShape[] BOUNDS_BASE;
   private static final VoxelShape[] BOUNDS_EXTENSION;
   // bounds for lever placement
-  private static final VoxelShape SOLIDNESS_BASE = VoxelShapes.combine(
+  private static final VoxelShape SOLIDNESS_BASE = VoxelShapes.combineAndSimplify(
       VoxelShapes.fullCube(),
       makeCuboidShape(3, 2, 3, 13, 16, 13),
       IBooleanFunction.ONLY_FIRST);
-  private static final VoxelShape SOLIDNESS_EXTENSION = VoxelShapes.combine(
+  private static final VoxelShape SOLIDNESS_EXTENSION = VoxelShapes.combineAndSimplify(
       VoxelShapes.fullCube(),
       makeCuboidShape(3, 0, 3, 13, 16, 13),
       IBooleanFunction.ONLY_FIRST);
