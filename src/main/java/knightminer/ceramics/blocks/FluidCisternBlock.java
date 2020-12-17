@@ -97,6 +97,8 @@ public class FluidCisternBlock extends CisternBlock {
     if (state.get(CisternBlock.EXTENSION)) {
       // try to find a base cistern below if an extension
       findBase(world, pos).ifPresent(te -> te.addExtension(pos));
+    } else {
+      TileEntityHelper.getTile(CisternTileEntity.class, world, pos).ifPresent(te -> te.tryMerge(pos.up()));
     }
     super.onBlockPlacedBy(world, pos, state, placer, stack);
   }

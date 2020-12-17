@@ -24,6 +24,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
 import slimeknights.mantle.tileentity.MantleTileEntity;
+import slimeknights.mantle.util.TileEntityHelper;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import javax.annotation.Nullable;
@@ -123,6 +124,18 @@ public class CisternTileEntity extends MantleTileEntity {
   }
 
   /**
+   * Attempts to merge a cistern at the given position with this one
+   * @param checkPos  Position to check
+   */
+  public void tryMerge(BlockPos checkPos) {
+    assert world != null;
+    // check if there is another cistern above the new one that should also be connected
+    if (world.getBlockState(checkPos).isIn(getBlockState().getBlock())) {
+      TileEntityHelper.getTile(CisternTileEntity.class, world, checkPos).ifPresent(te -> te.makeExtension(this));
+    }
+  }
+
+  /**
    * Adds a new cistern as an extension to this one. Called by the new cistern when its placed in the world.
    * @param extPos  Position of extension
    */
@@ -135,13 +148,7 @@ public class CisternTileEntity extends MantleTileEntity {
       extensions = newExtensions;
 
       // check if there is another cistern above the new one that should also be connected
-      BlockPos above = extPos.up();
-      if (world.getBlockState(above).isIn(this.getBlockState().getBlock())) {
-        TileEntity te = world.getTileEntity(above);
-        if (te instanceof CisternTileEntity) {
-          ((CisternTileEntity)te).makeExtension(this);
-        }
-      }
+      tryMerge(extPos.up());
     }
   }
 
