@@ -280,7 +280,7 @@ public class CisternTileEntity extends MantleTileEntity {
    * @return  True if the fluid is contained, false otherwise
    */
   public boolean containsFluid(FluidStack fluid) {
-    return tank.getFluid().isFluidEqual(fluid);
+    return tank.getFluidAmount() == 0 || tank.getFluid().isFluidEqual(fluid);
   }
 
   /**
