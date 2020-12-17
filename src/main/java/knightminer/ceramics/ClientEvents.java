@@ -4,6 +4,8 @@ import knightminer.ceramics.client.CisternTileEntityRenderer;
 import knightminer.ceramics.client.ClayBucketModel;
 import knightminer.ceramics.client.gui.KilnScreen;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -18,6 +20,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 public class ClientEvents {
   @SubscribeEvent
   static void setupClient(FMLClientSetupEvent event) {
+    RenderTypeLookup.setRenderLayer(Registration.GAUGE.get(), RenderType.getCutout());
+
     ScreenManager.registerFactory(Registration.KILN_CONTAINER.get(), KilnScreen::new);
     ClientRegistry.bindTileEntityRenderer(Registration.CISTERN_TILE_ENTITY.get(), CisternTileEntityRenderer::new);
   }

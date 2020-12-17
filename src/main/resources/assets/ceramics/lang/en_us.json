@@ -88,6 +88,11 @@
     "block.ceramics.kiln": "Kiln",
     
     "block.ceramics.unfired_cistern": "Unfired Cistern",
+    "block.ceramics.gauge": "Gauge",
+    "block.ceramics.gauge.tooltip": "Place on a tank to read the contained fluid level",
+    "block.ceramics.gauge.empty": "Cistern is empty",
+    "block.ceramics.gauge.contents": "Contains: %smb %s",
+
     "block.ceramics.cistern": "Cistern",
     "block.ceramics.cistern.tooltip": "Stack vertically to extend the fluid capacity",
    

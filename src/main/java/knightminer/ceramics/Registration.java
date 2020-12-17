@@ -2,6 +2,7 @@ package knightminer.ceramics;
 
 import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.blocks.FluidCisternBlock;
+import knightminer.ceramics.blocks.GaugeBlock;
 import knightminer.ceramics.blocks.KilnBlock;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
@@ -151,6 +152,7 @@ public class Registration {
   public static final RegistryObject<CookingRecipeSerializer<KilnRecipe>> KILN_SERIALIZER = SERIALIZERS.register("kiln", () -> new CookingRecipeSerializer<>(KilnRecipe::new, 100));
 
   // fluid handling
+  public static final ItemObject<GaugeBlock> GAUGE = BLOCKS.register("gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).harvestTool(ToolType.SHOVEL).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), TOOLTIP_BLOCK_ITEM);
   public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid()), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<FluidCisternBlock> CISTERN = BLOCKS.register("cistern", () -> new FluidCisternBlock(AbstractBlock.Properties.create(Material.ROCK, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(1.25F, 4.2F).notSolid()), TOOLTIP_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<CisternTileEntity>> CISTERN_TILE_ENTITY = TILE_ENTIITES.register("cistern", CisternTileEntity::new, CISTERN);

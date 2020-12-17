@@ -182,9 +182,9 @@ public class CisternBlock extends Block {
    * @param facingState  Block on side
    * @return  True if connected, false otherwise
    */
-  private boolean isConnected(Direction facing, BlockState facingState) {
+  protected boolean isConnected(Direction facing, BlockState facingState) {
     // must be in tag
-    if (!facingState.isIn(CeramicsTags.Blocks.BARREL_CONNECTIONS)) {
+    if (!facingState.isIn(CeramicsTags.Blocks.CISTERN_CONNECTIONS)) {
       return false;
     }
 

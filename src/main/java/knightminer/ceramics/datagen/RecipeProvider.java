@@ -218,6 +218,15 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .build(consumer);
     // fired
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.CISTERN, 0.3f);
+    // gauge
+    ShapedRecipeBuilder.shapedRecipe(Registration.GAUGE, 4)
+                       .key('b', Items.BRICK)
+                       .key('p', Tags.Items.GLASS_PANES_COLORLESS)
+                       .patternLine(" b ")
+                       .patternLine("bpb")
+                       .patternLine(" b ")
+                       .addCriterion("has_cistern", hasItem(Registration.CISTERN))
+                       .build(consumer);
 
     // armor
     // clay plates

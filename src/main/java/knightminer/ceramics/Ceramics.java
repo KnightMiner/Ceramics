@@ -59,5 +59,15 @@ public class Ceramics {
 	 */
 	public static ResourceLocation getResource(String name) {
 	  return new ResourceLocation(MOD_ID, name);
-  }
+	}
+
+	/**
+	 * Forms the mod ID into a language key
+	 * @param group Language key group
+	 * @param name Name within group
+	 * @return Language key
+	 */
+	public static String lang(String group, String name) {
+		return String.format("%s.%s.%s", group, MOD_ID, name);
+	}
 }

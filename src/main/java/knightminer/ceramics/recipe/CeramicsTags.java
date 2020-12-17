@@ -39,7 +39,7 @@ public class CeramicsTags {
     public static final INamedTag<Block> COLORED_PORCELAIN = makeWrapperTag("colored_porcelain");
     public static final INamedTag<Block> RAINBOW_PORCELAIN = makeWrapperTag("rainbow_porcelain");
     public static final INamedTag<Block> BRICKS = makeWrapperTag("bricks");
-    public static final INamedTag<Block> BARREL_CONNECTIONS = makeWrapperTag("barrel_connections");
+    public static final INamedTag<Block> CISTERN_CONNECTIONS = makeWrapperTag("cistern_connections");
 
     private static INamedTag<Block> makeWrapperTag(String id) {
       return BlockTags.makeWrapperTag(Ceramics.locationName(id));

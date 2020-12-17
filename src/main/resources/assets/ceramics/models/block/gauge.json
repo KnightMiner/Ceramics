@@ -1,0 +1,32 @@
+{
+  "textures": {
+    "particle": "ceramics:block/gauge",
+    "gauge": "ceramics:block/gauge",
+    "clay": "minecraft:block/terracotta"
+  },
+	"elements": [
+		{
+			"from": [4, 4, 0],
+			"to": [12, 12, 1],
+			"faces": {
+				"north": {"texture": "#gauge", "cullface": "north"},
+				"east":  {"texture": "#clay" },
+				"south": {"texture": "#gauge"},
+				"west":  {"texture": "#clay" },
+				"up":    {"texture": "#clay" },
+				"down":  {"texture": "#clay" }
+			}
+		},
+		{
+			"name": "inside",
+			"from": [11, 11, 1.01],
+			"to": [5, 5, 0],
+			"faces": {
+				"east": {"texture": "#clay"},
+				"west": {"texture": "#clay"},
+				"up":   {"texture": "#clay"},
+				"down": {"texture": "#clay"}
+			}
+		}
+	]
+}
