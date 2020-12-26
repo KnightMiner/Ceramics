@@ -1,4 +1,4 @@
-package knightminer.ceramics.client;
+package knightminer.ceramics.client.renderer;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.datafixers.util.Pair;

@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "extension=true": {
+      "bottom": 0,
+      "continue": true
+    },
+    "extension=false": {
+      "bottom": 2
+    }
+  }
+}

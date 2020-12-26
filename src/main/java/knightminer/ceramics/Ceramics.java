@@ -9,8 +9,10 @@ import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -29,6 +31,7 @@ public class Ceramics {
 		CeramicsNetwork.init();
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::gatherData);
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientEvents::onConstructor);
 	}
 
 	private void gatherData(GatherDataEvent event) {

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "ceramics:unfired_porcelain_faucet"
+  },
+  "result": "ceramics:porcelain_faucet",
+  "experience": 0.3,
+  "cookingtime": 200
+}

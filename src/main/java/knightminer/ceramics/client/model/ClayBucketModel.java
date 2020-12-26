@@ -1,4 +1,4 @@
-package knightminer.ceramics.client;
+package knightminer.ceramics.client.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

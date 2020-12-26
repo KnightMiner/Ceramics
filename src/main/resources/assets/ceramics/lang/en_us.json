@@ -112,6 +112,9 @@
     "block.ceramics.green_terracotta_cistern": "Green Terracotta Cistern",
     "block.ceramics.red_terracotta_cistern": "Red Terracotta Cistern",
     "block.ceramics.black_terracotta_cistern": "Black Terracotta Cistern",
+    
+    "block.ceramics.unfired_porcelain_faucet": "Unfired Porcelain Faucet",
+    "block.ceramics.porcelain_faucet": "Porcelain Faucet",
    
    
     "_comment": "#########",

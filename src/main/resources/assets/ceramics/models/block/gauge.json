@@ -20,7 +20,7 @@
 		{
 			"name": "inside",
 			"from": [11, 11, 1.01],
-			"to": [5, 5, 0],
+			"to": [5, 6, 0],
 			"faces": {
 				"east": {"texture": "#clay"},
 				"west": {"texture": "#clay"},

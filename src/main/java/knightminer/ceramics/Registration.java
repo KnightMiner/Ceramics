@@ -1,9 +1,11 @@
 package knightminer.ceramics;
 
 import knightminer.ceramics.blocks.CisternBlock;
+import knightminer.ceramics.blocks.FaucetBlock;
 import knightminer.ceramics.blocks.FluidCisternBlock;
 import knightminer.ceramics.blocks.GaugeBlock;
 import knightminer.ceramics.blocks.KilnBlock;
+import knightminer.ceramics.blocks.PouringFaucetBlock;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.ArmorMaterials;
@@ -12,6 +14,7 @@ import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.tileentity.CisternTileEntity;
+import knightminer.ceramics.tileentity.FaucetTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -156,13 +159,19 @@ public class Registration {
 
   // fluid handling
   public static final ItemObject<GaugeBlock> GAUGE = BLOCKS.register("gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), TOOLTIP_BLOCK_ITEM);
-  public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid()), DEFAULT_BLOCK_ITEM);
+  // cistern
+  private static final AbstractBlock.Properties CLAY_PROPERTIES = AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid();
+  public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MaterialColor.ADOBE).notSolid()), CISTERN_BLOCK_ITEM);
   public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color))), CISTERN_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<CisternTileEntity>> CISTERN_TILE_ENTITY = TILE_ENTIITES.register("cistern", CisternTileEntity::new, builder -> {
     builder.add(TERRACOTTA_CISTERN.get());
     builder.addAll(COLORED_CISTERN.values());
   });
+  // faucet
+  public static final ItemObject<FaucetBlock> UNFIRED_PORCELAIN_FAUCET = BLOCKS.register("unfired_porcelain_faucet", () -> new FaucetBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
+  public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.WHITE_TERRACOTTA).notSolid()), DEFAULT_BLOCK_ITEM);
+  public static final RegistryObject<TileEntityType<FaucetTileEntity>> FAUCET_TILE_ENTITY = TILE_ENTIITES.register("faucet", FaucetTileEntity::new, PORCELAIN_FAUCET);
 
 
   /**

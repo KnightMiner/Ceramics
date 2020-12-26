@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/faucet/side",
+    "textures": {
+        "tex": "ceramics:block/unfired_porcelain"
+    }
+}

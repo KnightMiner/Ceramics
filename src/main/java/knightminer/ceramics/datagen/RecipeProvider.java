@@ -239,6 +239,15 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .patternLine(" b ")
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
+    // faucet
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_PORCELAIN_FAUCET, 2)
+                       .key('c', Registration.UNFIRED_PORCELAIN)
+                       .patternLine("ccc")
+                       .patternLine(" c ")
+                       .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
+                       .build(consumer);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN_FAUCET, Registration.PORCELAIN_FAUCET, 0.3f);
+
 
     // armor
     // clay plates
@@ -308,6 +317,11 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .addCriterion("has_unfired", hasItem(Registration.UNFIRED_PORCELAIN_BLOCK))
                           .setGroup(locationString("porcelain_uncrafting"))
                           .build(consumer, suffix(Registration.UNFIRED_PORCELAIN_BLOCK, "_uncrafting"));
+    ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 2)
+                          .addIngredient(Registration.UNFIRED_PORCELAIN_FAUCET)
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_PORCELAIN_FAUCET))
+                          .setGroup(locationString("porcelain_uncrafting"))
+                          .build(consumer, suffix(Registration.UNFIRED_PORCELAIN_FAUCET, "_uncrafting"));
     // compat, wish there was a better way to do this
     ShapedRecipeBuilder.shapedRecipe(Blocks.CAKE)
                        .key('M', CeramicsTags.Items.MILK_BUCKETS)

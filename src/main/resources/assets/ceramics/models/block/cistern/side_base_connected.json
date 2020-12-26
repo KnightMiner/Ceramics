@@ -55,18 +55,18 @@
 		{
 			"name": "inside bottom",
 			"from": [3, 2, 3],
-			"to": [13, 5, 3],
+			"to": [13, 6, 3],
 			"faces": {"south": {"texture": "#texture"}}
 		},
 		{
 			"name": "inside left",
-			"from": [3, 5, 3],
+			"from": [3, 6, 3],
 			"to": [5, 11, 3],
 			"faces": {"south": {"texture": "#texture"}}
 		},
 		{
 			"name": "inside right",
-			"from": [11, 5, 3],
+			"from": [11, 6, 3],
 			"to": [13, 11, 3],
 			"faces": {"south": {"texture": "#texture"}}
 		},
@@ -83,7 +83,7 @@
 		{
 			"name": "connection bottom",
 			"from": [5, 4, 0],
-			"to": [11, 5, 1],
+			"to": [11, 6, 1],
 			"faces": {
 				"north": {"texture": "#texture", "cullface": "north"},
 				"down":  {"texture": "#texture"}
@@ -114,7 +114,7 @@
 		{
 			"name": "connection inside",
 			"from": [11, 11, 3],
-			"to": [5, 5, 0],
+			"to": [5, 6, 0],
 			"faces": {
 				"east": {"texture": "#texture"},
 				"west": {"texture": "#texture"},

@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "ceramics:gauge"
+    "ceramics:gauge",
+    "ceramics:unfired_porcelain_faucet",
+    "ceramics:porcelain_faucet"
   ]
 }

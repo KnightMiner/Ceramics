@@ -37,6 +37,7 @@ public class CeramicsNetwork extends NetworkWrapper {
       INSTANCE = new CeramicsNetwork();
 
       INSTANCE.registerPacket(CisternUpdatePacket.class, CisternUpdatePacket::new, NetworkDirection.PLAY_TO_CLIENT);
+      INSTANCE.registerPacket(FaucetActivationPacket.class, FaucetActivationPacket::new, NetworkDirection.PLAY_TO_CLIENT);
     }
   }
 
