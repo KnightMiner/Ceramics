@@ -1,6 +1,7 @@
 package knightminer.ceramics;
 
 import knightminer.ceramics.client.gui.KilnScreen;
+import knightminer.ceramics.client.model.CisternModel;
 import knightminer.ceramics.client.model.ClayBucketModel;
 import knightminer.ceramics.client.model.FaucetFluidLoader;
 import knightminer.ceramics.client.renderer.CisternTileEntityRenderer;
@@ -46,5 +47,6 @@ public class ClientEvents {
   @SubscribeEvent
   static void registerModels(ModelRegistryEvent event) {
     ModelLoaderRegistry.registerLoader(Ceramics.getResource("bucket"), ClayBucketModel.LOADER);
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("cistern"), CisternModel.LOADER);
   }
 }
