@@ -51,7 +51,7 @@ public class CisternTileEntity extends MantleTileEntity {
   private int renderIndex = 0;
 
   /** Consumer for when the parent invalidates */
-  private final NonNullConsumer<LazyOptional<IFluidHandler>> invalidationListener = new WeakConsumerWrapper<>(this, (te, handler) -> invalidateHandlers());
+  private final NonNullConsumer<LazyOptional<IFluidHandler>> invalidationListener = new WeakConsumerWrapper<>(this, (te, handler) -> te.invalidateHandlers());
 
   public CisternTileEntity() {
     super(Registration.CISTERN_TILE_ENTITY.get());

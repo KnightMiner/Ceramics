@@ -17,27 +17,47 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullConsumer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
+import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
-// TODO: store lazy optionals of two relevant blocks instead of refetching
 public class FaucetTileEntity extends TileEntity implements ITickableTileEntity {
+  /** Transfer rate of the faucet */
+  public static final int MB_PER_TICK = 12;
+  /** amount of MB to extract from the input at a time */
+  public static final int PACKET_SIZE = 144;
+
   private static final String TAG_DRAINED = "drained";
   private static final String TAG_STOP = "stop";
   private static final String TAG_POURING = "pouring";
   private static final String TAG_LAST_REDSTONE = "lastRedstone";
 
+  /** If true, faucet is currently pouring */
   private boolean isPouring = false;
+  /** If true, redstone told this faucet to stop, so stop when ready */
   private boolean stopPouring = false;
   /** Last fluid the client was sent, used to reduce number of packets we need to send */
   private Fluid clientFluid = Fluids.EMPTY;
+  /** Current fluid in the faucet */
   private FluidStack drained = FluidStack.EMPTY;
+  /** Used for pulse detection */
   private boolean lastRedstoneState;
+
+  /** Fluid handler of the input to the faucet */
+  private LazyOptional<IFluidHandler> inputHandler;
+  /** Fluid handler of the output from the faucet */
+  private LazyOptional<IFluidHandler> outputHandler;
+  /** Listener for when the input handler is invalidated */
+  private final NonNullConsumer<LazyOptional<IFluidHandler>> inputListener = new WeakConsumerWrapper<>(this, (self, handler) -> self.inputHandler = null);
+  /** Listner for when the output handler is invalidated */
+  private final NonNullConsumer<LazyOptional<IFluidHandler>> outputListener = new WeakConsumerWrapper<>(this, (self, handler) -> self.outputHandler = null);
 
   public FaucetTileEntity() {
     this(Registration.FAUCET_TILE_ENTITY.get());
@@ -46,6 +66,68 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
   @SuppressWarnings("WeakerAccess")
   protected FaucetTileEntity(TileEntityType<?> tileEntityTypeIn) {
     super(tileEntityTypeIn);
+  }
+
+
+  /* Fluid handler */
+
+  /**
+   * Finds the fluid handler on the given side
+   * @param side  Side to check
+   * @return  Fluid handler
+   */
+  private LazyOptional<IFluidHandler> findFluidHandler(Direction side) {
+    assert world != null;
+    TileEntity te = world.getTileEntity(pos.offset(side));
+    if (te != null) {
+      LazyOptional<IFluidHandler> handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+      if (handler.isPresent()) {
+        return handler;
+      }
+    }
+    return LazyOptional.empty();
+  }
+
+  /**
+   * Gets the input fluid handler
+   * @return  Input fluid handler
+   */
+  private LazyOptional<IFluidHandler> getInputHandler() {
+    if (inputHandler == null) {
+      inputHandler = findFluidHandler(getBlockState().get(FACING).getOpposite());
+      if (inputHandler.isPresent()) {
+        inputHandler.addListener(inputListener);
+      }
+    }
+    return inputHandler;
+  }
+
+  /**
+   * Gets the output fluid handler
+   * @return  Output fluid handler
+   */
+  private LazyOptional<IFluidHandler> getOutputHandler() {
+    if (outputHandler == null) {
+      outputHandler = findFluidHandler(Direction.DOWN);
+      if (outputHandler.isPresent()) {
+        outputHandler.addListener(outputListener);
+      }
+    }
+    return outputHandler;
+  }
+
+  /**
+   * Called when a neighbor changes to invalidate the cached fluid handler
+   * @param neighbor  Neighbor position that changed
+   */
+  public void neighborChanged(BlockPos neighbor) {
+    // if the neighbor was below us, remove output
+    if (pos.equals(neighbor.up())) {
+      outputHandler = null;
+      // neighbor behind us
+    } else if (pos.equals(neighbor.offset(getBlockState().get(FACING)))) {
+      inputHandler = null;
+    }
   }
 
 
@@ -132,18 +214,19 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
    */
   private void doTransfer() {
     // still got content left
-    Direction direction = this.getBlockState().get(FACING);
-    IFluidHandler toDrain = getFluidHandler(pos.offset(direction.getOpposite()), direction);
-    IFluidHandler toFill = getFluidHandler(pos.down(), Direction.UP);
-    if (toDrain != null && toFill != null) {
+    LazyOptional<IFluidHandler> inputOptional = getInputHandler();
+    LazyOptional<IFluidHandler> outputOptional = getOutputHandler();
+    if (inputOptional.isPresent() && outputOptional.isPresent()) {
       // can we drain?
-      FluidStack drained = toDrain.drain(144, IFluidHandler.FluidAction.SIMULATE);
+      IFluidHandler input = inputOptional.orElse(EmptyFluidHandler.INSTANCE);
+      FluidStack drained = input.drain(PACKET_SIZE, FluidAction.SIMULATE);
       if (!drained.isEmpty()) {
         // can we fill
-        int filled = toFill.fill(drained, IFluidHandler.FluidAction.SIMULATE);
+        IFluidHandler output = outputOptional.orElse(EmptyFluidHandler.INSTANCE);
+        int filled = output.fill(drained, FluidAction.SIMULATE);
         if (filled > 0) {
           // drain the liquid and transfer it, buffer the amount for delay
-          this.drained = toDrain.drain(filled, IFluidHandler.FluidAction.EXECUTE);
+          this.drained = input.drain(filled, FluidAction.EXECUTE);
 
           // sync to clients if we have changes
           if (!isPouring || clientFluid != drained.getFluid()) {
@@ -179,13 +262,15 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
       return;
     }
 
-    IFluidHandler toFill = getFluidHandler(pos.down(), Direction.UP);
-    if (toFill != null) {
+    // ensure we have an output
+    LazyOptional<IFluidHandler> outputOptional = getOutputHandler();
+    if (outputOptional.isPresent()) {
       FluidStack fillStack = drained.copy();
-      fillStack.setAmount(Math.min(drained.getAmount(), 6));
+      fillStack.setAmount(Math.min(drained.getAmount(), MB_PER_TICK));
 
       // can we fill?
-      int filled = toFill.fill(fillStack, IFluidHandler.FluidAction.SIMULATE);
+      IFluidHandler output = outputOptional.orElse(EmptyFluidHandler.INSTANCE);
+      int filled = output.fill(fillStack, IFluidHandler.FluidAction.SIMULATE);
       if (filled > 0) {
         // update client if they do not think we have fluid
         if (clientFluid != drained.getFluid()) {
@@ -195,11 +280,11 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
         // transfer it
         this.drained.shrink(filled);
         fillStack.setAmount(filled);
-        toFill.fill(fillStack, IFluidHandler.FluidAction.EXECUTE);
+        output.fill(fillStack, IFluidHandler.FluidAction.EXECUTE);
       }
     }
     else {
-      // filling TE got lost. all liquid buffered is lost.
+      // output got lost. all liquid buffered is lost.
       reset();
     }
   }
@@ -214,26 +299,6 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
       isPouring = false;
       syncToClient(FluidStack.EMPTY, false);
     }
-  }
-
-  /**
-   * Gets IFluidHandler of TE
-   * @param pos       TE position
-   * @param direction Side of TE to check for fluid handler
-   * @return  IFluidHandler of TE or null.
-   */
-  @SuppressWarnings("ConstantConditions")
-  @Nullable
-  private IFluidHandler getFluidHandler(BlockPos pos, Direction direction) {
-    // TODO: cache handlers
-    if (world == null) {
-      return null;
-    }
-    TileEntity te = world.getTileEntity(pos);
-    if (te != null) {
-      return te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction).orElse(null);
-    }
-    return null;
   }
 
   @Override

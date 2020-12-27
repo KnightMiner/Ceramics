@@ -139,6 +139,16 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 	}
 
 
+	@Override
+	protected void invalidateCaps() {
+		super.invalidateCaps();
+		topHandler.invalidate();
+		for (LazyOptional<IFluidHandler> handler : sideTanks.values()) {
+			handler.invalidate();
+		}
+	}
+
+
 	/* Flowing property */
 
 	/**
@@ -250,13 +260,13 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 			boolean hasFlown = false;
 			BlockState state = getBlockState();
 			if(state.get(ChannelBlock.DOWN)) {
-				hasFlown = trySide(Direction.DOWN, LIQUID_TRANSFER);
+				hasFlown = trySide(Direction.DOWN, FaucetTileEntity.MB_PER_TICK);
 			}
 			// try sides if we have any sides
 			int outputs = countOutputs(state);
 			if(!hasFlown && outputs > 0) {
 				// split the fluid evenly between sides
-				int flowRate = MathHelper.clamp(tank.getMaxUsable() / outputs, 1, LIQUID_TRANSFER);
+				int flowRate = MathHelper.clamp(tank.getMaxUsable() / outputs, 1, FaucetTileEntity.MB_PER_TICK);
 				// then transfer on each side
 				for(Direction side : Plane.HORIZONTAL) {
 					trySide(side, flowRate);

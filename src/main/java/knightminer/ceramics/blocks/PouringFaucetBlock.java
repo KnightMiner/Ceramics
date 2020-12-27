@@ -68,7 +68,10 @@ public class PouringFaucetBlock extends FaucetBlock {
     if (worldIn.isRemote()) {
       return;
     }
-    getFaucet(worldIn, pos).ifPresent(faucet -> faucet.handleRedstone(worldIn.isBlockPowered(pos)));
+    getFaucet(worldIn, pos).ifPresent(faucet -> {
+      faucet.neighborChanged(fromPos);
+      faucet.handleRedstone(worldIn.isBlockPowered(pos));
+    });
   }
 
   @SuppressWarnings("deprecation")
