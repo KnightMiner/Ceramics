@@ -377,7 +377,6 @@ public class CisternTileEntity extends MantleTileEntity {
       compound.put(TAG_FLUID, tank.writeToNBT());
     }
     compound.putInt(TAG_EXTENSIONS, extensions);
-    compound.putInt("renderIndex", renderIndex);
     return compound;
   }
 }
