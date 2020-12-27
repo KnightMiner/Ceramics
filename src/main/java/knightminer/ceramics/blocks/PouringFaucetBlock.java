@@ -98,10 +98,9 @@ public class PouringFaucetBlock extends FaucetBlock {
    */
   private static void addParticles(BlockState state, IWorld worldIn, BlockPos pos) {
     Direction direction = state.get(FACING);
-    //Direction direction1 = getFacing(state).getOpposite();
-    double x = (double)pos.getX() + 0.5D + 0.3D * (double)direction.getXOffset();
-    double y = (double)pos.getY() + 0.5D + 0.3D * (double)direction.getYOffset();
-    double z = (double)pos.getZ() + 0.5D + 0.3D * (double)direction.getZOffset();
+    double x = (double)pos.getX() + 0.5D - 0.3D * (double)direction.getXOffset();
+    double y = (double)pos.getY() + 0.5D - 0.3D * (double)direction.getYOffset();
+    double z = (double)pos.getZ() + 0.5D - 0.3D * (double)direction.getZOffset();
     worldIn.addParticle(new RedstoneParticleData(1.0F, 0.0F, 0.0F, 0.5f), x, y, z, 0.0D, 0.0D, 0.0D);
   }
 
