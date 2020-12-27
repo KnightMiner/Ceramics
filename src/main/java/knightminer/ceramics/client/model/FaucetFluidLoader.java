@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import knightminer.ceramics.Ceramics;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.JsonReloadListener;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
@@ -17,10 +20,13 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.IWorld;
 import net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.Mantle;
 import slimeknights.mantle.client.model.fluid.FluidCuboid;
+import slimeknights.mantle.client.render.FluidRenderer;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,6 +113,35 @@ public class FaucetFluidLoader extends JsonReloadListener {
    */
   public static FaucetFluid get(BlockState state) {
     return INSTANCE.fluidMap.getOrDefault(state, INSTANCE.defaultFluid);
+  }
+
+  /**
+   * Renders faucet fluids at the relevant location
+   * @param world       World instance
+   * @param pos         Base position
+   * @param direction   Direction to render
+   * @param matrices    Matrix instance
+   * @param buffer      Builder instance
+   * @param still       Still fluid texture
+   * @param flowing     Flowing fluid texture
+   * @param color       Color to tint fluid
+   * @param light       Fluid light value
+   */
+  public static void renderFaucetFluids(IWorld world, BlockPos pos, Direction direction, MatrixStack matrices, IVertexBuilder buffer, TextureAtlasSprite still, TextureAtlasSprite flowing, int color, int light) {
+    int i = 0;
+    FaucetFluid faucetFluid;
+    do {
+      // get the faucet data for the block
+      i++;
+      faucetFluid = FaucetFluidLoader.get(world.getBlockState(pos.down(i)));
+      // render all down cubes with the given offset
+      matrices.push();
+      matrices.translate(0, -i, 0);
+      for (FluidCuboid cube : faucetFluid.getFluids(direction)) {
+        FluidRenderer.renderCuboid(matrices, buffer, cube, still, flowing, cube.getFromScaled(), cube.getToScaled(), color, light, false);
+      }
+      matrices.pop();
+    } while (faucetFluid.isContinued());
   }
 
   /**

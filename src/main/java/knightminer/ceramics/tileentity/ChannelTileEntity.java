@@ -5,12 +5,11 @@ import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.ChannelFlowPacket;
+import knightminer.ceramics.network.ChannelFluidUpdatePacket;
 import knightminer.ceramics.util.tank.ChannelSideTank;
 import knightminer.ceramics.util.tank.ChannelTank;
 import knightminer.ceramics.util.tank.FillOnlyFluidHandler;
 import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -77,8 +76,8 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 	 * Gets the central fluid tank of this channel
 	 * @return  Central tank
 	 */
-	public ChannelTank getTank() {
-		return this.tank;
+	public FluidStack getFluid() {
+		return this.tank.getFluid();
 	}
 
 	@Override
@@ -148,7 +147,7 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 	 * @return Flow index
 	 */
 	private int getFlowIndex(Direction side) {
-		if (side.getAxis().isHorizontal()) {
+		if (side.getAxis().isVertical()) {
 			return 0;
 		}
 		return side.getIndex() - 1;
@@ -169,7 +168,7 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 		isFlowing[index] = (byte)(flowing ? 2 : 0);
 
 		// send packet to client if it changed
-		if(wasFlowing != flowing && world != null && world.isRemote) {
+		if(wasFlowing != flowing && world != null && !world.isRemote) {
 			syncFlowToClient(side, flowing);
 		}
 	}
@@ -367,15 +366,20 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 	private static final String TAG_TANK = "tank";
 
 	/**
+	 * Sends a fluid update to the client with the current fluid
+	 */
+	public void sendFluidUpdate() {
+		if (world != null && !world.isRemote) {
+			CeramicsNetwork.getInstance().sendToClientsAround(new ChannelFluidUpdatePacket(pos, getFluid()), world, pos);
+		}
+	}
+
+	/**
 	 * Updates the contained fluid from a packet
 	 * @param fluid  New fluid
 	 */
-	public void updateFluid(Fluid fluid) {
-		if (fluid == Fluids.EMPTY) {
-			tank.setFluid(FluidStack.EMPTY);
-		} else {
-			tank.setFluid(new FluidStack(fluid, 1));
-		}
+	public void updateFluid(FluidStack fluid) {
+		tank.setFluid(fluid);
 	}
 
 	@Override

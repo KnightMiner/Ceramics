@@ -41,25 +41,28 @@ public class ChannelTank extends FluidTank {
 
 	@Override
 	public int fill(FluidStack resource, FluidAction action) {
+		boolean wasEmpty = isEmpty();
 		int amount = super.fill(resource, action);
 		if(action.execute()) {
 			locked += amount;
+			// if we added something, sync to client
+			if (wasEmpty && !isEmpty()) {
+				parent.sendFluidUpdate();
+			}
 		}
 		return amount;
 	}
 
-// TODO: I think the intention was to only send update when adding or removing fluids, is there an easy way to do that?
-//	@Override
-//	protected void sendUpdate(int amount) {
-//		if(amount != 0) {
-//			// if the fluid is null, we just removed fluid
-//			// if the amounts matched, that means we had 0 before
-//			FluidStack fluid = this.getFluid();
-//			if(fluid.isEmpty() || fluid.getAmount() == amount) {
-//				super.sendUpdate(amount);
-//			}
-//		}
-//	}
+	@Override
+	public FluidStack drain(int maxDrain, FluidAction action) {
+		boolean wasEmpty = isEmpty();
+		FluidStack stack = super.drain(maxDrain, action);
+		// if we removed something, sync to client
+		if (action.execute() && !wasEmpty && isEmpty()) {
+			parent.sendFluidUpdate();
+		}
+		return stack;
+	}
 
 	@Override
 	public FluidTank readFromNBT(CompoundNBT nbt) {

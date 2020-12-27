@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import knightminer.ceramics.blocks.FaucetBlock;
 import knightminer.ceramics.client.model.FaucetFluidLoader;
-import knightminer.ceramics.client.model.FaucetFluidLoader.FaucetFluid;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -15,7 +14,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -68,21 +66,7 @@ public class FaucetTileEntityRenderer extends TileEntityRenderer<FaucetTileEntit
       }
 
       // render into the block(s) below
-      BlockPos pos = tileEntity.getPos();
-      int i = 0;
-      FaucetFluid faucetFluid;
-      do {
-        // get the faucet data for the block
-        i++;
-        faucetFluid = FaucetFluidLoader.get(world.getBlockState(pos.down(i)));
-        // render all down cubes with the given offset
-        matrices.push();
-        matrices.translate(0, -i, 0);
-        for (FluidCuboid cube : faucetFluid.getFluids(direction)) {
-          FluidRenderer.renderCuboid(matrices, buffer, cube, still, flowing, cube.getFromScaled(), cube.getToScaled(), color, combinedLightIn, isGas);
-        }
-        matrices.pop();
-      } while (faucetFluid.isContinued());
+      FaucetFluidLoader.renderFaucetFluids(world, tileEntity.getPos(), direction, matrices, buffer, still, flowing, color, combinedLightIn);
 
       // if rotated, pop back rotation
       if(isRotated) {

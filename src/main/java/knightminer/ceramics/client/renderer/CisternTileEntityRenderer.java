@@ -25,59 +25,6 @@ import slimeknights.mantle.client.render.FluidRenderer;
  * Renderer for cistern blocks
  */
 public class CisternTileEntityRenderer extends TileEntityRenderer<CisternTileEntity> {
-//  /** Map of block state to fluid cuboids for each relevant side */
-//  private static final Map<BlockState,Pair<FluidCuboid,List<FluidCuboid>>> CUBOID_MAP = new HashMap<>();
-//  /** Start of base fluid cube */
-//  private static final Vector3f CUBOID_FROM_BASE = new Vector3f(3, 2, 3);
-//  /** Start of extension fluid cubes */
-//  private static final Vector3f CUBOID_FROM_EXTENSION = new Vector3f(3, -1, 3);
-//  /** End of fluid cube in cisterns */
-//  private static final Vector3f CUBOID_TO = new Vector3f(13, 15, 13);
-//  /** Fluid cuboids for each side extension */
-//  private static final Map<Direction,FluidCuboid> SIDE_CUBOIDS = Util.make(new EnumMap<>(Direction.class), map -> {
-//    // logic to make a single side map
-//    Function<Direction,Map<Direction,FluidFace>> faceGenerator = dir -> {
-//      Map<Direction,FluidFace> faces = new EnumMap<>(Direction.class);
-//      faces.put(Direction.UP, FluidFace.NORMAL);
-//      faces.put(dir, FluidFace.NORMAL);
-//      return faces;
-//    };
-//    // add four sides to the map
-//    map.put(Direction.NORTH, new FluidCuboid(new Vector3f( 5, 6,  0), new Vector3f(11, 11,  3), faceGenerator.apply(Direction.NORTH)));
-//    map.put(Direction.SOUTH, new FluidCuboid(new Vector3f( 5, 6, 13), new Vector3f(11, 11, 16), faceGenerator.apply(Direction.SOUTH)));
-//    map.put(Direction.WEST,  new FluidCuboid(new Vector3f( 0, 6,  5), new Vector3f( 3, 11, 11), faceGenerator.apply(Direction.WEST)));
-//    map.put(Direction.EAST,  new FluidCuboid(new Vector3f(13, 6,  5), new Vector3f(16, 11, 11), faceGenerator.apply(Direction.EAST)));
-//  });
-//
-//  /**
-//   * Gets the fluid cuboids for rendering this state
-//   * @param state  State to render
-//   * @return  Pair of cuboids for center, and cuboid list for sides
-//   */
-//  private static Pair<FluidCuboid,List<FluidCuboid>> getCuboid(BlockState state) {
-//    // determine starting height
-//    Vector3f from = state.get(CisternBlock.EXTENSION) ? CUBOID_FROM_EXTENSION : CUBOID_FROM_BASE;
-//
-//    // determine which side faces to add
-//    ImmutableList.Builder<FluidCuboid> sides = ImmutableList.builder();
-//    for (Direction direction : Plane.HORIZONTAL) {
-//      if (state.get(CisternBlock.CONNECTIONS.get(direction))) {
-//        sides.add(SIDE_CUBOIDS.get(direction));
-//      }
-//    }
-//
-//    return Pair.of(new FluidCuboid(from, CUBOID_TO, Util.make(new EnumMap<>(Direction.class), map -> map.put(Direction.UP, FluidFace.NORMAL))), sides.build());
-//  }
-//
-//  /**
-//   * Gets the cached fluid cuboids for rendering this state
-//   * @param state  State to render
-//   * @return  Pair of cuboids for center, and cuboid list for sides
-//   */
-//  private static Pair<FluidCuboid,List<FluidCuboid>> getCachedCuboid(BlockState state) {
-//    return CUBOID_MAP.computeIfAbsent(state, CisternTileEntityRenderer::getCuboid);
-//  }
-
   public CisternTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
     super(rendererDispatcherIn);
   }
