@@ -32,7 +32,7 @@ public class FaucetTileEntityRenderer extends TileEntityRenderer<FaucetTileEntit
 
   @Override
   public void render(FaucetTileEntity tileEntity, float partialTicks, MatrixStack matrices, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-    FluidStack drained = tileEntity.getDrained();
+    FluidStack drained = tileEntity.getRenderFluid();
     if (!tileEntity.isPouring() || drained.isEmpty()) {
       return;
     }

@@ -111,7 +111,7 @@ public class PouringFaucetBlock extends FaucetBlock {
   @OnlyIn(Dist.CLIENT)
   public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
     getFaucet(worldIn, pos).ifPresent(faucet -> {
-      if (faucet.isPouring() && faucet.getDrained().isEmpty() && rand.nextFloat() < 0.25F) {
+      if (faucet.isPouring() && faucet.getRenderFluid().isEmpty() && rand.nextFloat() < 0.25F) {
         addParticles(stateIn, worldIn, pos);
       }
     });

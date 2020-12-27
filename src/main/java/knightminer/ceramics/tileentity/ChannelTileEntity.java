@@ -11,8 +11,6 @@ import knightminer.ceramics.util.tank.ChannelTank;
 import knightminer.ceramics.util.tank.FillOnlyFluidHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -390,19 +388,6 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 	 */
 	public void updateFluid(FluidStack fluid) {
 		tank.setFluid(fluid);
-	}
-
-	@Override
-	public SUpdateTileEntityPacket getUpdatePacket() {
-		CompoundNBT tag = new CompoundNBT();
-		write(tag);
-		return new SUpdateTileEntityPacket(this.getPos(), 0, tag);
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-		super.onDataPacket(net, pkt);
-		read(getBlockState(), pkt.getNbtCompound());
 	}
 
 	@Override
