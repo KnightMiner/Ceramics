@@ -320,7 +320,7 @@ public class ChannelBlock extends Block {
 	@Deprecated
 	@OnlyIn(Dist.CLIENT)
 	public boolean isSideInvisible(BlockState state, BlockState adjacentBlockState, Direction side) {
-		return adjacentBlockState.isIn(this) && state.get(DIRECTION_MAP.get(side)).canFlow() && adjacentBlockState.get(DIRECTION_MAP.get(side.getOpposite())).canFlow();
+		return side.getAxis().isHorizontal() && adjacentBlockState.isIn(this) && state.get(DIRECTION_MAP.get(side)).canFlow() && adjacentBlockState.get(DIRECTION_MAP.get(side.getOpposite())).canFlow();
 	}
 
 	public enum ChannelConnection implements IStringSerializable {
