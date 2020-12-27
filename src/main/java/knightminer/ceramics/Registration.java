@@ -3,6 +3,7 @@ package knightminer.ceramics;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.blocks.FaucetBlock;
+import knightminer.ceramics.blocks.FlowingChannelBlock;
 import knightminer.ceramics.blocks.FluidCisternBlock;
 import knightminer.ceramics.blocks.GaugeBlock;
 import knightminer.ceramics.blocks.KilnBlock;
@@ -14,6 +15,7 @@ import knightminer.ceramics.items.ClayBucketItem;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.KilnRecipe;
+import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
@@ -180,6 +182,8 @@ public class Registration {
 
   // channel
   public static final ItemObject<ChannelBlock> UNFIRED_CHANNEL = BLOCKS.register("unfired_channel", () -> new ChannelBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
+  public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.WHITE_TERRACOTTA).notSolid()), DEFAULT_BLOCK_ITEM);
+  public static final RegistryObject<TileEntityType<ChannelTileEntity>> CHANNEL_TILE_ENTITY = TILE_ENTIITES.register("channel", ChannelTileEntity::new, PORCELAIN_CHANNEL);
 
   /**
    * Standard hardened clay properties

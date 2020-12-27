@@ -1,6 +1,6 @@
 {
     "parent": "ceramics:block/channel/side_wall",
     "textures": {
-        "texture": "ceramics:blocks/porcelain/white"
+        "texture": "ceramics:block/porcelain/white"
     }
 }

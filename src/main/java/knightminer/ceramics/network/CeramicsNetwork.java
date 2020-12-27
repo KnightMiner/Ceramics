@@ -7,6 +7,8 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkDirection;
 import slimeknights.mantle.network.NetworkWrapper;
 
+import javax.annotation.Nullable;
+
 /**
  * Handler for all packets internal to Ceramics
  */
@@ -38,6 +40,9 @@ public class CeramicsNetwork extends NetworkWrapper {
 
       INSTANCE.registerPacket(CisternUpdatePacket.class, CisternUpdatePacket::new, NetworkDirection.PLAY_TO_CLIENT);
       INSTANCE.registerPacket(FaucetActivationPacket.class, FaucetActivationPacket::new, NetworkDirection.PLAY_TO_CLIENT);
+
+      INSTANCE.registerPacket(ChannelFluidUpdatePacket.class, ChannelFluidUpdatePacket::new, NetworkDirection.PLAY_TO_CLIENT);
+      INSTANCE.registerPacket(ChannelFlowPacket.class, ChannelFlowPacket::new, NetworkDirection.PLAY_TO_CLIENT);
     }
   }
 
@@ -47,7 +52,7 @@ public class CeramicsNetwork extends NetworkWrapper {
    * @param world  World instance
    * @param pos    Position
    */
-  public void sendToClientsAround(Object msg, World world, BlockPos pos) {
+  public void sendToClientsAround(Object msg, @Nullable World world, BlockPos pos) {
     if (world instanceof ServerWorld) {
       sendToClientsAround(msg, (ServerWorld) world, pos);
     }

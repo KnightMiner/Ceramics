@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "ceramics:unfired_channel"
+  },
+  "result": "ceramics:porcelain_channel",
+  "experience": 0.3,
+  "cookingtime": 200
+}

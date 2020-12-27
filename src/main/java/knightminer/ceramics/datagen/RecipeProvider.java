@@ -255,6 +255,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .patternLine("ppp")
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CHANNEL, Registration.PORCELAIN_CHANNEL, 0.3f);
 
     // armor
     // clay plates

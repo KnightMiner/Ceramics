@@ -4,6 +4,7 @@
     "ceramics:gauge",
     "ceramics:unfired_faucet",
     "ceramics:porcelain_faucet",
-    "ceramics:unfired_channel"
+    "ceramics:unfired_channel",
+    "ceramics:porcelain_channel"
   ]
 }

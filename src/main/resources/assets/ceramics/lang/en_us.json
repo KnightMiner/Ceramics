@@ -117,6 +117,7 @@
     "block.ceramics.porcelain_faucet": "Porcelain Faucet",
     
     "block.ceramics.unfired_channel": "Unfired Channel",
+    "block.ceramics.porcelain_channel": "Porcelain Channel",
     
     "block.ceramics.channel.side.in": "Set side to flow inwards",
     "block.ceramics.channel.side.out": "Set side to flow outwards",
