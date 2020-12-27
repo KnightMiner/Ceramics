@@ -10,8 +10,10 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 
 import javax.annotation.Nullable;
@@ -23,11 +25,11 @@ import java.util.EnumMap;
 public class FaucetBlock extends Block {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING_EXCEPT_UP;
 	private static final EnumMap<Direction,VoxelShape> SHAPES = Maps.newEnumMap(ImmutableMap.of(
-		Direction.DOWN,  Block.makeCuboidShape( 4.0D, 10.0D,  4.0D, 12.0D, 16.0D, 12.0D),
-		Direction.NORTH, Block.makeCuboidShape( 4.0D,  4.0D, 10.0D, 12.0D, 10.0D, 16.0D),
-		Direction.SOUTH, Block.makeCuboidShape( 4.0D,  4.0D,  0.0D, 12.0D, 10.0D,  6.0D),
-		Direction.WEST,  Block.makeCuboidShape(10.0D,  4.0D,  4.0D, 16.0D, 10.0D, 12.0D),
-		Direction.EAST,  Block.makeCuboidShape( 0.0D,  4.0D,  4.0D,  6.0D, 10.0D, 12.0D)
+			Direction.DOWN,  VoxelShapes.combineAndSimplify(makeCuboidShape( 4, 10,  4, 12, 16, 12), makeCuboidShape( 6, 10,  6, 10, 16, 10), IBooleanFunction.ONLY_FIRST),
+			Direction.NORTH, VoxelShapes.combineAndSimplify(makeCuboidShape( 4,  4, 10, 12, 10, 16), makeCuboidShape( 6,  6, 10, 10, 10, 16), IBooleanFunction.ONLY_FIRST),
+			Direction.SOUTH, VoxelShapes.combineAndSimplify(makeCuboidShape( 4,  4,  0, 12, 10,  6), makeCuboidShape( 6,  6,  0, 10, 10,  6), IBooleanFunction.ONLY_FIRST),
+			Direction.WEST,  VoxelShapes.combineAndSimplify(makeCuboidShape(10,  4,  4, 16, 10, 12), makeCuboidShape(10,  6,  6, 16, 10, 10), IBooleanFunction.ONLY_FIRST),
+			Direction.EAST,  VoxelShapes.combineAndSimplify(makeCuboidShape( 0,  4,  4,  6, 10, 12), makeCuboidShape( 0,  6,  6,  6, 10, 10), IBooleanFunction.ONLY_FIRST)
 	));
 
 	public FaucetBlock(Properties properties) {
