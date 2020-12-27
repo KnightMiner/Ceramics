@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ccc",
+    " c "
+  ],
+  "key": {
+    "c": {
+      "item": "ceramics:unfired_porcelain"
+    }
+  },
+  "result": {
+    "item": "ceramics:unfired_faucet",
+    "count": 2
+  }
+}

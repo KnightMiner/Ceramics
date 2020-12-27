@@ -1,5 +1,6 @@
 package knightminer.ceramics.blocks;
 
+import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -7,6 +8,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.AttachFace;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -189,9 +191,15 @@ public class CisternBlock extends Block {
     }
 
     // if the block has a side property, use that
-    BooleanProperty sideProp = CONNECTIONS.get(facing.getOpposite());
+    Direction opposite = facing.getOpposite();
+    BooleanProperty sideProp = CONNECTIONS.get(opposite);
     if (facingState.hasProperty(sideProp)) {
       return facingState.get(sideProp);
+    }
+    // channel connections
+    EnumProperty<ChannelConnection> channelProp = ChannelBlock.DIRECTION_MAP.get(opposite);
+    if (facingState.hasProperty(channelProp)) {
+      return facingState.get(channelProp) == ChannelConnection.OUT;
     }
     // if there is a face property and it is not wall, not connected
     if (facingState.hasProperty(BlockStateProperties.FACE) && facingState.get(BlockStateProperties.FACE) != AttachFace.WALL) {

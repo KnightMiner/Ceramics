@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "ceramics:unfired_porcelain_faucet"
+      "ceramics:unfired_channel"
     ]
   },
   "criteria": {
@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "ceramics:unfired_porcelain_faucet"
+        "recipe": "ceramics:unfired_channel"
       }
     }
   },

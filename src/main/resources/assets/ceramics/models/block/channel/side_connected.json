@@ -1,27 +1,34 @@
 {
-  "parent": "block/block",
+  "textures": {
+    "particle": "#texture"
+  },
   "elements": [
     {
       "name": "Base",
       "from": [ 4, 4, 0 ], 
-      "to": [ 12, 6, 16 ], 
+      "to": [ 12, 6, 4 ], 
       "faces": {
-        "north": { "texture": "#texture" },
+        "north": { "texture": "#texture", "cullface": "north" },
         "east":  { "texture": "#texture" },
-        "south": { "texture": "#texture" },
         "west":  { "texture": "#texture" },
-        "up":    { "texture": "#texture" },
         "down":  { "texture": "#texture" }
+      }
+    },
+    {
+      "name": "Top",
+      "from": [ 6, 6, 0 ], 
+      "to": [ 10, 6, 6 ], 
+      "faces": {
+        "up":    { "texture": "#top" }
       }
     },
     {
       "name": "West",
       "from": [ 10, 6, 0 ], 
-      "to": [ 12, 9, 16 ], 
+      "to": [ 12, 9, 4 ], 
       "faces": {
-        "north": { "texture": "#texture" },
+        "north": { "texture": "#texture", "cullface": "north" },
         "east":  { "texture": "#texture" },
-        "south": { "texture": "#texture" },
         "west":  { "texture": "#texture" },
         "up":    { "texture": "#texture" }
       }
@@ -29,11 +36,10 @@
     {
       "name": "East",
       "from": [ 4, 6, 0 ], 
-      "to": [ 6, 9, 16 ], 
+      "to": [ 6, 9, 4 ], 
       "faces": {
-        "north": { "texture": "#texture" },
+        "north": { "texture": "#texture", "cullface": "north" },
         "east":  { "texture": "#texture" },
-        "south": { "texture": "#texture" },
         "west":  { "texture": "#texture" },
         "up":    { "texture": "#texture" }
       }

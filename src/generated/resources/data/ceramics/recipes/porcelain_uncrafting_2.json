@@ -2,9 +2,14 @@
   "type": "minecraft:crafting_shapeless",
   "group": "ceramics:porcelain_uncrafting",
   "ingredients": [
-    {
-      "item": "ceramics:unfired_porcelain_faucet"
-    }
+    [
+      {
+        "item": "ceramics:unfired_faucet"
+      },
+      {
+        "item": "ceramics:unfired_channel"
+      }
+    ]
   ],
   "result": {
     "item": "ceramics:unfired_porcelain",

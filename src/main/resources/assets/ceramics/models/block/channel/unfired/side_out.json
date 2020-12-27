@@ -1,0 +1,7 @@
+{
+    "parent": "ceramics:block/channel/side_connected",
+    "textures": {
+        "texture": "ceramics:block/unfired_porcelain",
+        "top": "ceramics:block/channel/unfired_out"
+    }
+}

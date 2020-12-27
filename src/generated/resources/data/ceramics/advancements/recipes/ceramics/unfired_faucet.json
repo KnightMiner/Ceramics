@@ -2,16 +2,16 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "ceramics:porcelain_faucet_kiln"
+      "ceramics:unfired_faucet"
     ]
   },
   "criteria": {
-    "has_item": {
+    "has_cistern": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "ceramics:unfired_faucet"
+            "item": "ceramics:terracotta_cistern"
           }
         ]
       }
@@ -19,13 +19,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "ceramics:porcelain_faucet_kiln"
+        "recipe": "ceramics:unfired_faucet"
       }
     }
   },
   "requirements": [
     [
-      "has_item",
+      "has_cistern",
       "has_the_recipe"
     ]
   ]

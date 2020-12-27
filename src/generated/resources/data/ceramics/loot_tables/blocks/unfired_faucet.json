@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "ceramics:unfired_porcelain_faucet"
+          "name": "ceramics:unfired_faucet"
         }
       ],
       "conditions": [

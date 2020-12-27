@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/channel/center_out",
+    "textures": {
+        "texture": "ceramics:blocks/porcelain/white"
+    }
+}

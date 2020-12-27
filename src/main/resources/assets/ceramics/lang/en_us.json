@@ -113,8 +113,16 @@
     "block.ceramics.red_terracotta_cistern": "Red Terracotta Cistern",
     "block.ceramics.black_terracotta_cistern": "Black Terracotta Cistern",
     
-    "block.ceramics.unfired_porcelain_faucet": "Unfired Porcelain Faucet",
+    "block.ceramics.unfired_faucet": "Unfired Faucet",
     "block.ceramics.porcelain_faucet": "Porcelain Faucet",
+    
+    "block.ceramics.unfired_channel": "Unfired Channel",
+    
+    "block.ceramics.channel.side.in": "Set side to flow inwards",
+    "block.ceramics.channel.side.out": "Set side to flow outwards",
+    "block.ceramics.channel.side.none": "Disallowed flowing on side",
+    "block.ceramics.channel.down.out": "Allowed flowing down",
+    "block.ceramics.channel.down.none": "Disallowed flowing down",
    
    
     "_comment": "#########",

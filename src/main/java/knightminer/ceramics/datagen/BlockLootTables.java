@@ -44,8 +44,10 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
     registerDropSelfLootTable(Registration.GAUGE.get());
     Registration.COLORED_CISTERN.forEach(this::registerDropSelfLootTable);
     // faucet
-    registerDropSelfLootTable(Registration.UNFIRED_PORCELAIN_FAUCET.get());
+    registerDropSelfLootTable(Registration.UNFIRED_FAUCET.get());
     registerDropSelfLootTable(Registration.PORCELAIN_FAUCET.get());
+    // channel
+    registerDropSelfLootTable(Registration.UNFIRED_CHANNEL.get());
   }
 
   /**

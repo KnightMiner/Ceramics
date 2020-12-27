@@ -240,14 +240,21 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
     // faucet
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_PORCELAIN_FAUCET, 2)
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_FAUCET, 2)
                        .key('c', Registration.UNFIRED_PORCELAIN)
                        .patternLine("ccc")
                        .patternLine(" c ")
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN_FAUCET, Registration.PORCELAIN_FAUCET, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_FAUCET, Registration.PORCELAIN_FAUCET, 0.3f);
 
+    // channel
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CHANNEL, 3)
+                       .key('p', Registration.UNFIRED_PORCELAIN)
+                       .patternLine("ppp")
+                       .patternLine("ppp")
+                       .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
+                       .build(consumer);
 
     // armor
     // clay plates
@@ -318,10 +325,10 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .setGroup(locationString("porcelain_uncrafting"))
                           .build(consumer, suffix(Registration.UNFIRED_PORCELAIN_BLOCK, "_uncrafting"));
     ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 2)
-                          .addIngredient(Registration.UNFIRED_PORCELAIN_FAUCET)
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_PORCELAIN_FAUCET))
+                          .addIngredient(Ingredient.fromItems(Registration.UNFIRED_FAUCET, Registration.UNFIRED_CHANNEL))
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_FAUCET))
                           .setGroup(locationString("porcelain_uncrafting"))
-                          .build(consumer, suffix(Registration.UNFIRED_PORCELAIN_FAUCET, "_uncrafting"));
+                          .build(consumer, location("porcelain_uncrafting_2"));
     // compat, wish there was a better way to do this
     ShapedRecipeBuilder.shapedRecipe(Blocks.CAKE)
                        .key('M', CeramicsTags.Items.MILK_BUCKETS)
