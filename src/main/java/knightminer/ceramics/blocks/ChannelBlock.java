@@ -29,6 +29,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Constants.BlockFlags;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
@@ -50,6 +51,7 @@ public class ChannelBlock extends Block {
 
 	/** Properties for the channel */
 	public static final BooleanProperty DOWN = BlockStateProperties.DOWN;
+	public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 	public static final EnumProperty<ChannelConnection> NORTH = EnumProperty.create("north", ChannelConnection.class);
 	public static final EnumProperty<ChannelConnection> SOUTH = EnumProperty.create("south", ChannelConnection.class);
 	public static final EnumProperty<ChannelConnection> WEST = EnumProperty.create("west", ChannelConnection.class);
@@ -137,7 +139,7 @@ public class ChannelBlock extends Block {
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block,BlockState> builder) {
-		builder.add(DOWN);
+		builder.add(DOWN, POWERED);
 		DIRECTION_MAP.values().forEach(builder::add);
 	}
 
@@ -185,9 +187,9 @@ public class ChannelBlock extends Block {
 	@Override
 	@Nullable
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		BlockState state = this.getDefaultState();
 		World world = context.getWorld();
 		BlockPos pos = context.getPos();
+		BlockState state = this.getDefaultState().with(POWERED, world.isBlockPowered(pos));
 		Direction side = context.getFace();
 
 		// if placed on the top face, try to connect down
@@ -314,6 +316,20 @@ public class ChannelBlock extends Block {
 		}
 
 		return ActionResultType.PASS;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	@Deprecated
+	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+		if (!worldIn.isRemote) {
+			boolean isPowered = worldIn.isBlockPowered(pos);
+			if (isPowered != state.get(POWERED)) {
+				state = state.with(POWERED, isPowered).with(DOWN, isPowered && canConnect(worldIn, pos, Direction.DOWN));
+				worldIn.setBlockState(pos, state, BlockFlags.BLOCK_UPDATE);
+			}
+		}
 	}
 
 	@Override

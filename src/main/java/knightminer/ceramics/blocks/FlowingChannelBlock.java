@@ -45,7 +45,9 @@ public class FlowingChannelBlock extends ChannelBlock {
 	@Deprecated
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-		TileEntityHelper.getTile(ChannelTileEntity.class, worldIn, pos)
-										.ifPresent(te -> te.removeCachedNeighbor(fromOffset(pos, fromPos)));
+		if (!worldIn.isRemote()) {
+			TileEntityHelper.getTile(ChannelTileEntity.class, worldIn, pos)
+											.ifPresent(te -> te.removeCachedNeighbor(fromOffset(pos, fromPos)));
+		}
 	}
 }

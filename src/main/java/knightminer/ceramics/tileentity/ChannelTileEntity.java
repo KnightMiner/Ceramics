@@ -40,9 +40,6 @@ import java.util.Map;
 public class ChannelTileEntity extends TileEntity implements ITickableTileEntity {
 	public static final int LIQUID_TRANSFER = 16;
 
-	//** Stores if the block was powered last update */
-	//private boolean wasPowered;
-
 	/** Channel internal tank */
 	private final ChannelTank tank = new ChannelTank(36, this);
 	/** Handler to return from channel top */
@@ -338,39 +335,8 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 	}
 
 
-//	/**
-//	 * Called on block placement to fill data from blocks on all sides
-//	 * @param hit   Side clicked
-//	 * @param sneak  If true, player was sneaking
-//	 */
-//	public void onPlaceBlock(Direction hit, boolean sneak) {
-//		// TODO: still needed?
-//		this.wasPowered = world.isBlockPowered(pos);
-//	}
-//
-//	/**
-//	 * Handles an update from another block to update the shape
-//	 * @param fromPos      BlockPos that changed
-//	 */
-//	public void handleBlockUpdate(BlockPos fromPos, boolean didPlace, boolean isPowered) {
-//		// TOOD: still needed?
-//		// TODO: powered is/was in block?
-//
-//		// redstone power
-//		if(isPowered != wasPowered && side != Direction.DOWN) {
-//			TileEntity te = world.getTileEntity(pos.down());
-//			boolean isValid2 = te != null && (te instanceof ChannelTileEntity || te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite()).isPresent());
-//			this.connectedDown = isValid2 && isPowered;
-//
-//			CeramicsNetwork.getInstance().sendToClientsAround(new ChannelConnectionPacket(pos, Direction.DOWN, this.connectedDown), world, pos);
-//			wasPowered = isPowered;
-//		}
-//	}
-
-
 	/* NBT and sync */
 	private static final String TAG_IS_FLOWING = "is_flowing";
-	private static final String TAG_WAS_POWERED = "was_powered";
 	private static final String TAG_TANK = "tank";
 
 	/**
@@ -425,7 +391,6 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 				}
 			}
 		}
-		//this.wasPowered = nbt.getBoolean(TAG_WAS_POWERED);
 
 		// tank
 		CompoundNBT tankTag = nbt.getCompound(TAG_TANK);
