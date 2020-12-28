@@ -62,21 +62,22 @@ public class ChannelTileEntityRenderer extends TileEntityRenderer<ChannelTileEnt
 			// check if we have that side on the block
 			ChannelConnection connection = state.get(ChannelBlock.DIRECTION_MAP.get(direction));
 			if (connection.canFlow()) {
-				// add to center direction
-				if (connection == ChannelConnection.OUT) {
-					// if unset (up), use this direction
-					if (centerFlow == Direction.UP) {
-						centerFlow = direction;
-						// if set and it disagrees, set the fail state (down)
-					} else if (centerFlow != direction) {
-						centerFlow = Direction.DOWN;
-					}
-				}
 				// apply rotation for the side
 				isRotated = RenderingHelper.applyRotation(matrices, direction);
 				// get the relevant fluid model, render it
 				if (te.isFlowing(direction)) {
 					cube = model.getSideFlow(connection == ChannelConnection.OUT);
+
+					// add to center direction
+					if (connection == ChannelConnection.OUT) {
+						// if unset (up), use this direction
+						if (centerFlow == Direction.UP) {
+							centerFlow = direction;
+							// if set and it disagrees, set the fail state (down)
+						} else if (centerFlow != direction) {
+							centerFlow = Direction.DOWN;
+						}
+					}
 				} else {
 					cube = model.getSideStill();
 				}
