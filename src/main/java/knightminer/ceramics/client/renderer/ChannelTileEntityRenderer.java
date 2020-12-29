@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.client.model.ChannelModel;
-import knightminer.ceramics.client.model.FaucetFluidLoader;
 import knightminer.ceramics.tileentity.ChannelTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -18,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import slimeknights.mantle.client.model.FaucetFluidLoader;
 import slimeknights.mantle.client.model.fluid.FluidCuboid;
 import slimeknights.mantle.client.model.util.ModelHelper;
 import slimeknights.mantle.client.render.FluidRenderer;
@@ -53,6 +53,7 @@ public class ChannelTileEntityRenderer extends TileEntityRenderer<ChannelTileEnt
 		TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(attributes.getFlowingTexture(fluid));
 		IVertexBuilder builder = buffer.getBuffer(FluidRenderer.RENDER_TYPE);
 		int color = attributes.getColor(fluid);
+		light = FluidRenderer.withBlockLight(light, attributes.getLuminosity(fluid));
 
 		// render sides first, while doing so we will determine center "flow"
 		FluidCuboid cube;

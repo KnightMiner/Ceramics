@@ -3,7 +3,6 @@ package knightminer.ceramics.client.renderer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import knightminer.ceramics.blocks.FaucetBlock;
-import knightminer.ceramics.client.model.FaucetFluidLoader;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -17,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import slimeknights.mantle.client.model.FaucetFluidLoader;
 import slimeknights.mantle.client.model.fluid.FluidCuboid;
 import slimeknights.mantle.client.model.fluid.FluidsModel;
 import slimeknights.mantle.client.model.util.ModelHelper;
@@ -32,8 +32,8 @@ public class FaucetTileEntityRenderer extends TileEntityRenderer<FaucetTileEntit
 
   @Override
   public void render(FaucetTileEntity tileEntity, float partialTicks, MatrixStack matrices, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
-    FluidStack drained = tileEntity.getRenderFluid();
-    if (!tileEntity.isPouring() || drained.isEmpty()) {
+    FluidStack renderFluid = tileEntity.getRenderFluid();
+    if (!tileEntity.isPouring() || renderFluid.isEmpty()) {
       return;
     }
 
@@ -52,12 +52,13 @@ public class FaucetTileEntityRenderer extends TileEntityRenderer<FaucetTileEntit
       boolean isRotated = RenderingHelper.applyRotation(matrices, direction);
 
       // fluid props
-      FluidAttributes attributes = drained.getFluid().getAttributes();
-      int color = attributes.getColor(drained);
+      FluidAttributes attributes = renderFluid.getFluid().getAttributes();
+      int color = attributes.getColor(renderFluid);
       Function<ResourceLocation, TextureAtlasSprite> spriteGetter = Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
-      TextureAtlasSprite still = spriteGetter.apply(attributes.getStillTexture(drained));
-      TextureAtlasSprite flowing = spriteGetter.apply(attributes.getFlowingTexture(drained));
-      boolean isGas = attributes.isGaseous(drained);
+      TextureAtlasSprite still = spriteGetter.apply(attributes.getStillTexture(renderFluid));
+      TextureAtlasSprite flowing = spriteGetter.apply(attributes.getFlowingTexture(renderFluid));
+      boolean isGas = attributes.isGaseous(renderFluid);
+      combinedLightIn = FluidRenderer.withBlockLight(combinedLightIn, attributes.getLuminosity(renderFluid));
 
       // render all cubes in the model
       IVertexBuilder buffer = bufferIn.getBuffer(FluidRenderer.RENDER_TYPE);

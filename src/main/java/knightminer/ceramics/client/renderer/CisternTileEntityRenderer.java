@@ -48,6 +48,7 @@ public class CisternTileEntityRenderer extends TileEntityRenderer<CisternTileEnt
           TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(attributes.getFlowingTexture(fluid));
           IVertexBuilder builder = buffer.getBuffer(FluidRenderer.RENDER_TYPE);
           int color = attributes.getColor(fluid);
+          light = FluidRenderer.withBlockLight(light, attributes.getLuminosity(fluid));
 
           // if full, just render all full sides
           if (amount > CisternTank.BASE_CAPACITY) {
