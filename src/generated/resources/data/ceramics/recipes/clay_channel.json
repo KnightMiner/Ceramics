@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ppp",
+    "ppp"
+  ],
+  "key": {
+    "p": {
+      "item": "minecraft:clay_ball"
+    }
+  },
+  "result": {
+    "item": "ceramics:clay_channel",
+    "count": 3
+  }
+}

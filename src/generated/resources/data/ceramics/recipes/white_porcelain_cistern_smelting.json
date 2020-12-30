@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "ceramics:unfired_cistern"
+  },
+  "result": "ceramics:white_porcelain_cistern",
+  "experience": 0.3,
+  "cookingtime": 200
+}

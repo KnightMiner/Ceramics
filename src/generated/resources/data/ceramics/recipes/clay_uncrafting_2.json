@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "ceramics:clay_uncrafting",
+  "ingredients": [
+    [
+      {
+        "item": "ceramics:unfired_clay_plate"
+      },
+      {
+        "item": "ceramics:clay_faucet"
+      },
+      {
+        "item": "ceramics:clay_channel"
+      }
+    ]
+  ],
+  "result": {
+    "item": "minecraft:clay_ball",
+    "count": 2
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "ceramics:porcelain_cisterns",
+  "pattern": [
+    " c ",
+    "cdc",
+    " c "
+  ],
+  "key": {
+    "c": {
+      "tag": "ceramics:porcelain_cisterns"
+    },
+    "d": {
+      "tag": "forge:dyes/light_blue"
+    }
+  },
+  "result": {
+    "item": "ceramics:light_blue_porcelain_cistern",
+    "count": 4
+  }
+}

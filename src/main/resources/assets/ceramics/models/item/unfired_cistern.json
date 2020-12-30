@@ -1,6 +1,6 @@
 {
     "parent": "ceramics:block/cistern/item",
     "textures": {
-        "texture": "block/clay"
+        "texture": "ceramics:block/unfired_porcelain"
     }
 }

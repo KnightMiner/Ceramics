@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "ceramics:white_porcelain_cistern",
+    "ceramics:orange_porcelain_cistern",
+    "ceramics:magenta_porcelain_cistern",
+    "ceramics:light_blue_porcelain_cistern",
+    "ceramics:yellow_porcelain_cistern",
+    "ceramics:lime_porcelain_cistern",
+    "ceramics:pink_porcelain_cistern",
+    "ceramics:gray_porcelain_cistern",
+    "ceramics:light_gray_porcelain_cistern",
+    "ceramics:cyan_porcelain_cistern",
+    "ceramics:purple_porcelain_cistern",
+    "ceramics:blue_porcelain_cistern",
+    "ceramics:brown_porcelain_cistern",
+    "ceramics:green_porcelain_cistern",
+    "ceramics:red_porcelain_cistern",
+    "ceramics:black_porcelain_cistern"
+  ]
+}

@@ -30,6 +30,7 @@ public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
     this.copy(Blocks.BRICKS, CeramicsTags.Items.BRICKS);
     // cisterns
     this.copy(Blocks.TERRACOTTA_CISTERNS, CeramicsTags.Items.TERRACOTTA_CISTERNS);
+    this.copy(Blocks.PORCELAIN_CISTERNS, CeramicsTags.Items.PORCELAIN_CISTERNS);
 
     // item unique tags
     this.getOrCreateBuilder(CeramicsTags.Items.MILK_BUCKETS).add(Items.MILK_BUCKET, Registration.MILK_CLAY_BUCKET.get(), Registration.CRACKED_MILK_CLAY_BUCKET.get());

@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/faucet/side",
+    "textures": {
+        "tex": "block/terracotta"
+    }
+}

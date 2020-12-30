@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "facing=north": { "model": "ceramics:block/faucet/terracotta_side" },
+        "facing=south": { "model": "ceramics:block/faucet/terracotta_side", "y": 180 },
+        "facing=west":  { "model": "ceramics:block/faucet/terracotta_side", "y": 270 },
+        "facing=east":  { "model": "ceramics:block/faucet/terracotta_side", "y":  90 },
+        "facing=down":  { "model": "ceramics:block/faucet/terracotta_top" }
+    }
+}

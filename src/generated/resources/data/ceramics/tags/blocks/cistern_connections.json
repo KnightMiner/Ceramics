@@ -2,9 +2,13 @@
   "replace": false,
   "values": [
     "ceramics:gauge",
+    "ceramics:clay_faucet",
     "ceramics:unfired_faucet",
+    "ceramics:terracotta_faucet",
     "ceramics:porcelain_faucet",
+    "ceramics:clay_channel",
     "ceramics:unfired_channel",
+    "ceramics:terracotta_channel",
     "ceramics:porcelain_channel"
   ]
 }

@@ -2,16 +2,16 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "ceramics:unfired_clay_plate_uncrafting"
+      "ceramics:black_porcelain_cistern"
     ]
   },
   "criteria": {
-    "has_unfired": {
+    "has_cistern": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "item": "ceramics:unfired_clay_plate"
+            "item": "ceramics:white_porcelain_cistern"
           }
         ]
       }
@@ -19,13 +19,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "ceramics:unfired_clay_plate_uncrafting"
+        "recipe": "ceramics:black_porcelain_cistern"
       }
     }
   },
   "requirements": [
     [
-      "has_unfired",
+      "has_cistern",
       "has_the_recipe"
     ]
   ]

@@ -1,0 +1,6 @@
+{
+  "parent": "ceramics:block/channel/inventory",
+  "textures": {
+    "texture": "block/terracotta"
+  }
+}

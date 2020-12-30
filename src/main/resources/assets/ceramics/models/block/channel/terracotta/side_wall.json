@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/channel/side_wall",
+    "textures": {
+        "texture": "block/terracotta"
+    }
+}

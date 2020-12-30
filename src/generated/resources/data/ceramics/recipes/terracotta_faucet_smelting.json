@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smelting",
+  "ingredient": {
+    "item": "ceramics:clay_faucet"
+  },
+  "result": "ceramics:terracotta_faucet",
+  "experience": 0.3,
+  "cookingtime": 200
+}

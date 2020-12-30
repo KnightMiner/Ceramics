@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/channel/center",
+    "textures": {
+        "texture": "block/clay"
+    }
+}

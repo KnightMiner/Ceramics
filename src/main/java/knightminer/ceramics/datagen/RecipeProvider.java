@@ -209,17 +209,25 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     kilnFurnaceRecipe(consumer, Registration.CLAY_BUCKET, Registration.CRACKED_CLAY_BUCKET, 0.2f);
 
     // cistern
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CISTERN)
+    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CISTERN)
                        .key('c', Items.CLAY_BALL)
                        .patternLine("c c")
                        .patternLine("c c")
                        .patternLine("c c")
                        .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
                        .build(consumer);
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CISTERN)
+                       .key('c', Registration.UNFIRED_PORCELAIN)
+                       .patternLine("c c")
+                       .patternLine("c c")
+                       .patternLine("c c")
+                       .addCriterion("has_clay", hasItem(Registration.UNFIRED_PORCELAIN))
+                       .build(consumer);
     // fired
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.TERRACOTTA_CISTERN, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.CLAY_CISTERN, Registration.TERRACOTTA_CISTERN, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE), 0.3f);
     // colored
-    Registration.COLORED_CISTERN.forEach((color, block) -> {
+    Registration.COLORED_CISTERN.forEach((color, block) ->
       ShapedRecipeBuilder.shapedRecipe(block, 4)
                          .key('c', CeramicsTags.Items.TERRACOTTA_CISTERNS)
                          .key('d', color.getTag())
@@ -228,8 +236,20 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .patternLine(" c ")
                          .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                          .setGroup(Ceramics.locationName("colored_cisterns"))
-                         .build(consumer);
-    });
+                         .build(consumer)
+    );
+    Registration.PORCELAIN_CISTERN.forEach((color, block) ->
+      ShapedRecipeBuilder.shapedRecipe(block, 4)
+                         .key('c', CeramicsTags.Items.PORCELAIN_CISTERNS)
+                         .key('d', color.getTag())
+                         .patternLine(" c ")
+                         .patternLine("cdc")
+                         .patternLine(" c ")
+                         .addCriterion("has_cistern", hasItem(Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE)))
+                         .setGroup(Ceramics.locationName("porcelain_cisterns"))
+                         .build(consumer)
+    );
+
     // gauge
     ShapedRecipeBuilder.shapedRecipe(Registration.GAUGE, 4)
                        .key('b', Items.BRICK)
@@ -239,22 +259,37 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .patternLine(" b ")
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
+
     // faucet
+    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_FAUCET, 2)
+                       .key('c', Items.CLAY_BALL)
+                       .patternLine("ccc")
+                       .patternLine(" c ")
+                       .addCriterion("has_cistern", hasItem(Items.CLAY_BALL))
+                       .build(consumer);
     ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_FAUCET, 2)
                        .key('c', Registration.UNFIRED_PORCELAIN)
                        .patternLine("ccc")
                        .patternLine(" c ")
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
+    kilnFurnaceRecipe(consumer, Registration.CLAY_FAUCET, Registration.TERRACOTTA_FAUCET, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_FAUCET, Registration.PORCELAIN_FAUCET, 0.3f);
 
     // channel
+    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CHANNEL, 3)
+                       .key('p', Items.CLAY_BALL)
+                       .patternLine("ppp")
+                       .patternLine("ppp")
+                       .addCriterion("has_cistern", hasItem(Items.CLAY_BALL))
+                       .build(consumer);
     ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CHANNEL, 3)
                        .key('p', Registration.UNFIRED_PORCELAIN)
                        .patternLine("ppp")
                        .patternLine("ppp")
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
+    kilnFurnaceRecipe(consumer, Registration.CLAY_CHANNEL, Registration.TERRACOTTA_CHANNEL, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CHANNEL, Registration.PORCELAIN_CHANNEL, 0.3f);
 
     // armor
@@ -310,10 +345,10 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .setGroup(locationString("clay_uncrafting"))
                           .build(consumer, suffix(Registration.UNFIRED_CLAY_BUCKET, "_uncrafting"));
     ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 2)
-                          .addIngredient(Registration.UNFIRED_CLAY_PLATE)
+                          .addIngredient(Ingredient.fromItems(Registration.UNFIRED_CLAY_PLATE, Registration.CLAY_FAUCET, Registration.CLAY_CHANNEL))
                           .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_PLATE))
                           .setGroup(locationString("clay_uncrafting"))
-                          .build(consumer, suffix(Registration.UNFIRED_CLAY_PLATE, "_uncrafting"));
+                          .build(consumer, location("clay_uncrafting_2"));
     ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 6)
                           .addIngredient(Registration.UNFIRED_CISTERN)
                           .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CISTERN))

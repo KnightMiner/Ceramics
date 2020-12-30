@@ -1,0 +1,6 @@
+{
+    "parent": "ceramics:block/cistern/base",
+    "textures": {
+        "texture": "ceramics:block/porcelain/yellow"
+    }
+}

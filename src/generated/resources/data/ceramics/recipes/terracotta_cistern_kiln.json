@@ -1,7 +1,7 @@
 {
   "type": "ceramics:kiln",
   "ingredient": {
-    "item": "ceramics:unfired_cistern"
+    "item": "ceramics:clay_cistern"
   },
   "result": "ceramics:terracotta_cistern",
   "experience": 0.3,

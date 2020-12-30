@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:unfired_cistern"
+            "item": "ceramics:clay_cistern"
           }
         ]
       }

@@ -38,15 +38,22 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
     registerBuildingLootTable(Registration.RAINBOW_BRICKS);
     // kiln
     registerDropSelfLootTable(Registration.KILN.get());
-    // cistern
-    registerDropSelfLootTable(Registration.TERRACOTTA_CISTERN.get());
-    registerDropSelfLootTable(Registration.UNFIRED_CISTERN.get());
+    // gauge
     registerDropSelfLootTable(Registration.GAUGE.get());
+    // cistern
+    registerDropSelfLootTable(Registration.CLAY_CISTERN.get());
+    registerDropSelfLootTable(Registration.UNFIRED_CISTERN.get());
+    registerDropSelfLootTable(Registration.TERRACOTTA_CISTERN.get());
     Registration.COLORED_CISTERN.forEach(this::registerDropSelfLootTable);
+    Registration.PORCELAIN_CISTERN.forEach(this::registerDropSelfLootTable);
     // faucet
+    registerDropSelfLootTable(Registration.CLAY_FAUCET.get());
+    registerDropSelfLootTable(Registration.TERRACOTTA_FAUCET.get());
     registerDropSelfLootTable(Registration.UNFIRED_FAUCET.get());
     registerDropSelfLootTable(Registration.PORCELAIN_FAUCET.get());
     // channel
+    registerDropSelfLootTable(Registration.CLAY_CHANNEL.get());
+    registerDropSelfLootTable(Registration.TERRACOTTA_CHANNEL.get());
     registerDropSelfLootTable(Registration.UNFIRED_CHANNEL.get());
     registerDropSelfLootTable(Registration.PORCELAIN_CHANNEL.get());
   }

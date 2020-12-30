@@ -40,6 +40,7 @@ public class CeramicsTags {
     public static final INamedTag<Block> RAINBOW_PORCELAIN = makeWrapperTag("rainbow_porcelain");
     public static final INamedTag<Block> BRICKS = makeWrapperTag("bricks");
     public static final INamedTag<Block> TERRACOTTA_CISTERNS = makeWrapperTag("terracotta_cisterns");
+    public static final INamedTag<Block> PORCELAIN_CISTERNS = makeWrapperTag("porcelain_cisterns");
     public static final INamedTag<Block> CISTERN_CONNECTIONS = makeWrapperTag("cistern_connections");
 
     private static INamedTag<Block> makeWrapperTag(String id) {
@@ -55,6 +56,7 @@ public class CeramicsTags {
     public static final INamedTag<Item> BRICKS = makeWrapperTag("bricks");
     public static final INamedTag<Item> MILK_BUCKETS = ItemTags.makeWrapperTag("forge:buckets/milk");
     public static final INamedTag<Item> TERRACOTTA_CISTERNS = makeWrapperTag("terracotta_cisterns");
+    public static final INamedTag<Item> PORCELAIN_CISTERNS = makeWrapperTag("porcelain_cisterns");
 
     private static INamedTag<Item> makeWrapperTag(String id) {
       return ItemTags.makeWrapperTag(Ceramics.locationName(id));
