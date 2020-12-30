@@ -291,7 +291,6 @@ public class ChannelBlock extends Block {
 		// try each of the sides, if clicked use that
 		Vector3d hitVec = hit.getHitVec().subtract(pos.getX(), pos.getY(), pos.getZ());
 		// map X and Z coords to a direction
-		Ceramics.LOG.info(hitVec);
 		if (hitVec.getZ() < 0.25f) {
 			side = Direction.NORTH;
 		} else if (hitVec.getZ() > 0.75f) {

@@ -87,7 +87,7 @@ public class ChannelTileEntity extends TileEntity implements ITickableTileEntity
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
 		// top side gets the insert direct
-		if (side == Direction.UP) {
+		if (side == null || side == Direction.UP) {
 			return topHandler.cast();
 		}
 		// side tanks keep track of which side inserts
