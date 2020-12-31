@@ -25,6 +25,11 @@ public class CisternTank implements IFluidHandler, IFluidTank {
   }
 
   @Override
+  public boolean isFluidValid(FluidStack stack) {
+    return !stack.getFluid().getAttributes().isGaseous(stack);
+  }
+
+  @Override
   public FluidStack getFluid() {
     return fluid;
   }
@@ -67,7 +72,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
 
   @Override
   public int fill(FluidStack resource, FluidAction action) {
-    if (resource.isEmpty()) {
+    if (resource.isEmpty() || !isFluidValid(resource)) {
       return 0;
     }
     int capacity = getCapacity();
@@ -168,12 +173,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
   }
 
   @Override
-  public boolean isFluidValid(FluidStack stack) {
-    return true;
-  }
-
-  @Override
   public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-    return true;
+    return isFluidValid(stack);
   }
 }
