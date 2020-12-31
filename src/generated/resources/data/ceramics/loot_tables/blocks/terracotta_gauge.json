@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "ceramics:gauge"
+          "name": "ceramics:terracotta_gauge"
         }
       ],
       "conditions": [

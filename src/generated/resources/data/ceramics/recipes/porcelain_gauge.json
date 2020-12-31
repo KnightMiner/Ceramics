@@ -7,14 +7,14 @@
   ],
   "key": {
     "b": {
-      "item": "minecraft:brick"
+      "item": "ceramics:porcelain_brick"
     },
     "p": {
       "tag": "forge:glass_panes/colorless"
     }
   },
   "result": {
-    "item": "ceramics:gauge",
+    "item": "ceramics:porcelain_gauge",
     "count": 4
   }
 }

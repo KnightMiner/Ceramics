@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "facing=north": { "model": "ceramics:block/gauge", "y": 180 },
-        "facing=south": { "model": "ceramics:block/gauge" },
-        "facing=west":  { "model": "ceramics:block/gauge", "y":  90 },
-        "facing=east":  { "model": "ceramics:block/gauge", "y": 270 }
-    }
-}

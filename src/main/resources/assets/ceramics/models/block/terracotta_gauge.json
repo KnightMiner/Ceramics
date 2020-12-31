@@ -1,7 +1,7 @@
 {
   "textures": {
-    "particle": "ceramics:block/gauge",
-    "gauge": "ceramics:block/gauge",
+    "particle": "ceramics:block/terracotta_gauge",
+    "gauge": "ceramics:block/terracotta_gauge",
     "clay": "minecraft:block/terracotta"
   },
 	"elements": [

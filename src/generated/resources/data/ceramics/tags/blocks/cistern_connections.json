@@ -1,7 +1,8 @@
 {
   "replace": false,
   "values": [
-    "ceramics:gauge",
+    "ceramics:terracotta_gauge",
+    "ceramics:porcelain_gauge",
     "ceramics:clay_faucet",
     "ceramics:unfired_faucet",
     "ceramics:terracotta_faucet",

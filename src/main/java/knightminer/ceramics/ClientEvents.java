@@ -29,7 +29,8 @@ public class ClientEvents {
 
   @SubscribeEvent
   static void setupClient(FMLClientSetupEvent event) {
-    RenderTypeLookup.setRenderLayer(Registration.GAUGE.get(), RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), RenderType.getCutout());
+    RenderTypeLookup.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), RenderType.getCutout());
 
     ScreenManager.registerFactory(Registration.KILN_CONTAINER.get(), KilnScreen::new);
     ClientRegistry.bindTileEntityRenderer(Registration.CISTERN_TILE_ENTITY.get(), CisternTileEntityRenderer::new);

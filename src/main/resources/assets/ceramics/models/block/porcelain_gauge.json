@@ -1,0 +1,8 @@
+{
+  "parent": "ceramics:block/terracotta_gauge",
+  "textures": {
+    "particle": "ceramics:block/porcelain_gauge",
+    "gauge": "ceramics:block/porcelain_gauge",
+    "clay": "ceramics:block/porcelain/white"
+  }
+}

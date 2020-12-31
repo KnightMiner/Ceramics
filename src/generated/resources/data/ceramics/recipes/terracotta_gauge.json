@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " b ",
+    "bpb",
+    " b "
+  ],
+  "key": {
+    "b": {
+      "item": "minecraft:brick"
+    },
+    "p": {
+      "tag": "forge:glass_panes/colorless"
+    }
+  },
+  "result": {
+    "item": "ceramics:terracotta_gauge",
+    "count": 4
+  }
+}

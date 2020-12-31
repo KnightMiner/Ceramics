@@ -6,11 +6,16 @@ import knightminer.ceramics.datagen.LootTableProvider;
 import knightminer.ceramics.datagen.RecipeProvider;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.recipe.CeramicsTags;
+import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.item.Item;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -18,6 +23,9 @@ import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import slimeknights.mantle.registration.RegistrationHelper;
+
+import javax.annotation.Nullable;
 
 @SuppressWarnings("WeakerAccess")
 @Mod(Ceramics.MOD_ID)
@@ -32,6 +40,8 @@ public class Ceramics {
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::gatherData);
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientEvents::onConstructor);
+		MinecraftForge.EVENT_BUS.addGenericListener(Block.class, this::onMissingBlocks);
+		MinecraftForge.EVENT_BUS.addGenericListener(Item.class, this::onMissingItems);
 	}
 
 	private void gatherData(GatherDataEvent event) {
@@ -45,6 +55,29 @@ public class Ceramics {
 			gen.addProvider(new LootTableProvider(gen));
 		}
 	}
+
+	/** Maps a block name to a block */
+	@Nullable
+	private Block missingBlock(String name) {
+		if ("gauge".equals(name)) {
+			return Registration.TERRACOTTA_GAUGE.get();
+		}
+		return null;
+	}
+
+	/** Missing block event */
+	private void onMissingBlocks(MissingMappings<Block> event) {
+		RegistrationHelper.handleMissingMappings(event, MOD_ID, this::missingBlock);
+	}
+
+	/** Missing item event */
+	private void onMissingItems(MissingMappings<Item> event) {
+		RegistrationHelper.handleMissingMappings(event, MOD_ID, name -> {
+			IItemProvider provider = missingBlock(name);
+			return provider == null ? null : provider.asItem();
+		});
+	}
+
 
 	/**
 	 * Gets a resource locations as a string

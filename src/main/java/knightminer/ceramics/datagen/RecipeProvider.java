@@ -251,7 +251,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     );
 
     // gauge
-    ShapedRecipeBuilder.shapedRecipe(Registration.GAUGE, 4)
+    ShapedRecipeBuilder.shapedRecipe(Registration.TERRACOTTA_GAUGE, 4)
                        .key('b', Items.BRICK)
                        .key('p', Tags.Items.GLASS_PANES_COLORLESS)
                        .patternLine(" b ")
@@ -259,6 +259,15 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .patternLine(" b ")
                        .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                        .build(consumer);
+    ShapedRecipeBuilder.shapedRecipe(Registration.PORCELAIN_GAUGE, 4)
+                       .key('b', Registration.PORCELAIN_BRICK)
+                       .key('p', Tags.Items.GLASS_PANES_COLORLESS)
+                       .patternLine(" b ")
+                       .patternLine("bpb")
+                       .patternLine(" b ")
+                       .addCriterion("has_cistern", hasItem(Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE)))
+                       .build(consumer);
+
 
     // faucet
     ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_FAUCET, 2)

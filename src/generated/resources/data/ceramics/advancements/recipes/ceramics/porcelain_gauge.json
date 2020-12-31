@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "ceramics:porcelain_gauge"
+    ]
+  },
+  "criteria": {
+    "has_cistern": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "ceramics:white_porcelain_cistern"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "ceramics:porcelain_gauge"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_cistern",
+      "has_the_recipe"
+    ]
+  ]
+}

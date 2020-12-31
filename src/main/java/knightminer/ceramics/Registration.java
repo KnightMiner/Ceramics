@@ -89,8 +89,6 @@ public class Registration {
   private static final Function<Block,BlockItem> DEFAULT_BLOCK_ITEM = (block) -> new BlockItem(block, GROUP_PROPS);
   /** Item block function using {@link BlockTooltipItem} */
   private static final Function<Block,BlockItem> TOOLTIP_BLOCK_ITEM = (block) -> new BlockTooltipItem(block, GROUP_PROPS);
-  /** Item block function for cistern tooltips */
-  private static final Function<Block,BlockItem> CISTERN_BLOCK_ITEM = (block) -> new FixedTooltipBlockItem(block, GROUP_PROPS, "cistern.tooltip");
 
   /** Mapping for terracotta to make registration easier */
   public static final EnumObject<DyeColor,Block> TERRACOTTA = new EnumObject.Builder<DyeColor,Block>(DyeColor.class)
@@ -164,9 +162,12 @@ public class Registration {
    * fluid handling
    */
   private static final AbstractBlock.Properties CLAY_PROPERTIES = AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid();
-  public static final ItemObject<GaugeBlock> GAUGE = BLOCKS.register("gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), TOOLTIP_BLOCK_ITEM);
+  private static final Function<Block,BlockItem> GAUGE_BLOCK_ITEM = (block) -> new FixedTooltipBlockItem(block, GROUP_PROPS, "gauge.tooltip");
+  public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), GAUGE_BLOCK_ITEM);
+  public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.WHITE_TERRACOTTA).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), GAUGE_BLOCK_ITEM);
 
   // cistern
+  private static final Function<Block,BlockItem> CISTERN_BLOCK_ITEM = (block) -> new FixedTooltipBlockItem(block, GROUP_PROPS, "cistern.tooltip");
   public static final ItemObject<CisternBlock> CLAY_CISTERN = BLOCKS.register("clay_cistern", () -> new CisternBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MaterialColor.ADOBE).notSolid()), CISTERN_BLOCK_ITEM);
   public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).notSolid()), CISTERN_BLOCK_ITEM);
