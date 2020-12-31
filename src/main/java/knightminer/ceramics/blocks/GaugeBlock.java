@@ -81,6 +81,8 @@ public class GaugeBlock extends Block {
     return BOUNDS[state.get(HORIZONTAL_FACING).getHorizontalIndex()];
   }
 
+  @SuppressWarnings("deprecation")
+  @Deprecated
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader world, BlockPos pos) {
     Direction direction = state.get(HORIZONTAL_FACING);

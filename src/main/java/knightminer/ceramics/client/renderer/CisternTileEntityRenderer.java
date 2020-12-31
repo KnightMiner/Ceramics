@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.client.model.CisternModel;
 import knightminer.ceramics.tileentity.CisternTileEntity;
-import knightminer.ceramics.util.tank.CisternTank;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -36,7 +35,7 @@ public class CisternTileEntityRenderer extends TileEntityRenderer<CisternTileEnt
       int renderIndex = tileEntity.getRenderIndex();
       // capacity for gives us the minimum amount to start rendering in this segement
       // render nothing beyond the base capacity
-      int amount = fluid.getAmount() - CisternTank.capacityFor(renderIndex);
+      int amount = fluid.getAmount() - tileEntity.capacityFor(renderIndex);
       if (amount > 0) {
         // get the model pair, if the capacity is above the capacity per cistern, use the overfull model (no top face)
         BlockState state = tileEntity.getBlockState();
@@ -51,7 +50,8 @@ public class CisternTileEntityRenderer extends TileEntityRenderer<CisternTileEnt
           light = FluidRenderer.withBlockLight(light, attributes.getLuminosity(fluid));
 
           // if full, just render all full sides
-          if (amount > CisternTank.BASE_CAPACITY) {
+          int capacityPerLayer = tileEntity.capacityPerLayer();
+          if (amount > capacityPerLayer) {
             for (Direction direction : Plane.HORIZONTAL) {
               // state and model must contain that direction
               FluidCuboid cuboid = model.getFluid(direction);
@@ -65,7 +65,7 @@ public class CisternTileEntityRenderer extends TileEntityRenderer<CisternTileEnt
             Vector3f from = center.getFromScaled();
             Vector3f to = center.getToScaled().copy();
             float minY = from.getY();
-            to.setY(minY + amount * (to.getY() - minY) / (float)CisternTank.BASE_CAPACITY);
+            to.setY(minY + amount * (to.getY() - minY) / (float)capacityPerLayer);
             // render the center using Mantle's logic
             FluidRenderer.renderCuboid(matrices, builder, center, still, still, from, to, color, light, false);
 

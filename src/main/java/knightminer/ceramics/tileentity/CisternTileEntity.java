@@ -18,6 +18,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullConsumer;
+import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -86,6 +87,27 @@ public class CisternTileEntity extends MantleTileEntity {
     }
   }
 
+  /**
+   * Gets the capacity per layer of the tile entity
+   * @return  Capacity per layer
+   */
+  public int capacityPerLayer() {
+    Block block = getBlockState().getBlock();
+    if (Registration.PORCELAIN_CISTERN.contains(block)) {
+      return 6 * FluidAttributes.BUCKET_VOLUME;
+    }
+    return 4 * FluidAttributes.BUCKET_VOLUME;
+  }
+
+  /**
+   * Gets the capacity for the given height of the tile entity
+   * @param height  Cistern height
+   * @return  Capacity
+   */
+  public final int capacityFor(int height) {
+    return height * capacityPerLayer();
+  }
+
 
   /* Parent behavior */
 
@@ -103,7 +125,7 @@ public class CisternTileEntity extends MantleTileEntity {
       if (te instanceof CisternTileEntity) {
         // if we have fluid in the new base, extract that into that base
         FluidStack fluid = FluidStack.EMPTY;
-        int amountAboveRemoved = tank.getFluidAmount() - CisternTank.capacityFor(index);
+        int amountAboveRemoved = tank.getFluidAmount() - capacityFor(index);
         if (amountAboveRemoved > 0) {
           fluid = new FluidStack(tank.getFluid(), amountAboveRemoved);
         }

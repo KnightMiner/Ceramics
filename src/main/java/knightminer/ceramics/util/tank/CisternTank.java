@@ -2,7 +2,6 @@ package knightminer.ceramics.util.tank;
 
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -13,8 +12,6 @@ import javax.annotation.Nonnull;
  * Handles all tank behaviors for the cistern
  */
 public class CisternTank implements IFluidHandler, IFluidTank {
-  public static final int BASE_CAPACITY = FluidAttributes.BUCKET_VOLUME * 4;
-
   /** Current fluid in tank */
   protected FluidStack fluid = FluidStack.EMPTY;
   /** Relevant tile entity */
@@ -34,23 +31,13 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     return fluid;
   }
 
-  /**
-   * Gets the capacity for the given height
-   * @param height  Height to check
-   * @return  Capacity
-   */
-  public static int capacityFor(int height) {
-    return height * BASE_CAPACITY;
-  }
-
   @Override
   public int getCapacity() {
     // 1 for the base, plus 1 per extension
-    return capacityFor(parent.getExtensions() + 1);
+    return parent.capacityFor(parent.getExtensions() + 1);
   }
 
   public void validateAmount() {
-    int capacity = getCapacity();
     int extra = fluid.getAmount() - getCapacity();
     if (extra > 0) {
       drain(extra, FluidAction.EXECUTE);
