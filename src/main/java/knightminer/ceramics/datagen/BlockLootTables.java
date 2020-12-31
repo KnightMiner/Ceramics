@@ -3,11 +3,15 @@ package knightminer.ceramics.datagen;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import net.minecraft.block.Block;
+import net.minecraft.item.Items;
 import net.minecraft.loot.ConstantRange;
+import net.minecraft.loot.LootTable.Builder;
 import net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
@@ -20,9 +24,11 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
 
   @Override
   protected void addTables() {
+    IntFunction<Function<Block,Builder>> dropClay = count -> block -> droppingWithSilkTouchOrRandomly(block, Items.CLAY_BALL, ConstantRange.of(count));
+    IntFunction<Function<Block,Builder>> dropPorcelain = count -> block -> droppingWithSilkTouchOrRandomly(block, Registration.UNFIRED_PORCELAIN, ConstantRange.of(count));
+
     // unfired porcelain drops 4 of the item form
-    this.registerLootTable(Registration.UNFIRED_PORCELAIN_BLOCK.get(), (block) ->
-        droppingWithSilkTouchOrRandomly(block, Registration.UNFIRED_PORCELAIN, ConstantRange.of(4)));
+    registerLootTable(Registration.UNFIRED_PORCELAIN_BLOCK.get(), dropPorcelain.apply(4));
     Registration.PORCELAIN_BLOCK.forEach(this::registerDropSelfLootTable);
     Registration.RAINBOW_PORCELAIN.forEach(this::registerDropSelfLootTable);
 
@@ -41,20 +47,20 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
     // gauge
     registerDropSelfLootTable(Registration.GAUGE.get());
     // cistern
-    registerDropSelfLootTable(Registration.CLAY_CISTERN.get());
-    registerDropSelfLootTable(Registration.UNFIRED_CISTERN.get());
+    registerLootTable(Registration.CLAY_CISTERN.get(), dropClay.apply(3));
+    registerLootTable(Registration.UNFIRED_CISTERN.get(), dropPorcelain.apply(3));
     registerDropSelfLootTable(Registration.TERRACOTTA_CISTERN.get());
     Registration.COLORED_CISTERN.forEach(this::registerDropSelfLootTable);
     Registration.PORCELAIN_CISTERN.forEach(this::registerDropSelfLootTable);
     // faucet
-    registerDropSelfLootTable(Registration.CLAY_FAUCET.get());
+    registerLootTable(Registration.CLAY_FAUCET.get(), dropClay.apply(2));
+    registerLootTable(Registration.UNFIRED_FAUCET.get(), dropPorcelain.apply(2));
     registerDropSelfLootTable(Registration.TERRACOTTA_FAUCET.get());
-    registerDropSelfLootTable(Registration.UNFIRED_FAUCET.get());
     registerDropSelfLootTable(Registration.PORCELAIN_FAUCET.get());
     // channel
-    registerDropSelfLootTable(Registration.CLAY_CHANNEL.get());
+    registerLootTable(Registration.CLAY_CHANNEL.get(), dropClay.apply(2));
+    registerLootTable(Registration.UNFIRED_CHANNEL.get(), dropPorcelain.apply(2));
     registerDropSelfLootTable(Registration.TERRACOTTA_CHANNEL.get());
-    registerDropSelfLootTable(Registration.UNFIRED_CHANNEL.get());
     registerDropSelfLootTable(Registration.PORCELAIN_CHANNEL.get());
   }
 

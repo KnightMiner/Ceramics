@@ -11,6 +11,7 @@
     }
   },
   "result": {
-    "item": "ceramics:unfired_cistern"
+    "item": "ceramics:unfired_cistern",
+    "count": 2
   }
 }

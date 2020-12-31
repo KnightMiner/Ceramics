@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "ceramics:unfired_porcelain_block_uncrafting"
+      "ceramics:porcelain_uncrafting_4"
     ]
   },
   "criteria": {
@@ -19,7 +19,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "ceramics:unfired_porcelain_block_uncrafting"
+        "recipe": "ceramics:porcelain_uncrafting_4"
       }
     }
   },

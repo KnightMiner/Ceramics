@@ -11,6 +11,7 @@
     }
   },
   "result": {
-    "item": "ceramics:clay_cistern"
+    "item": "ceramics:clay_cistern",
+    "count": 2
   }
 }

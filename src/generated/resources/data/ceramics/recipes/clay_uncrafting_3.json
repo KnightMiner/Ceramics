@@ -2,12 +2,17 @@
   "type": "minecraft:crafting_shapeless",
   "group": "ceramics:clay_uncrafting",
   "ingredients": [
-    {
-      "item": "ceramics:unfired_cistern"
-    }
+    [
+      {
+        "item": "ceramics:unfired_clay_bucket"
+      },
+      {
+        "item": "ceramics:clay_cistern"
+      }
+    ]
   ],
   "result": {
     "item": "minecraft:clay_ball",
-    "count": 6
+    "count": 3
   }
 }
