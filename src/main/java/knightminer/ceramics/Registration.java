@@ -17,7 +17,7 @@ import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
-import knightminer.ceramics.recipe.NoCrackedShapedRecipe;
+import knightminer.ceramics.recipe.NoNBTIngredient;
 import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
@@ -43,7 +43,10 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -64,7 +67,7 @@ public class Registration {
   private static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(Ceramics.MOD_ID);
   private static final ContainerTypeDeferredRegister CONTAINERS = new ContainerTypeDeferredRegister(Ceramics.MOD_ID);
   private static final TileEntityTypeDeferredRegister TILE_ENTIITES = new TileEntityTypeDeferredRegister(Ceramics.MOD_ID);
-  private static final DeferredRegister<IRecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Ceramics.MOD_ID);
+  private static final DeferredRegister<IRecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Ceramics.MOD_ID);
 
   /** Initializes the registries with the forge mod bus */
   static void init() {
@@ -73,7 +76,8 @@ public class Registration {
     ITEMS.register(bus);
     CONTAINERS.register(bus);
     TILE_ENTIITES.register(bus);
-    SERIALIZERS.register(bus);
+    RECIPE_SERIALIZERS.register(bus);
+    bus.register(Registration.class);
   }
 
   /** Creative tab for all of Ceramics */
@@ -161,7 +165,7 @@ public class Registration {
   public static final RegistryObject<TileEntityType<KilnTileEntity>> KILN_TILE_ENTITY = TILE_ENTIITES.register("kiln", KilnTileEntity::new, KILN);
   // kiln recipes
   public static final IRecipeType<KilnRecipe> KILN_RECIPE = IRecipeType.register("ceramics:kiln");
-  public static final RegistryObject<CookingRecipeSerializer<KilnRecipe>> KILN_SERIALIZER = SERIALIZERS.register("kiln", () -> new CookingRecipeSerializer<>(KilnRecipe::new, 100));
+  public static final RegistryObject<CookingRecipeSerializer<KilnRecipe>> KILN_SERIALIZER = RECIPE_SERIALIZERS.register("kiln", () -> new CookingRecipeSerializer<>(KilnRecipe::new, 100));
 
   /*
    * fluid handling
@@ -201,8 +205,12 @@ public class Registration {
   public static final RegistryObject<TileEntityType<ChannelTileEntity>> CHANNEL_TILE_ENTITY = TILE_ENTIITES.register("channel", ChannelTileEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
   // clay repair
-  public static final RegistryObject<IRecipeSerializer<?>> CLAY_REPAIR_RECIPE_SERIALIZER = SERIALIZERS.register("cracked_clay_repair", CrackedClayRepairRecipe.Serializer::new);
-  public static final RegistryObject<IRecipeSerializer<?>> NO_CRACKED_SHAPED_RECIPE = SERIALIZERS.register("no_cracked_shaped_recipe", NoCrackedShapedRecipe.Serializer::new);
+  public static final RegistryObject<IRecipeSerializer<?>> CLAY_REPAIR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("cracked_clay_repair", CrackedClayRepairRecipe.Serializer::new);
+
+  @SubscribeEvent
+  static void registerRecipeSerializer(RegistryEvent.Register<IRecipeSerializer<?>> event) {
+    CraftingHelper.register(Ceramics.getResource("no_nbt"), NoNBTIngredient.SERIALIZER);
+  }
 
   /**
    * Standard hardened clay properties

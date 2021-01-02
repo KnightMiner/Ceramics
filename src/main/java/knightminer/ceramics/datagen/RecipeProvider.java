@@ -5,6 +5,7 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
+import knightminer.ceramics.recipe.NoNBTIngredient;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.block.Block;
@@ -24,7 +25,6 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
-import slimeknights.mantle.recipe.data.ConsumerWrapperBuilder;
 import slimeknights.mantle.registration.object.BuildingBlockObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
@@ -231,18 +231,17 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     // repair
     clayRepair(consumer, Registration.TERRACOTTA_CISTERN);
     // colored
-    Consumer<IFinishedRecipe> coloredConsumer = ConsumerWrapperBuilder.wrap(Registration.NO_CRACKED_SHAPED_RECIPE.get()).build(consumer);
     Registration.COLORED_CISTERN.forEach((color, block) -> {
       // craft
       ShapedRecipeBuilder.shapedRecipe(block, 4)
-                         .key('c', CeramicsTags.Items.TERRACOTTA_CISTERNS)
+                         .key('c', new NoNBTIngredient(Ingredient.fromTag(CeramicsTags.Items.TERRACOTTA_CISTERNS)))
                          .key('d', color.getTag())
                          .patternLine(" c ")
                          .patternLine("cdc")
                          .patternLine(" c ")
                          .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                          .setGroup(Ceramics.locationName("colored_cisterns"))
-                         .build(coloredConsumer);
+                         .build(consumer);
       // repair
       clayRepair(consumer, block);
     });

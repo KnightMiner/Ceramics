@@ -1,6 +1,5 @@
 {
-  "type": "ceramics:no_cracked_shaped_recipe",
-  "conditions": [],
+  "type": "minecraft:crafting_shaped",
   "group": "ceramics:colored_cisterns",
   "pattern": [
     " c ",
@@ -9,7 +8,8 @@
   ],
   "key": {
     "c": {
-      "tag": "ceramics:terracotta_cisterns"
+      "tag": "ceramics:terracotta_cisterns",
+      "type": "ceramics:no_nbt"
     },
     "d": {
       "tag": "forge:dyes/yellow"
