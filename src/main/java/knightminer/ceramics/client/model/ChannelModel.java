@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -32,7 +33,9 @@ import java.util.function.Function;
  */
 public class ChannelModel implements IModelGeometry<ChannelModel> {
 	/** Model loader instance */
-	public static final Loader LOADER = new Loader();
+	public static final Loader<ChannelModel> LOADER = new Loader<>(ChannelModel::new);
+	/** Model loader instance */
+	public static final Loader<CrackedModel> CRACKED_LOADER = new Loader<>(Cracked::new);
 
 	/** Base block model */
 	private final SimpleBlockModel model;
@@ -53,6 +56,22 @@ public class ChannelModel implements IModelGeometry<ChannelModel> {
 	public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial,TextureAtlasSprite> spriteGetter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation location) {
 		IBakedModel baked = this.model.bakeModel(owner, transform, overrides, spriteGetter, location);
 		return new BakedModel(baked, this.fluids);
+	}
+
+	/** Model geometry for a cracked cistern */
+	private static class Cracked extends CrackedModel {
+		/** Map of all fluid parts of the model */
+		private final Map<ChannelModelPart,FluidCuboid> fluids;
+		public Cracked(SimpleBlockModel model, Map<ChannelModelPart,FluidCuboid> fluids) {
+			super(model);
+			this.fluids = fluids;
+		}
+
+		@Override
+		public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial,TextureAtlasSprite> spriteGetter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation location) {
+			IBakedModel model = super.bake(owner, bakery, spriteGetter, transform, overrides, location);
+			return new BakedModel(model, this.fluids);
+		}
 	}
 
 	/**
@@ -98,12 +117,17 @@ public class ChannelModel implements IModelGeometry<ChannelModel> {
 	}
 
 	/** Model loader */
-	private static class Loader implements IModelLoader<ChannelModel> {
+	private static class Loader<T extends IModelGeometry<T>> implements IModelLoader<T> {
+		private final BiFunction<SimpleBlockModel, Map<ChannelModelPart,FluidCuboid>, T> constructor;
+		public Loader(BiFunction<SimpleBlockModel, Map<ChannelModelPart,FluidCuboid>, T> constructor) {
+			this.constructor = constructor;
+		}
+
 		@Override
 		public void onResourceManagerReload(IResourceManager resourceManager) {}
 
 		@Override
-		public ChannelModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+		public T read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
 			SimpleBlockModel model = SimpleBlockModel.deserialize(deserializationContext, modelContents);
 
 			// parse fluid cuboid for each side
@@ -121,7 +145,7 @@ public class ChannelModel implements IModelGeometry<ChannelModel> {
 			fluids.put(ChannelModelPart.SIDE_OUT,   FluidCuboid.fromJson(JSONUtils.getJsonObject(sideJson, "out")));
 			fluids.put(ChannelModelPart.SIDE_EDGE,  FluidCuboid.fromJson(JSONUtils.getJsonObject(sideJson, "edge")));
 
-			return new ChannelModel(model, fluids);
+			return constructor.apply(model, fluids);
 		}
 	}
 

@@ -1,6 +1,67 @@
 {
-    "parent": "ceramics:block/channel/center",
-    "textures": {
-        "texture": "block/terracotta"
+  "loader": "ceramics:cracked_channel",
+  "parent": "ceramics:block/channel/center_elements",
+  "textures": {
+    "texture": "block/terracotta",
+    "cracks_1": "ceramics:block/terracotta_cracks/1",
+    "cracks_2": "ceramics:block/terracotta_cracks/2",
+    "cracks_3": "ceramics:block/terracotta_cracks/3",
+    "cracks_4": "ceramics:block/terracotta_cracks/4",
+    "cracks_5": "ceramics:block/terracotta_cracks/5"
+  },
+  "fluids": {
+    "center": {
+      "still": {
+        "from": [  6, 6,  6 ],
+        "to":   [ 10, 8, 10 ],
+        "faces": { "up": {}, "down": {} }
+      },
+      "flowing": {
+        "from": [  6, 6,  6 ],
+        "to":   [ 10, 8, 10 ],
+        "faces": {
+          "up":   { "flowing": true },
+          "down": { "flowing": true, "rotation": 180 }
+        }
+      }
+    },
+    "down": {
+      "from": [  6, 0,  6 ],
+      "to":   [ 10, 6, 10 ],
+      "faces": {
+        "north": { "flowing": true },
+        "south": { "flowing": true },
+        "west":  { "flowing": true },
+        "east":  { "flowing": true }
+      }
+    },
+    "side": {
+      "still": {
+        "from": [  6, 6, 10 ],
+        "to":   [ 10, 8, 10 ],
+        "faces": { "south": {} }
+      },
+      "in": {
+        "from": [  6, 8, 10 ],
+        "to":   [ 10, 8, 16 ],
+        "faces": {
+          "up": { "flowing": true, "rotation": 180 }
+        }
+      },
+      "out": {
+        "from": [  6, 8, 10 ],
+        "to":   [ 10, 8, 16 ],
+        "faces": {
+          "up": { "flowing": true }
+        }
+      },
+      "edge": {
+        "from": [  6, 6, 16 ],
+        "to":   [ 10, 8, 16 ],
+        "faces": {
+          "south": { "flowing": true }
+        }
+      }
     }
+  }
 }

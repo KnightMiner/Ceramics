@@ -1,7 +1,13 @@
 {
-    "parent": "ceramics:block/channel/side_connected",
-    "textures": {
-        "texture": "block/terracotta",
-        "top": "ceramics:block/channel/terracotta_out"
-    }
+  "loader": "ceramics:cracked",
+  "parent": "ceramics:block/channel/side_connected",
+  "textures": {
+    "texture": "block/terracotta",
+    "top": "ceramics:block/channel/terracotta_out",
+    "cracks_1": "ceramics:block/terracotta_cracks/1",
+    "cracks_2": "ceramics:block/terracotta_cracks/2",
+    "cracks_3": "ceramics:block/terracotta_cracks/3",
+    "cracks_4": "ceramics:block/terracotta_cracks/4",
+    "cracks_5": "ceramics:block/terracotta_cracks/5"
+  }
 }

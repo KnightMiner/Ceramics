@@ -3,17 +3,19 @@ package knightminer.ceramics.tileentity;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.CisternBlock;
+import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CisternUpdatePacket;
+import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import knightminer.ceramics.util.tank.CisternTank;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.LazyOptional;
@@ -30,11 +32,10 @@ import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import javax.annotation.Nullable;
 
-public class CisternTileEntity extends MantleTileEntity {
+public class CisternTileEntity extends MantleTileEntity implements ICrackableTileEntity {
   /** Max capacity per cistern block */
   private static final String TAG_FLUID = "fluid";
   private static final String TAG_EXTENSIONS = "extensions";
-
 
   /* Base fields */
   /** Tank instance for this cistern */
@@ -54,8 +55,16 @@ public class CisternTileEntity extends MantleTileEntity {
   /** Consumer for when the parent invalidates */
   private final NonNullConsumer<LazyOptional<IFluidHandler>> invalidationListener = new WeakConsumerWrapper<>(this, (te, handler) -> te.invalidateHandlers());
 
-  public CisternTileEntity() {
+  /** Cracking logic */
+  private final CrackableTileEntityHandler cracksHandler;
+
+  public CisternTileEntity(boolean crackable) {
     super(Registration.CISTERN_TILE_ENTITY.get());
+    cracksHandler = new CrackableTileEntityHandler(this, crackable);
+  }
+
+  public CisternTileEntity() {
+    this(false);
   }
 
   /* Getters */
@@ -106,6 +115,16 @@ public class CisternTileEntity extends MantleTileEntity {
    */
   public final int capacityFor(int height) {
     return height * capacityPerLayer();
+  }
+
+  @Override
+  public CrackableTileEntityHandler getCracksHandler() {
+    return cracksHandler;
+  }
+
+  @Override
+  public IModelData getModelData() {
+    return cracksHandler.getModelData();
   }
 
 
@@ -198,6 +217,25 @@ public class CisternTileEntity extends MantleTileEntity {
     }
   }
 
+  /** Called by the tank when fluid is added */
+  public void onFluidAdded(int amountAdded) {
+    onTankChanged(false);
+
+    // if cracking is active and the fluid cracks the block, crack all blocks impacted by the fluid
+    FluidStack fluid = tank.getFluid();
+    if (cracksHandler.isActive() && world != null && !world.isRemote() && BaseClayBucketItem.doesCrack(fluid.getFluid())) {
+      int capacityPerLayer = capacityPerLayer();
+      // first index needing an update
+      int startIndex = (fluid.getAmount() - amountAdded + capacityPerLayer - 1) / capacityPerLayer;
+      // last index needing an update
+      int endIndex = (fluid.getAmount() - 1) / capacityPerLayer;
+      // loop through indexes, updating them
+      for (int i = startIndex; i <= endIndex; i++) {
+        TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos.up(i)).ifPresent(te -> te.getCracksHandler().fluidAdded(fluid));
+      }
+    }
+  }
+
 
   /* Extension behavior */
 
@@ -254,6 +292,25 @@ public class CisternTileEntity extends MantleTileEntity {
     getInternalHandler();
     assert publicHandler != null;
     return publicHandler;
+  }
+
+  /** Called on random block tick to update the heat */
+  public void randomTick() {
+    if (cracksHandler.isActive()) {
+      if (getBlockState().get(CisternBlock.EXTENSION)) {
+        // extensions: if fluid does not reach here, treat as empty
+        FluidStack fluid = getInternalHandler().orElse(EmptyFluidHandler.INSTANCE).getFluidInTank(0);
+        int localAmount = fluid.getAmount() - capacityFor(renderIndex);
+        if (localAmount > 0) {
+          cracksHandler.updateCracks(fluid.getFluid(), localAmount);
+        } else {
+          cracksHandler.updateCracks(Fluids.EMPTY, 0);
+        }
+      } else {
+        FluidStack fluid = tank.getFluid();
+        cracksHandler.updateCracks(fluid.getFluid(), Math.min(fluid.getAmount(), capacityPerLayer()));
+      }
+    }
   }
 
 
@@ -361,17 +418,9 @@ public class CisternTileEntity extends MantleTileEntity {
     }
   }
 
-  // we send all our info to the client on load
   @Override
-  public SUpdateTileEntityPacket getUpdatePacket() {
-    CompoundNBT tag = this.write(new CompoundNBT());
-    return new SUpdateTileEntityPacket(this.getPos(), 0, tag);
-  }
-
-  @Override
-  public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-    super.onDataPacket(net, pkt);
-    this.read(this.getBlockState(), pkt.getNbtCompound());
+  public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+    read(state, tag);
   }
 
   @Override
@@ -390,6 +439,7 @@ public class CisternTileEntity extends MantleTileEntity {
     if (tags.contains(TAG_FLUID, NBT.TAG_COMPOUND)) {
       tank.readFromNBT(tags.getCompound(TAG_FLUID));
     }
+    cracksHandler.readNBT(state, tags);
   }
 
   @Override
@@ -399,6 +449,7 @@ public class CisternTileEntity extends MantleTileEntity {
       compound.put(TAG_FLUID, tank.writeToNBT());
     }
     compound.putInt(TAG_EXTENSIONS, extensions);
+    cracksHandler.writeNBT(compound);
     return compound;
   }
 }

@@ -1,6 +1,7 @@
 package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.tileentity.CisternTileEntity;
+import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -14,19 +15,23 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import slimeknights.mantle.util.TileEntityHelper;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * Fired cistern block that can store fluids
  */
-public class FluidCisternBlock extends CisternBlock {
-  public FluidCisternBlock(Properties properties) {
+public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
+  private final boolean crackable;
+  public FluidCisternBlock(Properties properties, boolean crackable) {
     super(properties);
+    this.crackable = crackable;
   }
 
 
@@ -40,7 +45,7 @@ public class FluidCisternBlock extends CisternBlock {
   @Override
   @Nullable
   public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-    return new CisternTileEntity();
+    return new CisternTileEntity(crackable);
   }
 
 
@@ -127,5 +132,22 @@ public class FluidCisternBlock extends CisternBlock {
       state = state.with(CONNECTIONS.get(facing), isConnected(facing, facingState));
     }
     return state;
+  }
+
+
+  /* Cracking */
+
+  @Override
+  public boolean isCrackable() {
+    return crackable;
+  }
+
+  @SuppressWarnings("deprecation")
+  @Override
+  @Deprecated
+  public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+    if (isCrackable() && random.nextInt(5) == 0) {
+      TileEntityHelper.getTile(CisternTileEntity.class, worldIn, pos).ifPresent(CisternTileEntity::randomTick);
+    }
   }
 }

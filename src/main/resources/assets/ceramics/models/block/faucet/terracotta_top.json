@@ -1,6 +1,23 @@
 {
-    "parent": "ceramics:block/faucet/top",
-    "textures": {
-        "tex": "block/terracotta"
+  "loader": "ceramics:cracked_fluids",
+  "parent": "ceramics:block/faucet/elements_top",
+  "textures": {
+    "tex": "block/terracotta",
+    "cracks_1": "ceramics:block/terracotta_cracks/1",
+    "cracks_2": "ceramics:block/terracotta_cracks/2",
+    "cracks_3": "ceramics:block/terracotta_cracks/3",
+    "cracks_4": "ceramics:block/terracotta_cracks/4",
+    "cracks_5": "ceramics:block/terracotta_cracks/5"
+  },
+  "fluids": {
+    "from": [  6,  0, 6 ],
+    "to":   [ 10, 16, 10 ],
+    "faces": {
+      "up":    {},
+      "north": { "flowing": true },
+      "east":  { "flowing": true },
+      "south": { "flowing": true },
+      "west":  { "flowing": true }
     }
+  }
 }

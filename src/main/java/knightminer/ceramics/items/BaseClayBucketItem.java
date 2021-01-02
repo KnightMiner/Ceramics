@@ -232,8 +232,8 @@ public abstract class BaseClayBucketItem extends Item {
    * @param fluid  Fluid to test
    * @return true if it cracks the bucket
    */
-  protected boolean doesCrack(Fluid fluid) {
-    return fluid.getAttributes().getTemperature() >= 450;
+  public static boolean doesCrack(Fluid fluid) {
+    return fluid != Fluids.EMPTY && fluid.getAttributes().getTemperature() >= 450;
   }
 
   /**

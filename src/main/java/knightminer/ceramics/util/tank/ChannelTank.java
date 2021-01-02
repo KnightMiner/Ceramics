@@ -45,6 +45,8 @@ public class ChannelTank extends FluidTank {
 		int amount = super.fill(resource, action);
 		if(action.execute()) {
 			locked += amount;
+			// crack the faucet if hot and the faucet is crackable
+			parent.getCracksHandler().fluidAdded(fluid);
 			// if we added something, sync to client
 			if (wasEmpty && !isEmpty()) {
 				parent.sendFluidUpdate();

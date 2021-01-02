@@ -3,17 +3,18 @@ package knightminer.ceramics.tileentity;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.FaucetActivationPacket;
+import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullConsumer;
@@ -22,11 +23,12 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
+import slimeknights.mantle.tileentity.MantleTileEntity;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
-public class FaucetTileEntity extends TileEntity implements ITickableTileEntity {
+public class FaucetTileEntity extends MantleTileEntity implements ITickableTileEntity, ICrackableTileEntity {
   /** Transfer rate of the faucet */
   public static final int MB_PER_TICK = 12;
   /** amount of MB to extract from the input at a time */
@@ -58,13 +60,24 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
   /** Listner for when the output handler is invalidated */
   private final NonNullConsumer<LazyOptional<IFluidHandler>> outputListener = new WeakConsumerWrapper<>(this, (self, handler) -> self.outputHandler = null);
 
-  public FaucetTileEntity() {
-    this(Registration.FAUCET_TILE_ENTITY.get());
+  /** Crackable logic */
+  private final CrackableTileEntityHandler cracksHandler;
+
+  public FaucetTileEntity(boolean crackable) {
+    super(Registration.FAUCET_TILE_ENTITY.get());
+    cracksHandler = new CrackableTileEntityHandler(this, crackable);
   }
 
-  @SuppressWarnings("WeakerAccess")
-  protected FaucetTileEntity(TileEntityType<?> tileEntityTypeIn) {
-    super(tileEntityTypeIn);
+  public FaucetTileEntity() {
+    this(false);
+  }
+
+  /**
+   * Called on random tick to increase or decrease the heat
+   */
+  public void randomTick() {
+    // using render fluid so it works for the brief ticks between "packets"
+    cracksHandler.updateCracks(renderFluid);
   }
 
 
@@ -148,6 +161,17 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
     return renderFluid;
   }
 
+  @Override
+  public CrackableTileEntityHandler getCracksHandler() {
+    return cracksHandler;
+  }
+
+  @Override
+  public IModelData getModelData() {
+    return cracksHandler.getModelData();
+  }
+
+
   /* Activation */
 
   /**
@@ -226,6 +250,9 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
         if (filled > 0) {
           // drain the liquid and transfer it, buffer the amount for delay
           this.drained = input.drain(filled, FluidAction.EXECUTE);
+
+          // have the cracks handler check if this fluid cracks the faucet
+          this.cracksHandler.fluidAdded(this.drained);
 
           // sync to clients if we have changes
           if (!isPouring || !renderFluid.isFluidEqual(drained)) {
@@ -348,6 +375,7 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
     if (!renderFluid.isEmpty()) {
       compound.put(TAG_RENDER_FLUID, renderFluid.writeToNBT(new CompoundNBT()));
     }
+    cracksHandler.writeNBT(compound);
     return compound;
   }
 
@@ -369,5 +397,6 @@ public class FaucetTileEntity extends TileEntity implements ITickableTileEntity 
     } else {
       renderFluid = FluidStack.EMPTY;
     }
+    cracksHandler.readNBT(state, compound);
   }
 }

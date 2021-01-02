@@ -1,5 +1,6 @@
 package knightminer.ceramics.blocks;
 
+import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -26,9 +27,11 @@ import java.util.Random;
 /**
  * Pouring variant of the faucet block
  */
-public class PouringFaucetBlock extends FaucetBlock {
-  public PouringFaucetBlock(Properties builder) {
+public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
+  private final boolean crackable;
+  public PouringFaucetBlock(Properties builder, boolean crackable) {
     super(builder);
+    this.crackable = crackable;
   }
 
 
@@ -41,7 +44,7 @@ public class PouringFaucetBlock extends FaucetBlock {
 
   @Override
   public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-    return new FaucetTileEntity();
+    return new FaucetTileEntity(crackable);
   }
 
   @SuppressWarnings("deprecation")
@@ -115,5 +118,22 @@ public class PouringFaucetBlock extends FaucetBlock {
         addParticles(stateIn, worldIn, pos);
       }
     });
+  }
+
+
+  /* Cracking */
+
+  @Override
+  public boolean isCrackable() {
+    return crackable;
+  }
+
+  @SuppressWarnings("deprecation")
+  @Override
+  @Deprecated
+  public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+    if (isCrackable()) {
+      TileEntityHelper.getTile(FaucetTileEntity.class, worldIn, pos).ifPresent(FaucetTileEntity::randomTick);
+    }
   }
 }

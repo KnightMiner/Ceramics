@@ -37,6 +37,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     return parent.capacityFor(parent.getExtensions() + 1);
   }
 
+  /** Ensures the tank does not have too much fluid */
   public void validateAmount() {
     int extra = fluid.getAmount() - getCapacity();
     if (extra > 0) {
@@ -76,7 +77,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     // no existing fluid
     if (fluid.isEmpty()) {
       fluid = new FluidStack(resource, Math.min(capacity, resource.getAmount()));
-      parent.onTankChanged(false);
+      parent.onFluidAdded(fluid.getAmount());
       return fluid.getAmount();
     }
     // wrong type
@@ -94,7 +95,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     }
     // updates
     if (filled > 0) {
-      parent.onTankChanged(false);
+      parent.onFluidAdded(filled);
     }
     return filled;
   }

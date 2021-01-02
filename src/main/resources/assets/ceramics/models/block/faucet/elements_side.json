@@ -1,0 +1,80 @@
+{
+  "comment": "Model is facing South (as in: the block it's connected to is south of it)",
+  "textures": {
+    "particle": "#tex"
+  },
+  "display": {
+    "gui": {
+      "rotation": [ 30, 225, 0 ],
+      "translation": [ 3, -1, 0 ],
+      "scale": [ 0.9375, 0.9375, 0.9375 ]
+    },
+    "ground": {
+      "translation": [ 0, 3, -1 ],
+      "scale": [ 0.25, 0.25, 0.25 ]
+    },
+    "fixed": {
+      "translation": [ 0, 0, -1 ],
+      "scale": [ 0.5, 0.5, 0.5 ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [ 75, 45, 0 ],
+      "translation": [ 0, 3, 0.5 ],
+      "scale": [ 0.4, 0.4, 0.4 ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [ 75, 45, 0 ],
+      "translation": [ 0, 3, 0.5 ],
+      "scale": [ 0.4, 0.4, 0.4 ]
+    },
+    "firstperson_righthand": {
+      "rotation": [ 0, 135, 0 ],
+      "translation": [ 0, 0.5, 0 ],
+      "scale": [ 0.5, 0.5, 0.5 ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [ 0, 135, 0 ],
+      "translation": [ 0, 0.5, 0 ],
+      "scale": [ 0.5, 0.5, 0.5 ]
+    }
+  },
+  "elements": [
+    {
+      "from": [  4,  4, 10 ],
+      "to":   [ 12,  6, 16 ],
+      "faces": {
+        "up":    {"texture": "#tex"},
+        "down":  {"texture": "#tex"},
+        "north": {"texture": "#tex"},
+        "east":  {"texture": "#tex"},
+        "south": {"texture": "#tex", "cullface": "south"},
+        "west":  {"texture": "#tex"}
+      },
+      "__comment": "The bottom platform, facing south with the dark texture side"
+    },
+    {
+      "from": [ 10,  6, 10 ],
+      "to":   [ 12, 10, 16 ],
+      "faces": {
+        "up":    {"texture": "#tex"},
+        "north": {"texture": "#tex"},
+        "east":  {"texture": "#tex"},
+        "south": {"texture": "#tex", "cullface": "south"},
+        "west":  {"texture": "#tex"}
+      },
+      "__comment": "Left side from front (east)"
+    },
+    {
+      "from": [  4,  6, 10 ],
+      "to":   [  6, 10, 16 ],
+      "faces": {
+        "up":    {"texture": "#tex"},
+        "north": {"texture": "#tex"},
+        "east":  {"texture": "#tex"},
+        "south": {"texture": "#tex", "cullface": "south"},
+        "west":  {"texture": "#tex"}
+      },
+      "__comment": "Right side from front (west)"
+    }
+  ]
+}

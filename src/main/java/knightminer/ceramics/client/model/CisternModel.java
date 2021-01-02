@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -35,7 +36,9 @@ import java.util.function.Function;
  */
 public class CisternModel implements IModelGeometry<CisternModel> {
 	/** Model loader instance */
-	public static final Loader LOADER = new Loader();
+	public static final Loader<CisternModel> LOADER = new Loader<>(CisternModel::new);
+	/** Model loader for cracked models */
+	public static final Loader<CrackedModel> CRACKED_LOADER = new Loader<>(Cracked::new);
 
 	/** Base block model */
 	private final SimpleBlockModel model;
@@ -58,13 +61,29 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 		return new BakedModel(baked, this.fluids);
 	}
 
+	/** Model geometrry for a cracked cistern */
+	private static class Cracked extends CrackedModel {
+		/** Map of side to fluid. {@link Direction#UP} represents extension center, {@link Direction#DOWN} base center */
+		private final Map<Direction,FluidCuboid> fluids;
+		public Cracked(SimpleBlockModel model, Map<Direction,FluidCuboid> fluids) {
+			super(model);
+			this.fluids = fluids;
+		}
+
+		@Override
+		public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial,TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
+			IBakedModel model = super.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation);
+			return new BakedModel(model, fluids);
+		}
+	}
+
 	/**
 	 * Baked model wrapper for cistern models
 	 */
 	public static class BakedModel extends BakedModelWrapper<IBakedModel> {
 		/** Map of side to fluid. {@link Direction#UP} represents extension center, {@link Direction#DOWN} base center */
 		private final Map<Direction,FluidCuboid> fluids;
-		private BakedModel(IBakedModel originalModel, final Map<Direction,FluidCuboid> fluids) {
+		private BakedModel(IBakedModel originalModel, Map<Direction,FluidCuboid> fluids) {
 			super(originalModel);
 			this.fluids = fluids;
 		}
@@ -89,12 +108,17 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 	}
 
 	/** Model loader */
-	private static class Loader implements IModelLoader<CisternModel> {
+	private static class Loader<T extends IModelGeometry<T>> implements IModelLoader<T> {
+		private final BiFunction<SimpleBlockModel, Map<Direction,FluidCuboid>, T> constructor;
+		public Loader(BiFunction<SimpleBlockModel, Map<Direction,FluidCuboid>, T> constructor) {
+			this.constructor = constructor;
+		}
+
 		@Override
 		public void onResourceManagerReload(IResourceManager resourceManager) {}
 
 		@Override
-		public CisternModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+		public T read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
 			SimpleBlockModel model = SimpleBlockModel.deserialize(deserializationContext, modelContents);
 			// parse fluid cuboid for each side
 			JsonObject fluidJson = JSONUtils.getJsonObject(modelContents, "fluids");
@@ -108,7 +132,7 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 					fluids.put(direction, FluidCuboid.fromJson(JSONUtils.getJsonObject(fluidJson, direction.getString())));
 				}
 			}
-			return new CisternModel(model, fluids);
+			return constructor.apply(model, fluids);
 		}
 	}
 }

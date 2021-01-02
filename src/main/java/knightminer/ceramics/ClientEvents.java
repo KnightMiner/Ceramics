@@ -4,6 +4,8 @@ import knightminer.ceramics.client.gui.KilnScreen;
 import knightminer.ceramics.client.model.ChannelModel;
 import knightminer.ceramics.client.model.CisternModel;
 import knightminer.ceramics.client.model.ClayBucketModel;
+import knightminer.ceramics.client.model.CrackedFluidsModel;
+import knightminer.ceramics.client.model.CrackedModel;
 import knightminer.ceramics.client.renderer.ChannelTileEntityRenderer;
 import knightminer.ceramics.client.renderer.CisternTileEntityRenderer;
 import knightminer.ceramics.client.renderer.FaucetTileEntityRenderer;
@@ -29,8 +31,13 @@ public class ClientEvents {
 
   @SubscribeEvent
   static void setupClient(FMLClientSetupEvent event) {
-    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), RenderType.getCutout());
-    RenderTypeLookup.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), RenderType.getCutout());
+    RenderType cutout = RenderType.getCutout();
+    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), cutout);
+    RenderTypeLookup.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), cutout);
+    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_CISTERN.get(), cutout);
+    Registration.COLORED_CISTERN.forEach(cistern -> RenderTypeLookup.setRenderLayer(cistern, cutout));
+    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
+    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
 
     ScreenManager.registerFactory(Registration.KILN_CONTAINER.get(), KilnScreen::new);
     ClientRegistry.bindTileEntityRenderer(Registration.CISTERN_TILE_ENTITY.get(), CisternTileEntityRenderer::new);
@@ -43,5 +50,10 @@ public class ClientEvents {
     ModelLoaderRegistry.registerLoader(Ceramics.getResource("bucket"), ClayBucketModel.LOADER);
     ModelLoaderRegistry.registerLoader(Ceramics.getResource("cistern"), CisternModel.LOADER);
     ModelLoaderRegistry.registerLoader(Ceramics.getResource("channel"), ChannelModel.LOADER);
+    // cracked models
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("cracked"), CrackedModel.LOADER);
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("cracked_fluids"), CrackedFluidsModel.LOADER);
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("cracked_cistern"), CisternModel.CRACKED_LOADER);
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("cracked_channel"), ChannelModel.CRACKED_LOADER);
   }
 }

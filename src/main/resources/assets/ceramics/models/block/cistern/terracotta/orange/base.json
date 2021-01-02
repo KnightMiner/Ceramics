@@ -1,5 +1,5 @@
 {
-    "parent": "ceramics:block/cistern/base",
+    "parent": "ceramics:block/cistern/terracotta/base",
     "textures": {
         "texture": "block/orange_terracotta"
     }

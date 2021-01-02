@@ -1,5 +1,5 @@
 {
-    "parent": "ceramics:block/cistern/side_full_unconnected",
+    "parent": "ceramics:block/cistern/terracotta/side_full_unconnected",
     "textures": {
         "texture": "block/gray_terracotta"
     }
