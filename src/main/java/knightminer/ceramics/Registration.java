@@ -12,6 +12,7 @@ import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.items.ClayBucketItem;
+import knightminer.ceramics.items.CrackableItemBlock;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.KilnRecipe;
@@ -89,6 +90,8 @@ public class Registration {
   private static final Function<Block,BlockItem> DEFAULT_BLOCK_ITEM = (block) -> new BlockItem(block, GROUP_PROPS);
   /** Item block function using {@link BlockTooltipItem} */
   private static final Function<Block,BlockItem> TOOLTIP_BLOCK_ITEM = (block) -> new BlockTooltipItem(block, GROUP_PROPS);
+  /** Item block function using {@link FixedTooltipBlockItem} */
+  private static final Function<String, Function<Block,BlockItem>> FIXED_TOOLTIP = name -> block -> new FixedTooltipBlockItem(block, GROUP_PROPS, name);
 
   /** Mapping for terracotta to make registration easier */
   public static final EnumObject<DyeColor,Block> TERRACOTTA = new EnumObject.Builder<DyeColor,Block>(DyeColor.class)
@@ -162,13 +165,14 @@ public class Registration {
    * fluid handling
    */
   private static final AbstractBlock.Properties CLAY_PROPERTIES = AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid();
-  private static final Function<Block,BlockItem> GAUGE_BLOCK_ITEM = (block) -> new FixedTooltipBlockItem(block, GROUP_PROPS, "gauge.tooltip");
+  private static final Function<Block,BlockItem> GAUGE_BLOCK_ITEM = FIXED_TOOLTIP.apply("gauge.tooltip");
   public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), GAUGE_BLOCK_ITEM);
   public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.WHITE_TERRACOTTA).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), GAUGE_BLOCK_ITEM);
 
   // cistern
-  private static final Function<Block,BlockItem> TERRACOTTA_CISTERN_BLOCK_ITEM = (block) -> new FixedTooltipBlockItem(block, GROUP_PROPS, "terracotta_cistern.tooltip");
-  private static final Function<Block,BlockItem> PORCELAIN_CISTERN_BLOCK_ITEM = (block) -> new FixedTooltipBlockItem(block, GROUP_PROPS, "porcelain_cistern.tooltip");
+  private static final Function<String,Function<Block,BlockItem>> CRACKABLE_BLOCK_ITEM = tooltip -> block -> new CrackableItemBlock(block, GROUP_PROPS, tooltip);
+  private static final Function<Block,BlockItem> TERRACOTTA_CISTERN_BLOCK_ITEM = CRACKABLE_BLOCK_ITEM.apply("terracotta_cistern.tooltip");
+  private static final Function<Block,BlockItem> PORCELAIN_CISTERN_BLOCK_ITEM = FIXED_TOOLTIP.apply("porcelain_cistern.tooltip");
   public static final ItemObject<CisternBlock> CLAY_CISTERN = BLOCKS.register("clay_cistern", () -> new CisternBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
   public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).notSolid().tickRandomly(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
@@ -182,17 +186,18 @@ public class Registration {
 
   // faucet
   public static final ItemObject<FaucetBlock> CLAY_FAUCET = BLOCKS.register("clay_faucet", () -> new FaucetBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), TOOLTIP_BLOCK_ITEM);
+  public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_faucet.tooltip"));
   public static final ItemObject<FaucetBlock> UNFIRED_FAUCET = BLOCKS.register("unfired_faucet", () -> new FaucetBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.WHITE_TERRACOTTA).notSolid(), false), TOOLTIP_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<FaucetTileEntity>> FAUCET_TILE_ENTITY = TILE_ENTIITES.register("faucet", FaucetTileEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
 
   // channel
   public static final ItemObject<ChannelBlock> CLAY_CHANNEL = BLOCKS.register("clay_channel", () -> new ChannelBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), TOOLTIP_BLOCK_ITEM);
+  public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_channel.tooltip"));
   public static final ItemObject<ChannelBlock> UNFIRED_CHANNEL = BLOCKS.register("unfired_channel", () -> new ChannelBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.WHITE_TERRACOTTA).notSolid(), false), TOOLTIP_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<ChannelTileEntity>> CHANNEL_TILE_ENTITY = TILE_ENTIITES.register("channel", ChannelTileEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
+
 
   /**
    * Standard hardened clay properties

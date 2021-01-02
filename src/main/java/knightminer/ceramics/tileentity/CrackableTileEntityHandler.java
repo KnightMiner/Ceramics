@@ -1,6 +1,7 @@
 package knightminer.ceramics.tileentity;
 
 import knightminer.ceramics.items.BaseClayBucketItem;
+import knightminer.ceramics.items.CrackableItemBlock;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CrackableCrackPacket;
 import net.minecraft.block.Block;
@@ -8,8 +9,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
@@ -17,13 +20,14 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import slimeknights.mantle.client.model.data.SinglePropertyData;
 import slimeknights.mantle.tileentity.MantleTileEntity;
+import slimeknights.mantle.util.TileEntityHelper;
 
 /** Common logic for all crackable fluid blocks */
 public class CrackableTileEntityHandler {
 	/** Shared model property for the different cracked blocks */
 	public static final ModelProperty<Integer> PROPERTY = new ModelProperty<>(i -> i >= 0 && i <= 5);
 	/** Tag for NBT */
-	private static final String TAG_CRACKS = "cracks";
+	public static final String TAG_CRACKS = "cracks";
 
 	/** Parent tile entity */
 	private final MantleTileEntity parent;
@@ -43,6 +47,8 @@ public class CrackableTileEntityHandler {
 	public boolean isActive() {
 		return active;
 	}
+
+	/* Blocks */
 
 	/**
 	 * Called when a new fluid is added to set the first crack stage if hot
@@ -91,8 +97,6 @@ public class CrackableTileEntityHandler {
 					// just increase by 1
 					setCracks(cracks + 1);
 				}
-			} else if (cracks > 0) {
-				setCracks(cracks - 1);
 			}
 		}
 	}
@@ -129,6 +133,33 @@ public class CrackableTileEntityHandler {
 		return data;
 	}
 
+	/* Items */
+
+	/**
+	 * Sets the cracked state of the block
+	 * @param stack  Stack to crack
+	 */
+	public void setItemNBT(ItemStack stack) {
+		if (active && cracks > 0) {
+			stack.getOrCreateTag().putInt(TAG_CRACKS, cracks);
+		}
+	}
+
+	/**
+	 * Sets the cracks state from the item stack
+	 * @param stack  Stack
+	 */
+	public void setCracks(ItemStack stack) {
+		if (active) {
+			cracks = CrackableItemBlock.getCracks(stack);
+			data.setData(PROPERTY, cracks);
+			parent.requestModelDataUpdate();
+		}
+	}
+
+
+	/* NBT */
+
 	/**
 	 * Reads cracks data from NBT
 	 * @param nbt  NBT
@@ -160,6 +191,11 @@ public class CrackableTileEntityHandler {
 	public interface ICrackableBlock {
 		/** Determines if this version of the block is crackable */
 		boolean isCrackable();
+
+		/** Helper to avoid having to write this line multiple times */
+		static void onBlockPlacedBy(IWorld world, BlockPos pos, ItemStack stack) {
+			TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
+		}
 	}
 
 	/** Interface to make syncing easier */

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
+import knightminer.ceramics.items.CrackableItemBlock;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -17,6 +18,9 @@ import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -42,6 +46,18 @@ import java.util.function.Function;
 
 /** Generic cracked model for cracked clay blocks */
 public class CrackedModel implements IModelGeometry<CrackedModel> {
+	/** Item overrides list, note overrides does not work through a model wrapper */
+	public static final ItemOverrideList OVERRIDES = new ItemOverrideList() {
+		@Override
+		public IBakedModel getOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+			int cracks = CrackableItemBlock.getCracks(stack);
+			if (cracks > 0 && model instanceof BakedModel) {
+				return ((BakedModel)model).getModel(cracks);
+			}
+			return model;
+		}
+	};
+
 	public static final IModelLoader<CrackedModel> LOADER = new Loader();
 
 	private final SimpleBlockModel model;
@@ -85,7 +101,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 		}
 
 		// wrap the original model
-		IBakedModel original = model.bakeModel(owner, transform, overrides, spriteGetter, location);
+		IBakedModel original = model.bakeModel(owner, transform, OVERRIDES, spriteGetter, location);
 		return new BakedModel(original, owner, newElements, textures, transform);
 	}
 
@@ -108,10 +124,11 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 
 		/**
 		 * Gets the cracked model for the given stage
-		 * @param stage  Stage between 0 and 4
+		 * @param cracks  Cracks between 1 and 5
 		 * @return  Cracked model
 		 */
-		private IBakedModel getModel(int stage) {
+		public IBakedModel getModel(int cracks) {
+			int stage = cracks - 1;
 			if (crackedModels[stage] == null) {
 				// retexture the parts with the texture for this stage
 				IModelConfiguration retextured = new ExtraTextureConfiguration(owner, ImmutableMap.of("cracks", textures[stage]));
@@ -124,7 +141,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 		public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random random, IModelData data) {
 			Integer cracks = data.getData(CrackableTileEntityHandler.PROPERTY);
 			if (cracks != null && cracks > 0) {
-				return getModel(cracks - 1).getQuads(state, side, random, data);
+				return getModel(cracks).getQuads(state, side, random, data);
 			}
 			return originalModel.getQuads(state, side, random, data);
 		}

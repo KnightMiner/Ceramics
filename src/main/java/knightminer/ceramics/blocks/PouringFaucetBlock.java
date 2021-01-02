@@ -4,7 +4,9 @@ import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBloc
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particles.RedstoneParticleData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -134,6 +136,13 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
     if (isCrackable()) {
       TileEntityHelper.getTile(FaucetTileEntity.class, worldIn, pos).ifPresent(FaucetTileEntity::randomTick);
+    }
+  }
+
+  @Override
+  public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    if (crackable) {
+      ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
     }
   }
 }

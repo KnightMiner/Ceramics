@@ -152,6 +152,8 @@
     "block.ceramics.channel.side.none": "Disallowed flowing on side",
     "block.ceramics.channel.down.out": "Allowed flowing down",
     "block.ceramics.channel.down.none": "Disallowed flowing down",
+    
+    "tooltip.ceramics.cracked": "Cracked: %s / %s",
    
    
     "_comment": "#########",

@@ -5,6 +5,8 @@ import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -13,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import slimeknights.mantle.util.TileEntityHelper;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 /**
@@ -71,6 +74,13 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
 		if (isCrackable()) {
 			TileEntityHelper.getTile(ChannelTileEntity.class, worldIn, pos).ifPresent(ChannelTileEntity::randomTick);
+		}
+	}
+
+	@Override
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+		if (crackable) {
+			ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
 		}
 	}
 }

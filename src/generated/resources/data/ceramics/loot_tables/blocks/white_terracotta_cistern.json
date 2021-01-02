@@ -15,5 +15,18 @@
         }
       ]
     }
+  ],
+  "functions": [
+    {
+      "function": "minecraft:copy_nbt",
+      "source": "block_entity",
+      "ops": [
+        {
+          "source": "cracks",
+          "target": "cracks",
+          "op": "replace"
+        }
+      ]
+    }
   ]
 }

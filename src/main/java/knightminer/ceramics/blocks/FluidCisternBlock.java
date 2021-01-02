@@ -102,10 +102,19 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
     if (state.get(CisternBlock.EXTENSION)) {
       // try to find a base cistern below if an extension
       findBase(world, pos).ifPresent(te -> te.addExtension(pos));
+      // crackable handling
+      if (crackable) {
+        ICrackableBlock.onBlockPlacedBy(world, pos, stack);
+      }
     } else {
-      TileEntityHelper.getTile(CisternTileEntity.class, world, pos).ifPresent(te -> te.tryMerge(pos.up()));
+      TileEntityHelper.getTile(CisternTileEntity.class, world, pos).ifPresent(te -> {
+        te.tryMerge(pos.up());
+        // crackable handling
+        if (crackable) {
+          te.getCracksHandler().setCracks(stack);
+        }
+      });
     }
-    super.onBlockPlacedBy(world, pos, state, placer, stack);
   }
 
   @SuppressWarnings("deprecation")
