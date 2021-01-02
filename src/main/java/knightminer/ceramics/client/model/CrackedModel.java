@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import knightminer.ceramics.items.CrackableItemBlock;
+import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -50,7 +50,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 	public static final ItemOverrideList OVERRIDES = new ItemOverrideList() {
 		@Override
 		public IBakedModel getOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
-			int cracks = CrackableItemBlock.getCracks(stack);
+			int cracks = CrackableBlockItem.getCracks(stack);
 			if (cracks > 0 && model instanceof BakedModel) {
 				return ((BakedModel)model).getModel(cracks);
 			}

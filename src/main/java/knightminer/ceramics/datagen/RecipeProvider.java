@@ -4,6 +4,7 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
+import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.block.Block;
@@ -23,6 +24,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
+import slimeknights.mantle.recipe.data.ConsumerWrapperBuilder;
 import slimeknights.mantle.registration.object.BuildingBlockObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
@@ -226,8 +228,12 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     // fired
     kilnFurnaceRecipe(consumer, Registration.CLAY_CISTERN, Registration.TERRACOTTA_CISTERN, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE), 0.3f);
+    // repair
+    clayRepair(consumer, Registration.TERRACOTTA_CISTERN);
     // colored
-    Registration.COLORED_CISTERN.forEach((color, block) ->
+    Consumer<IFinishedRecipe> coloredConsumer = ConsumerWrapperBuilder.wrap(Registration.NO_CRACKED_SHAPED_RECIPE.get()).build(consumer);
+    Registration.COLORED_CISTERN.forEach((color, block) -> {
+      // craft
       ShapedRecipeBuilder.shapedRecipe(block, 4)
                          .key('c', CeramicsTags.Items.TERRACOTTA_CISTERNS)
                          .key('d', color.getTag())
@@ -236,8 +242,10 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                          .patternLine(" c ")
                          .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
                          .setGroup(Ceramics.locationName("colored_cisterns"))
-                         .build(consumer)
-    );
+                         .build(coloredConsumer);
+      // repair
+      clayRepair(consumer, block);
+    });
     Registration.PORCELAIN_CISTERN.forEach((color, block) ->
       ShapedRecipeBuilder.shapedRecipe(block, 4)
                          .key('c', CeramicsTags.Items.PORCELAIN_CISTERNS)
@@ -280,10 +288,11 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .key('c', Registration.UNFIRED_PORCELAIN)
                        .patternLine("ccc")
                        .patternLine(" c ")
-                       .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
+                       .addCriterion("has_cistern", hasItem(Registration.UNFIRED_PORCELAIN))
                        .build(consumer);
     kilnFurnaceRecipe(consumer, Registration.CLAY_FAUCET, Registration.TERRACOTTA_FAUCET, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_FAUCET, Registration.PORCELAIN_FAUCET, 0.3f);
+    clayRepair(consumer, Registration.TERRACOTTA_FAUCET);
 
     // channel
     ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CHANNEL, 3)
@@ -296,10 +305,11 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .key('p', Registration.UNFIRED_PORCELAIN)
                        .patternLine("ppp")
                        .patternLine("ppp")
-                       .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
+                       .addCriterion("has_cistern", hasItem(Registration.UNFIRED_PORCELAIN))
                        .build(consumer);
     kilnFurnaceRecipe(consumer, Registration.CLAY_CHANNEL, Registration.TERRACOTTA_CHANNEL, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CHANNEL, Registration.PORCELAIN_CHANNEL, 0.3f);
+    clayRepair(consumer, Registration.TERRACOTTA_CHANNEL);
 
     // armor
     // clay plates
@@ -692,5 +702,14 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    */
   private void kilnFurnaceRecipe(Consumer<IFinishedRecipe> consumer, ITag<Item> input, IItemProvider output, float experience, ResourceLocation name) {
     kilnFurnaceRecipe(consumer, Ingredient.fromTag(input), hasItem(input), output, experience, name);
+  }
+
+  /**
+   * Adds a recipe to repair a terracotta item's cracks
+   * @param consumer    Recipe consumer
+   * @param repairable  Repairable item
+   */
+  private void clayRepair(Consumer<IFinishedRecipe> consumer, IItemProvider repairable) {
+    consumer.accept(new CrackedClayRepairRecipe.FinishedRecipe(suffix(repairable, "_repair"), repairable, Ingredient.fromTag(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR), hasItem(repairable)));
   }
 }

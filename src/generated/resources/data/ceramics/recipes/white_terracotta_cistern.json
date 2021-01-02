@@ -1,5 +1,6 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "ceramics:no_cracked_shaped_recipe",
+  "conditions": [],
   "group": "ceramics:colored_cisterns",
   "pattern": [
     " c ",

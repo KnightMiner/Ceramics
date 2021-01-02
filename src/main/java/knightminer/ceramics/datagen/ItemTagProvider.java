@@ -34,5 +34,6 @@ public class ItemTagProvider extends net.minecraft.data.ItemTagsProvider {
 
     // item unique tags
     this.getOrCreateBuilder(CeramicsTags.Items.MILK_BUCKETS).add(Items.MILK_BUCKET, Registration.MILK_CLAY_BUCKET.get(), Registration.CRACKED_MILK_CLAY_BUCKET.get());
+    this.getOrCreateBuilder(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR).add(Items.CLAY_BALL);
   }
 }

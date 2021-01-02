@@ -181,6 +181,8 @@
     "item.ceramics.clay_leggings": "Clay Plate Leggings",
     "item.ceramics.clay_boots": "Clay Plate Boots",
     
+    "jei.ceramics.clay_repair": "Can be used in world to repair cracked terracotta cisterns, faucets, and channels.",
+    
     "_comment": "#############",
     "_comment": "# Container #",
     "_comment": "#############",

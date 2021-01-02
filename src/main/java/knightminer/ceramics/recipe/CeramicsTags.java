@@ -57,6 +57,7 @@ public class CeramicsTags {
     public static final INamedTag<Item> MILK_BUCKETS = ItemTags.makeWrapperTag("forge:buckets/milk");
     public static final INamedTag<Item> TERRACOTTA_CISTERNS = makeWrapperTag("terracotta_cisterns");
     public static final INamedTag<Item> PORCELAIN_CISTERNS = makeWrapperTag("porcelain_cisterns");
+    public static final INamedTag<Item> TERRACOTTA_CRACK_REPAIR = makeWrapperTag("terracotta_crack_repair");
 
     private static INamedTag<Item> makeWrapperTag(String id) {
       return ItemTags.makeWrapperTag(Ceramics.locationName(id));

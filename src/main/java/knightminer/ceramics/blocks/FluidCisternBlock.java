@@ -55,6 +55,9 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   @Deprecated
   @Override
   public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
+      return ActionResultType.SUCCESS;
+    }
     boolean success = false;
     if (!world.isRemote()) {
       // simply update the fluid handler capability

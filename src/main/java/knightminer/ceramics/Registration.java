@@ -12,10 +12,12 @@ import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.items.ClayBucketItem;
-import knightminer.ceramics.items.CrackableItemBlock;
+import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
+import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
+import knightminer.ceramics.recipe.NoCrackedShapedRecipe;
 import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
@@ -170,7 +172,7 @@ public class Registration {
   public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.WHITE_TERRACOTTA).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), GAUGE_BLOCK_ITEM);
 
   // cistern
-  private static final Function<String,Function<Block,BlockItem>> CRACKABLE_BLOCK_ITEM = tooltip -> block -> new CrackableItemBlock(block, GROUP_PROPS, tooltip);
+  private static final Function<String,Function<Block,BlockItem>> CRACKABLE_BLOCK_ITEM = tooltip -> block -> new CrackableBlockItem(block, GROUP_PROPS, tooltip);
   private static final Function<Block,BlockItem> TERRACOTTA_CISTERN_BLOCK_ITEM = CRACKABLE_BLOCK_ITEM.apply("terracotta_cistern.tooltip");
   private static final Function<Block,BlockItem> PORCELAIN_CISTERN_BLOCK_ITEM = FIXED_TOOLTIP.apply("porcelain_cistern.tooltip");
   public static final ItemObject<CisternBlock> CLAY_CISTERN = BLOCKS.register("clay_cistern", () -> new CisternBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
@@ -198,6 +200,9 @@ public class Registration {
   public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.WHITE_TERRACOTTA).notSolid(), false), TOOLTIP_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<ChannelTileEntity>> CHANNEL_TILE_ENTITY = TILE_ENTIITES.register("channel", ChannelTileEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
+  // clay repair
+  public static final RegistryObject<IRecipeSerializer<?>> CLAY_REPAIR_RECIPE_SERIALIZER = SERIALIZERS.register("cracked_clay_repair", CrackedClayRepairRecipe.Serializer::new);
+  public static final RegistryObject<IRecipeSerializer<?>> NO_CRACKED_SHAPED_RECIPE = SERIALIZERS.register("no_cracked_shaped_recipe", NoCrackedShapedRecipe.Serializer::new);
 
   /**
    * Standard hardened clay properties

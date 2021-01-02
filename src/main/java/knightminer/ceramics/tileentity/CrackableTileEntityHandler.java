@@ -1,16 +1,20 @@
 package knightminer.ceramics.tileentity;
 
 import knightminer.ceramics.items.BaseClayBucketItem;
-import knightminer.ceramics.items.CrackableItemBlock;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CrackableCrackPacket;
+import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FlowingFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -101,12 +105,26 @@ public class CrackableTileEntityHandler {
 		}
 	}
 
-	/** Updates the cracks state of this block */
-	public void setCracks(int cracks) {
-		if (active && this.cracks != cracks) {
+	/**
+	 * Internal method to safely set cracks, updating relevant properties
+	 * @param cracks  New cracks value
+	 * @return  True if something changed
+	 */
+	private boolean setCracksRaw(int cracks) {
+		if (cracks < 0) cracks = 0;
+		if (cracks > 5) cracks = 5;
+		if (cracks != this.cracks) {
 			this.cracks = cracks;
 			this.data.setData(PROPERTY, cracks);
 			this.parent.requestModelDataUpdate();
+			return true;
+		}
+		return false;
+	}
+
+	/** Updates the cracks state of this block */
+	public void setCracks(int cracks) {
+		if (active && setCracksRaw(cracks)) {
 			this.parent.markDirtyFast();
 
 			// if client, refresh block, if server sync to client
@@ -117,7 +135,7 @@ public class CrackableTileEntityHandler {
 					BlockState state = parent.getBlockState();
 					world.notifyBlockUpdate(pos, state, state, 3);
 				} else {
-					CeramicsNetwork.getInstance().sendToClientsAround(new CrackableCrackPacket(pos, cracks), world, pos);
+					CeramicsNetwork.getInstance().sendToClientsAround(new CrackableCrackPacket(pos, this.cracks), world, pos);
 				}
 			}
 		}
@@ -151,9 +169,7 @@ public class CrackableTileEntityHandler {
 	 */
 	public void setCracks(ItemStack stack) {
 		if (active) {
-			cracks = CrackableItemBlock.getCracks(stack);
-			data.setData(PROPERTY, cracks);
-			parent.requestModelDataUpdate();
+			setCracksRaw(cracks);
 		}
 	}
 
@@ -168,13 +184,11 @@ public class CrackableTileEntityHandler {
 		Block block = state.getBlock();
 		if (block instanceof ICrackableBlock && ((ICrackableBlock)block).isCrackable()) {
 			this.active = true;
-			this.cracks = nbt.getInt(TAG_CRACKS);
+			setCracksRaw(nbt.getInt(TAG_CRACKS));
 		} else {
 			this.active = false;
 			this.cracks = 0;
 		}
-		data.setData(PROPERTY, cracks);
-		parent.requestModelDataUpdate();
 	}
 
 	/**
@@ -195,6 +209,42 @@ public class CrackableTileEntityHandler {
 		/** Helper to avoid having to write this line multiple times */
 		static void onBlockPlacedBy(IWorld world, BlockPos pos, ItemStack stack) {
 			TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
+		}
+
+		/**
+		 * Attempts to repair a crackable block
+		 * @param world    World instance
+		 * @param pos      Position of crackable block
+		 * @param player   Player interacting
+		 * @param hand     Hand used
+		 * @return  True if repaired, false for wrong repair item or no cracks
+		 */
+		static boolean tryRepair(IWorld world, BlockPos pos, PlayerEntity player, Hand hand) {
+			ItemStack held = player.getHeldItem(hand);
+			if (held.getItem().isIn(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
+				return TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).filter(te -> {
+					CrackableTileEntityHandler handler = te.getCracksHandler();
+					int cracks = handler.getCracks();
+					if (handler.isActive() && cracks > 0) {
+						// play sound
+						world.playSound(player, pos, SoundType.GROUND.getPlaceSound(), SoundCategory.BLOCKS, 1, 1);
+
+						if (!world.isRemote()) {
+							// repair halfway
+							handler.setCracks(Math.max(0, cracks - 3));
+							// take clay
+							if (!player.isCreative()) {
+								held.shrink(1);
+								player.setHeldItem(hand, held);
+							}
+						}
+
+						return true;
+					}
+					return false;
+				}).isPresent();
+			}
+			return false;
 		}
 	}
 

@@ -5,6 +5,8 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.client.gui.KilnScreen;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.BaseClayBucketItem;
+import knightminer.ceramics.items.CrackableBlockItem;
+import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.KilnRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -31,6 +33,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @JeiPlugin
@@ -45,6 +48,13 @@ public class JEIPlugin implements IModPlugin {
     ISubtypeInterpreter bucketInterpreter = BaseClayBucketItem::getSubtype;
     registration.registerSubtypeInterpreter(Registration.CLAY_BUCKET.get(), bucketInterpreter);
     registration.registerSubtypeInterpreter(Registration.CRACKED_CLAY_BUCKET.get(), bucketInterpreter);
+
+    // separate different states of crackable clay
+    ISubtypeInterpreter crackableClay = stack -> CrackableBlockItem.getCracks(stack) > 0 ? "cracked" : "";
+    registration.registerSubtypeInterpreter(Registration.TERRACOTTA_CISTERN.asItem(), crackableClay);
+    Registration.COLORED_CISTERN.forEach(block -> registration.registerSubtypeInterpreter(block.asItem(), crackableClay));
+    registration.registerSubtypeInterpreter(Registration.TERRACOTTA_FAUCET.asItem(), crackableClay);
+    registration.registerSubtypeInterpreter(Registration.TERRACOTTA_CHANNEL.asItem(), crackableClay);
   }
 
   @Override
@@ -85,6 +95,10 @@ public class JEIPlugin implements IModPlugin {
       results.add((KilnRecipe)recipe);
     }
     registration.addRecipes(results, KilnCategory.UID);
+
+    // clay repair info
+    List<ItemStack> clayRepair = CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR.getAllElements().stream().map(ItemStack::new).collect(Collectors.toList());
+    registration.addIngredientInfo(clayRepair, VanillaTypes.ITEM, Ceramics.lang("jei", "clay_repair"));
   }
 
   @Override

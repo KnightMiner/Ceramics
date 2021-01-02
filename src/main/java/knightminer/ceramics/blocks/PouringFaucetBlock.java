@@ -53,6 +53,9 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   @Deprecated
   @Override
   public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+    if (crackable && ICrackableBlock.tryRepair(worldIn, pos, player, handIn)) {
+      return ActionResultType.SUCCESS;
+    }
     if (player.isSneaking()) {
       return ActionResultType.PASS;
     }

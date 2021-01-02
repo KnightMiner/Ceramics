@@ -17,9 +17,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /** BlockItem for crackable blocks to show cracked amount */
-public class CrackableItemBlock extends FixedTooltipBlockItem {
+public class CrackableBlockItem extends FixedTooltipBlockItem {
 	private static final String TOOLTIP_KEY = Ceramics.lang("tooltip", "cracked");
-	public CrackableItemBlock(Block blockIn, Properties builder, String tooltipSuffix) {
+	public CrackableBlockItem(Block blockIn, Properties builder, String tooltipSuffix) {
 		super(blockIn, builder, tooltipSuffix);
 	}
 
@@ -34,6 +34,26 @@ public class CrackableItemBlock extends FixedTooltipBlockItem {
 			return nbt.getInt(CrackableTileEntityHandler.TAG_CRACKS);
 		}
 		return 0;
+	}
+
+	/**
+	 * Sets the number of cracks for the item
+	 * @param stack  Stack to set
+	 * @param cracks  New cracks value
+	 */
+	public static ItemStack setCracks(ItemStack stack, int cracks) {
+		if (cracks == 0) {
+			CompoundNBT nbt = stack.getTag();
+			if (nbt != null) {
+				nbt.remove(CrackableTileEntityHandler.TAG_CRACKS);
+				if (nbt.isEmpty()) {
+					stack.setTag(null);
+				}
+			}
+		} else {
+			stack.getOrCreateTag().putInt(CrackableTileEntityHandler.TAG_CRACKS, cracks);
+		}
+		return stack;
 	}
 
 	@Override
