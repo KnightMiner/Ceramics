@@ -59,7 +59,9 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack.getItem() == item) {
-				return setCracks(stack.copy(), Math.max(0, getCracks(stack) - 3));
+				stack = stack.copy();
+				stack.setCount(1);
+				return setCracks(stack, Math.max(0, getCracks(stack) - 3));
 			}
 		}
 		return super.getCraftingResult(inv);
