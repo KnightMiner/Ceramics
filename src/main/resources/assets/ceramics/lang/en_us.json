@@ -174,12 +174,12 @@
     "item.ceramics.cracked_milk_clay_bucket": "Milk Bucket",
     "item.ceramics.cracked_milk_clay_bucket.tooltip": "Bucket will break when emptying",
 
-    "item.ceramics.unfired_clay_plate": "Unfired Clay Plate",
-    "item.ceramics.clay_plate": "Clay Plate",
-    "item.ceramics.clay_helmet": "Clay Plate Helmet",
-    "item.ceramics.clay_chestplate": "Clay Plate Chestplate",
-    "item.ceramics.clay_leggings": "Clay Plate Leggings",
-    "item.ceramics.clay_boots": "Clay Plate Boots",
+    "item.ceramics.unfired_clay_plate": "Clay Plate",
+    "item.ceramics.clay_plate": "Terracotta Plate",
+    "item.ceramics.clay_helmet": "Terracotta Plate Helmet",
+    "item.ceramics.clay_chestplate": "Terracotta Plate Chestplate",
+    "item.ceramics.clay_leggings": "Terracotta Plate Leggings",
+    "item.ceramics.clay_boots": "Terracotta Plate Boots",
     
     "jei.ceramics.clay_repair": "Can be used in world to repair cracked terracotta cisterns, faucets, and channels.",
     
