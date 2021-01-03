@@ -1,6 +1,7 @@
 package knightminer.ceramics.tileentity;
 
 import knightminer.ceramics.items.BaseClayBucketItem;
+import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CrackableCrackPacket;
 import knightminer.ceramics.recipe.CeramicsTags;
@@ -169,7 +170,7 @@ public class CrackableTileEntityHandler {
 	 */
 	public void setCracks(ItemStack stack) {
 		if (active) {
-			setCracksRaw(cracks);
+			setCracksRaw(CrackableBlockItem.getCracks(stack));
 		}
 	}
 
