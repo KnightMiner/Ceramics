@@ -58,18 +58,17 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
     if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
       return ActionResultType.SUCCESS;
     }
-    boolean success = false;
-    if (!world.isRemote()) {
-      // simply update the fluid handler capability
-      TileEntity te = world.getTileEntity(pos);
-      if (te != null) {
-        success = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace())
-                    .filter(handler -> FluidUtil.interactWithFluidHandler(player, hand, handler))
-                    .isPresent();
+    // success if the item is a fluid handler, regardless of if fluid moved
+    if (FluidUtil.getFluidHandler(player.getHeldItem(hand)).isPresent()) {
+      // only server needs to do anything
+      if (!world.isRemote()) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null) {
+          // simply update the fluid handler capability
+            te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace())
+              .ifPresent(handler -> FluidUtil.interactWithFluidHandler(player, hand, handler));
+        }
       }
-    }
-    // return success for any fluid handlers
-    if (success || FluidUtil.getFluidHandler(player.getHeldItem(hand)).isPresent()) {
       return ActionResultType.SUCCESS;
     }
     return ActionResultType.PASS;
