@@ -173,6 +173,30 @@ public abstract class BaseClayBucketItem extends Item {
   /* Fluid handling */
 
   /**
+   * Returns true if the fluid cracks the bucket
+   * @param fluid  Fluid to test
+   * @return true if it cracks the bucket
+   */
+  public static boolean doesCrack(Fluid fluid) {
+    if (fluid == Fluids.EMPTY) {
+      return false;
+    }
+    // if tags are loaded, we can get the most accurate results
+    boolean hotTemperature = fluid.getAttributes().getTemperature() >= 450;
+    if (CeramicsTags.tagsLoaded()) {
+      // if the temperature is hot, ensure its not tagged cool
+      if (hotTemperature) {
+        return !CeramicsTags.Fluids.COOL_FLUIDS.contains(fluid);
+      }
+      // if the temperature is cool but tagged hot, it cracks
+      return CeramicsTags.Fluids.HOT_FLUIDS.contains(fluid);
+    }
+
+    // no tags, stuck with only temperature
+    return hotTemperature;
+  }
+
+  /**
    * Returns whether a bucket has fluid. Note the fluid may still be null if
    * true due to milk buckets
    */
@@ -225,15 +249,6 @@ public abstract class BaseClayBucketItem extends Item {
    */
   protected ItemStack withMilk() {
     return new ItemStack(isCracked ? Registration.CRACKED_MILK_CLAY_BUCKET : Registration.MILK_CLAY_BUCKET);
-  }
-
-  /**
-   * Returns true if the fluid cracks the bucket
-   * @param fluid  Fluid to test
-   * @return true if it cracks the bucket
-   */
-  public static boolean doesCrack(Fluid fluid) {
-    return fluid != Fluids.EMPTY && fluid.getAttributes().getTemperature() >= 450;
   }
 
   /**

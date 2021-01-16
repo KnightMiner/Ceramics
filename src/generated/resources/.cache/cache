@@ -667,6 +667,8 @@ f5a685bc0a6910140fd26d355d862b8f3849a6b3 data/ceramics/tags/blocks/porcelain_blo
 d744dffbd972ea092a731b4e3854ad6e9c0662b4 data/ceramics/tags/blocks/porcelain_cisterns.json
 11d0a3a40783c666e566c85fbf5415a5089e5879 data/ceramics/tags/blocks/rainbow_porcelain.json
 7904fdc6177759252043b95e45448aa4063426ae data/ceramics/tags/blocks/terracotta_cisterns.json
+74700d556ca80c7a1db5fd4efb09c3ddb26cad66 data/ceramics/tags/fluids/cool_fluids.json
+74700d556ca80c7a1db5fd4efb09c3ddb26cad66 data/ceramics/tags/fluids/hot_fluids.json
 5da5bfdef1013be9f771a69770a2890f92f06665 data/ceramics/tags/items/bricks.json
 175422af12cd07cfb01894f86e14b09da5ebc42b data/ceramics/tags/items/colored_porcelain.json
 25407223cfd1780bc15bb8067f6aa39b6fdea872 data/ceramics/tags/items/colored_terracotta.json
