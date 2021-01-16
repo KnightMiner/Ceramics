@@ -100,13 +100,15 @@ public class ChannelTileEntity extends MantleTileEntity implements ITickableTile
 
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
-		// top side gets the insert direct
-		if (side == null || side == Direction.UP) {
-			return topHandler.cast();
-		}
-		// side tanks keep track of which side inserts
-		if (side != Direction.DOWN && getBlockState().get(ChannelBlock.DIRECTION_MAP.get(side)) == ChannelConnection.IN) {
-			return sideTanks.get(side).cast();
+		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+			// top side gets the insert direct
+			if (side == null || side == Direction.UP) {
+				return topHandler.cast();
+			}
+			// side tanks keep track of which side inserts
+			if (side != Direction.DOWN && getBlockState().get(ChannelBlock.DIRECTION_MAP.get(side)) == ChannelConnection.IN) {
+				return sideTanks.get(side).cast();
+			}
 		}
 		return super.getCapability(capability, side);
 	}
