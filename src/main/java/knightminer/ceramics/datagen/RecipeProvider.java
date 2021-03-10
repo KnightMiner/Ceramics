@@ -379,10 +379,10 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .setGroup(locationString("porcelain_uncrafting"))
                           .build(consumer, location("porcelain_uncrafting_2"));
     ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 3)
-                          .addIngredient(Registration.CLAY_CISTERN)
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_FAUCET))
+                          .addIngredient(Registration.UNFIRED_CISTERN)
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CISTERN))
                           .setGroup(locationString("porcelain_uncrafting"))
-                          .build(consumer, location("porcelain_uncrafting"));
+                          .build(consumer, location("porcelain_uncrafting_3"));
     // compat, wish there was a better way to do this
     ShapedRecipeBuilder.shapedRecipe(Blocks.CAKE)
                        .key('M', CeramicsTags.Items.MILK_BUCKETS)

@@ -3,7 +3,7 @@
   "group": "ceramics:porcelain_uncrafting",
   "ingredients": [
     {
-      "item": "ceramics:clay_cistern"
+      "item": "ceramics:unfired_cistern"
     }
   ],
   "result": {
