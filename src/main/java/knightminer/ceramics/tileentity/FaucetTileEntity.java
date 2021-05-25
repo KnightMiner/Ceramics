@@ -30,9 +30,9 @@ import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
 public class FaucetTileEntity extends MantleTileEntity implements ITickableTileEntity, ICrackableTileEntity {
   /** Transfer rate of the faucet */
-  public static final int MB_PER_TICK = 12;
+  public static final int MB_PER_TICK = 25;
   /** amount of MB to extract from the input at a time */
-  public static final int PACKET_SIZE = 144;
+  public static final int PACKET_SIZE = 250;
 
   private static final String TAG_DRAINED = "drained";
   private static final String TAG_RENDER_FLUID = "render_fluid";
