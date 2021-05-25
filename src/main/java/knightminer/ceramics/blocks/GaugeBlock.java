@@ -86,8 +86,8 @@ public class GaugeBlock extends Block {
   @Override
   public boolean isValidPosition(BlockState state, IWorldReader world, BlockPos pos) {
     Direction direction = state.get(HORIZONTAL_FACING);
-    BlockPos offset = pos.offset(direction.getOpposite());
-    return world.getBlockState(offset).isSolidSide(world, offset, direction);
+    TileEntity te = world.getTileEntity(pos.offset(direction.getOpposite()));
+    return te != null && te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction).isPresent();
   }
 
   @Override
