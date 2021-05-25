@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public class ChannelTileEntity extends MantleTileEntity implements ITickableTileEntity, ICrackableTileEntity {
 	/** Channel internal tank */
-	private final ChannelTank tank = new ChannelTank(50, this);
+	private final ChannelTank tank = new ChannelTank(75, this);
 	/** Handler to return from channel top */
 	private final LazyOptional<IFluidHandler> topHandler = LazyOptional.of(() -> new FillOnlyFluidHandler(tank));
 	/** Tanks for inserting on each side */
