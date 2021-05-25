@@ -53,7 +53,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   @Deprecated
   @Override
   public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-    if (crackable && ICrackableBlock.tryRepair(worldIn, pos, player, handIn)) {
+    if (isCrackable() && ICrackableBlock.tryRepair(worldIn, pos, player, handIn)) {
       return ActionResultType.SUCCESS;
     }
     if (player.isSneaking()) {
@@ -61,12 +61,6 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
     }
     getFaucet(worldIn, pos).ifPresent(FaucetTileEntity::activate);
     return ActionResultType.SUCCESS;
-  }
-
-  @Override
-  public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side) {
-    // TODO: keep?
-    return true;
   }
 
   @SuppressWarnings("deprecation")
@@ -144,7 +138,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
 
   @Override
   public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-    if (crackable) {
+    if (isCrackable()) {
       ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
     }
   }

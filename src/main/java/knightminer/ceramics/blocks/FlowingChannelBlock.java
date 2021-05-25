@@ -64,6 +64,10 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 		}
 	}
 
+	@Override
+	protected void activateTileEntity(BlockState state, World world, BlockPos pos, Direction side) {
+		TileEntityHelper.getTile(ChannelTileEntity.class, world, pos).ifPresent(te -> te.refreshNeighbor(state, side));
+	}
 
 	/* Cracking */
 

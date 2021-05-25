@@ -37,11 +37,11 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
   private static final String TAG_DRAINED = "drained";
   private static final String TAG_RENDER_FLUID = "render_fluid";
   private static final String TAG_STOP = "stop";
-  private static final String TAG_POURING = "pouring";
+  private static final String TAG_STATE = "state";
   private static final String TAG_LAST_REDSTONE = "lastRedstone";
 
   /** If true, faucet is currently pouring */
-  private boolean isPouring = false;
+  private FaucetState faucetState = FaucetState.OFF;
   /** If true, redstone told this faucet to stop, so stop when ready */
   private boolean stopPouring = false;
   /** Current fluid in the faucet */
@@ -150,7 +150,7 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
    * @return True if pouring
    */
   public boolean isPouring() {
-    return isPouring;
+    return faucetState != FaucetState.OFF;
   }
 
   /**
@@ -182,12 +182,22 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
     if (world == null || world.isRemote) {
       return;
     }
-    // already pouring? we want to stop then
-    if (isPouring) {
-      stopPouring = true;
-    } else {
-      stopPouring = false;
-      doTransfer();
+    // already pouring? we want to start
+    switch (faucetState) {
+      // off activates the faucet
+      case OFF:
+        stopPouring = false;
+        doTransfer(true);
+        break;
+      // powered deactivates the faucet, sync to client
+      case POWERED:
+        faucetState = FaucetState.OFF;
+        syncToClient(FluidStack.EMPTY, false);
+        break;
+      // pouring means we stop pouring as soon as possible
+      case POURING:
+        stopPouring = true;
+        break;
     }
   }
 
@@ -196,10 +206,15 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
    * @param hasSignal  New signal state
    */
   public void handleRedstone(boolean hasSignal) {
-    if (hasSignal != lastRedstoneState ) {
+    if (hasSignal != lastRedstoneState) {
       lastRedstoneState = hasSignal;
-      if (hasSignal && world != null) {
-        world.getPendingBlockTicks().scheduleTick(pos, this.getBlockState().getBlock(), 2);
+      if (hasSignal) {
+        if (world != null){
+          world.getPendingBlockTicks().scheduleTick(pos, this.getBlockState().getBlock(), 2);
+        }
+      } else if (faucetState == FaucetState.POWERED) {
+        faucetState = FaucetState.OFF;
+        syncToClient(FluidStack.EMPTY, false);
       }
     }
   }
@@ -212,30 +227,32 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
     if (world == null || world.isRemote) {
       return;
     }
+
     // nothing to do if not pouring
-    if (!isPouring) {
+    if (faucetState == FaucetState.OFF) {
+      return;
+      // if powered and we can transfer, schedule transfer for next tick
+    } else if (faucetState == FaucetState.POWERED && doTransfer(false)) {
+      faucetState = FaucetState.POURING;
       return;
     }
-    // if done, try draining another
-    if (drained.isEmpty()) {
-      // unless told to stop
-      if (stopPouring) {
-        reset();
-      }
-      else {
-        doTransfer();
-      }
-    }
-    else {
-      // continue current stack
+
+    // continue current stack
+    if (!drained.isEmpty()) {
       pour();
+      // stop if told to stop once done
+    } else if (stopPouring) {
+      reset();
+      // otherwise keep going
+    } else {
+      doTransfer(true);
     }
   }
 
   /**
    * Initiate fluid transfer
    */
-  private void doTransfer() {
+  private boolean doTransfer(boolean execute) {
     // still got content left
     LazyOptional<IFluidHandler> inputOptional = getInputHandler();
     LazyOptional<IFluidHandler> outputOptional = getOutputHandler();
@@ -248,36 +265,42 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
         IFluidHandler output = outputOptional.orElse(EmptyFluidHandler.INSTANCE);
         int filled = output.fill(drained, FluidAction.SIMULATE);
         if (filled > 0) {
-          // drain the liquid and transfer it, buffer the amount for delay
-          this.drained = input.drain(filled, FluidAction.EXECUTE);
+          // fill if requested
+          if (execute) {
+            // drain the liquid and transfer it, buffer the amount for delay
+            this.drained = input.drain(filled, FluidAction.EXECUTE);
 
-          // have the cracks handler check if this fluid cracks the faucet
-          this.cracksHandler.fluidAdded(this.drained);
+            // have the cracks handler check if this fluid cracks the faucet
+            this.cracksHandler.fluidAdded(this.drained);
 
-          // sync to clients if we have changes
-          if (!isPouring || !renderFluid.isFluidEqual(drained)) {
-            isPouring = true;
-            syncToClient(this.drained, true);
+            // sync to clients if we have changes
+            if (faucetState == FaucetState.OFF || !renderFluid.isFluidEqual(drained)) {
+              syncToClient(this.drained, true);
+            }
+            faucetState = FaucetState.POURING;
+
+            // pour after initial packet, in case we end up resetting later
+            pour();
           }
-
-          // pour after initial packet, in case we end up resetting later
-          pour();
-          return;
+          return true;
         }
       }
 
       // if powered, keep faucet running
       if (lastRedstoneState) {
         // sync if either we were not pouring before (particle effects), or if the client thinks we have fluid
-        if (!isPouring || !renderFluid.isFluidEqual(FluidStack.EMPTY)) {
-          isPouring = true;
+        if (execute && (faucetState == FaucetState.OFF || !renderFluid.isFluidEqual(FluidStack.EMPTY))) {
           syncToClient(FluidStack.EMPTY, true);
         }
-        return;
+        faucetState = FaucetState.POWERED;
+        return false;
       }
     }
     // reset if not powered, or if nothing to do
-    reset();
+    if (execute) {
+      reset();
+    }
+    return false;
   }
 
   /**
@@ -321,8 +344,8 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
   private void reset() {
     stopPouring = false;
     drained = FluidStack.EMPTY;
-    if (isPouring || !renderFluid.isFluidEqual(drained)) {
-      isPouring = false;
+    if (faucetState != FaucetState.OFF || !renderFluid.isFluidEqual(drained)) {
+      faucetState = FaucetState.OFF;
       syncToClient(FluidStack.EMPTY, false);
     }
   }
@@ -353,29 +376,34 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
    * @param fluid new FluidStack
    */
   public void onActivationPacket(FluidStack fluid, boolean isPouring) {
-    this.isPouring = isPouring;
+    // pouring and powered are interchangable on the client
+    this.faucetState = isPouring ? FaucetState.POURING : FaucetState.OFF;
     this.renderFluid = fluid;
   }
 
   @Override
-  public CompoundNBT getUpdateTag() {
-    // new tag instead of super since default implementation calls the super of writeToNBT
-    return write(new CompoundNBT());
+  protected boolean shouldSyncOnUpdate() {
+    return true;
+  }
+
+  @Override
+  protected void writeSynced(CompoundNBT compound) {
+    super.writeSynced(compound);
+    compound.putByte(TAG_STATE, (byte)faucetState.ordinal());
+    if (!renderFluid.isEmpty()) {
+      compound.put(TAG_RENDER_FLUID, renderFluid.writeToNBT(new CompoundNBT()));
+    }
+    cracksHandler.writeNBT(compound);
   }
 
   @Override
   public CompoundNBT write(CompoundNBT compound) {
     compound = super.write(compound);
-    compound.putBoolean(TAG_POURING, isPouring);
     compound.putBoolean(TAG_STOP, stopPouring);
     compound.putBoolean(TAG_LAST_REDSTONE, lastRedstoneState);
     if (!drained.isEmpty()) {
       compound.put(TAG_DRAINED, drained.writeToNBT(new CompoundNBT()));
     }
-    if (!renderFluid.isEmpty()) {
-      compound.put(TAG_RENDER_FLUID, renderFluid.writeToNBT(new CompoundNBT()));
-    }
-    cracksHandler.writeNBT(compound);
     return compound;
   }
 
@@ -383,7 +411,7 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
   public void read(BlockState state, CompoundNBT compound) {
     super.read(state, compound);
 
-    isPouring = compound.getBoolean(TAG_POURING);
+    faucetState = FaucetState.fromIndex(compound.getByte(TAG_STATE));
     stopPouring = compound.getBoolean(TAG_STOP);
     lastRedstoneState = compound.getBoolean(TAG_LAST_REDSTONE);
     // fluids
@@ -398,5 +426,20 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
       renderFluid = FluidStack.EMPTY;
     }
     cracksHandler.readNBT(state, compound);
+  }
+
+  private enum FaucetState {
+    OFF,
+    POURING,
+    POWERED;
+
+    /** Gets the state for the given index */
+    public static FaucetState fromIndex(int index) {
+      switch (index) {
+        case 1: return POURING;
+        case 2: return POWERED;
+      }
+      return OFF;
+    }
   }
 }
