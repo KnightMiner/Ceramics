@@ -197,7 +197,7 @@ public class CrackableTileEntityHandler {
 	 * @param nbt  NBT
 	 */
 	public void writeNBT(CompoundNBT nbt) {
-		if (active) {
+		if (active && cracks > 0) {
 			nbt.putInt(TAG_CRACKS, cracks);
 		}
 	}
