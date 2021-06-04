@@ -72,8 +72,6 @@ public class CeramicsTags {
 
   public static class Fluids {
     private static void init() {}
-    @SuppressWarnings("WeakerAccess")
-    public static final IOptionalNamedTag<Fluid> MILK = FluidTags.createOptional(new ResourceLocation("forge:milk"));
 
     public static final IOptionalNamedTag<Fluid> HOT_FLUIDS = makeWrapperTag("hot_fluids");
     public static final IOptionalNamedTag<Fluid> COOL_FLUIDS = makeWrapperTag("cool_fluids");

@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
@@ -240,7 +241,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  True if the fluid is milk
    */
   protected static boolean isMilk(Fluid fluid) {
-    return CeramicsTags.tagsLoaded() && CeramicsTags.Fluids.MILK.contains(fluid);
+    return ForgeMod.MILK.isPresent() && fluid == ForgeMod.MILK.get();
   }
 
   /**
