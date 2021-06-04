@@ -312,7 +312,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
 
     // armor
     // clay plates
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_PLATE)
+    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_PLATE, 2)
                        .key('c', Items.CLAY_BALL)
                        .patternLine("cc")
                        .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
@@ -320,16 +320,16 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_PLATE, Registration.CLAY_PLATE, 0.3f);
 
     // helmet
-    ICriterionInstance hasClayPlate = hasItem(Registration.CLAY_PLATE);
+    ICriterionInstance hasClayPlate = hasItem(CeramicsTags.Items.BRICK_PLATES);
     ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_HELMET)
-                       .key('c', Registration.CLAY_PLATE)
+                       .key('c', CeramicsTags.Items.BRICK_PLATES)
                        .patternLine("ccc")
                        .patternLine("c c")
                        .addCriterion("has_plate", hasClayPlate)
                        .build(consumer);
     // chestplate
     ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CHESTPLATE)
-                       .key('c', Registration.CLAY_PLATE)
+                       .key('c', CeramicsTags.Items.BRICK_PLATES)
                        .patternLine("c c")
                        .patternLine("ccc")
                        .patternLine("ccc")
@@ -337,7 +337,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .build(consumer);
     // leggings
     ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_LEGGINGS)
-                       .key('c', Registration.CLAY_PLATE)
+                       .key('c', CeramicsTags.Items.BRICK_PLATES)
                        .patternLine("ccc")
                        .patternLine("c c")
                        .patternLine("c c")
@@ -345,7 +345,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                        .build(consumer);
     // boots
     ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_BOOTS)
-                       .key('c', Registration.CLAY_PLATE)
+                       .key('c', CeramicsTags.Items.BRICK_PLATES)
                        .patternLine("c c")
                        .patternLine("c c")
                        .addCriterion("has_plate", hasClayPlate)
@@ -363,10 +363,15 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
                           .setGroup(locationString("clay_uncrafting"))
                           .build(consumer, location("clay_uncrafting_3"));
     ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 2)
-                          .addIngredient(Ingredient.fromItems(Registration.UNFIRED_CLAY_PLATE, Registration.CLAY_FAUCET, Registration.CLAY_CHANNEL))
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_PLATE))
+                          .addIngredient(Ingredient.fromItems(Registration.CLAY_FAUCET, Registration.CLAY_CHANNEL))
+                          .addCriterion("has_unfired", hasItem(Registration.CLAY_FAUCET))
                           .setGroup(locationString("clay_uncrafting"))
                           .build(consumer, location("clay_uncrafting_2"));
+    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 1)
+                          .addIngredient(Ingredient.fromItems(Registration.UNFIRED_CLAY_PLATE))
+                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_PLATE))
+                          .setGroup(locationString("clay_uncrafting"))
+                          .build(consumer, location("clay_uncrafting"));
     // porcelain uncrafting
     ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
                           .addIngredient(Registration.UNFIRED_PORCELAIN_BLOCK)

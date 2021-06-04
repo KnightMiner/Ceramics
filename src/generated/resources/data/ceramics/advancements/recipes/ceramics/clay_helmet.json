@@ -11,7 +11,7 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:clay_plate"
+            "tag": "forge:plates/brick"
           }
         ]
       }

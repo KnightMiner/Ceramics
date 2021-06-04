@@ -2,16 +2,16 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "ceramics:clay_boots"
+      "ceramics:clay_uncrafting"
     ]
   },
   "criteria": {
-    "has_plate": {
+    "has_unfired": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "tag": "forge:plates/brick"
+            "item": "ceramics:unfired_clay_plate"
           }
         ]
       }
@@ -19,13 +19,13 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "ceramics:clay_boots"
+        "recipe": "ceramics:clay_uncrafting"
       }
     }
   },
   "requirements": [
     [
-      "has_plate",
+      "has_unfired",
       "has_the_recipe"
     ]
   ]
