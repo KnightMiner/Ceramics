@@ -273,6 +273,6 @@ public abstract class BaseClayBucketItem extends Item {
       assert stack.getTag() != null;
       return stack.getTag().getString(TAG_FLUID);
     }
-    return "";
+    return "minecraft:empty";
   }
 }
