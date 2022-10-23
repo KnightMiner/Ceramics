@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:dark_bricks"
+            "items": [
+              "ceramics:dark_bricks"
+            ]
           }
         ]
       }

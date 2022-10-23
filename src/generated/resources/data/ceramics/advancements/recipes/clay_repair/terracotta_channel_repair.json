@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:terracotta_channel"
+            "items": [
+              "ceramics:terracotta_channel"
+            ]
           }
         ]
       }

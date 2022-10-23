@@ -69,7 +69,7 @@ public class JEIPlugin implements IModPlugin {
     assert world != null;
     RecipeManager recipeManager = world.getRecipeManager();
     List<KilnRecipe> results = new ArrayList<>();
-    for (Recipe<Container> recipe : recipeManager.byType(Registration.KILN_RECIPE).values()) {
+    for (Recipe<Container> recipe : recipeManager.byType(Registration.KILN_RECIPE.get()).values()) {
       // ignore dynamic
       if (recipe.isSpecial()) {
         continue;

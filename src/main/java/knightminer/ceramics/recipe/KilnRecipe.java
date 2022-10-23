@@ -9,7 +9,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class KilnRecipe extends AbstractCookingRecipe {
   public KilnRecipe(ResourceLocation id, String group, Ingredient ingredient, ItemStack result, float experience, int cookTime) {
-    super(Registration.KILN_RECIPE, id, group, ingredient, result, experience, cookTime);
+    super(Registration.KILN_RECIPE.get(), id, group, ingredient, result, experience, cookTime);
   }
 
   public Ingredient getInput() {

@@ -22,6 +22,7 @@ import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
@@ -67,6 +68,7 @@ public class Registration {
   private static final MenuTypeDeferredRegister CONTAINERS = new MenuTypeDeferredRegister(Ceramics.MOD_ID);
   private static final BlockEntityTypeDeferredRegister TILE_ENTIITES = new BlockEntityTypeDeferredRegister(Ceramics.MOD_ID);
   private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Ceramics.MOD_ID);
+  private static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registry.RECIPE_TYPE_REGISTRY, Ceramics.MOD_ID);
 
   /** Initializes the registries with the forge mod bus */
   static void init() {
@@ -76,6 +78,7 @@ public class Registration {
     CONTAINERS.register(bus);
     TILE_ENTIITES.register(bus);
     RECIPE_SERIALIZERS.register(bus);
+    RECIPE_TYPES.register(bus);
     bus.register(Registration.class);
   }
 
@@ -163,7 +166,12 @@ public class Registration {
   public static final RegistryObject<MenuType<KilnContainer>> KILN_CONTAINER = CONTAINERS.register("kiln", KilnContainer::new);
   public static final RegistryObject<BlockEntityType<KilnTileEntity>> KILN_TILE_ENTITY = TILE_ENTIITES.register("kiln", KilnTileEntity::new, KILN);
   // kiln recipes
-  public static final RecipeType<KilnRecipe> KILN_RECIPE = RecipeType.register("ceramics:kiln");
+  public static final RegistryObject<RecipeType<KilnRecipe>> KILN_RECIPE = RECIPE_TYPES.register("kiln", () -> new RecipeType<>() {
+    @Override
+    public String toString() {
+      return "ceramics:kiln";
+    }
+  });
   public static final RegistryObject<SimpleCookingSerializer<KilnRecipe>> KILN_SERIALIZER = RECIPE_SERIALIZERS.register("kiln", () -> new SimpleCookingSerializer<>(KilnRecipe::new, 100));
 
   /*

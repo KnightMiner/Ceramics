@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:white_porcelain_cistern"
+            "items": [
+              "ceramics:white_porcelain_cistern"
+            ]
           }
         ]
       }

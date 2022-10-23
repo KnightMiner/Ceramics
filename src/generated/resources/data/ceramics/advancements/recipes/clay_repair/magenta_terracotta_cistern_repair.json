@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:magenta_terracotta_cistern"
+            "items": [
+              "ceramics:magenta_terracotta_cistern"
+            ]
           }
         ]
       }

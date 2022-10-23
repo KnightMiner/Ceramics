@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class KilnTileEntity extends AbstractFurnaceBlockEntity {
   public KilnTileEntity(BlockPos pos, BlockState state) {
-    super(Registration.KILN_TILE_ENTITY.get(), pos, state, Registration.KILN_RECIPE);
+    super(Registration.KILN_TILE_ENTITY.get(), pos, state, Registration.KILN_RECIPE.get());
   }
 
   @Override

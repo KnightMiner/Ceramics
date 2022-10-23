@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:lava_bricks_slab"
+            "items": [
+              "ceramics:lava_bricks_slab"
+            ]
           }
         ]
       }

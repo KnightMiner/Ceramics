@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:light_gray_terracotta_cistern"
+            "items": [
+              "ceramics:light_gray_terracotta_cistern"
+            ]
           }
         ]
       }

@@ -14,11 +14,11 @@ import java.util.List;
 public class KilnContainer extends AbstractFurnaceMenu {
   @SuppressWarnings("unused")
   public KilnContainer(int id, Inventory inventory, FriendlyByteBuf buffer) {
-    super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE, RecipeBookType.FURNACE, id, inventory);
+    super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE.get(), RecipeBookType.FURNACE, id, inventory);
   }
 
   public KilnContainer(int id, Inventory inventory, Container tileEntity, ContainerData furnaceData) {
-    super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE, RecipeBookType.FURNACE, id, inventory, tileEntity, furnaceData);
+    super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE.get(), RecipeBookType.FURNACE, id, inventory, tileEntity, furnaceData);
   }
 
   @Override

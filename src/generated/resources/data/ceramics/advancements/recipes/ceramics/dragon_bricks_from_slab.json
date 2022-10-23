@@ -11,7 +11,9 @@
       "conditions": {
         "items": [
           {
-            "item": "ceramics:dragon_bricks_slab"
+            "items": [
+              "ceramics:dragon_bricks_slab"
+            ]
           }
         ]
       }
