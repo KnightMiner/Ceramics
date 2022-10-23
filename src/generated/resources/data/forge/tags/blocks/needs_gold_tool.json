@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "ceramics:golden_bricks",
+    "ceramics:golden_bricks_slab",
+    "ceramics:golden_bricks_stairs",
+    "ceramics:golden_bricks_wall"
+  ]
+}

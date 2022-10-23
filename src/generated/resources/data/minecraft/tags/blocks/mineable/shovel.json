@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "ceramics:unfired_porcelain_block",
+    "ceramics:clay_cistern",
+    "ceramics:unfired_cistern",
+    "ceramics:clay_faucet",
+    "ceramics:unfired_faucet",
+    "ceramics:clay_channel",
+    "ceramics:unfired_channel"
+  ]
+}

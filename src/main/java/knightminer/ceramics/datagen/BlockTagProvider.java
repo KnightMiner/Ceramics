@@ -11,6 +11,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import slimeknights.mantle.registration.object.EnumObject;
 import slimeknights.mantle.registration.object.ItemObject;
@@ -85,5 +86,47 @@ public class BlockTagProvider extends BlockTagsProvider {
     Registration.COLORED_CISTERN.forEach(block -> terracottaCisterns.add(block));
     TagsProvider.TagAppender<Block> porcelainCisterns = this.tag(CeramicsTags.Blocks.PORCELAIN_CISTERNS);
     Registration.PORCELAIN_CISTERN.forEach(block -> porcelainCisterns.add(block));
+
+    // pickaxe
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.PORCELAIN_BLOCK, Registration.RAINBOW_PORCELAIN);
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.KILN);
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.TERRACOTTA_GAUGE, Registration.PORCELAIN_GAUGE);
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.TERRACOTTA_CISTERN);
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.PORCELAIN_CISTERN, Registration.COLORED_CISTERN);
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.TERRACOTTA_FAUCET, Registration.PORCELAIN_FAUCET);
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.TERRACOTTA_CHANNEL, Registration.PORCELAIN_CHANNEL);
+    addTag(BlockTags.MINEABLE_WITH_PICKAXE,
+           Registration.DARK_BRICKS, Registration.LAVA_BRICKS, Registration.DRAGON_BRICKS,
+           Registration.PORCELAIN_BRICKS, Registration.MONOCHROME_BRICKS, Registration.GOLDEN_BRICKS,
+           Registration.MARINE_BRICKS, Registration.RAINBOW_BRICKS);
+    addTag(Tags.Blocks.NEEDS_GOLD_TOOL, Registration.GOLDEN_BRICKS);
+    // shovel
+    addTag(BlockTags.MINEABLE_WITH_SHOVEL, Registration.UNFIRED_PORCELAIN_BLOCK);
+    addTag(BlockTags.MINEABLE_WITH_SHOVEL, Registration.CLAY_CISTERN, Registration.UNFIRED_CISTERN);
+    addTag(BlockTags.MINEABLE_WITH_SHOVEL, Registration.CLAY_FAUCET, Registration.UNFIRED_FAUCET);
+    addTag(BlockTags.MINEABLE_WITH_SHOVEL, Registration.CLAY_CHANNEL, Registration.UNFIRED_CHANNEL);
+  }
+
+  @SafeVarargs
+  private <T extends Block> void addTag(TagKey<Block> tag, ItemObject<T>... blocks) {
+    TagsProvider.TagAppender<Block> appender = this.tag(tag);
+    for (ItemObject<T> block : blocks) {
+      appender.add(block.get());
+    }
+  }
+
+  @SafeVarargs
+  private<T extends Block> void addTag(TagKey<Block> tag, EnumObject<?, T>... blocks) {
+    TagsProvider.TagAppender<Block> appender = this.tag(tag);
+    for (EnumObject<?, T> object : blocks) {
+      object.forEach(block -> appender.add(block));
+    }
+  }
+
+  private void addTag(TagKey<Block> tag, WallBuildingBlockObject... blocks) {
+    TagsProvider.TagAppender<Block> appender = this.tag(tag);
+    for (WallBuildingBlockObject object : blocks) {
+      object.values().forEach(appender::add);
+    }
   }
 }
