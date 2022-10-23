@@ -1,19 +1,20 @@
 buildscript {
   repositories {
-    maven { url = "https://files.minecraftforge.net/maven" }
+    maven { url = 'https://maven.minecraftforge.net' }
     jcenter()
     mavenCentral()
   }
   dependencies {
-    classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
   }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'maven'
+apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 group = "knightminer"
 archivesBaseName = "Ceramics"
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 configurations {
     deployerJars
@@ -75,23 +76,17 @@ minecraft {
   }
 }
 
-// Need this here so eclipse task generates correctly.
-sourceCompatibility = targetCompatibility = "1.8"
-compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
-}
-
 repositories {
   // JEI and Mantle
   maven {
     name 'DVS1 Maven FS'
-    url 'http://dvs1.progwml6.com/files/maven'
+    url 'https://dvs1.progwml6.com/files/maven'
   }
 }
 
 dependencies {
   minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-  compile fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_version}")
+  implementation  fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_version}")
     
   // compile against the JEI API but do not include it at runtime
   compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
