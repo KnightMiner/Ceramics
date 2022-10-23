@@ -4,14 +4,14 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.FaucetActivationPacket;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -28,7 +28,7 @@ import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
-public class FaucetTileEntity extends MantleTileEntity implements ITickableTileEntity, ICrackableTileEntity {
+public class FaucetTileEntity extends MantleTileEntity implements TickableBlockEntity, ICrackableTileEntity {
   /** Transfer rate of the faucet */
   public static final int MB_PER_TICK = 25;
   /** amount of MB to extract from the input at a time */
@@ -90,7 +90,7 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
    */
   private LazyOptional<IFluidHandler> findFluidHandler(Direction side) {
     assert level != null;
-    TileEntity te = level.getBlockEntity(worldPosition.relative(side));
+    BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
     if (te != null) {
       LazyOptional<IFluidHandler> handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
       if (handler.isPresent()) {
@@ -352,8 +352,8 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public AxisAlignedBB getRenderBoundingBox() {
-    return new AxisAlignedBB(worldPosition.getX(), worldPosition.getY() - 1, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1);
+  public AABB getRenderBoundingBox() {
+    return new AABB(worldPosition.getX(), worldPosition.getY() - 1, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1);
   }
 
 
@@ -366,8 +366,8 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
    */
   private void syncToClient(FluidStack fluid, boolean isPouring) {
     renderFluid = fluid.copy();
-    if (level instanceof ServerWorld) {
-      CeramicsNetwork.getInstance().sendToClientsAround(new FaucetActivationPacket(worldPosition, fluid, isPouring), (ServerWorld) level, getBlockPos());
+    if (level instanceof ServerLevel) {
+      CeramicsNetwork.getInstance().sendToClientsAround(new FaucetActivationPacket(worldPosition, fluid, isPouring), (ServerLevel) level, getBlockPos());
     }
   }
 
@@ -387,28 +387,28 @@ public class FaucetTileEntity extends MantleTileEntity implements ITickableTileE
   }
 
   @Override
-  protected void writeSynced(CompoundNBT compound) {
+  protected void writeSynced(CompoundTag compound) {
     super.writeSynced(compound);
     compound.putByte(TAG_STATE, (byte)faucetState.ordinal());
     if (!renderFluid.isEmpty()) {
-      compound.put(TAG_RENDER_FLUID, renderFluid.writeToNBT(new CompoundNBT()));
+      compound.put(TAG_RENDER_FLUID, renderFluid.writeToNBT(new CompoundTag()));
     }
     cracksHandler.writeNBT(compound);
   }
 
   @Override
-  public CompoundNBT save(CompoundNBT compound) {
+  public CompoundTag save(CompoundTag compound) {
     compound = super.save(compound);
     compound.putBoolean(TAG_STOP, stopPouring);
     compound.putBoolean(TAG_LAST_REDSTONE, lastRedstoneState);
     if (!drained.isEmpty()) {
-      compound.put(TAG_DRAINED, drained.writeToNBT(new CompoundNBT()));
+      compound.put(TAG_DRAINED, drained.writeToNBT(new CompoundTag()));
     }
     return compound;
   }
 
   @Override
-  public void load(BlockState state, CompoundNBT compound) {
+  public void load(BlockState state, CompoundTag compound) {
     super.load(state, compound);
 
     faucetState = FaucetState.fromIndex(compound.getByte(TAG_STATE));

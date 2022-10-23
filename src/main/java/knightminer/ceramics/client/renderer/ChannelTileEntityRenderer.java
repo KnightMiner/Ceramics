@@ -1,20 +1,20 @@
 package knightminer.ceramics.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.client.model.ChannelModel;
 import knightminer.ceramics.tileentity.ChannelTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Plane;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Plane;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import slimeknights.mantle.client.model.FaucetFluidLoader;
@@ -23,20 +23,20 @@ import slimeknights.mantle.client.model.util.ModelHelper;
 import slimeknights.mantle.client.render.FluidRenderer;
 import slimeknights.mantle.client.render.RenderingHelper;
 
-public class ChannelTileEntityRenderer extends TileEntityRenderer<ChannelTileEntity> {
-	public ChannelTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
+public class ChannelTileEntityRenderer extends BlockEntityRenderer<ChannelTileEntity> {
+	public ChannelTileEntityRenderer(BlockEntityRenderDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn);
 	}
 
 	@Override
-	public void render(ChannelTileEntity te, float partialTicks, MatrixStack matrices, IRenderTypeBuffer buffer, int light, int combinedOverlayIn)  {
+	public void render(ChannelTileEntity te, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlayIn)  {
 		FluidStack fluid = te.getFluid();
 		if (fluid.isEmpty()) {
 			return;
 		}
 
 		// fetch model properties
-		World world = te.getLevel();
+		Level world = te.getLevel();
 		if (world == null) {
 			return;
 		}
@@ -51,7 +51,7 @@ public class ChannelTileEntityRenderer extends TileEntityRenderer<ChannelTileEnt
 		FluidAttributes attributes = fluid.getFluid().getAttributes();
 		TextureAtlasSprite still = FluidRenderer.getBlockSprite(attributes.getStillTexture(fluid));
 		TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(attributes.getFlowingTexture(fluid));
-		IVertexBuilder builder = buffer.getBuffer(FluidRenderer.RENDER_TYPE);
+		VertexConsumer builder = buffer.getBuffer(FluidRenderer.RENDER_TYPE);
 		int color = attributes.getColor(fluid);
 		light = FluidRenderer.withBlockLight(light, attributes.getLuminosity(fluid));
 

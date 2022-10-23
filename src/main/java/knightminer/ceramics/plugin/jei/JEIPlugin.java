@@ -21,15 +21,15 @@ import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,11 +64,11 @@ public class JEIPlugin implements IModPlugin {
 
   @Override
   public void registerRecipes(IRecipeRegistration registration) {
-    ClientWorld world = Minecraft.getInstance().level;
+    ClientLevel world = Minecraft.getInstance().level;
     assert world != null;
     RecipeManager recipeManager = world.getRecipeManager();
     List<KilnRecipe> results = new ArrayList<>();
-    for (IRecipe<IInventory> recipe : recipeManager.byType(Registration.KILN_RECIPE).values()) {
+    for (Recipe<Container> recipe : recipeManager.byType(Registration.KILN_RECIPE).values()) {
       // ignore dynamic
       if (recipe.isSpecial()) {
         continue;
@@ -121,8 +121,8 @@ public class JEIPlugin implements IModPlugin {
   public void onRuntimeAvailable(IJeiRuntime runtime) {
     // add buckets to the ingredient list since JEI fills that list too soon
     NonNullList<ItemStack> buckets = NonNullList.create();
-    Registration.CLAY_BUCKET.get().fillItemCategory(ItemGroup.TAB_SEARCH, buckets);
-    Registration.CRACKED_CLAY_BUCKET.get().fillItemCategory(ItemGroup.TAB_SEARCH, buckets);
+    Registration.CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
+    Registration.CRACKED_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
     runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM, buckets);
   }
 }

@@ -1,7 +1,7 @@
 package knightminer.ceramics.util.tank;
 
 import knightminer.ceramics.tileentity.CisternTileEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -131,7 +131,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
    * Updates the tank contents from NBT
    * @param nbt  NBT
    */
-  public void readFromNBT(CompoundNBT nbt) {
+  public void readFromNBT(CompoundTag nbt) {
     FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
     setFluid(fluid);
   }
@@ -140,8 +140,8 @@ public class CisternTank implements IFluidHandler, IFluidTank {
    * Writes the tank contents to NBT
    * @return  Contents as NBT
    */
-  public CompoundNBT writeToNBT() {
-    return fluid.writeToNBT(new CompoundNBT());
+  public CompoundTag writeToNBT() {
+    return fluid.writeToNBT(new CompoundTag());
   }
 
 

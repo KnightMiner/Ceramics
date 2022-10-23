@@ -5,20 +5,20 @@ import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CrackableCrackPacket;
 import knightminer.ceramics.recipe.CeramicsTags;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -82,7 +82,7 @@ public class CrackableTileEntityHandler {
 			if (BaseClayBucketItem.doesCrack(fluid)) {
 				// after 5, break the block
 				if (cracks >= 5) {
-					World world = parent.getLevel();
+					Level world = parent.getLevel();
 					if (world != null) {
 						world.destroyBlock(parent.getBlockPos(), false);
 						// if we have at least a bucket of fluid, place in world if possible
@@ -129,7 +129,7 @@ public class CrackableTileEntityHandler {
 			this.parent.markDirtyFast();
 
 			// if client, refresh block, if server sync to client
-			World world = parent.getLevel();
+			Level world = parent.getLevel();
 			if (world != null) {
 				BlockPos pos = parent.getBlockPos();
 				if (world.isClientSide()) {
@@ -181,7 +181,7 @@ public class CrackableTileEntityHandler {
 	 * Reads cracks data from NBT
 	 * @param nbt  NBT
 	 */
-	public void readNBT(BlockState state, CompoundNBT nbt) {
+	public void readNBT(BlockState state, CompoundTag nbt) {
 		Block block = state.getBlock();
 		if (block instanceof ICrackableBlock && ((ICrackableBlock)block).isCrackable()) {
 			this.active = true;
@@ -196,7 +196,7 @@ public class CrackableTileEntityHandler {
 	 * Writes cracks data to NBT
 	 * @param nbt  NBT
 	 */
-	public void writeNBT(CompoundNBT nbt) {
+	public void writeNBT(CompoundTag nbt) {
 		if (active && cracks > 0) {
 			nbt.putInt(TAG_CRACKS, cracks);
 		}
@@ -208,7 +208,7 @@ public class CrackableTileEntityHandler {
 		boolean isCrackable();
 
 		/** Helper to avoid having to write this line multiple times */
-		static void onBlockPlacedBy(IWorld world, BlockPos pos, ItemStack stack) {
+		static void onBlockPlacedBy(LevelAccessor world, BlockPos pos, ItemStack stack) {
 			TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
 		}
 
@@ -220,7 +220,7 @@ public class CrackableTileEntityHandler {
 		 * @param hand     Hand used
 		 * @return  True if repaired, false for wrong repair item or no cracks
 		 */
-		static boolean tryRepair(IWorld world, BlockPos pos, PlayerEntity player, Hand hand) {
+		static boolean tryRepair(LevelAccessor world, BlockPos pos, Player player, InteractionHand hand) {
 			ItemStack held = player.getItemInHand(hand);
 			if (held.getItem().is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
 				return TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).filter(te -> {
@@ -228,7 +228,7 @@ public class CrackableTileEntityHandler {
 					int cracks = handler.getCracks();
 					if (handler.isActive() && cracks > 0) {
 						// play sound
-						world.playSound(player, pos, SoundType.GRAVEL.getPlaceSound(), SoundCategory.BLOCKS, 1, 1);
+						world.playSound(player, pos, SoundType.GRAVEL.getPlaceSound(), SoundSource.BLOCKS, 1, 1);
 
 						if (!world.isClientSide()) {
 							// repair halfway

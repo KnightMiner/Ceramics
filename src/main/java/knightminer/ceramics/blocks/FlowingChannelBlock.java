@@ -3,26 +3,26 @@ package knightminer.ceramics.blocks;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import slimeknights.mantle.util.TileEntityHelper;
 
 import javax.annotation.Nullable;
 import java.util.Random;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Channel extension that supports moving fluids
@@ -40,7 +40,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	}
 
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+	public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
 		return new ChannelTileEntity(crackable);
 	}
 
@@ -58,7 +58,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	@SuppressWarnings("deprecation")
 	@Override
 	@Deprecated
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 		if (!worldIn.isClientSide()) {
 			TileEntityHelper.getTile(ChannelTileEntity.class, worldIn, pos)
@@ -67,7 +67,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	}
 
 	@Override
-	protected void activateTileEntity(BlockState state, World world, BlockPos pos, Direction side) {
+	protected void activateTileEntity(BlockState state, Level world, BlockPos pos, Direction side) {
 		TileEntityHelper.getTile(ChannelTileEntity.class, world, pos).ifPresent(te -> te.refreshNeighbor(state, side));
 	}
 
@@ -81,14 +81,14 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	@SuppressWarnings("deprecation")
 	@Override
 	@Deprecated
-	public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
 		if (isCrackable()) {
 			TileEntityHelper.getTile(ChannelTileEntity.class, worldIn, pos).ifPresent(ChannelTileEntity::randomTick);
 		}
 	}
 
 	@Override
-	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
 		if (crackable) {
 			ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
 		}
@@ -96,9 +96,9 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 
 	@Deprecated
 	@Override
-	public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
 		if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
 		return super.use(state, world, pos, player, hand, hit);
 	}

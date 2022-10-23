@@ -1,9 +1,9 @@
 package knightminer.ceramics.network;
 
 import knightminer.ceramics.Ceramics;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fml.network.NetworkDirection;
 import slimeknights.mantle.network.NetworkWrapper;
 
@@ -52,9 +52,9 @@ public class CeramicsNetwork extends NetworkWrapper {
    * @param world  World instance
    * @param pos    Position
    */
-  public void sendToClientsAround(Object msg, @Nullable World world, BlockPos pos) {
-    if (world instanceof ServerWorld) {
-      sendToClientsAround(msg, (ServerWorld) world, pos);
+  public void sendToClientsAround(Object msg, @Nullable Level world, BlockPos pos) {
+    if (world instanceof ServerLevel) {
+      sendToClientsAround(msg, (ServerLevel) world, pos);
     }
   }
 }

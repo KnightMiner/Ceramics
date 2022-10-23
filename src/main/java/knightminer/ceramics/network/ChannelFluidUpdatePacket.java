@@ -2,8 +2,8 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.tileentity.ChannelTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import slimeknights.mantle.util.TileEntityHelper;
@@ -14,7 +14,7 @@ public class ChannelFluidUpdatePacket extends FluidUpdatePacket {
 		super(pos, fluid);
 	}
 
-	public ChannelFluidUpdatePacket(PacketBuffer buffer) {
+	public ChannelFluidUpdatePacket(FriendlyByteBuf buffer) {
 		super(buffer);
 	}
 

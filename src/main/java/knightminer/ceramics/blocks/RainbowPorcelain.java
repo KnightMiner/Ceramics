@@ -1,14 +1,14 @@
 package knightminer.ceramics.blocks;
 
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.util.StringRepresentable;
 
 import java.util.Locale;
 
 /**
  * Enum for all the different rainbow porcelain colors
  */
-public enum RainbowPorcelain implements IStringSerializable {
+public enum RainbowPorcelain implements StringRepresentable {
   RED(MaterialColor.COLOR_RED),
   ORANGE(MaterialColor.COLOR_ORANGE),
   YELLOW(MaterialColor.COLOR_YELLOW),

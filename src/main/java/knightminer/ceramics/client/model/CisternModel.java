@@ -3,18 +3,18 @@ package knightminer.ceramics.client.model;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.RenderMaterial;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Plane;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Plane;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
@@ -51,13 +51,13 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 	}
 
 	@Override
-	public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation,IUnbakedModel> modelGetter, Set<Pair<String,String>> missingTextureErrors) {
+	public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation,UnbakedModel> modelGetter, Set<Pair<String,String>> missingTextureErrors) {
 		return model.getTextures(owner, modelGetter, missingTextureErrors);
 	}
 
 	@Override
-	public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial,TextureAtlasSprite> spriteGetter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation location) {
-		IBakedModel baked = this.model.bakeModel(owner, transform, overrides, spriteGetter, location);
+	public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material,TextureAtlasSprite> spriteGetter, ModelState transform, ItemOverrides overrides, ResourceLocation location) {
+		BakedModel baked = this.model.bakeModel(owner, transform, overrides, spriteGetter, location);
 		return new BakedModel(baked, this.fluids);
 	}
 
@@ -71,8 +71,8 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 		}
 
 		@Override
-		public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial,TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
-			IBakedModel model = super.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation);
+		public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material,TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+			BakedModel model = super.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation);
 			return new BakedModel(model, fluids);
 		}
 	}
@@ -80,10 +80,10 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 	/**
 	 * Baked model wrapper for cistern models
 	 */
-	public static class BakedModel extends BakedModelWrapper<IBakedModel> {
+	public static class BakedModel extends BakedModelWrapper<BakedModel> {
 		/** Map of side to fluid. {@link Direction#UP} represents extension center, {@link Direction#DOWN} base center */
 		private final Map<Direction,FluidCuboid> fluids;
-		private BakedModel(IBakedModel originalModel, Map<Direction,FluidCuboid> fluids) {
+		private BakedModel(BakedModel originalModel, Map<Direction,FluidCuboid> fluids) {
 			super(originalModel);
 			this.fluids = fluids;
 		}
@@ -115,21 +115,21 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 		}
 
 		@Override
-		public void onResourceManagerReload(IResourceManager resourceManager) {}
+		public void onResourceManagerReload(ResourceManager resourceManager) {}
 
 		@Override
 		public T read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
 			SimpleBlockModel model = SimpleBlockModel.deserialize(deserializationContext, modelContents);
 			// parse fluid cuboid for each side
-			JsonObject fluidJson = JSONUtils.getAsJsonObject(modelContents, "fluids");
+			JsonObject fluidJson = GsonHelper.getAsJsonObject(modelContents, "fluids");
 			Map<Direction,FluidCuboid> fluids = new EnumMap<>(Direction.class);
 			// Y axis reused for base and extension
-			fluids.put(Direction.DOWN, FluidCuboid.fromJson(JSONUtils.getAsJsonObject(fluidJson, "base")));
-			fluids.put(Direction.UP, FluidCuboid.fromJson(JSONUtils.getAsJsonObject(fluidJson, "extension")));
+			fluids.put(Direction.DOWN, FluidCuboid.fromJson(GsonHelper.getAsJsonObject(fluidJson, "base")));
+			fluids.put(Direction.UP, FluidCuboid.fromJson(GsonHelper.getAsJsonObject(fluidJson, "extension")));
 			// sides as themselves
 			for (Direction direction : Plane.HORIZONTAL) {
 				if (fluidJson.has(direction.getSerializedName())) {
-					fluids.put(direction, FluidCuboid.fromJson(JSONUtils.getAsJsonObject(fluidJson, direction.getSerializedName())));
+					fluids.put(direction, FluidCuboid.fromJson(GsonHelper.getAsJsonObject(fluidJson, direction.getSerializedName())));
 				}
 			}
 			return constructor.apply(model, fluids);

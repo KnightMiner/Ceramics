@@ -3,7 +3,7 @@ package knightminer.ceramics.plugin.jei;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.KilnRecipe;
@@ -19,10 +19,10 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.ForgeI18n;
 
 @MethodsReturnNonnullByDefault
@@ -112,7 +112,7 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   }
 
   @Override
-  public void draw(KilnRecipe recipe, MatrixStack matrixStack, double mouseX, double mouseY) {
+  public void draw(KilnRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
     this.animatedFlame.draw(matrixStack, 1, 20);
     IDrawableAnimated arrow = this.getArrow(recipe);
     arrow.draw(matrixStack, 24, 18);
@@ -121,25 +121,25 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   }
 
   /** Draws the recipe experience info */
-  protected void drawExperience(KilnRecipe recipe, MatrixStack matrixStack) {
+  protected void drawExperience(KilnRecipe recipe, PoseStack matrixStack) {
     float experience = recipe.getExperience();
     if (experience > 0.0F) {
-      TranslationTextComponent experienceString = new TranslationTextComponent("gui.jei.category.smelting.experience", experience);
+      TranslatableComponent experienceString = new TranslatableComponent("gui.jei.category.smelting.experience", experience);
       Minecraft minecraft = Minecraft.getInstance();
-      FontRenderer fontRenderer = minecraft.font;
+      Font fontRenderer = minecraft.font;
       int stringWidth = fontRenderer.width(experienceString);
       fontRenderer.draw(matrixStack, experienceString, (this.background.getWidth() - stringWidth), 0, 0xFF808080);
     }
   }
 
   /** Draws the recipe cook time info */
-  protected void drawCookTime(KilnRecipe recipe, MatrixStack matrixStack) {
+  protected void drawCookTime(KilnRecipe recipe, PoseStack matrixStack) {
     int cookTime = recipe.getCookingTime();
     if (cookTime > 0) {
       int cookTimeSeconds = cookTime / 20;
-      TranslationTextComponent timeString = new TranslationTextComponent("gui.jei.category.smelting.time.seconds", cookTimeSeconds);
+      TranslatableComponent timeString = new TranslatableComponent("gui.jei.category.smelting.time.seconds", cookTimeSeconds);
       Minecraft minecraft = Minecraft.getInstance();
-      FontRenderer fontRenderer = minecraft.font;
+      Font fontRenderer = minecraft.font;
       int stringWidth = fontRenderer.width(timeString);
       fontRenderer.draw(matrixStack, timeString, (this.background.getWidth() - stringWidth), 45, 0xFF808080);
     }

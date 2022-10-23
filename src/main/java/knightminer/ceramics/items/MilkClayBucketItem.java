@@ -1,26 +1,26 @@
 package knightminer.ceramics.items;
 
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.UseAction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Clay bucket holding milk
@@ -32,14 +32,14 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public ActionResult<ItemStack> use(World worldIn, PlayerEntity player, Hand hand) {
+  public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand hand) {
     player.startUsingItem(hand);
-    return new ActionResult<>(ActionResultType.SUCCESS, player.getItemInHand(hand));
+    return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
   }
 
   @Override
-  public UseAction getUseAnimation(ItemStack stack) {
-    return UseAction.DRINK;
+  public UseAnim getUseAnimation(ItemStack stack) {
+    return UseAnim.DRINK;
   }
 
   @Override
@@ -48,20 +48,20 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public ItemStack finishUsingItem(ItemStack stack, World worldIn, LivingEntity entity) {
+  public ItemStack finishUsingItem(ItemStack stack, Level worldIn, LivingEntity entity) {
     if (!worldIn.isClientSide()) {
       // TODO: this is a hack until I find a better way to make it cure the same as milk
       entity.curePotionEffects(MILK_STACK);
     }
     // update stats
-    if (entity instanceof ServerPlayerEntity) {
-      ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
+    if (entity instanceof ServerPlayer) {
+      ServerPlayer serverplayerentity = (ServerPlayer)entity;
       CriteriaTriggers.CONSUME_ITEM.trigger(serverplayerentity, stack);
       serverplayerentity.awardStat(Stats.ITEM_USED.get(this));
     }
     // if a player, empty a bucket
-    if (entity instanceof PlayerEntity) {
-      PlayerEntity player = (PlayerEntity)entity;
+    if (entity instanceof Player) {
+      Player player = (Player)entity;
       if (isCracked) {
         renderBrokenItem(player, stack);
       }
@@ -71,8 +71,8 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public ITextComponent getName(ItemStack stack) {
-    return super.getName(stack).plainCopy().withStyle(TextFormatting.RED);
+  public Component getName(ItemStack stack) {
+    return super.getName(stack).plainCopy().withStyle(ChatFormatting.RED);
   }
 
   /* Fluids */
@@ -91,7 +91,7 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> subItems) {
+  public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> subItems) {
     if (/*Config.bucketEnabled && */this.allowdedIn(tab) && !isCracked) {
       subItems.add(new ItemStack(this));
     }

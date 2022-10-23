@@ -10,15 +10,15 @@ import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTile
 import knightminer.ceramics.util.tank.ChannelSideTank;
 import knightminer.ceramics.util.tank.ChannelTank;
 import knightminer.ceramics.util.tank.FillOnlyFluidHandler;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Plane;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Plane;
+import net.minecraft.Util;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -40,7 +40,7 @@ import java.util.Map;
 /**
  * Logic for channel fluid transfer
  */
-public class ChannelTileEntity extends MantleTileEntity implements ITickableTileEntity, ICrackableTileEntity {
+public class ChannelTileEntity extends MantleTileEntity implements TickableBlockEntity, ICrackableTileEntity {
 	/** Channel internal tank */
 	private final ChannelTank tank = new ChannelTank(75, this);
 	/** Handler to return from channel top */
@@ -86,8 +86,8 @@ public class ChannelTileEntity extends MantleTileEntity implements ITickableTile
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public AxisAlignedBB getRenderBoundingBox() {
-		return new AxisAlignedBB(worldPosition.getX(), worldPosition.getY() - 1, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1);
+	public AABB getRenderBoundingBox() {
+		return new AABB(worldPosition.getX(), worldPosition.getY() - 1, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1);
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class ChannelTileEntity extends MantleTileEntity implements ITickableTile
 	private LazyOptional<IFluidHandler> getNeighborHandlerUncached(Direction side) {
 		assert level != null;
 		// must have a TE with a fluid handler
-		TileEntity te = level.getBlockEntity(worldPosition.relative(side));
+		BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
 		if (te != null) {
 			LazyOptional<IFluidHandler> handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
 			if (handler.isPresent()) {
@@ -353,7 +353,7 @@ public class ChannelTileEntity extends MantleTileEntity implements ITickableTile
 			int outputs = countOutputs(state);
 			if(!hasFlown && outputs > 0) {
 				// split the fluid evenly between sides
-				int flowRate = MathHelper.clamp(tank.getMaxUsable() / outputs, 1, FaucetTileEntity.MB_PER_TICK);
+				int flowRate = Mth.clamp(tank.getMaxUsable() / outputs, 1, FaucetTileEntity.MB_PER_TICK);
 				// then transfer on each side
 				for(Direction side : Plane.HORIZONTAL) {
 					trySide(side, flowRate);
@@ -454,15 +454,15 @@ public class ChannelTileEntity extends MantleTileEntity implements ITickableTile
 	}
 
 	@Override
-	protected void writeSynced(CompoundNBT nbt) {
+	protected void writeSynced(CompoundTag nbt) {
 		super.writeSynced(nbt);
 		nbt.putByteArray(TAG_IS_FLOWING, isFlowing);
-		nbt.put(TAG_TANK, tank.writeToNBT(new CompoundNBT()));
+		nbt.put(TAG_TANK, tank.writeToNBT(new CompoundTag()));
 		cracksHandler.writeNBT(nbt);
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt) {
+	public void load(BlockState state, CompoundTag nbt) {
 		super.load(state, nbt);
 
 		// isFlowing
@@ -482,7 +482,7 @@ public class ChannelTileEntity extends MantleTileEntity implements ITickableTile
 		}
 
 		// tank
-		CompoundNBT tankTag = nbt.getCompound(TAG_TANK);
+		CompoundTag tankTag = nbt.getCompound(TAG_TANK);
 		tank.readFromNBT(tankTag);
 		cracksHandler.readNBT(state, nbt);
 	}

@@ -3,23 +3,23 @@ package knightminer.ceramics.items;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.util.FluidClayBucketWrapper;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ItemParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Shared logic between the milk and fluid filled clay buckets
@@ -58,15 +58,15 @@ public abstract class BaseClayBucketItem extends Item {
   /* Item methods */
 
   @Override
-  public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+  public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
     return new FluidClayBucketWrapper(stack);
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
     if (isCracked) {
-      tooltip.add(new TranslationTextComponent(this.getDescriptionId() + ".tooltip").withStyle(TextFormatting.GRAY));
+      tooltip.add(new TranslatableComponent(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
     }
   }
 
@@ -86,24 +86,24 @@ public abstract class BaseClayBucketItem extends Item {
    * @param player  Player for which the item breaks
    * @param stack  Item breaking
    */
-  protected static void renderBrokenItem(PlayerEntity player, ItemStack stack) {
+  protected static void renderBrokenItem(Player player, ItemStack stack) {
     // play sound
-    World world = player.getCommandSenderWorld();
+    Level world = player.getCommandSenderWorld();
     world.playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BREAK, player.getSoundSource(), 0.8F, 0.8F + world.random.nextFloat() * 0.4F, false);
     // add particles
     Random rand = player.getRandom();
-    ItemParticleData particle = new ItemParticleData(ParticleTypes.ITEM, stack);
+    ItemParticleOption particle = new ItemParticleOption(ParticleTypes.ITEM, stack);
     for(int i = 0; i < 5; ++i) {
-      Vector3d offset = new Vector3d((rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
+      Vec3 offset = new Vec3((rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
       offset = offset.xRot(-player.xRot * DEGREE_TO_RAD);
       offset = offset.yRot(-player.yRot * DEGREE_TO_RAD);
-      Vector3d pos = new Vector3d((rand.nextFloat() - 0.5D) * 0.3D, -rand.nextFloat() * 0.6D - 0.3D, 0.6D);
+      Vec3 pos = new Vec3((rand.nextFloat() - 0.5D) * 0.3D, -rand.nextFloat() * 0.6D - 0.3D, 0.6D);
       pos = pos.xRot(-player.xRot * DEGREE_TO_RAD);
       pos = pos.yRot(-player.yRot * DEGREE_TO_RAD);
       pos = pos.add(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
       // spawnParticle is no-oped on server, need to use server specific variant
-      if (world instanceof ServerWorld) {
-        ((ServerWorld)world).sendParticles(particle, pos.x, pos.y, pos.z, 1, offset.x, offset.y + 0.05D, offset.z, 0.0D);
+      if (world instanceof ServerLevel) {
+        ((ServerLevel)world).sendParticles(particle, pos.x, pos.y, pos.z, 1, offset.x, offset.y + 0.05D, offset.z, 0.0D);
       } else {
         world.addParticle(particle, pos.x, pos.y, pos.z, offset.x, offset.y + 0.05D, offset.z);
       }
@@ -136,7 +136,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @param player  Player placer
    * @return  Empty bucket, may be the original stack
    */
-  protected static ItemStack emptyBucket(ItemStack stack, PlayerEntity player) {
+  protected static ItemStack emptyBucket(ItemStack stack, Player player) {
     return !player.isCreative() ? stack.getContainerItem() : stack;
   }
 
@@ -147,7 +147,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @param newBucket         Filled bucket stack
    * @return  Stack of buckets
    */
-  protected static ItemStack updateBucket(ItemStack originalStack, PlayerEntity player, ItemStack newBucket) {
+  protected static ItemStack updateBucket(ItemStack originalStack, Player player, ItemStack newBucket) {
     // shrink the stack
     if (player.isCreative()) {
       return originalStack;
@@ -166,7 +166,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @param player  Player instance
    * @param stack   Stack to add
    */
-  protected static void addItem(PlayerEntity player, ItemStack stack) {
+  protected static void addItem(Player player, ItemStack stack) {
     if (!player.inventory.add(stack)) {
       player.drop(stack, false);
     }
@@ -213,7 +213,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  Fluid contained in the container
    */
   public Fluid getFluid(ItemStack stack) {
-    CompoundNBT tags = stack.getTag();
+    CompoundTag tags = stack.getTag();
     if(tags != null) {
       Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(tags.getString(TAG_FLUID)));
       return fluid == null ? Fluids.EMPTY : fluid;

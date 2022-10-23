@@ -9,9 +9,9 @@ import knightminer.ceramics.client.model.CrackedModel;
 import knightminer.ceramics.client.renderer.ChannelTileEntityRenderer;
 import knightminer.ceramics.client.renderer.CisternTileEntityRenderer;
 import knightminer.ceramics.client.renderer.FaucetTileEntityRenderer;
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -32,14 +32,14 @@ public class ClientEvents {
   @SubscribeEvent
   static void setupClient(FMLClientSetupEvent event) {
     RenderType cutout = RenderType.cutout();
-    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), cutout);
-    RenderTypeLookup.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), cutout);
-    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_CISTERN.get(), cutout);
-    Registration.COLORED_CISTERN.forEach(cistern -> RenderTypeLookup.setRenderLayer(cistern, cutout));
-    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
-    RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
+    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), cutout);
+    ItemBlockRenderTypes.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), cutout);
+    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CISTERN.get(), cutout);
+    Registration.COLORED_CISTERN.forEach(cistern -> ItemBlockRenderTypes.setRenderLayer(cistern, cutout));
+    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
+    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
 
-    ScreenManager.register(Registration.KILN_CONTAINER.get(), KilnScreen::new);
+    MenuScreens.register(Registration.KILN_CONTAINER.get(), KilnScreen::new);
     ClientRegistry.bindTileEntityRenderer(Registration.CISTERN_TILE_ENTITY.get(), CisternTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(Registration.FAUCET_TILE_ENTITY.get(), FaucetTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(Registration.CHANNEL_TILE_ENTITY.get(), ChannelTileEntityRenderer::new);

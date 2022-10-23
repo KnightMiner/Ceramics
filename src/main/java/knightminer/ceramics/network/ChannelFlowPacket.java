@@ -2,9 +2,9 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.tileentity.ChannelTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.mantle.util.TileEntityHelper;
@@ -20,14 +20,14 @@ public class ChannelFlowPacket implements IThreadsafePacket {
 		this.flow = flow;
 	}
 
-	public ChannelFlowPacket(PacketBuffer buffer) {
+	public ChannelFlowPacket(FriendlyByteBuf buffer) {
 		pos = buffer.readBlockPos();
 		side = buffer.readEnum(Direction.class);
 		flow = buffer.readBoolean();
 	}
 
 	@Override
-	public void encode(PacketBuffer buffer) {
+	public void encode(FriendlyByteBuf buffer) {
 		buffer.writeBlockPos(pos);
 		buffer.writeEnum(side);
 		buffer.writeBoolean(flow);

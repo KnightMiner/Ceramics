@@ -2,9 +2,9 @@ package knightminer.ceramics.recipe;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import net.minecraft.item.crafting.Ingredient.IItemList;
+import net.minecraft.world.item.crafting.Ingredient.Value;
 
 /**
  * Ingredient extension that only matches if the stack has no NBT
@@ -26,7 +26,7 @@ public class NoNBTIngredient extends Ingredient {
 		this(Arrays.stream(ingredient.values));
 	}
 
-	protected NoNBTIngredient(Stream<? extends IItemList> itemLists) {
+	protected NoNBTIngredient(Stream<? extends Value> itemLists) {
 		super(itemLists);
 	}
 
@@ -56,7 +56,7 @@ public class NoNBTIngredient extends Ingredient {
 	/** Serializer logic is basically vanilla */
 	private static class Serializer extends VanillaIngredientSerializer {
 		@Override
-		public NoNBTIngredient parse(PacketBuffer buffer) {
+		public NoNBTIngredient parse(FriendlyByteBuf buffer) {
 			return new NoNBTIngredient(super.parse(buffer));
 		}
 

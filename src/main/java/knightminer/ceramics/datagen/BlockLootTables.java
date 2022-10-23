@@ -2,13 +2,13 @@ package knightminer.ceramics.datagen;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
-import net.minecraft.block.Block;
-import net.minecraft.item.Items;
-import net.minecraft.loot.ConstantRange;
-import net.minecraft.loot.LootTable.Builder;
-import net.minecraft.loot.functions.CopyNbt;
-import net.minecraft.loot.functions.CopyNbt.Action;
-import net.minecraft.loot.functions.CopyNbt.Source;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.ConstantIntValue;
+import net.minecraft.world.level.storage.loot.LootTable.Builder;
+import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction;
+import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction.MergeStrategy;
+import net.minecraft.world.level.storage.loot.functions.CopyNbtFunction.DataSource;
 import net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 import static knightminer.ceramics.tileentity.CrackableTileEntityHandler.TAG_CRACKS;
 
-public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
+public class BlockLootTables extends net.minecraft.data.loot.BlockLoot {
   @Override
   protected Iterable<Block> getKnownBlocks() {
     return ForgeRegistries.BLOCKS.getValues().stream()
@@ -29,9 +29,9 @@ public class BlockLootTables extends net.minecraft.data.loot.BlockLootTables {
 
   @Override
   protected void addTables() {
-    IntFunction<Function<Block,Builder>> dropClay = count -> block -> createSingleItemTableWithSilkTouch(block, Items.CLAY_BALL, ConstantRange.exactly(count));
-    IntFunction<Function<Block,Builder>> dropPorcelain = count -> block -> createSingleItemTableWithSilkTouch(block, Registration.UNFIRED_PORCELAIN, ConstantRange.exactly(count));
-    Function<Block,Builder> dropSelfWithCracks = block -> createSingleItemTable(block).apply(CopyNbt.copyData(Source.BLOCK_ENTITY).copy(TAG_CRACKS, TAG_CRACKS, Action.REPLACE));
+    IntFunction<Function<Block,Builder>> dropClay = count -> block -> createSingleItemTableWithSilkTouch(block, Items.CLAY_BALL, ConstantIntValue.exactly(count));
+    IntFunction<Function<Block,Builder>> dropPorcelain = count -> block -> createSingleItemTableWithSilkTouch(block, Registration.UNFIRED_PORCELAIN, ConstantIntValue.exactly(count));
+    Function<Block,Builder> dropSelfWithCracks = block -> createSingleItemTable(block).apply(CopyNbtFunction.copyData(DataSource.BLOCK_ENTITY).copy(TAG_CRACKS, TAG_CRACKS, MergeStrategy.REPLACE));
 
     // unfired porcelain drops 4 of the item form
     add(Registration.UNFIRED_PORCELAIN_BLOCK.get(), dropPorcelain.apply(4));

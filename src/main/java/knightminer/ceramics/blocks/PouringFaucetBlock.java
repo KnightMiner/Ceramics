@@ -2,22 +2,22 @@ package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.RedstoneParticleData;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import slimeknights.mantle.util.TileEntityHelper;
@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Pouring variant of the faucet block
@@ -47,28 +47,28 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   }
 
   @Override
-  public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
     return new FaucetTileEntity(crackable);
   }
 
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+  public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
     if (isCrackable() && ICrackableBlock.tryRepair(worldIn, pos, player, handIn)) {
-      return ActionResultType.SUCCESS;
+      return InteractionResult.SUCCESS;
     }
     if (player.isShiftKeyDown()) {
-      return ActionResultType.PASS;
+      return InteractionResult.PASS;
     }
     getFaucet(worldIn, pos).ifPresent(FaucetTileEntity::activate);
-    return ActionResultType.SUCCESS;
+    return InteractionResult.SUCCESS;
   }
 
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+  public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
     if (worldIn.isClientSide()) {
       return;
     }
@@ -81,7 +81,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
+  public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand) {
     getFaucet(worldIn, pos).ifPresent(FaucetTileEntity::activate);
   }
 
@@ -91,7 +91,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
    * @param pos    Faucet position
    * @return  Optional of faucet, empty if missing or wrong type
    */
-  private Optional<FaucetTileEntity> getFaucet(World world, BlockPos pos) {
+  private Optional<FaucetTileEntity> getFaucet(Level world, BlockPos pos) {
     return TileEntityHelper.getTile(FaucetTileEntity.class, world, pos);
   }
 
@@ -103,17 +103,17 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
    * @param worldIn  World instance
    * @param pos      Faucet position
    */
-  private static void addParticles(BlockState state, IWorld worldIn, BlockPos pos) {
+  private static void addParticles(BlockState state, LevelAccessor worldIn, BlockPos pos) {
     Direction direction = state.getValue(FACING);
     double x = (double)pos.getX() + 0.5D - 0.3D * (double)direction.getStepX();
     double y = (double)pos.getY() + 0.5D - 0.3D * (double)direction.getStepY();
     double z = (double)pos.getZ() + 0.5D - 0.3D * (double)direction.getStepZ();
-    worldIn.addParticle(new RedstoneParticleData(1.0F, 0.0F, 0.0F, 0.5f), x, y, z, 0.0D, 0.0D, 0.0D);
+    worldIn.addParticle(new DustParticleOptions(1.0F, 0.0F, 0.0F, 0.5f), x, y, z, 0.0D, 0.0D, 0.0D);
   }
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+  public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
     getFaucet(worldIn, pos).ifPresent(faucet -> {
       if (faucet.isPouring() && faucet.getRenderFluid().isEmpty() && rand.nextFloat() < 0.25F) {
         addParticles(stateIn, worldIn, pos);
@@ -132,14 +132,14 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+  public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
     if (isCrackable()) {
       TileEntityHelper.getTile(FaucetTileEntity.class, worldIn, pos).ifPresent(FaucetTileEntity::randomTick);
     }
   }
 
   @Override
-  public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+  public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
     if (isCrackable()) {
       ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
     }

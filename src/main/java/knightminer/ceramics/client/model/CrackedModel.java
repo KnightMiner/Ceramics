@@ -6,24 +6,24 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.BlockPart;
-import net.minecraft.client.renderer.model.BlockPartFace;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockElementFace;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -47,9 +47,9 @@ import java.util.function.Function;
 /** Generic cracked model for cracked clay blocks */
 public class CrackedModel implements IModelGeometry<CrackedModel> {
 	/** Item overrides list, note overrides does not work through a model wrapper */
-	public static final ItemOverrideList OVERRIDES = new ItemOverrideList() {
+	public static final ItemOverrides OVERRIDES = new ItemOverrides() {
 		@Override
-		public IBakedModel resolve(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+		public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
 			int cracks = CrackableBlockItem.getCracks(stack);
 			if (cracks > 0 && model instanceof BakedModel) {
 				return ((BakedModel)model).getModel(cracks);
@@ -66,12 +66,12 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 	}
 
 	@Override
-	public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation,IUnbakedModel> modelGetter, Set<Pair<String,String>> missingTextureErrors) {
-		Collection<RenderMaterial> textures = model.getTextures(owner, modelGetter, missingTextureErrors);
+	public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation,UnbakedModel> modelGetter, Set<Pair<String,String>> missingTextureErrors) {
+		Collection<Material> textures = model.getTextures(owner, modelGetter, missingTextureErrors);
 		for (int i = 1; i <=5; i++) {
 			String name = "cracks_" + i;
-			RenderMaterial material = owner.resolveTexture(name);
-			if (Objects.equals(material.texture(), MissingTextureSprite.getLocation())) {
+			Material material = owner.resolveTexture(name);
+			if (Objects.equals(material.texture(), MissingTextureAtlasSprite.getLocation())) {
 				missingTextureErrors.add(Pair.of(name, owner.getModelName()));
 			}
 			textures.add(material);
@@ -80,42 +80,42 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 	}
 
 	@Override
-	public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial,TextureAtlasSprite> spriteGetter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation location) {
+	public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material,TextureAtlasSprite> spriteGetter, ModelState transform, ItemOverrides overrides, ResourceLocation location) {
 		// fetch textures
-		RenderMaterial[] textures = new RenderMaterial[5];
+		Material[] textures = new Material[5];
 		for (int i = 0; i < 5; i++) {
 			textures[i] = owner.resolveTexture("cracks_" + (i + 1));
 		}
 
 		// create extra quads
-		List<BlockPart> elements = model.getElements();
-		List<BlockPart> newElements = new ArrayList<>(elements.size() * 2);
+		List<BlockElement> elements = model.getElements();
+		List<BlockElement> newElements = new ArrayList<>(elements.size() * 2);
 		newElements.addAll(elements);
-		for (BlockPart element : elements) {
-			Map<Direction,BlockPartFace> mapFaces = new HashMap<>();
-			for (Entry<Direction, BlockPartFace> entry : element.faces.entrySet()) {
-				BlockPartFace face = entry.getValue();
-				mapFaces.put(entry.getKey(), new BlockPartFace(face.cullForDirection, -1, "cracks", face.uv));
+		for (BlockElement element : elements) {
+			Map<Direction,BlockElementFace> mapFaces = new HashMap<>();
+			for (Entry<Direction, BlockElementFace> entry : element.faces.entrySet()) {
+				BlockElementFace face = entry.getValue();
+				mapFaces.put(entry.getKey(), new BlockElementFace(face.cullForDirection, -1, "cracks", face.uv));
 			}
-			newElements.add(new BlockPart(element.from, element.to, mapFaces, element.rotation, element.shade));
+			newElements.add(new BlockElement(element.from, element.to, mapFaces, element.rotation, element.shade));
 		}
 
 		// wrap the original model
-		IBakedModel original = model.bakeModel(owner, transform, OVERRIDES, spriteGetter, location);
+		BakedModel original = model.bakeModel(owner, transform, OVERRIDES, spriteGetter, location);
 		return new BakedModel(original, owner, newElements, textures, transform);
 	}
 
 	/** Baked model for this */
-	private static class BakedModel extends DynamicBakedWrapper<IBakedModel> {
-		private final IBakedModel[] crackedModels;
+	private static class BakedModel extends DynamicBakedWrapper<BakedModel> {
+		private final BakedModel[] crackedModels;
 		private final IModelConfiguration owner;
-		private final List<BlockPart> elements;
-		private final RenderMaterial[] textures;
-		private final IModelTransform transform;
+		private final List<BlockElement> elements;
+		private final Material[] textures;
+		private final ModelState transform;
 
-		public BakedModel(IBakedModel originalModel, IModelConfiguration owner, List<BlockPart> elements, RenderMaterial[] textures, IModelTransform transform) {
+		public BakedModel(BakedModel originalModel, IModelConfiguration owner, List<BlockElement> elements, Material[] textures, ModelState transform) {
 			super(originalModel);
-			this.crackedModels = new IBakedModel[textures.length];
+			this.crackedModels = new BakedModel[textures.length];
 			this.owner = owner;
 			this.elements = elements;
 			this.textures = textures;
@@ -127,7 +127,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 		 * @param cracks  Cracks between 1 and 5
 		 * @return  Cracked model
 		 */
-		public IBakedModel getModel(int cracks) {
+		public BakedModel getModel(int cracks) {
 			int stage = cracks - 1;
 			if (crackedModels[stage] == null) {
 				// retexture the parts with the texture for this stage
@@ -150,7 +150,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 	/** Loader implementation */
 	private static class Loader implements IModelLoader<CrackedModel> {
 		@Override
-		public void onResourceManagerReload(IResourceManager resourceManager) {}
+		public void onResourceManagerReload(ResourceManager resourceManager) {}
 
 		@Override
 		public CrackedModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {

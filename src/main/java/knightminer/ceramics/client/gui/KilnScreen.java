@@ -1,17 +1,17 @@
 package knightminer.ceramics.client.gui;
 
 import knightminer.ceramics.container.KilnContainer;
-import net.minecraft.client.gui.recipebook.FurnaceRecipeGui;
-import net.minecraft.client.gui.screen.inventory.AbstractFurnaceScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.recipebook.SmeltingRecipeBookComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractFurnaceScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
 public class KilnScreen extends AbstractFurnaceScreen<KilnContainer> {
   private static final ResourceLocation FURNACE_GUI_TEXTURES = new ResourceLocation("textures/gui/container/furnace.png");
 
-  public KilnScreen(KilnContainer kiln, PlayerInventory inventory, ITextComponent name) {
-    super(kiln, new FurnaceRecipeGui(), inventory, name, FURNACE_GUI_TEXTURES);
+  public KilnScreen(KilnContainer kiln, Inventory inventory, Component name) {
+    super(kiln, new SmeltingRecipeBookComponent(), inventory, name, FURNACE_GUI_TEXTURES);
   }
 
   @Override

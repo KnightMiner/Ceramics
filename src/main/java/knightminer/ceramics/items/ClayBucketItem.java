@@ -1,46 +1,46 @@
 package knightminer.ceramics.items;
 
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CauldronBlock;
-import net.minecraft.block.IBucketPickupHandler;
-import net.minecraft.block.ILiquidContainer;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CauldronBlock;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceContext.FluidMode;
-import net.minecraft.util.math.RayTraceResult.Type;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.phys.HitResult.Type;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -52,7 +52,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 /**
  * Clay bucket that holds arbitrary fluids
@@ -66,20 +66,20 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	/* Bucket behavior */
 
 	@Override
-	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		Fluid fluid = this.getFluid(stack);
-		BlockRayTraceResult trace = getPlayerPOVHitResult(world, player, fluid == Fluids.EMPTY ? FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
+		BlockHitResult trace = getPlayerPOVHitResult(world, player, fluid == Fluids.EMPTY ? Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
 
 		// fire Forge event for bucket use
-		ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
+		InteractionResultHolder<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
 		if (ret != null) {
 			return ret;
 		}
 
 		// if we missed, do nothing
 		if (trace.getType() != Type.BLOCK) {
-			return ActionResult.pass(stack);
+			return InteractionResultHolder.pass(stack);
 		}
 
 		// normal fluid logic
@@ -92,15 +92,15 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			BlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
 			if (block == Blocks.CAULDRON && !player.isCrouching()) {
-				ActionResult<ItemStack> result = interactWithCauldron(world, pos, state, player, stack, fluid);
-				if (result.getResult() != ActionResultType.PASS) {
+				InteractionResultHolder<ItemStack> result = interactWithCauldron(world, pos, state, player, stack, fluid);
+				if (result.getResult() != InteractionResult.PASS) {
 					return result;
 				}
 			}
 
 			if (fluid == Fluids.EMPTY) {
-				if (block instanceof IBucketPickupHandler) {
-					Fluid newFluid = ((IBucketPickupHandler)block).takeLiquid(world, pos, state);
+				if (block instanceof BucketPickup) {
+					Fluid newFluid = ((BucketPickup)block).takeLiquid(world, pos, state);
 					if (newFluid != Fluids.EMPTY) {
 						player.awardStat(Stats.ITEM_USED.get(this));
 
@@ -112,26 +112,26 @@ public class ClayBucketItem extends BaseClayBucketItem {
 						player.playSound(sound, 1.0F, 1.0F);
 						ItemStack newStack = updateBucket(stack, player, withFluid(newFluid));
 						if (!world.isClientSide()) {
-							CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity)player, newStack.copy());
+							CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, newStack.copy());
 						}
 
-						return ActionResult.success(newStack);
+						return InteractionResultHolder.success(newStack);
 					}
 				}
 			} else {
-				BlockPos fluidPos = state.getBlock() instanceof ILiquidContainer && fluid == Fluids.WATER ? pos : offset;
+				BlockPos fluidPos = state.getBlock() instanceof LiquidBlockContainer && fluid == Fluids.WATER ? pos : offset;
 				if (this.tryPlaceContainedLiquid(player, world, fluidPos, stack, trace)) {
 					onLiquidPlaced(fluid, world, stack, fluidPos);
-					if (player instanceof ServerPlayerEntity) {
-						CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity)player, fluidPos, stack);
+					if (player instanceof ServerPlayer) {
+						CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, fluidPos, stack);
 					}
 
 					player.awardStat(Stats.ITEM_USED.get(this));
-					return ActionResult.success(emptyBucket(stack, player));
+					return InteractionResultHolder.success(emptyBucket(stack, player));
 				}
 			}
 		}
-		return ActionResult.fail(stack);
+		return InteractionResultHolder.fail(stack);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	 * @param stack  Stack instance
 	 * @param pos    Position to place the world
 	 */
-	private static void onLiquidPlaced(Fluid fluid, World world, ItemStack stack, BlockPos pos) {
+	private static void onLiquidPlaced(Fluid fluid, Level world, ItemStack stack, BlockPos pos) {
 		// TODO: is this bad?
 		Item item = fluid.getBucket();
 		if (item instanceof BucketItem) {
@@ -151,7 +151,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 
 	// TODO: possibly migrate to the Forge method
 	@SuppressWarnings("deprecation")
-	private boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, World world, BlockPos pos, ItemStack stack, @Nullable BlockRayTraceResult trace) {
+	private boolean tryPlaceContainedLiquid(@Nullable Player player, Level world, BlockPos pos, ItemStack stack, @Nullable BlockHitResult trace) {
 		Fluid fluidStack = this.getFluid(stack);
 		Fluid fluid = fluidStack.getFluid();
 		if (!(fluid instanceof FlowingFluid)) {
@@ -161,15 +161,15 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		BlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 		boolean replaceable = state.canBeReplaced(fluid);
-		if (state.isAir(world, pos) || replaceable || block instanceof ILiquidContainer && ((ILiquidContainer)block).canPlaceLiquid(world, pos, state, fluid)) {
+		if (state.isAir(world, pos) || replaceable || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(world, pos, state, fluid)) {
 			if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
-				world.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+				world.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
 
 				for(int l = 0; l < 8; ++l) {
 					world.addParticle(ParticleTypes.LARGE_SMOKE, pos.getX() + Math.random(), pos.getY() + Math.random(), pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
 				}
-			} else if (block instanceof ILiquidContainer && fluid == Fluids.WATER) {
-				if (((ILiquidContainer)block).placeLiquid(world, pos, state, ((FlowingFluid)fluid).getSource(false))) {
+			} else if (block instanceof LiquidBlockContainer && fluid == Fluids.WATER) {
+				if (((LiquidBlockContainer)block).placeLiquid(world, pos, state, ((FlowingFluid)fluid).getSource(false))) {
 					this.playEmptySound(fluid, player, world, pos);
 				}
 			} else {
@@ -196,12 +196,12 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	 * @param world   World instance
 	 * @param pos     Position of sound
 	 */
-	private void playEmptySound(Fluid fluid, @Nullable PlayerEntity player, IWorld world, BlockPos pos) {
+	private void playEmptySound(Fluid fluid, @Nullable Player player, LevelAccessor world, BlockPos pos) {
 		SoundEvent sound = fluid.getAttributes().getEmptySound();
 		if (sound == null) {
 			sound = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
 		}
-		world.playSound(player, pos, sound, SoundCategory.BLOCKS, 1.0F, 1.0F);
+		world.playSound(player, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	 * @param fluid   Contained fluid
 	 * @return  Action result from interaction, pass means failed to interact with a cauldron
 	 */
-	private ActionResult<ItemStack> interactWithCauldron(World world, BlockPos pos, BlockState state, @Nullable PlayerEntity player, ItemStack stack, Fluid fluid) {
+	private InteractionResultHolder<ItemStack> interactWithCauldron(Level world, BlockPos pos, BlockState state, @Nullable Player player, ItemStack stack, Fluid fluid) {
 		// if the bucket is empty, try filling from the cauldron
 		int level = state.getValue(CauldronBlock.LEVEL);
 		if (fluid == Fluids.EMPTY) {
@@ -227,8 +227,8 @@ public class ClayBucketItem extends BaseClayBucketItem {
 				if(!world.isClientSide()) {
 					((CauldronBlock)Blocks.CAULDRON).setWaterLevel(world, pos, state, 0);
 				}
-				world.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-				return ActionResult.success(withFluid(Fluids.WATER));
+				world.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+				return InteractionResultHolder.success(withFluid(Fluids.WATER));
 			}
 		} else if(fluid == Fluids.WATER) {
 			// fill cauldron if not full
@@ -239,32 +239,32 @@ public class ClayBucketItem extends BaseClayBucketItem {
 				if(!world.isClientSide) {
 					((CauldronBlock)Blocks.CAULDRON).setWaterLevel(world, pos, state, 3);
 				}
-				world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
 
 				// return empty bucket
-				return ActionResult.success(stack.getContainerItem());
+				return InteractionResultHolder.success(stack.getContainerItem());
 			}
 		} else {
 			// pass if not empty or water
-			return ActionResult.pass(stack);
+			return InteractionResultHolder.pass(stack);
 		}
 		// consume so we do not accidentally place water next to the cauldron, consistency with vanilla
-		return ActionResult.success(stack);
+		return InteractionResultHolder.success(stack);
 	}
 
 	@Override
-	public ActionResultType interactLivingEntity(ItemStack stack, PlayerEntity player, LivingEntity target, Hand hand) {
+	public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand hand) {
 		// only work if the bucket is empty and right clicking a cow
-		if(!player.isCreative() && !hasFluid(stack) && target instanceof CowEntity && !target.isBaby()) {
+		if(!player.isCreative() && !hasFluid(stack) && target instanceof Cow && !target.isBaby()) {
 			// sound
 			player.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
 			if (!player.getCommandSenderWorld().isClientSide()) {
 				addItem(player, withMilk());
 				stack.shrink(1);
 			}
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 
 
@@ -283,9 +283,9 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	}
 
 	@Override
-	public ITextComponent getName(ItemStack stack) {
+	public Component getName(ItemStack stack) {
 		Fluid fluid = getFluid(stack);
-		ITextComponent component;
+		Component component;
 		if(fluid == Fluids.EMPTY) {
 			component = super.getName(stack);
 		} else {
@@ -295,17 +295,17 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			assert location != null;
 			String fluidKey = String.format("%s.%s.%s", key, location.getNamespace(), location.getPath());
 			if (ForgeI18n.getPattern(fluidKey).equals(fluidKey)) {
-				component = new TranslationTextComponent(key + ".filled", new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME).getDisplayName());
+				component = new TranslatableComponent(key + ".filled", new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME).getDisplayName());
 			} else {
-				component = new TranslationTextComponent(fluidKey);
+				component = new TranslatableComponent(fluidKey);
 			}
 		}
 		// display name in red
-		return component.plainCopy().withStyle(TextFormatting.RED);
+		return component.plainCopy().withStyle(ChatFormatting.RED);
 	}
 
 	@Override
-	public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> subItems) {
+	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> subItems) {
 		if (/*Config.bucketEnabled && */this.allowdedIn(tab)) {
 			// empty only for non-cracked, keep cracked hidden
 			if (!isCracked) {
@@ -325,9 +325,9 @@ public class ClayBucketItem extends BaseClayBucketItem {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		if (isCracked || getFluid(stack) == Fluids.EMPTY) {
-			tooltip.add(new TranslationTextComponent(this.getDescriptionId() + ".tooltip").withStyle(TextFormatting.GRAY));
+			tooltip.add(new TranslatableComponent(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
 		}
 	}
 

@@ -1,8 +1,8 @@
 package knightminer.ceramics.util.tank;
 
 import knightminer.ceramics.tileentity.ChannelTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraftforge.fluids.FluidStack;
 
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;

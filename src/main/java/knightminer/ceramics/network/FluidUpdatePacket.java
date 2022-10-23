@@ -1,7 +1,7 @@
 package knightminer.ceramics.network;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
 
@@ -16,13 +16,13 @@ public abstract class FluidUpdatePacket implements IThreadsafePacket {
 		this.fluid = fluid;
 	}
 
-	public FluidUpdatePacket(PacketBuffer buffer) {
+	public FluidUpdatePacket(FriendlyByteBuf buffer) {
 		this.pos = buffer.readBlockPos();
 		this.fluid = buffer.readFluidStack();
 	}
 
 	@Override
-	public void encode(PacketBuffer buffer) {
+	public void encode(FriendlyByteBuf buffer) {
 		buffer.writeBlockPos(pos);
 		buffer.writeFluidStack(fluid);
 	}

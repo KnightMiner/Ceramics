@@ -2,38 +2,38 @@ package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.recipe.CeramicsTags;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.pathfinding.PathType;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.AttachFace;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Plane;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Plane;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 import static net.minecraft.state.properties.BlockStateProperties.EAST;
-import static net.minecraft.state.properties.BlockStateProperties.NORTH;
+import staticnet.minecraft.world.level.block.state.properties.BlockStatePropertiess.NORTH;
 import static net.minecraft.state.properties.BlockStateProperties.SOUTH;
-import static net.minecraft.state.properties.BlockStateProperties.WEST;
+import staticnet.minecraft.world.level.block.state.properties.BlockStatePropertiess.WEST;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Base block between unfired and fired cisterns. Extended for fluid variant
@@ -53,14 +53,14 @@ public class CisternBlock extends Block {
   private static final VoxelShape[] BOUNDS_BASE;
   private static final VoxelShape[] BOUNDS_EXTENSION;
   // bounds for lever placement
-  private static final VoxelShape SOLIDNESS_BASE = VoxelShapes.join(
-      VoxelShapes.block(),
+  private static final VoxelShape SOLIDNESS_BASE = Shapes.join(
+      Shapes.block(),
       box(3, 2, 3, 13, 16, 13),
-      IBooleanFunction.ONLY_FIRST);
-  private static final VoxelShape SOLIDNESS_EXTENSION = VoxelShapes.join(
-      VoxelShapes.block(),
+      BooleanOp.ONLY_FIRST);
+  private static final VoxelShape SOLIDNESS_EXTENSION = Shapes.join(
+      Shapes.block(),
       box(3, 0, 3, 13, 16, 13),
-      IBooleanFunction.ONLY_FIRST);
+      BooleanOp.ONLY_FIRST);
 
   /**
    * Gets a key for the bounds based on the given booleans
@@ -91,10 +91,10 @@ public class CisternBlock extends Block {
           for (boolean east : bools) {
             // add in the connected sides
             VoxelShape bounds = base;
-            if (north) bounds = VoxelShapes.or(bounds, connectionNorth);
-            if (south) bounds = VoxelShapes.or(bounds, connectionSouth);
-            if (west) bounds = VoxelShapes.or(bounds, connectionWest);
-            if (east) bounds = VoxelShapes.or(bounds, connectionEast);
+            if (north) bounds = Shapes.or(bounds, connectionNorth);
+            if (south) bounds = Shapes.or(bounds, connectionSouth);
+            if (west) bounds = Shapes.or(bounds, connectionWest);
+            if (east) bounds = Shapes.or(bounds, connectionEast);
 
             // simplify the final bounds into the proper key
             boundList[boundsKey(north, south, west, east)] = bounds.optimize();
@@ -107,21 +107,21 @@ public class CisternBlock extends Block {
 
   static {
     // base shapes
-    BOUNDS_BASE = makeBounds(VoxelShapes.joinUnoptimized(
-        VoxelShapes.or(
+    BOUNDS_BASE = makeBounds(Shapes.joinUnoptimized(
+        Shapes.or(
             box(2, 0, 2, 14,  1, 14),
             box(1, 1, 2, 15, 16, 14),
             box(2, 1, 1, 14, 16, 15)),
         box(3, 2, 3, 13, 16, 13),
-        IBooleanFunction.ONLY_FIRST));
+        BooleanOp.ONLY_FIRST));
 
     // extension shapes
-    BOUNDS_EXTENSION = makeBounds(VoxelShapes.joinUnoptimized(
-        VoxelShapes.or(
+    BOUNDS_EXTENSION = makeBounds(Shapes.joinUnoptimized(
+        Shapes.or(
             box(1, 0, 2, 15, 16, 14),
             box(2, 0, 1, 14, 16, 15)),
         box(3, 0, 3, 13, 16, 13),
-        IBooleanFunction.ONLY_FIRST));
+        BooleanOp.ONLY_FIRST));
   }
 
   public CisternBlock(Properties properties) {
@@ -132,7 +132,7 @@ public class CisternBlock extends Block {
   /* Block state properties */
 
   @Override
-  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+  protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
     builder.add(EXTENSION);
     for (Direction side : Plane.HORIZONTAL) {
       builder.add(CONNECTIONS.get(side));
@@ -142,7 +142,7 @@ public class CisternBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+  public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
     return false;
   }
 
@@ -214,8 +214,8 @@ public class CisternBlock extends Block {
   }
 
   @Override
-  public BlockState getStateForPlacement(BlockItemUseContext context) {
-    IBlockReader world = context.getLevel();
+  public BlockState getStateForPlacement(BlockPlaceContext context) {
+    BlockGetter world = context.getLevel();
     BlockPos pos = context.getClickedPos();
     return defaultBlockState().setValue(EXTENSION, world.getBlockState(pos.below()).is(this))
                             .setValue(NORTH, isConnected(Direction.NORTH, world.getBlockState(pos.north())))
@@ -227,7 +227,7 @@ public class CisternBlock extends Block {
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
     if (!facing.getAxis().isVertical()) {
       // barrel connects to
       state = state.setValue(CONNECTIONS.get(facing), isConnected(facing, facingState));
@@ -241,7 +241,7 @@ public class CisternBlock extends Block {
   @Override
   @SuppressWarnings("deprecation")
   @Deprecated
-  public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+  public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
     VoxelShape[] boundList = state.getValue(EXTENSION) ? BOUNDS_EXTENSION : BOUNDS_BASE;
     return boundList[boundsKey(state.getValue(NORTH), state.getValue(SOUTH), state.getValue(WEST), state.getValue(EAST))];
   }
@@ -249,7 +249,7 @@ public class CisternBlock extends Block {
   // used to calculated side solidness for torch/lever placement, not collision
   @Override
   @Deprecated
-  public VoxelShape getBlockSupportShape(BlockState state, IBlockReader reader, BlockPos pos) {
+  public VoxelShape getBlockSupportShape(BlockState state, BlockGetter reader, BlockPos pos) {
     return state.getValue(EXTENSION) ? SOLIDNESS_EXTENSION : SOLIDNESS_BASE;
   }
 }

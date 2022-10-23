@@ -1,19 +1,19 @@
 package knightminer.ceramics.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import knightminer.ceramics.blocks.FaucetBlock;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import slimeknights.mantle.client.model.FaucetFluidLoader;
@@ -25,20 +25,20 @@ import slimeknights.mantle.client.render.RenderingHelper;
 
 import java.util.function.Function;
 
-public class FaucetTileEntityRenderer extends TileEntityRenderer<FaucetTileEntity> {
-  public FaucetTileEntityRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
+public class FaucetTileEntityRenderer extends BlockEntityRenderer<FaucetTileEntity> {
+  public FaucetTileEntityRenderer(BlockEntityRenderDispatcher rendererDispatcherIn) {
     super(rendererDispatcherIn);
   }
 
   @Override
-  public void render(FaucetTileEntity tileEntity, float partialTicks, MatrixStack matrices, IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+  public void render(FaucetTileEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
     FluidStack renderFluid = tileEntity.getRenderFluid();
     if (!tileEntity.isPouring() || renderFluid.isEmpty()) {
       return;
     }
 
     // safety
-    World world = tileEntity.getLevel();
+    Level world = tileEntity.getLevel();
     if (world == null) {
       return;
     }
@@ -54,14 +54,14 @@ public class FaucetTileEntityRenderer extends TileEntityRenderer<FaucetTileEntit
       // fluid props
       FluidAttributes attributes = renderFluid.getFluid().getAttributes();
       int color = attributes.getColor(renderFluid);
-      Function<ResourceLocation, TextureAtlasSprite> spriteGetter = Minecraft.getInstance().getTextureAtlas(PlayerContainer.BLOCK_ATLAS);
+      Function<ResourceLocation, TextureAtlasSprite> spriteGetter = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
       TextureAtlasSprite still = spriteGetter.apply(attributes.getStillTexture(renderFluid));
       TextureAtlasSprite flowing = spriteGetter.apply(attributes.getFlowingTexture(renderFluid));
       boolean isGas = attributes.isGaseous(renderFluid);
       combinedLightIn = FluidRenderer.withBlockLight(combinedLightIn, attributes.getLuminosity(renderFluid));
 
       // render all cubes in the model
-      IVertexBuilder buffer = bufferIn.getBuffer(FluidRenderer.RENDER_TYPE);
+      VertexConsumer buffer = bufferIn.getBuffer(FluidRenderer.RENDER_TYPE);
       for (FluidCuboid cube : model.getFluids()) {
         FluidRenderer.renderCuboid(matrices, buffer, cube, 0, still, flowing, color, combinedLightIn, isGas);
       }

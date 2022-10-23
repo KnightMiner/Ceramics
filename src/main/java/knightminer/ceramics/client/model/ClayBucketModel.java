@@ -7,26 +7,26 @@ import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Transformation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.BakedItemModel;
 import net.minecraftforge.client.model.IModelConfiguration;
@@ -89,38 +89,38 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
    * @return  Material, or null if the material is missing
    */
   @Nullable
-  private static RenderMaterial getMaterial(IModelConfiguration owner, String name) {
-    RenderMaterial location = owner.resolveTexture(name);
-    if (MissingTextureSprite.getLocation().equals(location.texture())) {
+  private static Material getMaterial(IModelConfiguration owner, String name) {
+    Material location = owner.resolveTexture(name);
+    if (MissingTextureAtlasSprite.getLocation().equals(location.texture())) {
      return null;
     }
     return location;
   }
 
   @Override
-  public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
-    RenderMaterial particleLocation = getMaterial(owner, "particle");
+  public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+    Material particleLocation = getMaterial(owner, "particle");
     // front texture, full 3D
-    RenderMaterial baseLocation = getMaterial(owner, "base");
+    Material baseLocation = getMaterial(owner, "base");
     // inner (texture in the middle, flat)
-    RenderMaterial fluidMaskLocation = getMaterial(owner, "fluid");
+    Material fluidMaskLocation = getMaterial(owner, "fluid");
     // inner (texture in the back, flat)
-    RenderMaterial innerLocation = getMaterial(owner, "inner");
+    Material innerLocation = getMaterial(owner, "inner");
 
     // determine the transforms to use
-    IModelTransform transformsFromModel = owner.getCombinedTransform();
-    ImmutableMap<TransformType,TransformationMatrix> transformMap = PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(transformsFromModel, modelTransform));
+    ModelState transformsFromModel = owner.getCombinedTransform();
+    ImmutableMap<TransformType,Transformation> transformMap = PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(transformsFromModel, modelTransform));
 
     // particle has fallback if null based on a few other sprites
     TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
 
     // if the fluid is lighter than air, will manipulate the initial state to be rotated 180 deg to turn it upside down
     if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir()) {
-      modelTransform = new ModelTransformComposition(modelTransform, new SimpleModelTransform(new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null)));
+      modelTransform = new ModelTransformComposition(modelTransform, new SimpleModelTransform(new Transformation(null, new Quaternion(0, 0, 1, 0), null, null)));
     }
 
     // start building quads
-    TransformationMatrix transform = modelTransform.getRotation();
+    Transformation transform = modelTransform.getRotation();
     ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
     if (fluid == Fluids.EMPTY) {
       // if no fluid, just render the inner sprite, looks better
@@ -162,15 +162,15 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
     }
 
     if (particleSprite == null) {
-      particleSprite = spriteGetter.apply(ModelLoaderRegistry.blockMaterial(MissingTextureSprite.getLocation()));
+      particleSprite = spriteGetter.apply(ModelLoaderRegistry.blockMaterial(MissingTextureAtlasSprite.getLocation()));
     }
 
     return new BakedModel(bakery, owner, this, builder.build(), particleSprite, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), modelTransform, owner.isSideLit());
   }
 
   @Override
-  public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-    Set<RenderMaterial> texs = Sets.newHashSet();
+  public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    Set<Material> texs = Sets.newHashSet();
     texs.add(owner.resolveTexture("particle"));
     texs.add(owner.resolveTexture("base"));
     texs.add(owner.resolveTexture("inner"));
@@ -181,7 +181,7 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
   /** Model loader logic */
   private static class Loader implements IModelLoader<ClayBucketModel> {
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {}
+    public void onResourceManagerReload(ResourceManager resourceManager) {}
 
     @Override
     public ClayBucketModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
@@ -208,7 +208,7 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
   }
 
   /** Handles adding in the model for a specific fluid, replacing the fluidless model */
-  private static final class ContainedFluidOverrideHandler extends ItemOverrideList {
+  private static final class ContainedFluidOverrideHandler extends ItemOverrides {
     private static final ResourceLocation REBAKE_LOCATION = new ResourceLocation("ceramics:bucket_override");
 
     private final ModelBakery bakery;
@@ -217,7 +217,7 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
     }
 
     @Override
-    public IBakedModel resolve(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity) {
+    public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity) {
       return FluidUtil.getFluidContained(stack).map(fluidStack -> {
         BakedModel model = (BakedModel)originalModel;
 
@@ -225,7 +225,7 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
         String name = Objects.requireNonNull(fluid.getRegistryName()).toString();
         if (!model.cache.containsKey(name)) {
           ClayBucketModel parent = model.parent.withFluid(fluid);
-          IBakedModel bakedModel = parent.bake(model.owner, bakery, ModelLoader.defaultTextureGetter(), model.originalTransform, model.getOverrides(), REBAKE_LOCATION);
+          BakedModel bakedModel = parent.bake(model.owner, bakery, ModelLoader.defaultTextureGetter(), model.originalTransform, model.getOverrides(), REBAKE_LOCATION);
           model.cache.put(name, bakedModel);
           return bakedModel;
         }
@@ -239,12 +239,12 @@ public final class ClayBucketModel implements IModelGeometry<ClayBucketModel> {
   private static final class BakedModel extends BakedItemModel {
     private final IModelConfiguration owner;
     private final ClayBucketModel parent;
-    private final Map<String, IBakedModel> cache; // contains all the baked models since they'll never change
-    private final IModelTransform originalTransform;
+    private final Map<String, BakedModel> cache; // contains all the baked models since they'll never change
+    private final ModelState originalTransform;
 
     private BakedModel(ModelBakery bakery, IModelConfiguration owner, ClayBucketModel parent, ImmutableList<BakedQuad> quads,
-                       TextureAtlasSprite particle, ImmutableMap<TransformType, TransformationMatrix> transforms,
-                       Map<String, IBakedModel> cache, boolean untransformed, IModelTransform originalTransform, boolean isSideLit) {
+                       TextureAtlasSprite particle, ImmutableMap<TransformType, Transformation> transforms,
+                       Map<String, BakedModel> cache, boolean untransformed, ModelState originalTransform, boolean isSideLit) {
       super(quads, particle, transforms, new ContainedFluidOverrideHandler(bakery), untransformed, isSideLit);
       this.owner = owner;
       this.parent = parent;

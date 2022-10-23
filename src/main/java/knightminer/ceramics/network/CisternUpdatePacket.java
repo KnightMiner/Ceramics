@@ -2,8 +2,8 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
@@ -23,14 +23,14 @@ public class CisternUpdatePacket implements IThreadsafePacket {
     this.shouldRefreshCapabilities = shouldRefreshCapabilities;
   }
 
-  public CisternUpdatePacket(PacketBuffer buffer) {
+  public CisternUpdatePacket(FriendlyByteBuf buffer) {
     this.pos = buffer.readBlockPos();
     this.fluid = FluidStack.readFromPacket(buffer);
     this.shouldRefreshCapabilities = buffer.readBoolean();
   }
 
   @Override
-  public void encode(PacketBuffer buffer) {
+  public void encode(FriendlyByteBuf buffer) {
     buffer.writeBlockPos(pos);
     fluid.writeToPacket(buffer);
     buffer.writeBoolean(shouldRefreshCapabilities);

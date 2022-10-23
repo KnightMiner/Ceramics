@@ -1,27 +1,27 @@
 package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.Ceramics;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
@@ -29,10 +29,9 @@ import javax.annotation.Nullable;
 
 import static net.minecraft.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.net.minimport net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-/**
- * Decorative block to place on the side of a cistern, reads fluid value
+ecraft.world.level.block.state.properties.BlockStateProperties* Decorative block to place on the side of a cistern, reads fluid value
  */
 public class GaugeBlock extends Block {
   private static final VoxelShape[] BOUNDS = {
@@ -53,24 +52,24 @@ public class GaugeBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+  public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
     // display adjacent tank contents
     if (!world.isClientSide()) {
       Direction side = state.getValue(HORIZONTAL_FACING);
-      TileEntity te = world.getBlockEntity(pos.relative(side.getOpposite()));
+      BlockEntity te = world.getBlockEntity(pos.relative(side.getOpposite()));
       if (te != null) {
         te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side).ifPresent(handler -> {
           FluidStack fluid = handler.getFluidInTank(0);
           if (fluid.isEmpty()) {
-            player.displayClientMessage(new TranslationTextComponent(Ceramics.lang("block", "gauge.empty")), true);
+            player.displayClientMessage(new TranslatableComponent(Ceramics.lang("block", "gauge.empty")), true);
           } else {
-            player.displayClientMessage(new TranslationTextComponent(Ceramics.lang("block", "gauge.contents"), fluid.getAmount(), fluid.getDisplayName()), true);
+            player.displayClientMessage(new TranslatableComponent(Ceramics.lang("block", "gauge.contents"), fluid.getAmount(), fluid.getDisplayName()), true);
           }
         });
       }
     }
 
-    return ActionResultType.SUCCESS;
+    return InteractionResult.SUCCESS;
   }
 
 
@@ -79,24 +78,24 @@ public class GaugeBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+  public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
     return BOUNDS[state.getValue(HORIZONTAL_FACING).get2DDataValue()];
   }
 
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public boolean canSurvive(BlockState state, IWorldReader world, BlockPos pos) {
+  public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
     Direction direction = state.getValue(HORIZONTAL_FACING);
-    TileEntity te = world.getBlockEntity(pos.relative(direction.getOpposite()));
+    BlockEntity te = world.getBlockEntity(pos.relative(direction.getOpposite()));
     return te != null && te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction).isPresent();
   }
 
   @Override
   @Nullable
-  public BlockState getStateForPlacement(BlockItemUseContext context) {
+  public BlockState getStateForPlacement(BlockPlaceContext context) {
     BlockState state = this.defaultBlockState();
-    IWorldReader world = context.getLevel();
+    LevelReader world = context.getLevel();
     BlockPos pos = context.getClickedPos();
     Direction[] nearestDir = context.getNearestLookingDirections();
     for (Direction direction : nearestDir) {
@@ -114,7 +113,7 @@ public class GaugeBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
     return facing.getOpposite() == state.getValue(HORIZONTAL_FACING) && !state.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : state;
   }
 
@@ -133,7 +132,7 @@ public class GaugeBlock extends Block {
   }
 
   @Override
-  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+  protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
     builder.add(HORIZONTAL_FACING);
   }
 }

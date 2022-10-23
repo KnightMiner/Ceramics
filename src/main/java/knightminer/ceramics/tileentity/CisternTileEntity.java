@@ -8,13 +8,13 @@ import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CisternUpdatePacket;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import knightminer.ceramics.util.tank.CisternTank;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -140,7 +140,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
     BlockPos newBase = worldPosition.above(index);
     BlockState newState = level.getBlockState(newBase);
     if (newState.is(block) && newState.getValue(CisternBlock.EXTENSION)) {
-      TileEntity te = level.getBlockEntity(newBase);
+      BlockEntity te = level.getBlockEntity(newBase);
       if (te instanceof CisternTileEntity) {
         // if we have fluid in the new base, extract that into that base
         FluidStack fluid = FluidStack.EMPTY;
@@ -252,7 +252,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
     // if this is an extension, we want to find a parent handler
     if (getBlockState().getValue(CisternBlock.EXTENSION)) {
       if (level != null) {
-        TileEntity te = level.getBlockEntity(worldPosition.below());
+        BlockEntity te = level.getBlockEntity(worldPosition.below());
         if (te instanceof CisternTileEntity) {
           CisternTileEntity parent = (CisternTileEntity) te;
 
@@ -419,21 +419,21 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
   }
 
   @Override
-  public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+  public void handleUpdateTag(BlockState state, CompoundTag tag) {
     load(state, tag);
   }
 
   @Override
-  public CompoundNBT getUpdateTag() {
+  public CompoundTag getUpdateTag() {
     // new tag instead of super since default implementation calls the super of writeToNBT
-    return this.save(new CompoundNBT());
+    return this.save(new CompoundTag());
   }
 
 
   /* Serialization */
 
   @Override
-  public void load(BlockState state, CompoundNBT tags) {
+  public void load(BlockState state, CompoundTag tags) {
     super.load(state, tags);
     extensions = tags.getInt(TAG_EXTENSIONS);
     if (tags.contains(TAG_FLUID, NBT.TAG_COMPOUND)) {
@@ -443,7 +443,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
   }
 
   @Override
-  public CompoundNBT save(CompoundNBT compound) {
+  public CompoundTag save(CompoundTag compound) {
     compound = super.save(compound);
     if (tank.getFluidAmount() > 0) {
       compound.put(TAG_FLUID, tank.writeToNBT());

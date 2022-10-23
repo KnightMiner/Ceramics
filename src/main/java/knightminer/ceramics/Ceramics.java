@@ -7,12 +7,12 @@ import knightminer.ceramics.datagen.LootTableProvider;
 import knightminer.ceramics.datagen.RecipeProvider;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.recipe.CeramicsTags;
-import net.minecraft.block.Block;
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Item;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -75,7 +75,7 @@ public class Ceramics {
 	/** Missing item event */
 	private void onMissingItems(MissingMappings<Item> event) {
 		RegistrationHelper.handleMissingMappings(event, MOD_ID, name -> {
-			IItemProvider provider = missingBlock(name);
+			ItemLike provider = missingBlock(name);
 			return provider == null ? null : provider.asItem();
 		});
 	}

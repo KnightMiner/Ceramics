@@ -2,8 +2,8 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent.Context;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.mantle.util.TileEntityHelper;
@@ -17,13 +17,13 @@ public class CrackableCrackPacket implements IThreadsafePacket {
 		this.cracks = cracks;
 	}
 
-	public CrackableCrackPacket(PacketBuffer buffer) {
+	public CrackableCrackPacket(FriendlyByteBuf buffer) {
 		this.pos = buffer.readBlockPos();
 		this.cracks = buffer.readVarInt();
 	}
 
 	@Override
-	public void encode(PacketBuffer buffer) {
+	public void encode(FriendlyByteBuf buffer) {
 		buffer.writeBlockPos(pos);
 		buffer.writeVarInt(cracks);
 	}

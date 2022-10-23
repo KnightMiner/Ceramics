@@ -2,20 +2,20 @@ package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import slimeknights.mantle.util.TileEntityHelper;
@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 /**
  * Fired cistern block that can store fluids
@@ -46,7 +46,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
 
   @Override
   @Nullable
-  public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
     return new CisternTileEntity(crackable);
   }
 
@@ -56,24 +56,24 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+  public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
     if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
-      return ActionResultType.SUCCESS;
+      return InteractionResult.SUCCESS;
     }
     // success if the item is a fluid handler, regardless of if fluid moved
     if (FluidUtil.getFluidHandler(player.getItemInHand(hand)).isPresent()) {
       // only server needs to do anything
       if (!world.isClientSide()) {
-        TileEntity te = world.getBlockEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (te != null) {
           // simply update the fluid handler capability
             te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection())
               .ifPresent(handler -> FluidUtil.interactWithFluidHandler(player, hand, handler));
         }
       }
-      return ActionResultType.SUCCESS;
+      return InteractionResult.SUCCESS;
     }
-    return ActionResultType.PASS;
+    return InteractionResult.PASS;
   }
 
 
@@ -85,7 +85,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
    * @param pos    Cistern extension position
    * @return  Optional containing base TE, or empty optional if base cannot be found
    */
-  private Optional<CisternTileEntity> findBase(World world, BlockPos pos) {
+  private Optional<CisternTileEntity> findBase(Level world, BlockPos pos) {
     BlockPos base = pos;
     BlockState checkState;
     do {
@@ -102,7 +102,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   }
 
   @Override
-  public void setPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+  public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
     if (state.getValue(CisternBlock.EXTENSION)) {
       // try to find a base cistern below if an extension
       findBase(world, pos).ifPresent(te -> te.addExtension(pos));
@@ -124,7 +124,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+  public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
     if (state.hasTileEntity() && (!state.is(newState.getBlock()) || !newState.hasTileEntity())) {
       if (state.getValue(EXTENSION)) {
         findBase(world, pos).ifPresent(te -> te.removeExtension(pos));
@@ -138,7 +138,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
     // overridden to remove down connection, we handle that conditionally in the TE
     if (!facing.getAxis().isVertical()) {
       // barrel connects to
@@ -158,7 +158,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public void randomTick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random) {
+  public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
     if (isCrackable() && random.nextInt(5) == 0) {
       TileEntityHelper.getTile(CisternTileEntity.class, worldIn, pos).ifPresent(CisternTileEntity::randomTick);
     }
