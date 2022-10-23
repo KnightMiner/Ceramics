@@ -2,9 +2,9 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.Ceramics;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkDirection;
 import slimeknights.mantle.network.NetworkWrapper;
 
 import javax.annotation.Nullable;

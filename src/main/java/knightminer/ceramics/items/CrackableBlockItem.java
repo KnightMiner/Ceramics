@@ -2,21 +2,19 @@ package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants.NBT;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.item.Item.Properties;
 
 /** BlockItem for crackable blocks to show cracked amount */
 public class CrackableBlockItem extends FixedTooltipBlockItem {
@@ -32,7 +30,7 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 	 */
 	public static int getCracks(ItemStack stack) {
 		CompoundTag nbt = stack.getTag();
-		if (nbt != null && nbt.contains(CrackableTileEntityHandler.TAG_CRACKS, NBT.TAG_ANY_NUMERIC)) {
+		if (nbt != null && nbt.contains(CrackableTileEntityHandler.TAG_CRACKS, Tag.TAG_ANY_NUMERIC)) {
 			return nbt.getInt(CrackableTileEntityHandler.TAG_CRACKS);
 		}
 		return 0;
@@ -69,12 +67,12 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 	}
 
 	@Override
-	public boolean showDurabilityBar(ItemStack stack) {
+	public boolean isBarVisible(ItemStack stack) {
 		return stack.getCount() == 1 && getCracks(stack) > 0;
 	}
 
 	@Override
-	public double getDurabilityForDisplay(ItemStack stack) {
-		return (double) getCracks(stack) / 6.0;
+	public int getBarWidth(ItemStack stack) {
+		return 13 - getCracks(stack) * 2;
 	}
 }

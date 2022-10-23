@@ -3,16 +3,16 @@ package knightminer.ceramics.client.model;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
@@ -55,7 +55,7 @@ public class ChannelModel implements IModelGeometry<ChannelModel> {
 	@Override
 	public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material,TextureAtlasSprite> spriteGetter, ModelState transform, ItemOverrides overrides, ResourceLocation location) {
 		BakedModel baked = this.model.bakeModel(owner, transform, overrides, spriteGetter, location);
-		return new BakedModel(baked, this.fluids);
+		return new Baked(baked, this.fluids);
 	}
 
 	/** Model geometry for a cracked cistern */
@@ -70,16 +70,16 @@ public class ChannelModel implements IModelGeometry<ChannelModel> {
 		@Override
 		public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material,TextureAtlasSprite> spriteGetter, ModelState transform, ItemOverrides overrides, ResourceLocation location) {
 			BakedModel model = super.bake(owner, bakery, spriteGetter, transform, overrides, location);
-			return new BakedModel(model, this.fluids);
+			return new Baked(model, this.fluids);
 		}
 	}
 
 	/**
 	 * Baked model wrapper for cistern models
 	 */
-	public static class BakedModel extends BakedModelWrapper<BakedModel> {
+	public static class Baked extends BakedModelWrapper<BakedModel> {
 		private final Map<ChannelModelPart,FluidCuboid> fluids;
-		private BakedModel(BakedModel originalModel, Map<ChannelModelPart,FluidCuboid> fluids) {
+		private Baked(BakedModel originalModel, Map<ChannelModelPart,FluidCuboid> fluids) {
 			super(originalModel);
 			this.fluids = fluids;
 		}

@@ -1,58 +1,57 @@
 package knightminer.ceramics.items;
 
+import knightminer.ceramics.Ceramics;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CauldronBlock;
-import net.minecraft.world.level.block.BucketPickup;
-import net.minecraft.world.level.block.LiquidBlockContainer;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.Cow;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.stats.Stats;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.phys.HitResult.Type;
-import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Clay bucket that holds arbitrary fluids
@@ -69,7 +68,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		Fluid fluid = this.getFluid(stack);
-		BlockHitResult trace = getPlayerPOVHitResult(world, player, fluid == Fluids.EMPTY ? Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
+		BlockHitResult trace = getPlayerPOVHitResult(world, player, fluid == Fluids.EMPTY ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
 
 		// fire Forge event for bucket use
 		InteractionResultHolder<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
@@ -99,29 +98,36 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			}
 
 			if (fluid == Fluids.EMPTY) {
-				if (block instanceof BucketPickup) {
-					Fluid newFluid = ((BucketPickup)block).takeLiquid(world, pos, state);
-					if (newFluid != Fluids.EMPTY) {
-						player.awardStat(Stats.ITEM_USED.get(this));
+				if (block instanceof BucketPickup pickup) {
 
-						// play sound effect
-						SoundEvent sound = newFluid.getAttributes().getFillSound();
-						if (sound == null) {
-							sound = newFluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
-						}
-						player.playSound(sound, 1.0F, 1.0F);
-						ItemStack newStack = updateBucket(stack, player, withFluid(newFluid));
-						if (!world.isClientSide()) {
-							CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, newStack.copy());
-						}
+					ItemStack pickupStack = pickup.pickupBlock(world, pos, state);
+					if (pickupStack.getItem() instanceof BucketItem bucket) {
+						Fluid newFluid = bucket.getFluid();
+						if (newFluid != Fluids.EMPTY) {
+							player.awardStat(Stats.ITEM_USED.get(this));
 
-						return InteractionResultHolder.success(newStack);
+							// play sound effect
+							SoundEvent sound = newFluid.getAttributes().getFillSound();
+							if (sound == null) {
+								sound = newFluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
+							}
+							player.playSound(sound, 1.0F, 1.0F);
+							ItemStack newStack = updateBucket(stack, player, withFluid(newFluid));
+							if (!world.isClientSide()) {
+								CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, newStack.copy());
+							}
+
+							return InteractionResultHolder.success(newStack);
+						}
+					} else {
+						// TODO: doomed
+						Ceramics.LOG.error("Picked up invalid fluid, this will get fixed later");
 					}
 				}
 			} else {
 				BlockPos fluidPos = state.getBlock() instanceof LiquidBlockContainer && fluid == Fluids.WATER ? pos : offset;
 				if (this.tryPlaceContainedLiquid(player, world, fluidPos, stack, trace)) {
-					onLiquidPlaced(fluid, world, stack, fluidPos);
+					onLiquidPlaced(player, fluid, world, stack, fluidPos);
 					if (player instanceof ServerPlayer) {
 						CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)player, fluidPos, stack);
 					}
@@ -136,24 +142,24 @@ public class ClayBucketItem extends BaseClayBucketItem {
 
 	/**
 	 * Called when a liquid is placed in world
+	 * @param player Player placing the liquid
 	 * @param fluid  Fluid to place
 	 * @param world  World instance
 	 * @param stack  Stack instance
 	 * @param pos    Position to place the world
 	 */
-	private static void onLiquidPlaced(Fluid fluid, Level world, ItemStack stack, BlockPos pos) {
+	private static void onLiquidPlaced(Player player, Fluid fluid, Level world, ItemStack stack, BlockPos pos) {
 		// TODO: is this bad?
 		Item item = fluid.getBucket();
 		if (item instanceof BucketItem) {
-			((BucketItem)item).checkExtraContent(world, stack, pos);
+			((BucketItem)item).checkExtraContent(player, world, stack, pos);
 		}
 	}
 
 	// TODO: possibly migrate to the Forge method
 	@SuppressWarnings("deprecation")
 	private boolean tryPlaceContainedLiquid(@Nullable Player player, Level world, BlockPos pos, ItemStack stack, @Nullable BlockHitResult trace) {
-		Fluid fluidStack = this.getFluid(stack);
-		Fluid fluid = fluidStack.getFluid();
+		Fluid fluid = this.getFluid(stack);
 		if (!(fluid instanceof FlowingFluid)) {
 			return false;
 		}
@@ -161,7 +167,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		BlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
 		boolean replaceable = state.canBeReplaced(fluid);
-		if (state.isAir(world, pos) || replaceable || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(world, pos, state, fluid)) {
+		if (state.isAir() || replaceable || block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).canPlaceLiquid(world, pos, state, fluid)) {
 			if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
 				world.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
 
@@ -215,8 +221,9 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	 * @return  Action result from interaction, pass means failed to interact with a cauldron
 	 */
 	private InteractionResultHolder<ItemStack> interactWithCauldron(Level world, BlockPos pos, BlockState state, @Nullable Player player, ItemStack stack, Fluid fluid) {
+		// TODO: cauldron interactions
 		// if the bucket is empty, try filling from the cauldron
-		int level = state.getValue(CauldronBlock.LEVEL);
+		int level = state.getValue(LayeredCauldronBlock.LEVEL);
 		if (fluid == Fluids.EMPTY) {
 			// if empty, try emptying
 			if(level == 3) {
@@ -225,7 +232,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 					player.awardStat(Stats.USE_CAULDRON);
 				}
 				if(!world.isClientSide()) {
-					((CauldronBlock)Blocks.CAULDRON).setWaterLevel(world, pos, state, 0);
+					world.setBlockAndUpdate(pos, Blocks.CAULDRON.defaultBlockState());
 				}
 				world.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
 				return InteractionResultHolder.success(withFluid(Fluids.WATER));
@@ -237,7 +244,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 					player.awardStat(Stats.FILL_CAULDRON);
 				}
 				if(!world.isClientSide) {
-					((CauldronBlock)Blocks.CAULDRON).setWaterLevel(world, pos, state, 3);
+					world.setBlockAndUpdate(pos, Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3));
 				}
 				world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
 
@@ -278,7 +285,7 @@ public class ClayBucketItem extends BaseClayBucketItem {
 	}
 
 	@Override
-	public int getBurnTime(ItemStack stack) {
+	public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
 		return getFluid(stack) == Fluids.LAVA ? 20000 : 0;
 	}
 

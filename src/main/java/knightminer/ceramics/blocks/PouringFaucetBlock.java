@@ -1,37 +1,38 @@
 package knightminer.ceramics.blocks;
 
+import knightminer.ceramics.Registration;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import slimeknights.mantle.util.TileEntityHelper;
+import slimeknights.mantle.util.BlockEntityHelper;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 /**
  * Pouring variant of the faucet block
  */
-public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
+public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, EntityBlock {
   private final boolean crackable;
   public PouringFaucetBlock(Properties builder, boolean crackable) {
     super(builder);
@@ -41,14 +42,16 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
 
   /* Tile entity */
 
+  @Nullable
   @Override
-  public boolean hasTileEntity(BlockState state) {
-    return true;
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new FaucetTileEntity(pos, state, crackable);
   }
 
+  @Nullable
   @Override
-  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-    return new FaucetTileEntity(crackable);
+  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+    return BlockEntityHelper.serverTicker(level, type, Registration.FAUCET_TILE_ENTITY.get(), FaucetTileEntity.SERVER_TICKER);
   }
 
   @SuppressWarnings("deprecation")
@@ -92,7 +95,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
    * @return  Optional of faucet, empty if missing or wrong type
    */
   private Optional<FaucetTileEntity> getFaucet(Level world, BlockPos pos) {
-    return TileEntityHelper.getTile(FaucetTileEntity.class, world, pos);
+    return BlockEntityHelper.get(FaucetTileEntity.class, world, pos);
   }
 
   /* Display */
@@ -108,7 +111,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
     double x = (double)pos.getX() + 0.5D - 0.3D * (double)direction.getStepX();
     double y = (double)pos.getY() + 0.5D - 0.3D * (double)direction.getStepY();
     double z = (double)pos.getZ() + 0.5D - 0.3D * (double)direction.getStepZ();
-    worldIn.addParticle(new DustParticleOptions(1.0F, 0.0F, 0.0F, 0.5f), x, y, z, 0.0D, 0.0D, 0.0D);
+    worldIn.addParticle(new DustParticleOptions(DustParticleOptions.REDSTONE_PARTICLE_COLOR, 0.5f), x, y, z, 0.0D, 0.0D, 0.0D);
   }
 
   @Override
@@ -134,7 +137,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   @Deprecated
   public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
     if (isCrackable()) {
-      TileEntityHelper.getTile(FaucetTileEntity.class, worldIn, pos).ifPresent(FaucetTileEntity::randomTick);
+      BlockEntityHelper.get(FaucetTileEntity.class, worldIn, pos).ifPresent(FaucetTileEntity::randomTick);
     }
   }
 

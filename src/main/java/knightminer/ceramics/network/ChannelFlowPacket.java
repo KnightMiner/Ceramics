@@ -2,12 +2,12 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.tileentity.ChannelTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent.Context;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
-import slimeknights.mantle.util.TileEntityHelper;
+import slimeknights.mantle.util.BlockEntityHelper;
 
 /** Packet for when the flowing state changes on a channel side */
 public class ChannelFlowPacket implements IThreadsafePacket {
@@ -40,7 +40,7 @@ public class ChannelFlowPacket implements IThreadsafePacket {
 
 	private static class HandleClient {
 		private static void handle(ChannelFlowPacket packet) {
-			TileEntityHelper.getTile(ChannelTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.setFlow(packet.side, packet.flow));
+			BlockEntityHelper.get(ChannelTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.setFlow(packet.side, packet.flow));
 		}
 	}
 }

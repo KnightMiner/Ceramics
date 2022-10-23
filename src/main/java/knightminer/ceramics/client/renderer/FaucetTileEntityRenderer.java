@@ -4,16 +4,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import knightminer.ceramics.blocks.FaucetBlock;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import slimeknights.mantle.client.model.FaucetFluidLoader;
@@ -21,14 +21,13 @@ import slimeknights.mantle.client.model.fluid.FluidCuboid;
 import slimeknights.mantle.client.model.fluid.FluidsModel;
 import slimeknights.mantle.client.model.util.ModelHelper;
 import slimeknights.mantle.client.render.FluidRenderer;
+import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 
 import java.util.function.Function;
 
-public class FaucetTileEntityRenderer extends BlockEntityRenderer<FaucetTileEntity> {
-  public FaucetTileEntityRenderer(BlockEntityRenderDispatcher rendererDispatcherIn) {
-    super(rendererDispatcherIn);
-  }
+public class FaucetTileEntityRenderer implements BlockEntityRenderer<FaucetTileEntity> {
+  public FaucetTileEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
   @Override
   public void render(FaucetTileEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
@@ -45,7 +44,7 @@ public class FaucetTileEntityRenderer extends BlockEntityRenderer<FaucetTileEnti
 
     // fetch faucet model to determine where to render fluids
     BlockState state = tileEntity.getBlockState();
-    FluidsModel.BakedModel model = ModelHelper.getBakedModel(state, FluidsModel.BakedModel.class);
+    FluidsModel.Baked model = ModelHelper.getBakedModel(state, FluidsModel.Baked.class);
     if (model != null) {
       // if side, rotate fluid model
       Direction direction = state.getValue(FaucetBlock.FACING);
@@ -61,7 +60,7 @@ public class FaucetTileEntityRenderer extends BlockEntityRenderer<FaucetTileEnti
       combinedLightIn = FluidRenderer.withBlockLight(combinedLightIn, attributes.getLuminosity(renderFluid));
 
       // render all cubes in the model
-      VertexConsumer buffer = bufferIn.getBuffer(FluidRenderer.RENDER_TYPE);
+      VertexConsumer buffer = bufferIn.getBuffer(MantleRenderTypes.FLUID);
       for (FluidCuboid cube : model.getFluids()) {
         FluidRenderer.renderCuboid(matrices, buffer, cube, 0, still, flowing, color, combinedLightIn, isGas);
       }

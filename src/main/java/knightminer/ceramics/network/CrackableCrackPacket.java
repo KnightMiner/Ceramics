@@ -2,11 +2,11 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.NetworkEvent.Context;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
-import slimeknights.mantle.util.TileEntityHelper;
+import slimeknights.mantle.util.BlockEntityHelper;
 
 public class CrackableCrackPacket implements IThreadsafePacket {
 	private final BlockPos pos;
@@ -35,7 +35,7 @@ public class CrackableCrackPacket implements IThreadsafePacket {
 
 	private static class HandleClient {
 		private static void handle(CrackableCrackPacket packet) {
-			TileEntityHelper.getTile(ICrackableTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.getCracksHandler().setCracks(packet.cracks));
+			BlockEntityHelper.get(ICrackableTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.getCracksHandler().setCracks(packet.cracks));
 		}
 	}
 }

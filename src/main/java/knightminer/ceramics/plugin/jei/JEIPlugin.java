@@ -10,9 +10,9 @@ import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.KilnRecipe;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -22,18 +22,19 @@ import mezz.jei.api.registration.ISubtypeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
+import slimeknights.mantle.util.RegistryHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 @JeiPlugin
@@ -45,16 +46,16 @@ public class JEIPlugin implements IModPlugin {
 
   @Override
   public void registerItemSubtypes(ISubtypeRegistration registration) {
-    ISubtypeInterpreter bucketInterpreter = BaseClayBucketItem::getSubtype;
-    registration.registerSubtypeInterpreter(Registration.CLAY_BUCKET.get(), bucketInterpreter);
-    registration.registerSubtypeInterpreter(Registration.CRACKED_CLAY_BUCKET.get(), bucketInterpreter);
+    IIngredientSubtypeInterpreter<ItemStack> bucketInterpreter = (stack, context) -> BaseClayBucketItem.getSubtype(stack);
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CLAY_BUCKET.get(), bucketInterpreter);
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CRACKED_CLAY_BUCKET.get(), bucketInterpreter);
 
     // separate different states of crackable clay
-    ISubtypeInterpreter crackableClay = stack -> CrackableBlockItem.getCracks(stack) > 0 ? "cracked" : "";
-    registration.registerSubtypeInterpreter(Registration.TERRACOTTA_CISTERN.asItem(), crackableClay);
-    Registration.COLORED_CISTERN.forEach(block -> registration.registerSubtypeInterpreter(block.asItem(), crackableClay));
-    registration.registerSubtypeInterpreter(Registration.TERRACOTTA_FAUCET.asItem(), crackableClay);
-    registration.registerSubtypeInterpreter(Registration.TERRACOTTA_CHANNEL.asItem(), crackableClay);
+    IIngredientSubtypeInterpreter<ItemStack> crackableClay = (stack, context) -> CrackableBlockItem.getCracks(stack) > 0 ? "cracked" : "";
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.TERRACOTTA_CISTERN.asItem(), crackableClay);
+    Registration.COLORED_CISTERN.forEach(block -> registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, block.asItem(), crackableClay));
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.TERRACOTTA_FAUCET.asItem(), crackableClay);
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.TERRACOTTA_CHANNEL.asItem(), crackableClay);
   }
 
   @Override
@@ -87,34 +88,34 @@ public class JEIPlugin implements IModPlugin {
       }
 
       // recipe type
-      if (!(recipe instanceof KilnRecipe)) {
+      if (!(recipe instanceof KilnRecipe kilnRecipe)) {
         Ceramics.LOG.error("Invalid kiln recipe {}, wrong class", recipe.getId());
         continue;
       }
       // add to list
-      results.add((KilnRecipe)recipe);
+      results.add(kilnRecipe);
     }
-    registration.addRecipes(results, KilnCategory.UID);
+    registration.addRecipes(KilnCategory.TYPE, results);
 
     // clay repair info
-    List<ItemStack> clayRepair = CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR.getValues().stream().map(ItemStack::new).collect(Collectors.toList());
-    registration.addIngredientInfo(clayRepair, VanillaTypes.ITEM, Ceramics.lang("jei", "clay_repair"));
+    List<ItemStack> clayRepair = RegistryHelper.getTagValueStream(Registry.ITEM, CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR).map(ItemStack::new).toList();
+    registration.addIngredientInfo(clayRepair, VanillaTypes.ITEM_STACK, Ceramics.component("jei", "clay_repair"));
   }
 
   @Override
   public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-    registration.addRecipeClickArea(KilnScreen.class, 78, 32, 28, 23, KilnCategory.UID, VanillaRecipeCategoryUid.FUEL);
+    registration.addRecipeClickArea(KilnScreen.class, 78, 32, 28, 23, KilnCategory.TYPE, RecipeTypes.FUELING);
   }
 
   @Override
   public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-    registration.addRecipeTransferHandler(KilnContainer.class, KilnCategory.UID,              KilnCategory.INPUT_SLOT, 1, 3, 36);
-    registration.addRecipeTransferHandler(KilnContainer.class, VanillaRecipeCategoryUid.FUEL, KilnCategory.FUEL_SLOT,  1, 3, 36);
+    registration.addRecipeTransferHandler(KilnContainer.class, KilnCategory.TYPE,   KilnCategory.INPUT_SLOT, 1, 3, 36);
+    registration.addRecipeTransferHandler(KilnContainer.class, RecipeTypes.FUELING, KilnCategory.FUEL_SLOT,  1, 3, 36);
   }
 
   @Override
   public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-    registration.addRecipeCatalyst(new ItemStack(Registration.KILN), KilnCategory.UID, VanillaRecipeCategoryUid.FUEL);
+    registration.addRecipeCatalyst(new ItemStack(Registration.KILN), KilnCategory.TYPE, RecipeTypes.FUELING);
   }
 
   @Override
@@ -123,6 +124,6 @@ public class JEIPlugin implements IModPlugin {
     NonNullList<ItemStack> buckets = NonNullList.create();
     Registration.CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
     Registration.CRACKED_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
-    runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM, buckets);
+    runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, buckets);
   }
 }

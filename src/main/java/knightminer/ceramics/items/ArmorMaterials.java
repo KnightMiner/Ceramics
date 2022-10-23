@@ -2,14 +2,14 @@ package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.util.LazyLoadedValue;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Lazy;
 
 import java.util.function.Supplier;
 
@@ -27,7 +27,7 @@ public enum ArmorMaterials implements ArmorMaterial {
   private final int enchantability;
   private final float toughness;
   private final float knockbackResistance;
-  private final LazyLoadedValue<Ingredient> repairMaterial;
+  private final Lazy<Ingredient> repairMaterial;
 
   ArmorMaterials(String name, int durabilityFactor, int[] protection, int enchantability, float toughness, float knockbackResistance, Supplier<Ingredient> ingredient) {
     this.name = Ceramics.MOD_ID + ":" + name;
@@ -36,7 +36,7 @@ public enum ArmorMaterials implements ArmorMaterial {
     this.enchantability = enchantability;
     this.toughness = toughness;
     this.knockbackResistance = knockbackResistance;
-    repairMaterial = new LazyLoadedValue<>(ingredient);
+    repairMaterial = Lazy.of(ingredient);
   }
 
   @Override

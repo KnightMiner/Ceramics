@@ -2,12 +2,12 @@ package knightminer.ceramics.network;
 
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.network.NetworkEvent.Context;
+import net.minecraftforge.network.NetworkEvent.Context;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
-import slimeknights.mantle.util.TileEntityHelper;
+import slimeknights.mantle.util.BlockEntityHelper;
 
 /**
  * Packet sent whenever cistern contents change
@@ -44,7 +44,7 @@ public class CisternUpdatePacket implements IThreadsafePacket {
   /** Separate class to prevent unsafe clientside access */
   private static class HandleClient {
     private static void handle(CisternUpdatePacket packet) {
-      TileEntityHelper.getTile(CisternTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.updateFluidTo(packet.fluid, packet.shouldRefreshCapabilities));
+      BlockEntityHelper.get(CisternTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.updateFluidTo(packet.fluid, packet.shouldRefreshCapabilities));
     }
   }
 }

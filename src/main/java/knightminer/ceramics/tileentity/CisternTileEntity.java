@@ -8,16 +8,16 @@ import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CisternUpdatePacket;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import knightminer.ceramics.util.tank.CisternTank;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullConsumer;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -26,13 +26,14 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
-import slimeknights.mantle.tileentity.MantleTileEntity;
-import slimeknights.mantle.util.TileEntityHelper;
+import slimeknights.mantle.block.entity.MantleBlockEntity;
+import slimeknights.mantle.util.BlockEntityHelper;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CisternTileEntity extends MantleTileEntity implements ICrackableTileEntity {
+public class CisternTileEntity extends MantleBlockEntity implements ICrackableTileEntity {
   /** Max capacity per cistern block */
   private static final String TAG_FLUID = "fluid";
   private static final String TAG_EXTENSIONS = "extensions";
@@ -58,13 +59,13 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
   /** Cracking logic */
   private final CrackableTileEntityHandler cracksHandler;
 
-  public CisternTileEntity(boolean crackable) {
-    super(Registration.CISTERN_TILE_ENTITY.get());
+  public CisternTileEntity(BlockPos pos, BlockState state, boolean crackable) {
+    super(Registration.CISTERN_TILE_ENTITY.get(), pos, state);
     cracksHandler = new CrackableTileEntityHandler(this, crackable);
   }
 
-  public CisternTileEntity() {
-    this(false);
+  public CisternTileEntity(BlockPos pos, BlockState state) {
+    this(pos, state, false);
   }
 
   /* Getters */
@@ -122,6 +123,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
     return cracksHandler;
   }
 
+  @Nonnull
   @Override
   public IModelData getModelData() {
     return cracksHandler.getModelData();
@@ -172,7 +174,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
     assert level != null;
     // check if there is another cistern above the new one that should also be connected
     if (level.getBlockState(checkPos).is(getBlockState().getBlock())) {
-      TileEntityHelper.getTile(CisternTileEntity.class, level, checkPos).ifPresent(te -> te.makeExtension(this));
+      BlockEntityHelper.get(CisternTileEntity.class, level, checkPos).ifPresent(te -> te.makeExtension(this));
     }
   }
 
@@ -231,7 +233,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
       int endIndex = (fluid.getAmount() - 1) / capacityPerLayer;
       // loop through indexes, updating them
       for (int i = startIndex; i <= endIndex; i++) {
-        TileEntityHelper.getTile(ICrackableTileEntity.class, level, worldPosition.above(i)).ifPresent(te -> te.getCracksHandler().fluidAdded(fluid));
+        BlockEntityHelper.get(ICrackableTileEntity.class, level, worldPosition.above(i)).ifPresent(te -> te.getCracksHandler().fluidAdded(fluid));
       }
     }
   }
@@ -253,8 +255,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
     if (getBlockState().getValue(CisternBlock.EXTENSION)) {
       if (level != null) {
         BlockEntity te = level.getBlockEntity(worldPosition.below());
-        if (te instanceof CisternTileEntity) {
-          CisternTileEntity parent = (CisternTileEntity) te;
+        if (te instanceof CisternTileEntity parent) {
 
           // invalidate existing handlers
           invalidateHandlers();
@@ -380,6 +381,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
 
   /* Capabilities */
 
+  @Nonnull
   @Override
   public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
     if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
@@ -389,7 +391,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
   }
 
   @Override
-  protected void invalidateCaps() {
+  public void invalidateCaps() {
     super.invalidateCaps();
     invalidateHandlers();
   }
@@ -419,37 +421,35 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
   }
 
   @Override
-  public void handleUpdateTag(BlockState state, CompoundTag tag) {
-    load(state, tag);
-  }
-
-  @Override
-  public CompoundTag getUpdateTag() {
-    // new tag instead of super since default implementation calls the super of writeToNBT
-    return this.save(new CompoundTag());
+  protected boolean shouldSyncOnUpdate() {
+    return true;
   }
 
 
   /* Serialization */
 
   @Override
-  public void load(BlockState state, CompoundTag tags) {
-    super.load(state, tags);
+  public void load(CompoundTag tags) {
+    super.load(tags);
     extensions = tags.getInt(TAG_EXTENSIONS);
-    if (tags.contains(TAG_FLUID, NBT.TAG_COMPOUND)) {
+    if (tags.contains(TAG_FLUID, Tag.TAG_COMPOUND)) {
       tank.readFromNBT(tags.getCompound(TAG_FLUID));
     }
-    cracksHandler.readNBT(state, tags);
+    cracksHandler.readNBT(getBlockState(), tags);
   }
 
   @Override
-  public CompoundTag save(CompoundTag compound) {
-    compound = super.save(compound);
+  protected void saveSynced(CompoundTag compound) {
+    super.saveSynced(compound);
     if (tank.getFluidAmount() > 0) {
       compound.put(TAG_FLUID, tank.writeToNBT());
     }
-    compound.putInt(TAG_EXTENSIONS, extensions);
     cracksHandler.writeNBT(compound);
-    return compound;
+  }
+
+  @Override
+  public void saveAdditional(CompoundTag compound) {
+    super.saveAdditional(compound);
+    compound.putInt(TAG_EXTENSIONS, extensions);
   }
 }

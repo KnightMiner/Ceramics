@@ -2,16 +2,18 @@ package knightminer.ceramics.tileentity;
 
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.container.KilnContainer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class KilnTileEntity extends AbstractFurnaceBlockEntity {
-  public KilnTileEntity() {
-    super(Registration.KILN_TILE_ENTITY.get(), Registration.KILN_RECIPE);
+  public KilnTileEntity(BlockPos pos, BlockState state) {
+    super(Registration.KILN_TILE_ENTITY.get(), pos, state, Registration.KILN_RECIPE);
   }
 
   @Override

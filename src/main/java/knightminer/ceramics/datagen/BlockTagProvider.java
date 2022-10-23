@@ -3,15 +3,20 @@ package knightminer.ceramics.datagen;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.tags.BlockTags;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import slimeknights.mantle.registration.object.EnumObject;
+import slimeknights.mantle.registration.object.ItemObject;
+import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
-public class BlockTagProvider extends net.minecraft.data.tags.BlockTagsProvider {
+public class BlockTagProvider extends BlockTagsProvider {
   public BlockTagProvider(DataGenerator gen, ExistingFileHelper helper) {
     super(gen, Ceramics.MOD_ID, helper);
   }
@@ -77,10 +82,8 @@ public class BlockTagProvider extends net.minecraft.data.tags.BlockTagsProvider 
     // list of all terracotta cisterns
     TagsProvider.TagAppender<Block> terracottaCisterns = this.tag(CeramicsTags.Blocks.TERRACOTTA_CISTERNS)
                                                          .add(Registration.TERRACOTTA_CISTERN.get());
-    //noinspection Convert2MethodRef
     Registration.COLORED_CISTERN.forEach(block -> terracottaCisterns.add(block));
     TagsProvider.TagAppender<Block> porcelainCisterns = this.tag(CeramicsTags.Blocks.PORCELAIN_CISTERNS);
-    //noinspection Convert2MethodRef
     Registration.PORCELAIN_CISTERN.forEach(block -> porcelainCisterns.add(block));
   }
 }

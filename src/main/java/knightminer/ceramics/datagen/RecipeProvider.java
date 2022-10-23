@@ -4,26 +4,26 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
+import knightminer.ceramics.recipe.CrackedClayRepairRecipe.Finished;
 import knightminer.ceramics.recipe.NoNBTIngredient;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import slimeknights.mantle.registration.object.BuildingBlockObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
@@ -49,7 +49,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
   }
 
   @Override
-  protected void buildShapelessRecipes(Consumer<FinishedRecipe> consumer) {
+  protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
     // recoloring terracotta
     CriterionTriggerInstance terracottaCriteria = has(CeramicsTags.Items.COLORED_TERRACOTTA);
     Registration.TERRACOTTA.forEach((color, item) ->
@@ -103,7 +103,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     CriterionTriggerInstance hasTheRainbow = has(CeramicsTags.Items.RAINBOW_PORCELAIN);
     Registration.RAINBOW_PORCELAIN.forEach((color, item) ->
       SingleItemRecipeBuilder.stonecutting(Ingredient.of(CeramicsTags.Items.RAINBOW_PORCELAIN), item)
-                             .unlocks("has_the_rainbow", hasTheRainbow)
+                             .unlockedBy("has_the_rainbow", hasTheRainbow)
                              .save(consumer, item.getRegistryName())
     );
 
@@ -544,7 +544,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         .group(slab.asItem().getRegistryName().toString())
         .save(consumer, suffix(location, "_slab_crafting"));
     SingleItemRecipeBuilder.stonecutting(ingredient, slab, 2)
-                           .unlocks("has_item", hasBuilding)
+                           .unlockedBy("has_item", hasBuilding)
                            .save(consumer, suffix(location, "_slab_stonecutter"));
 
     // stairs
@@ -558,7 +558,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         .group(stairs.asItem().getRegistryName().toString())
         .save(consumer, suffix(location, "_stairs_crafting"));
     SingleItemRecipeBuilder.stonecutting(ingredient, stairs)
-                           .unlocks("has_item", hasBuilding)
+                           .unlockedBy("has_item", hasBuilding)
                            .save(consumer, suffix(location, "_stairs_stonecutter"));
 
     // wall
@@ -570,7 +570,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
         .unlockedBy("has_item", hasBuilding)
         .save(consumer, suffix(location, "_wall_crafting"));
     SingleItemRecipeBuilder.stonecutting(ingredient, wall)
-                           .unlocks("has_item", hasBuilding)
+                           .unlockedBy("has_item", hasBuilding)
                            .save(consumer, suffix(location, "_wall_stonecutter"));
 
     // block from slab, its bricks so its easy
@@ -653,7 +653,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
    * @param output      Recipe output
    * @param experience  Experience earned
    */
-  private void kilnRecipe(Consumer<FinishedRecipe> consumer, Tag<Item> input, ItemLike output, float experience) {
+  private void kilnRecipe(Consumer<FinishedRecipe> consumer, TagKey<Item> input, ItemLike output, float experience) {
     kilnRecipe(consumer, Ingredient.of(input), has(input), output, experience, location(output.asItem().getRegistryName().getPath() + "_kiln"));
   }
 
@@ -704,7 +704,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
    * @param experience  Experience earned
    * @param name        Recipe name
    */
-  private void kilnFurnaceRecipe(Consumer<FinishedRecipe> consumer, Tag<Item> input, ItemLike output, float experience, ResourceLocation name) {
+  private void kilnFurnaceRecipe(Consumer<FinishedRecipe> consumer, TagKey<Item> input, ItemLike output, float experience, ResourceLocation name) {
     kilnFurnaceRecipe(consumer, Ingredient.of(input), has(input), output, experience, name);
   }
 
@@ -714,6 +714,6 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
    * @param repairable  Repairable item
    */
   private void clayRepair(Consumer<FinishedRecipe> consumer, ItemLike repairable) {
-    consumer.accept(new CrackedClayRepairRecipe.FinishedRecipe(suffix(repairable, "_repair"), repairable, Ingredient.of(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR), has(repairable)));
+    consumer.accept(new Finished(suffix(repairable, "_repair"), repairable, Ingredient.of(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR), has(repairable)));
   }
 }

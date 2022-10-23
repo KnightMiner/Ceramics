@@ -7,27 +7,28 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.KilnRecipe;
-import mezz.jei.api.MethodsReturnNonnullByDefault;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableAnimated.StartDirection;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.fml.ForgeI18n;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
-@MethodsReturnNonnullByDefault
 public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   static final ResourceLocation UID = new ResourceLocation(Ceramics.MOD_ID, "kiln");
+  static final RecipeType<KilnRecipe> TYPE = new RecipeType<>(UID, KilnRecipe.class);
   private static final ResourceLocation RECIPE_GUI_VANILLA = new ResourceLocation("jei", "textures/gui/gui_vanilla.png");
   // slots
   static final int INPUT_SLOT = 0;
@@ -37,18 +38,18 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   private final IDrawable background;
   private final IDrawable icon;
   private final IDrawableAnimated animatedFlame;
-  private final String localizedName;
+  private final Component name;
   private final LoadingCache<Integer, IDrawableAnimated> cachedArrows;
 
   KilnCategory(IGuiHelper guiHelper) {
     // elements
     this.background = guiHelper.createDrawable(RECIPE_GUI_VANILLA, 0, 114, 82, 54);
-    this.icon = guiHelper.createDrawableIngredient(new ItemStack(Registration.KILN));
-    this.localizedName = ForgeI18n.parseMessage("gui.jei.category.ceramics.kiln");
+    this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Registration.KILN));
+    this.name = Ceramics.component("gui.category", "kiln");
     // animations
     IDrawableStatic staticFlame = guiHelper.createDrawable(RECIPE_GUI_VANILLA, 82, 114, 14, 14);
     this.animatedFlame = guiHelper.createAnimatedDrawable(staticFlame, 300, StartDirection.TOP, true);
-    this.cachedArrows = CacheBuilder.newBuilder().maximumSize(25L).build(new CacheLoader<Integer, IDrawableAnimated>() {
+    this.cachedArrows = CacheBuilder.newBuilder().maximumSize(25L).build(new CacheLoader<>() {
       @Override
       public IDrawableAnimated load(Integer cookTime) {
         return guiHelper.drawableBuilder(RECIPE_GUI_VANILLA, 82, 128, 24, 17).buildAnimated(cookTime, StartDirection.LEFT, false);
@@ -69,19 +70,26 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
 
   /* Properties */
 
+  @SuppressWarnings("removal")
   @Override
   public ResourceLocation getUid() {
     return UID;
   }
 
+  @SuppressWarnings("removal")
   @Override
   public Class<? extends KilnRecipe> getRecipeClass() {
     return KilnRecipe.class;
   }
 
   @Override
-  public String getTitle() {
-    return this.localizedName;
+  public RecipeType<KilnRecipe> getRecipeType() {
+    return TYPE;
+  }
+
+  @Override
+  public Component getTitle() {
+    return this.name;
   }
 
   @Override
@@ -98,21 +106,13 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   /* Recipe */
 
   @Override
-  public void setIngredients(KilnRecipe recipe, IIngredients ingredients) {
-    ingredients.setInputIngredients(recipe.getIngredients());
-    ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
+  public void setRecipe(IRecipeLayoutBuilder builder, KilnRecipe recipe, IFocusGroup focuses) {
+    builder.addSlot(RecipeIngredientRole.INPUT, 0, 0).addIngredients(recipe.getInput());
+    builder.addSlot(RecipeIngredientRole.OUTPUT, 60, 18).addItemStack(recipe.getResultItem());
   }
 
   @Override
-  public void setRecipe(IRecipeLayout recipeLayout, KilnRecipe recipe, IIngredients ingredients) {
-    IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-    guiItemStacks.init(INPUT_SLOT, true, 0, 0);
-    guiItemStacks.init(OUTPUT_SLOT, false, 60, 18);
-    guiItemStacks.set(ingredients);
-  }
-
-  @Override
-  public void draw(KilnRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
+  public void draw(KilnRecipe recipe, IRecipeSlotsView view, PoseStack matrixStack, double mouseX, double mouseY) {
     this.animatedFlame.draw(matrixStack, 1, 20);
     IDrawableAnimated arrow = this.getArrow(recipe);
     arrow.draw(matrixStack, 24, 18);

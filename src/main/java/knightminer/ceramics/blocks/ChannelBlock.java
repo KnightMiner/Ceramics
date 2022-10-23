@@ -1,43 +1,40 @@
 package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.Ceramics;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.util.Constants.BlockFlags;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class ChannelBlock extends Block {
 	private static final Component SIDE_IN = new TranslatableComponent(Ceramics.lang("block", "channel.side.in"));
@@ -329,7 +326,7 @@ public class ChannelBlock extends Block {
 			boolean isPowered = worldIn.hasNeighborSignal(pos);
 			if (isPowered != state.getValue(POWERED)) {
 				state = state.setValue(POWERED, isPowered).setValue(DOWN, isPowered && canConnect(worldIn, pos, Direction.DOWN));
-				worldIn.setBlock(pos, state, BlockFlags.BLOCK_UPDATE);
+				worldIn.setBlock(pos, state, Block.UPDATE_NEIGHBORS);
 			}
 		}
 	}
@@ -367,11 +364,11 @@ public class ChannelBlock extends Block {
 		 * @return  Opposite direction
 		 */
 		public ChannelConnection getOpposite() {
-			switch(this) {
-				case IN:  return OUT;
-				case OUT: return IN;
-			}
-			return NONE;
+			return switch (this) {
+				case IN -> OUT;
+				case OUT -> IN;
+				default -> NONE;
+			};
 		}
 
 		/**
@@ -381,20 +378,18 @@ public class ChannelBlock extends Block {
 		 */
 		public ChannelConnection getNext(boolean reverse) {
 			if (reverse) {
-				switch(this) {
-					case NONE: return OUT;
-					case OUT:  return IN;
-					case IN:   return NONE;
-				}
+				return switch (this) {
+					case NONE -> OUT;
+					case OUT -> IN;
+					case IN -> NONE;
+				};
 			} else {
-				switch(this) {
-					case NONE: return IN;
-					case IN:   return OUT;
-					case OUT:  return NONE;
-				}
+				return switch (this) {
+					case NONE -> IN;
+					case IN -> OUT;
+					case OUT -> NONE;
+				};
 			}
-			// not possible
-			throw new UnsupportedOperationException();
 		}
 	}
 }

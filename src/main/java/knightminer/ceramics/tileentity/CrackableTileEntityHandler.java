@@ -5,27 +5,27 @@ import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CrackableCrackPacket;
 import knightminer.ceramics.recipe.CeramicsTags;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import slimeknights.mantle.block.entity.MantleBlockEntity;
 import slimeknights.mantle.client.model.data.SinglePropertyData;
-import slimeknights.mantle.tileentity.MantleTileEntity;
-import slimeknights.mantle.util.TileEntityHelper;
+import slimeknights.mantle.util.BlockEntityHelper;
 
 /** Common logic for all crackable fluid blocks */
 public class CrackableTileEntityHandler {
@@ -35,7 +35,7 @@ public class CrackableTileEntityHandler {
 	public static final String TAG_CRACKS = "cracks";
 
 	/** Parent tile entity */
-	private final MantleTileEntity parent;
+	private final MantleBlockEntity parent;
 	/** Model data for the client */
 	private final IModelData data = new SinglePropertyData<>(PROPERTY, 0);
 	/** Current cracks value. Once it reaches 6 the block breaks */
@@ -43,7 +43,7 @@ public class CrackableTileEntityHandler {
 	/** Whether to use crackable logic, used to allow one class to handle both cases */
 	private boolean active;
 
-	public CrackableTileEntityHandler(MantleTileEntity parent, boolean active) {
+	public CrackableTileEntityHandler(MantleBlockEntity parent, boolean active) {
 		this.parent = parent;
 		this.active = active;
 	}
@@ -126,7 +126,7 @@ public class CrackableTileEntityHandler {
 	/** Updates the cracks state of this block */
 	public void setCracks(int cracks) {
 		if (active && setCracksRaw(cracks)) {
-			this.parent.markDirtyFast();
+			this.parent.setChangedFast();
 
 			// if client, refresh block, if server sync to client
 			Level world = parent.getLevel();
@@ -209,7 +209,7 @@ public class CrackableTileEntityHandler {
 
 		/** Helper to avoid having to write this line multiple times */
 		static void onBlockPlacedBy(LevelAccessor world, BlockPos pos, ItemStack stack) {
-			TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
+			BlockEntityHelper.get(ICrackableTileEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
 		}
 
 		/**
@@ -222,8 +222,8 @@ public class CrackableTileEntityHandler {
 		 */
 		static boolean tryRepair(LevelAccessor world, BlockPos pos, Player player, InteractionHand hand) {
 			ItemStack held = player.getItemInHand(hand);
-			if (held.getItem().is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
-				return TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).filter(te -> {
+			if (held.is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
+				return BlockEntityHelper.get(ICrackableTileEntity.class, world, pos).filter(te -> {
 					CrackableTileEntityHandler handler = te.getCracksHandler();
 					int cracks = handler.getCracks();
 					if (handler.isActive() && cracks > 0) {

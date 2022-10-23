@@ -22,40 +22,39 @@ import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SimpleCookingSerializer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import slimeknights.mantle.item.BlockTooltipItem;
 import slimeknights.mantle.registration.deferred.BlockDeferredRegister;
-import slimeknights.mantle.registration.deferred.ContainerTypeDeferredRegister;
+import slimeknights.mantle.registration.deferred.BlockEntityTypeDeferredRegister;
 import slimeknights.mantle.registration.deferred.ItemDeferredRegister;
-import slimeknights.mantle.registration.deferred.TileEntityTypeDeferredRegister;
+import slimeknights.mantle.registration.deferred.MenuTypeDeferredRegister;
 import slimeknights.mantle.registration.object.EnumObject;
 import slimeknights.mantle.registration.object.ItemObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
@@ -65,8 +64,8 @@ import java.util.function.Function;
 public class Registration {
   private static final BlockDeferredRegister BLOCKS = new BlockDeferredRegister(Ceramics.MOD_ID);
   private static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(Ceramics.MOD_ID);
-  private static final ContainerTypeDeferredRegister CONTAINERS = new ContainerTypeDeferredRegister(Ceramics.MOD_ID);
-  private static final TileEntityTypeDeferredRegister TILE_ENTIITES = new TileEntityTypeDeferredRegister(Ceramics.MOD_ID);
+  private static final MenuTypeDeferredRegister CONTAINERS = new MenuTypeDeferredRegister(Ceramics.MOD_ID);
+  private static final BlockEntityTypeDeferredRegister TILE_ENTIITES = new BlockEntityTypeDeferredRegister(Ceramics.MOD_ID);
   private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Ceramics.MOD_ID);
 
   /** Initializes the registries with the forge mod bus */
@@ -170,10 +169,10 @@ public class Registration {
   /*
    * fluid handling
    */
-  private static final BlockBehaviour.Properties CLAY_PROPERTIES = BlockBehaviour.Properties.of(Material.CLAY).harvestTool(ToolType.SHOVEL).strength(0.6F).sound(SoundType.GRAVEL).noOcclusion();
+  private static final BlockBehaviour.Properties CLAY_PROPERTIES = BlockBehaviour.Properties.of(Material.CLAY).strength(0.6F).sound(SoundType.GRAVEL).noOcclusion();
   private static final Function<Block,BlockItem> GAUGE_BLOCK_ITEM = FIXED_TOOLTIP.apply("gauge.tooltip");
-  public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.COLOR_ORANGE).harvestTool(ToolType.PICKAXE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
-  public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.TERRACOTTA_WHITE).harvestTool(ToolType.PICKAXE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
+  public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.COLOR_ORANGE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
+  public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.TERRACOTTA_WHITE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
 
   // cistern
   private static final Function<String,Function<Block,BlockItem>> CRACKABLE_BLOCK_ITEM = tooltip -> block -> new CrackableBlockItem(block, GROUP_PROPS, tooltip);
@@ -218,7 +217,7 @@ public class Registration {
    * @return  Block properties
    */
   private static BlockBehaviour.Properties terracottaProps(MaterialColor color) {
-    return BlockBehaviour.Properties.of(Material.STONE, color).harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops().strength(1.25F, 4.2F);
+    return BlockBehaviour.Properties.of(Material.STONE, color).requiresCorrectToolForDrops().strength(1.25F, 4.2F);
   }
 
   /**
@@ -227,24 +226,23 @@ public class Registration {
    * @return  Material color
    */
   private static MaterialColor getTerracottaColor(DyeColor color) {
-    switch (color) {
-      default:
-      case WHITE:      return MaterialColor.TERRACOTTA_WHITE;
-      case ORANGE:     return MaterialColor.TERRACOTTA_ORANGE;
-      case MAGENTA:    return MaterialColor.TERRACOTTA_MAGENTA;
-      case LIGHT_BLUE: return MaterialColor.TERRACOTTA_LIGHT_BLUE;
-      case YELLOW:     return MaterialColor.TERRACOTTA_YELLOW;
-      case LIME:       return MaterialColor.TERRACOTTA_LIGHT_GREEN;
-      case PINK:       return MaterialColor.TERRACOTTA_PINK;
-      case GRAY:       return MaterialColor.TERRACOTTA_GRAY;
-      case LIGHT_GRAY: return MaterialColor.TERRACOTTA_LIGHT_GRAY;
-      case CYAN:       return MaterialColor.TERRACOTTA_CYAN;
-      case PURPLE:     return MaterialColor.TERRACOTTA_PURPLE;
-      case BLUE:       return MaterialColor.TERRACOTTA_BLUE;
-      case BROWN:      return MaterialColor.TERRACOTTA_BROWN;
-      case GREEN:      return MaterialColor.TERRACOTTA_GREEN;
-      case RED:        return MaterialColor.TERRACOTTA_RED;
-      case BLACK:      return MaterialColor.TERRACOTTA_BLACK;
-    }
+    return switch (color) {
+      case WHITE      -> MaterialColor.TERRACOTTA_WHITE;
+      case ORANGE     -> MaterialColor.TERRACOTTA_ORANGE;
+      case MAGENTA    -> MaterialColor.TERRACOTTA_MAGENTA;
+      case LIGHT_BLUE -> MaterialColor.TERRACOTTA_LIGHT_BLUE;
+      case YELLOW     -> MaterialColor.TERRACOTTA_YELLOW;
+      case LIME       -> MaterialColor.TERRACOTTA_LIGHT_GREEN;
+      case PINK       -> MaterialColor.TERRACOTTA_PINK;
+      case GRAY       -> MaterialColor.TERRACOTTA_GRAY;
+      case LIGHT_GRAY -> MaterialColor.TERRACOTTA_LIGHT_GRAY;
+      case CYAN       -> MaterialColor.TERRACOTTA_CYAN;
+      case PURPLE     -> MaterialColor.TERRACOTTA_PURPLE;
+      case BLUE       -> MaterialColor.TERRACOTTA_BLUE;
+      case BROWN      -> MaterialColor.TERRACOTTA_BROWN;
+      case GREEN      -> MaterialColor.TERRACOTTA_GREEN;
+      case RED        -> MaterialColor.TERRACOTTA_RED;
+      case BLACK      -> MaterialColor.TERRACOTTA_BLACK;
+    };
   }
 }

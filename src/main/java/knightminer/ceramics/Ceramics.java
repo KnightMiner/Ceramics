@@ -7,21 +7,21 @@ import knightminer.ceramics.datagen.LootTableProvider;
 import knightminer.ceramics.datagen.RecipeProvider;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.recipe.CeramicsTags;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import slimeknights.mantle.registration.RegistrationHelper;
@@ -40,7 +40,6 @@ public class Ceramics {
 		CeramicsNetwork.init();
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::gatherData);
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> ClientEvents::onConstructor);
 		MinecraftForge.EVENT_BUS.addGenericListener(Block.class, this::onMissingBlocks);
 		MinecraftForge.EVENT_BUS.addGenericListener(Item.class, this::onMissingItems);
 	}
@@ -107,5 +106,15 @@ public class Ceramics {
 	 */
 	public static String lang(String group, String name) {
 		return String.format("%s.%s.%s", group, MOD_ID, name);
+	}
+
+	/**
+	 * Forms a translation component with the following details
+	 * @param group Language key group
+	 * @param name Name within group
+	 * @return Language key
+	 */
+	public static Component component(String group, String name) {
+		return new TranslatableComponent(lang(group, name));
 	}
 }

@@ -10,15 +10,17 @@ import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTile
 import knightminer.ceramics.util.tank.ChannelSideTank;
 import knightminer.ceramics.util.tank.ChannelTank;
 import knightminer.ceramics.util.tank.FillOnlyFluidHandler;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
-import net.minecraft.Util;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -30,9 +32,10 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
-import slimeknights.mantle.tileentity.MantleTileEntity;
+import slimeknights.mantle.block.entity.MantleBlockEntity;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
@@ -40,7 +43,8 @@ import java.util.Map;
 /**
  * Logic for channel fluid transfer
  */
-public class ChannelTileEntity extends MantleTileEntity implements TickableBlockEntity, ICrackableTileEntity {
+public class ChannelTileEntity extends MantleBlockEntity implements ICrackableTileEntity {
+	public static final BlockEntityTicker<ChannelTileEntity> SERVER_TICKER = (level, pos, state, te) -> te.tick(level, pos, state);
 	/** Channel internal tank */
 	private final ChannelTank tank = new ChannelTank(75, this);
 	/** Handler to return from channel top */
@@ -67,13 +71,13 @@ public class ChannelTileEntity extends MantleTileEntity implements TickableBlock
 	/** Crackable handling */
 	private final CrackableTileEntityHandler cracksHandler;
 
-	public ChannelTileEntity(boolean crackable) {
-		super(Registration.CHANNEL_TILE_ENTITY.get());
+	public ChannelTileEntity(BlockPos pos, BlockState state, boolean crackable) {
+		super(Registration.CHANNEL_TILE_ENTITY.get(), pos, state);
 		cracksHandler = new CrackableTileEntityHandler(this, crackable);
 	}
 
-	public ChannelTileEntity() {
-		this(false);
+	public ChannelTileEntity(BlockPos pos, BlockState state) {
+		this(pos, state, false);
 	}
 
 	/**
@@ -95,6 +99,7 @@ public class ChannelTileEntity extends MantleTileEntity implements TickableBlock
 		return cracksHandler;
 	}
 
+	@Nonnull
 	@Override
 	public IModelData getModelData() {
 		return cracksHandler.getModelData();
@@ -121,6 +126,7 @@ public class ChannelTileEntity extends MantleTileEntity implements TickableBlock
 		}
 	}
 
+	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
 		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
@@ -213,7 +219,7 @@ public class ChannelTileEntity extends MantleTileEntity implements TickableBlock
 	}
 
 	@Override
-	protected void invalidateCaps() {
+	public void invalidateCaps() {
 		super.invalidateCaps();
 		topHandler.invalidate();
 		for (LazyOptional<IFluidHandler> handler : sideHandlers.values()) {
@@ -333,19 +339,13 @@ public class ChannelTileEntity extends MantleTileEntity implements TickableBlock
 	/**
 	 * Ticking logic
 	 */
-	@Override
-	public void tick() {
-		if(level == null || level.isClientSide) {
-			return;
-		}
-
+	public void tick(Level level, BlockPos pos, BlockState state) {
 		// must have fluid first
 		FluidStack fluid = tank.getFluid();
 		if(!fluid.isEmpty()) {
 
 			// if we have down and can flow, skip sides
 			boolean hasFlown = false;
-			BlockState state = getBlockState();
 			if(state.getValue(ChannelBlock.DOWN)) {
 				hasFlown = trySide(Direction.DOWN, FaucetTileEntity.MB_PER_TICK);
 			}
@@ -454,16 +454,16 @@ public class ChannelTileEntity extends MantleTileEntity implements TickableBlock
 	}
 
 	@Override
-	protected void writeSynced(CompoundTag nbt) {
-		super.writeSynced(nbt);
+	protected void saveSynced(CompoundTag nbt) {
+		super.saveSynced(nbt);
 		nbt.putByteArray(TAG_IS_FLOWING, isFlowing);
 		nbt.put(TAG_TANK, tank.writeToNBT(new CompoundTag()));
 		cracksHandler.writeNBT(nbt);
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt) {
-		super.load(state, nbt);
+	public void load(CompoundTag nbt) {
+		super.load(nbt);
 
 		// isFlowing
 		if (nbt.contains(TAG_IS_FLOWING)) {
@@ -484,6 +484,6 @@ public class ChannelTileEntity extends MantleTileEntity implements TickableBlock
 		// tank
 		CompoundTag tankTag = nbt.getCompound(TAG_TANK);
 		tank.readFromNBT(tankTag);
-		cracksHandler.readNBT(state, nbt);
+		cracksHandler.readNBT(getBlockState(), nbt);
 	}
 }

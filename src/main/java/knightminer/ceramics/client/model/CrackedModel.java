@@ -6,24 +6,24 @@ import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.tileentity.CrackableTileEntityHandler;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -49,10 +49,10 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 	/** Item overrides list, note overrides does not work through a model wrapper */
 	public static final ItemOverrides OVERRIDES = new ItemOverrides() {
 		@Override
-		public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity) {
+		public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity livingEntity, int seed) {
 			int cracks = CrackableBlockItem.getCracks(stack);
-			if (cracks > 0 && model instanceof BakedModel) {
-				return ((BakedModel)model).getModel(cracks);
+			if (cracks > 0 && model instanceof Baked baked) {
+				return baked.getModel(cracks);
 			}
 			return model;
 		}
@@ -102,18 +102,18 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 
 		// wrap the original model
 		BakedModel original = model.bakeModel(owner, transform, OVERRIDES, spriteGetter, location);
-		return new BakedModel(original, owner, newElements, textures, transform);
+		return new Baked(original, owner, newElements, textures, transform);
 	}
 
 	/** Baked model for this */
-	private static class BakedModel extends DynamicBakedWrapper<BakedModel> {
+	private static class Baked extends DynamicBakedWrapper<BakedModel> {
 		private final BakedModel[] crackedModels;
 		private final IModelConfiguration owner;
 		private final List<BlockElement> elements;
 		private final Material[] textures;
 		private final ModelState transform;
 
-		public BakedModel(BakedModel originalModel, IModelConfiguration owner, List<BlockElement> elements, Material[] textures, ModelState transform) {
+		public Baked(BakedModel originalModel, IModelConfiguration owner, List<BlockElement> elements, Material[] textures, ModelState transform) {
 			super(originalModel);
 			this.crackedModels = new BakedModel[textures.length];
 			this.owner = owner;

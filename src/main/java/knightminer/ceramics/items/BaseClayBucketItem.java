@@ -3,23 +3,23 @@ package knightminer.ceramics.items;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.util.FluidClayBucketWrapper;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.Level;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
@@ -32,8 +32,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-
-import net.minecraft.world.item.Item.Properties;
 
 /**
  * Shared logic between the milk and fluid filled clay buckets
@@ -95,11 +93,11 @@ public abstract class BaseClayBucketItem extends Item {
     ItemParticleOption particle = new ItemParticleOption(ParticleTypes.ITEM, stack);
     for(int i = 0; i < 5; ++i) {
       Vec3 offset = new Vec3((rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-      offset = offset.xRot(-player.xRot * DEGREE_TO_RAD);
-      offset = offset.yRot(-player.yRot * DEGREE_TO_RAD);
+      offset = offset.xRot(-player.getXRot() * DEGREE_TO_RAD);
+      offset = offset.yRot(-player.getYRot() * DEGREE_TO_RAD);
       Vec3 pos = new Vec3((rand.nextFloat() - 0.5D) * 0.3D, -rand.nextFloat() * 0.6D - 0.3D, 0.6D);
-      pos = pos.xRot(-player.xRot * DEGREE_TO_RAD);
-      pos = pos.yRot(-player.yRot * DEGREE_TO_RAD);
+      pos = pos.xRot(-player.getXRot() * DEGREE_TO_RAD);
+      pos = pos.yRot(-player.getYRot() * DEGREE_TO_RAD);
       pos = pos.add(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
       // spawnParticle is no-oped on server, need to use server specific variant
       if (world instanceof ServerLevel) {
@@ -167,7 +165,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @param stack   Stack to add
    */
   protected static void addItem(Player player, ItemStack stack) {
-    if (!player.inventory.add(stack)) {
+    if (!player.getInventory().add(stack)) {
       player.drop(stack, false);
     }
   }
@@ -189,10 +187,10 @@ public abstract class BaseClayBucketItem extends Item {
     if (CeramicsTags.tagsLoaded()) {
       // if the temperature is hot, ensure its not tagged cool
       if (hotTemperature) {
-        return !CeramicsTags.Fluids.COOL_FLUIDS.contains(fluid);
+        return !fluid.is(CeramicsTags.Fluids.COOL_FLUIDS);
       }
       // if the temperature is cool but tagged hot, it cracks
-      return CeramicsTags.Fluids.HOT_FLUIDS.contains(fluid);
+      return fluid.is(CeramicsTags.Fluids.HOT_FLUIDS);
     }
 
     // no tags, stuck with only temperature

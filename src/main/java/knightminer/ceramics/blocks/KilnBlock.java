@@ -1,25 +1,25 @@
 package knightminer.ceramics.blocks;
 
+import knightminer.ceramics.Registration;
 import knightminer.ceramics.tileentity.KilnTileEntity;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.Random;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class KilnBlock extends AbstractFurnaceBlock {
 
@@ -27,20 +27,17 @@ public class KilnBlock extends AbstractFurnaceBlock {
     super(props);
   }
 
-  /** @deprecated  Only added to fully implement interface in {@link net.minecraft.block.AbstractFurnaceBlock} */
-  @Deprecated
   @Nullable
   @Override
-  public BlockEntity newBlockEntity(BlockGetter world) {
-    return new KilnTileEntity();
+  public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    return new KilnTileEntity(pos, state);
   }
 
   @Override
   @Nullable
-  public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-    return new KilnTileEntity();
+  public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+    return createFurnaceTicker(pLevel, pBlockEntityType, Registration.KILN_TILE_ENTITY.get());
   }
-
   @Override
   protected void openContainer(Level world, BlockPos pos, Player player) {
     BlockEntity tile = world.getBlockEntity(pos);

@@ -1,11 +1,11 @@
 package knightminer.ceramics.client.gui;
 
 import knightminer.ceramics.container.KilnContainer;
-import net.minecraft.client.gui.screens.recipebook.SmeltingRecipeBookComponent;
 import net.minecraft.client.gui.screens.inventory.AbstractFurnaceScreen;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.screens.recipebook.SmeltingRecipeBookComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 public class KilnScreen extends AbstractFurnaceScreen<KilnContainer> {
   private static final ResourceLocation FURNACE_GUI_TEXTURES = new ResourceLocation("textures/gui/container/furnace.png");
@@ -18,8 +18,9 @@ public class KilnScreen extends AbstractFurnaceScreen<KilnContainer> {
   public void init() {
     super.init();
     // remove the last button (the recipe book button) as I cannot yet filter that properly
-    this.buttons.remove(this.buttons.size()-1);
-    this.children.remove(this.children.size()-1);
+    // TODO: pretty sure Forge lets me do this now
+    this.renderables.remove(this.renderables.size()-1);
+//    this.children.remove(this.children.size()-1);
     if (this.recipeBookComponent.isVisible()) {
       this.recipeBookComponent.toggleVisibility();
     }

@@ -8,8 +8,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 /**
  * Handles all tank behaviors for the cistern
  */
@@ -28,6 +26,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     return !stack.getFluid().getAttributes().isGaseous(stack);
   }
 
+  @Nonnull
   @Override
   public FluidStack getFluid() {
     return fluid;
@@ -102,6 +101,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     return filled;
   }
 
+  @Nonnull
   @Override
   public FluidStack drain(FluidStack resource, FluidAction action) {
     if (resource.isEmpty() || !resource.isFluidEqual(fluid)) {
@@ -110,6 +110,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     return drain(resource.getAmount(), action);
   }
 
+  @Nonnull
   @Override
   public FluidStack drain(int maxDrain, FluidAction action) {
     int drained = maxDrain;
@@ -152,6 +153,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
     return 1;
   }
 
+  @Nonnull
   @Override
   public FluidStack getFluidInTank(int tank) {
     return getFluid();
@@ -163,7 +165,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
   }
 
   @Override
-  public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+  public boolean isFluidValid(int tank, FluidStack stack) {
     return isFluidValid(stack);
   }
 }

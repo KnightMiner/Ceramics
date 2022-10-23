@@ -28,12 +28,10 @@ import net.minecraft.world.level.LevelAccessor;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static net.minecraft.state.properties.BlockStateProperties.EAST;
-import staticnet.minecraft.world.level.block.state.properties.BlockStatePropertiess.NORTH;
-import static net.minecraft.state.properties.BlockStateProperties.SOUTH;
-import staticnet.minecraft.world.level.block.state.properties.BlockStatePropertiess.WEST;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.EAST;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.NORTH;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.SOUTH;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WEST;
 
 /**
  * Base block between unfired and fired cisterns. Extended for fluid variant

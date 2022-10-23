@@ -1,14 +1,13 @@
 package knightminer.ceramics.container;
 
-import com.google.common.collect.Lists;
 import knightminer.ceramics.Registration;
 import net.minecraft.client.RecipeBookCategories;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.AbstractFurnaceMenu;
-import net.minecraft.world.inventory.RecipeBookType;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractFurnaceMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.RecipeBookType;
 
 import java.util.List;
 
@@ -24,6 +23,6 @@ public class KilnContainer extends AbstractFurnaceMenu {
 
   @Override
   public List<RecipeBookCategories> getRecipeBookCategories() {
-    return Lists.newArrayList(RecipeBookCategories.FURNACE_SEARCH, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC);
+    return List.of(RecipeBookCategories.FURNACE_SEARCH, RecipeBookCategories.FURNACE_BLOCKS, RecipeBookCategories.FURNACE_MISC);
   }
 }

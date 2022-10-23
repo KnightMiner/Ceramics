@@ -3,18 +3,18 @@ package knightminer.ceramics.client.model;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.client.model.BakedModelWrapper;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
@@ -58,7 +58,7 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 	@Override
 	public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material,TextureAtlasSprite> spriteGetter, ModelState transform, ItemOverrides overrides, ResourceLocation location) {
 		BakedModel baked = this.model.bakeModel(owner, transform, overrides, spriteGetter, location);
-		return new BakedModel(baked, this.fluids);
+		return new Baked(baked, this.fluids);
 	}
 
 	/** Model geometrry for a cracked cistern */
@@ -73,17 +73,17 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 		@Override
 		public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material,TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
 			BakedModel model = super.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation);
-			return new BakedModel(model, fluids);
+			return new Baked(model, fluids);
 		}
 	}
 
 	/**
 	 * Baked model wrapper for cistern models
 	 */
-	public static class BakedModel extends BakedModelWrapper<BakedModel> {
+	public static class Baked extends BakedModelWrapper<BakedModel> {
 		/** Map of side to fluid. {@link Direction#UP} represents extension center, {@link Direction#DOWN} base center */
 		private final Map<Direction,FluidCuboid> fluids;
-		private BakedModel(BakedModel originalModel, Map<Direction,FluidCuboid> fluids) {
+		private Baked(BakedModel originalModel, Map<Direction,FluidCuboid> fluids) {
 			super(originalModel);
 			this.fluids = fluids;
 		}

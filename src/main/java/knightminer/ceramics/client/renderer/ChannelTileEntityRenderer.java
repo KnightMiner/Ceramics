@@ -6,27 +6,26 @@ import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.client.model.ChannelModel;
 import knightminer.ceramics.tileentity.ChannelTileEntity;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import slimeknights.mantle.client.model.FaucetFluidLoader;
 import slimeknights.mantle.client.model.fluid.FluidCuboid;
 import slimeknights.mantle.client.model.util.ModelHelper;
 import slimeknights.mantle.client.render.FluidRenderer;
+import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 
-public class ChannelTileEntityRenderer extends BlockEntityRenderer<ChannelTileEntity> {
-	public ChannelTileEntityRenderer(BlockEntityRenderDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
-	}
+public class ChannelTileEntityRenderer implements BlockEntityRenderer<ChannelTileEntity> {
+	public ChannelTileEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
 	public void render(ChannelTileEntity te, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlayIn)  {
@@ -42,7 +41,7 @@ public class ChannelTileEntityRenderer extends BlockEntityRenderer<ChannelTileEn
 		}
 		BlockPos pos = te.getBlockPos();
 		BlockState state = te.getBlockState();
-		ChannelModel.BakedModel model = ModelHelper.getBakedModel(state, ChannelModel.BakedModel.class);
+		ChannelModel.Baked model = ModelHelper.getBakedModel(state, ChannelModel.Baked.class);
 		if (model == null) {
 			return;
 		}
@@ -51,7 +50,7 @@ public class ChannelTileEntityRenderer extends BlockEntityRenderer<ChannelTileEn
 		FluidAttributes attributes = fluid.getFluid().getAttributes();
 		TextureAtlasSprite still = FluidRenderer.getBlockSprite(attributes.getStillTexture(fluid));
 		TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(attributes.getFlowingTexture(fluid));
-		VertexConsumer builder = buffer.getBuffer(FluidRenderer.RENDER_TYPE);
+		VertexConsumer builder = buffer.getBuffer(MantleRenderTypes.FLUID);
 		int color = attributes.getColor(fluid);
 		light = FluidRenderer.withBlockLight(light, attributes.getLuminosity(fluid));
 

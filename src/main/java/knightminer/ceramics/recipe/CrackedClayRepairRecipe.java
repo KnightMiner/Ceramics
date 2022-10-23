@@ -8,21 +8,21 @@ import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import slimeknights.mantle.recipe.RecipeHelper;
+import slimeknights.mantle.recipe.helper.RecipeHelper;
 import slimeknights.mantle.util.JsonHelper;
 
 import javax.annotation.Nullable;
@@ -98,7 +98,7 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 	/**
 	 * Finished recipe for datagens
 	 */
-	public static class FinishedRecipe implements FinishedRecipe {
+	public static class Finished implements FinishedRecipe {
 		private final ResourceLocation id;
 		private final Item item;
 		private final Ingredient ingredient;
@@ -106,7 +106,7 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 		private final Advancement.Builder advancementBuilder;
 		@Nullable
 		private final ResourceLocation advancementId;
-		public FinishedRecipe(ResourceLocation id, ItemLike item, Ingredient ingredient, @Nullable CriterionTriggerInstance criteria) {
+		public Finished(ResourceLocation id, ItemLike item, Ingredient ingredient, @Nullable CriterionTriggerInstance criteria) {
 			this.id = id;
 			this.item = item.asItem();
 			this.ingredient = ingredient;
