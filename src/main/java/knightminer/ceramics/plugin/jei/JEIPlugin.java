@@ -64,18 +64,18 @@ public class JEIPlugin implements IModPlugin {
 
   @Override
   public void registerRecipes(IRecipeRegistration registration) {
-    ClientWorld world = Minecraft.getInstance().world;
+    ClientWorld world = Minecraft.getInstance().level;
     assert world != null;
     RecipeManager recipeManager = world.getRecipeManager();
     List<KilnRecipe> results = new ArrayList<>();
-    for (IRecipe<IInventory> recipe : recipeManager.getRecipes(Registration.KILN_RECIPE).values()) {
+    for (IRecipe<IInventory> recipe : recipeManager.byType(Registration.KILN_RECIPE).values()) {
       // ignore dynamic
-      if (recipe.isDynamic()) {
+      if (recipe.isSpecial()) {
         continue;
       }
 
       // validate output
-      ItemStack output = recipe.getRecipeOutput();
+      ItemStack output = recipe.getResultItem();
       if (output.isEmpty()) {
         Ceramics.LOG.error("Invalid kiln recipe {}, no output", recipe.getId());
         continue;
@@ -97,7 +97,7 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipes(results, KilnCategory.UID);
 
     // clay repair info
-    List<ItemStack> clayRepair = CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR.getAllElements().stream().map(ItemStack::new).collect(Collectors.toList());
+    List<ItemStack> clayRepair = CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR.getValues().stream().map(ItemStack::new).collect(Collectors.toList());
     registration.addIngredientInfo(clayRepair, VanillaTypes.ITEM, Ceramics.lang("jei", "clay_repair"));
   }
 
@@ -121,8 +121,8 @@ public class JEIPlugin implements IModPlugin {
   public void onRuntimeAvailable(IJeiRuntime runtime) {
     // add buckets to the ingredient list since JEI fills that list too soon
     NonNullList<ItemStack> buckets = NonNullList.create();
-    Registration.CLAY_BUCKET.get().fillItemGroup(ItemGroup.SEARCH, buckets);
-    Registration.CRACKED_CLAY_BUCKET.get().fillItemGroup(ItemGroup.SEARCH, buckets);
+    Registration.CLAY_BUCKET.get().fillItemCategory(ItemGroup.TAB_SEARCH, buckets);
+    Registration.CRACKED_CLAY_BUCKET.get().fillItemCategory(ItemGroup.TAB_SEARCH, buckets);
     runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM, buckets);
   }
 }

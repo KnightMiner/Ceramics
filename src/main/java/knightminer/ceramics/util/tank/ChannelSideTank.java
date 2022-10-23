@@ -5,6 +5,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraftforge.fluids.FluidStack;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 /** Tank for each side connection, for the sake of rendering */
 public class ChannelSideTank extends FillOnlyFluidHandler {
 	private final ChannelTileEntity channel;

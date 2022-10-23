@@ -35,7 +35,7 @@ public class CrackableCrackPacket implements IThreadsafePacket {
 
 	private static class HandleClient {
 		private static void handle(CrackableCrackPacket packet) {
-			TileEntityHelper.getTile(ICrackableTileEntity.class, Minecraft.getInstance().world, packet.pos).ifPresent(te -> te.getCracksHandler().setCracks(packet.cracks));
+			TileEntityHelper.getTile(ICrackableTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.getCracksHandler().setCracks(packet.cracks));
 		}
 	}
 }

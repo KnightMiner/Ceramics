@@ -44,7 +44,7 @@ public class CisternUpdatePacket implements IThreadsafePacket {
   /** Separate class to prevent unsafe clientside access */
   private static class HandleClient {
     private static void handle(CisternUpdatePacket packet) {
-      TileEntityHelper.getTile(CisternTileEntity.class, Minecraft.getInstance().world, packet.pos).ifPresent(te -> te.updateFluidTo(packet.fluid, packet.shouldRefreshCapabilities));
+      TileEntityHelper.getTile(CisternTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.updateFluidTo(packet.fluid, packet.shouldRefreshCapabilities));
     }
   }
 }

@@ -26,6 +26,8 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Pouring variant of the faucet block
  */
@@ -52,11 +54,11 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+  public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
     if (isCrackable() && ICrackableBlock.tryRepair(worldIn, pos, player, handIn)) {
       return ActionResultType.SUCCESS;
     }
-    if (player.isSneaking()) {
+    if (player.isShiftKeyDown()) {
       return ActionResultType.PASS;
     }
     getFaucet(worldIn, pos).ifPresent(FaucetTileEntity::activate);
@@ -67,12 +69,12 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   @Deprecated
   @Override
   public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-    if (worldIn.isRemote()) {
+    if (worldIn.isClientSide()) {
       return;
     }
     getFaucet(worldIn, pos).ifPresent(faucet -> {
       faucet.neighborChanged(fromPos);
-      faucet.handleRedstone(worldIn.isBlockPowered(pos));
+      faucet.handleRedstone(worldIn.hasNeighborSignal(pos));
     });
   }
 
@@ -102,10 +104,10 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
    * @param pos      Faucet position
    */
   private static void addParticles(BlockState state, IWorld worldIn, BlockPos pos) {
-    Direction direction = state.get(FACING);
-    double x = (double)pos.getX() + 0.5D - 0.3D * (double)direction.getXOffset();
-    double y = (double)pos.getY() + 0.5D - 0.3D * (double)direction.getYOffset();
-    double z = (double)pos.getZ() + 0.5D - 0.3D * (double)direction.getZOffset();
+    Direction direction = state.getValue(FACING);
+    double x = (double)pos.getX() + 0.5D - 0.3D * (double)direction.getStepX();
+    double y = (double)pos.getY() + 0.5D - 0.3D * (double)direction.getStepY();
+    double z = (double)pos.getZ() + 0.5D - 0.3D * (double)direction.getStepZ();
     worldIn.addParticle(new RedstoneParticleData(1.0F, 0.0F, 0.0F, 0.5f), x, y, z, 0.0D, 0.0D, 0.0D);
   }
 
@@ -137,7 +139,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock {
   }
 
   @Override
-  public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+  public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
     if (isCrackable()) {
       ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
     }

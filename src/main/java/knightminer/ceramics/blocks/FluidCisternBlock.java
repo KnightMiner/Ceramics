@@ -24,6 +24,8 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.Random;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Fired cistern block that can store fluids
  */
@@ -54,18 +56,18 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+  public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
     if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
       return ActionResultType.SUCCESS;
     }
     // success if the item is a fluid handler, regardless of if fluid moved
-    if (FluidUtil.getFluidHandler(player.getHeldItem(hand)).isPresent()) {
+    if (FluidUtil.getFluidHandler(player.getItemInHand(hand)).isPresent()) {
       // only server needs to do anything
-      if (!world.isRemote()) {
-        TileEntity te = world.getTileEntity(pos);
+      if (!world.isClientSide()) {
+        TileEntity te = world.getBlockEntity(pos);
         if (te != null) {
           // simply update the fluid handler capability
-            te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace())
+            te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection())
               .ifPresent(handler -> FluidUtil.interactWithFluidHandler(player, hand, handler));
         }
       }
@@ -87,12 +89,12 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
     BlockPos base = pos;
     BlockState checkState;
     do {
-      base = base.down();
+      base = base.below();
       checkState = world.getBlockState(base);
-    } while (checkState.isIn(this) && checkState.get(CisternBlock.EXTENSION));
+    } while (checkState.is(this) && checkState.getValue(CisternBlock.EXTENSION));
 
     // if the position is a cistern, it means we found a base, return that position
-    if (checkState.isIn(this)) {
+    if (checkState.is(this)) {
       return TileEntityHelper.getTile(CisternTileEntity.class, world, base);
     }
     // not found, return nothing
@@ -100,8 +102,8 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   }
 
   @Override
-  public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-    if (state.get(CisternBlock.EXTENSION)) {
+  public void setPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    if (state.getValue(CisternBlock.EXTENSION)) {
       // try to find a base cistern below if an extension
       findBase(world, pos).ifPresent(te -> te.addExtension(pos));
       // crackable handling
@@ -110,7 +112,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
       }
     } else {
       TileEntityHelper.getTile(CisternTileEntity.class, world, pos).ifPresent(te -> {
-        te.tryMerge(pos.up());
+        te.tryMerge(pos.above());
         // crackable handling
         if (crackable) {
           te.getCracksHandler().setCracks(stack);
@@ -122,25 +124,25 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock {
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
-    if (state.hasTileEntity() && (!state.isIn(newState.getBlock()) || !newState.hasTileEntity())) {
-      if (state.get(EXTENSION)) {
+  public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving) {
+    if (state.hasTileEntity() && (!state.is(newState.getBlock()) || !newState.hasTileEntity())) {
+      if (state.getValue(EXTENSION)) {
         findBase(world, pos).ifPresent(te -> te.removeExtension(pos));
       } else {
         TileEntityHelper.getTile(CisternTileEntity.class, world, pos).ifPresent(te -> te.onBroken(this));
       }
-      world.removeTileEntity(pos);
+      world.removeBlockEntity(pos);
     }
   }
 
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
     // overridden to remove down connection, we handle that conditionally in the TE
     if (!facing.getAxis().isVertical()) {
       // barrel connects to
-      state = state.with(CONNECTIONS.get(facing), isConnected(facing, facingState));
+      state = state.setValue(CONNECTIONS.get(facing), isConnected(facing, facingState));
     }
     return state;
   }

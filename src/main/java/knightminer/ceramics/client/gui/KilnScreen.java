@@ -20,8 +20,8 @@ public class KilnScreen extends AbstractFurnaceScreen<KilnContainer> {
     // remove the last button (the recipe book button) as I cannot yet filter that properly
     this.buttons.remove(this.buttons.size()-1);
     this.children.remove(this.children.size()-1);
-    if (this.recipeGui.isVisible()) {
-      this.recipeGui.toggleVisibility();
+    if (this.recipeBookComponent.isVisible()) {
+      this.recipeBookComponent.toggleVisibility();
     }
   }
 }

@@ -135,12 +135,12 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
    * @param index  Number of blocks the new base is above this block
    */
   private void transferBaseTo(Block block, int index) {
-    assert world != null;
+    assert level != null;
     // ensure the block above is the right type and is an extension
-    BlockPos newBase = pos.up(index);
-    BlockState newState = world.getBlockState(newBase);
-    if (newState.isIn(block) && newState.get(CisternBlock.EXTENSION)) {
-      TileEntity te = world.getTileEntity(newBase);
+    BlockPos newBase = worldPosition.above(index);
+    BlockState newState = level.getBlockState(newBase);
+    if (newState.is(block) && newState.getValue(CisternBlock.EXTENSION)) {
+      TileEntity te = level.getBlockEntity(newBase);
       if (te instanceof CisternTileEntity) {
         // if we have fluid in the new base, extract that into that base
         FluidStack fluid = FluidStack.EMPTY;
@@ -169,10 +169,10 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
    * @param checkPos  Position to check
    */
   public void tryMerge(BlockPos checkPos) {
-    assert world != null;
+    assert level != null;
     // check if there is another cistern above the new one that should also be connected
-    if (world.getBlockState(checkPos).isIn(getBlockState().getBlock())) {
-      TileEntityHelper.getTile(CisternTileEntity.class, world, checkPos).ifPresent(te -> te.makeExtension(this));
+    if (level.getBlockState(checkPos).is(getBlockState().getBlock())) {
+      TileEntityHelper.getTile(CisternTileEntity.class, level, checkPos).ifPresent(te -> te.makeExtension(this));
     }
   }
 
@@ -181,15 +181,15 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
    * @param extPos  Position of extension
    */
   public void addExtension(BlockPos extPos) {
-    assert world != null;
+    assert level != null;
 
     // update extensions if the new position is outside the cistern (mostly safety)
-    int newExtensions = extPos.getY() - pos.getY();
+    int newExtensions = extPos.getY() - worldPosition.getY();
     if (newExtensions > extensions) {
       extensions = newExtensions;
 
       // check if there is another cistern above the new one that should also be connected
-      tryMerge(extPos.up());
+      tryMerge(extPos.above());
     }
   }
 
@@ -198,11 +198,11 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
    * @param extPos  Extension to remove
    */
   public void removeExtension(BlockPos extPos) {
-    assert extPos.getY() > pos.getY();
-    assert world != null;
+    assert extPos.getY() > worldPosition.getY();
+    assert level != null;
 
     // index of the extension that was removed
-    int removed = extPos.getY() - pos.getY();
+    int removed = extPos.getY() - worldPosition.getY();
     // check if the removed position was within our current cistern
     if (removed <= extensions) {
       // if not the top, make a new base
@@ -223,7 +223,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
 
     // if cracking is active and the fluid cracks the block, crack all blocks impacted by the fluid
     FluidStack fluid = tank.getFluid();
-    if (cracksHandler.isActive() && world != null && !world.isRemote() && BaseClayBucketItem.doesCrack(fluid.getFluid())) {
+    if (cracksHandler.isActive() && level != null && !level.isClientSide() && BaseClayBucketItem.doesCrack(fluid.getFluid())) {
       int capacityPerLayer = capacityPerLayer();
       // first index needing an update
       int startIndex = (fluid.getAmount() - amountAdded + capacityPerLayer - 1) / capacityPerLayer;
@@ -231,7 +231,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
       int endIndex = (fluid.getAmount() - 1) / capacityPerLayer;
       // loop through indexes, updating them
       for (int i = startIndex; i <= endIndex; i++) {
-        TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos.up(i)).ifPresent(te -> te.getCracksHandler().fluidAdded(fluid));
+        TileEntityHelper.getTile(ICrackableTileEntity.class, level, worldPosition.above(i)).ifPresent(te -> te.getCracksHandler().fluidAdded(fluid));
       }
     }
   }
@@ -250,9 +250,9 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
     }
 
     // if this is an extension, we want to find a parent handler
-    if (getBlockState().get(CisternBlock.EXTENSION)) {
-      if (world != null) {
-        TileEntity te = world.getTileEntity(pos.down());
+    if (getBlockState().getValue(CisternBlock.EXTENSION)) {
+      if (level != null) {
+        TileEntity te = level.getBlockEntity(worldPosition.below());
         if (te instanceof CisternTileEntity) {
           CisternTileEntity parent = (CisternTileEntity) te;
 
@@ -269,7 +269,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
 
           // return the internal handler
           return internalHandler;
-        } else if (!world.isRemote()) {
+        } else if (!level.isClientSide()) {
           // render thread often has a few ticks with no cistern for an extension the base is broken
           Ceramics.LOG.error("Missing cistern tile entity below cistern extension");
         }
@@ -297,7 +297,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
   /** Called on random block tick to update the heat */
   public void randomTick() {
     if (cracksHandler.isActive()) {
-      if (getBlockState().get(CisternBlock.EXTENSION)) {
+      if (getBlockState().getValue(CisternBlock.EXTENSION)) {
         // extensions: if fluid does not reach here, treat as empty
         FluidStack fluid = getInternalHandler().orElse(EmptyFluidHandler.INSTANCE).getFluidInTank(0);
         int localAmount = fluid.getAmount() - capacityFor(renderIndex);
@@ -322,7 +322,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
    * @param extensions  Number of extensions
    */
   protected void makeBase(FluidStack fluid, int extensions) {
-    assert world != null;
+    assert level != null;
     // extra extra data from parent
     this.extensions = extensions;
     tank.setFluid(fluid);
@@ -331,7 +331,7 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
     invalidateHandlers();
     renderIndex = 0;
     // update block state in world
-    world.setBlockState(pos, getBlockState().with(CisternBlock.EXTENSION, false));
+    level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CisternBlock.EXTENSION, false));
   }
 
   /**
@@ -360,13 +360,13 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
    * @param parent  New parent to the extension
    */
   protected void makeExtension(CisternTileEntity parent) {
-    assert world != null;
+    assert level != null;
 
     // ensure the fluid is valid for the parent
     FluidStack fluid = tank.getFluid();
     if (fluid.isEmpty() || parent.containsFluid(fluid)) {
       // update block to extension block
-      world.setBlockState(pos, getBlockState().with(CisternBlock.EXTENSION, true));
+      level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CisternBlock.EXTENSION, true));
       // merge contents into the parent, add an extra 1 for ourself
       parent.mergeCisterns(fluid, extensions + 1);
 
@@ -401,8 +401,8 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
    * Called when the tank contents change
    */
   public void onTankChanged(boolean shouldRefreshCapabilities) {
-    if(world != null && !world.isRemote) {
-      CeramicsNetwork.getInstance().sendToClientsAround(new CisternUpdatePacket(pos, tank.getFluid(), shouldRefreshCapabilities), world, pos);
+    if(level != null && !level.isClientSide) {
+      CeramicsNetwork.getInstance().sendToClientsAround(new CisternUpdatePacket(worldPosition, tank.getFluid(), shouldRefreshCapabilities), level, worldPosition);
     }
   }
 
@@ -420,21 +420,21 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
 
   @Override
   public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-    read(state, tag);
+    load(state, tag);
   }
 
   @Override
   public CompoundNBT getUpdateTag() {
     // new tag instead of super since default implementation calls the super of writeToNBT
-    return this.write(new CompoundNBT());
+    return this.save(new CompoundNBT());
   }
 
 
   /* Serialization */
 
   @Override
-  public void read(BlockState state, CompoundNBT tags) {
-    super.read(state, tags);
+  public void load(BlockState state, CompoundNBT tags) {
+    super.load(state, tags);
     extensions = tags.getInt(TAG_EXTENSIONS);
     if (tags.contains(TAG_FLUID, NBT.TAG_COMPOUND)) {
       tank.readFromNBT(tags.getCompound(TAG_FLUID));
@@ -443,8 +443,8 @@ public class CisternTileEntity extends MantleTileEntity implements ICrackableTil
   }
 
   @Override
-  public CompoundNBT write(CompoundNBT compound) {
-    compound = super.write(compound);
+  public CompoundNBT save(CompoundNBT compound) {
+    compound = super.save(compound);
     if (tank.getFluidAmount() > 0) {
       compound.put(TAG_FLUID, tank.writeToNBT());
     }

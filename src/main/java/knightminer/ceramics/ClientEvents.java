@@ -31,7 +31,7 @@ public class ClientEvents {
 
   @SubscribeEvent
   static void setupClient(FMLClientSetupEvent event) {
-    RenderType cutout = RenderType.getCutout();
+    RenderType cutout = RenderType.cutout();
     RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), cutout);
     RenderTypeLookup.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), cutout);
     RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_CISTERN.get(), cutout);
@@ -39,7 +39,7 @@ public class ClientEvents {
     RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
     RenderTypeLookup.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
 
-    ScreenManager.registerFactory(Registration.KILN_CONTAINER.get(), KilnScreen::new);
+    ScreenManager.register(Registration.KILN_CONTAINER.get(), KilnScreen::new);
     ClientRegistry.bindTileEntityRenderer(Registration.CISTERN_TILE_ENTITY.get(), CisternTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(Registration.FAUCET_TILE_ENTITY.get(), FaucetTileEntityRenderer::new);
     ClientRegistry.bindTileEntityRenderer(Registration.CHANNEL_TILE_ENTITY.get(), ChannelTileEntityRenderer::new);

@@ -22,29 +22,29 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
   }
 
   @Override
-  protected void registerTags() {
+  protected void addTags() {
     // vanilla colored terracotta
-    TagsProvider.Builder<Block> coloredTerracotta = this.getOrCreateBuilder(CeramicsTags.Blocks.COLORED_TERRACOTTA);
+    TagsProvider.Builder<Block> coloredTerracotta = this.tag(CeramicsTags.Blocks.COLORED_TERRACOTTA);
     Registration.TERRACOTTA.values().forEach(coloredTerracotta::add);
 
     // porcelain
-    this.getOrCreateBuilder(BlockTags.ENDERMAN_HOLDABLE).add(Registration.UNFIRED_PORCELAIN_BLOCK.get());
-    TagsProvider.Builder<Block> coloredPorcelain = this.getOrCreateBuilder(CeramicsTags.Blocks.COLORED_PORCELAIN);
+    this.tag(BlockTags.ENDERMAN_HOLDABLE).add(Registration.UNFIRED_PORCELAIN_BLOCK.get());
+    TagsProvider.Builder<Block> coloredPorcelain = this.tag(CeramicsTags.Blocks.COLORED_PORCELAIN);
     Registration.PORCELAIN_BLOCK.forEach((color, block) -> {
       if (color != DyeColor.WHITE) {
         coloredPorcelain.add(block);
       }
     });
-    this.getOrCreateBuilder(CeramicsTags.Blocks.PORCELAIN)
+    this.tag(CeramicsTags.Blocks.PORCELAIN)
         .add(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE))
         .addTag(CeramicsTags.Blocks.COLORED_PORCELAIN);
 
     // rainbow porcelain
-    TagsProvider.Builder<Block> rainbow = this.getOrCreateBuilder(CeramicsTags.Blocks.RAINBOW_PORCELAIN);
+    TagsProvider.Builder<Block> rainbow = this.tag(CeramicsTags.Blocks.RAINBOW_PORCELAIN);
     Registration.RAINBOW_PORCELAIN.values().forEach(rainbow::add);
 
     // bricks
-    this.getOrCreateBuilder(CeramicsTags.Blocks.BRICKS).add(
+    this.tag(CeramicsTags.Blocks.BRICKS).add(
         // clay
         Blocks.BRICKS,
         Registration.DARK_BRICKS.get(),
@@ -57,7 +57,7 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
         Registration.MONOCHROME_BRICKS.get(),
         Registration.RAINBOW_BRICKS.get()
     );
-    this.getOrCreateBuilder(BlockTags.WALLS).add(
+    this.tag(BlockTags.WALLS).add(
         // clay
         Registration.DARK_BRICKS.getWall(),
         Registration.DRAGON_BRICKS.getWall(),
@@ -70,16 +70,16 @@ public class BlockTagProvider extends net.minecraft.data.BlockTagsProvider {
         Registration.RAINBOW_BRICKS.getWall()
     );
     // blocks that cisterns connect to
-    this.getOrCreateBuilder(CeramicsTags.Blocks.CISTERN_CONNECTIONS)
+    this.tag(CeramicsTags.Blocks.CISTERN_CONNECTIONS)
         .add(Registration.TERRACOTTA_GAUGE.get(), Registration.PORCELAIN_GAUGE.get(),
              Registration.CLAY_FAUCET.get(), Registration.UNFIRED_FAUCET.get(), Registration.TERRACOTTA_FAUCET.get(), Registration.PORCELAIN_FAUCET.get(),
              Registration.CLAY_CHANNEL.get(), Registration.UNFIRED_CHANNEL.get(), Registration.TERRACOTTA_CHANNEL.get(), Registration.PORCELAIN_CHANNEL.get());
     // list of all terracotta cisterns
-    TagsProvider.Builder<Block> terracottaCisterns = this.getOrCreateBuilder(CeramicsTags.Blocks.TERRACOTTA_CISTERNS)
+    TagsProvider.Builder<Block> terracottaCisterns = this.tag(CeramicsTags.Blocks.TERRACOTTA_CISTERNS)
                                                          .add(Registration.TERRACOTTA_CISTERN.get());
     //noinspection Convert2MethodRef
     Registration.COLORED_CISTERN.forEach(block -> terracottaCisterns.add(block));
-    TagsProvider.Builder<Block> porcelainCisterns = this.getOrCreateBuilder(CeramicsTags.Blocks.PORCELAIN_CISTERNS);
+    TagsProvider.Builder<Block> porcelainCisterns = this.tag(CeramicsTags.Blocks.PORCELAIN_CISTERNS);
     //noinspection Convert2MethodRef
     Registration.PORCELAIN_CISTERN.forEach(block -> porcelainCisterns.add(block));
   }

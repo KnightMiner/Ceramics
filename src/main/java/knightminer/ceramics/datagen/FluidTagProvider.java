@@ -19,9 +19,9 @@ public class FluidTagProvider extends FluidTagsProvider {
 	}
 
 	@Override
-	protected void registerTags() {
+	protected void addTags() {
 		// water and lava are handled by the temperature check, so just make empty tags
-		this.getOrCreateBuilder(CeramicsTags.Fluids.COOL_FLUIDS);
-		this.getOrCreateBuilder(CeramicsTags.Fluids.HOT_FLUIDS);
+		this.tag(CeramicsTags.Fluids.COOL_FLUIDS);
+		this.tag(CeramicsTags.Fluids.HOT_FLUIDS);
 	}
 }

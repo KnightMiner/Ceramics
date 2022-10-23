@@ -84,14 +84,14 @@ public class Registration {
   private static final ItemGroup GROUP = new ItemGroup(Ceramics.MOD_ID) {
     @Override
     @OnlyIn(Dist.CLIENT)
-    public ItemStack createIcon() {
+    public ItemStack makeIcon() {
       return new ItemStack(PORCELAIN_BRICK);
     }
   };
   /** Item properties with the group set */
-  private static final Item.Properties GROUP_PROPS = new Item.Properties().group(GROUP);
+  private static final Item.Properties GROUP_PROPS = new Item.Properties().tab(GROUP);
   /** Item properties with the group set and a stack size of 1 */
-  private static final Item.Properties UNSTACKABLE_PROPS = new Item.Properties().maxStackSize(1).group(GROUP);
+  private static final Item.Properties UNSTACKABLE_PROPS = new Item.Properties().stacksTo(1).tab(GROUP);
   /** Item block function that sets the group props */
   private static final Function<Block,BlockItem> DEFAULT_BLOCK_ITEM = (block) -> new BlockItem(block, GROUP_PROPS);
   /** Item block function using {@link BlockTooltipItem} */
@@ -120,24 +120,24 @@ public class Registration {
     .build();
 
   /* Building blocks */
-  public static final ItemObject<Block> UNFIRED_PORCELAIN_BLOCK = BLOCKS.register("unfired_porcelain_block", Block.Properties.create(Material.CLAY).hardnessAndResistance(0.6F).sound(SoundType.GROUND), DEFAULT_BLOCK_ITEM);
+  public static final ItemObject<Block> UNFIRED_PORCELAIN_BLOCK = BLOCKS.register("unfired_porcelain_block", Block.Properties.of(Material.CLAY).strength(0.6F).sound(SoundType.GRAVEL), DEFAULT_BLOCK_ITEM);
 
   // porcelain
-  public static final EnumObject<DyeColor,Block> PORCELAIN_BLOCK = BLOCKS.registerEnum(DyeColor.values(), "porcelain", (color) -> new Block(Block.Properties.from(TERRACOTTA.get(color))), DEFAULT_BLOCK_ITEM);
+  public static final EnumObject<DyeColor,Block> PORCELAIN_BLOCK = BLOCKS.registerEnum(DyeColor.values(), "porcelain", (color) -> new Block(Block.Properties.copy(TERRACOTTA.get(color))), DEFAULT_BLOCK_ITEM);
   public static final EnumObject<RainbowPorcelain,Block> RAINBOW_PORCELAIN = BLOCKS.registerEnum(RainbowPorcelain.values(), "rainbow_porcelain",
-      (color) -> new Block(Block.Properties.create(Material.ROCK, color.getColor()).hardnessAndResistance(2.0F, 6.0F)), TOOLTIP_BLOCK_ITEM);
+      (color) -> new Block(Block.Properties.of(Material.STONE, color.getColor()).strength(2.0F, 6.0F)), TOOLTIP_BLOCK_ITEM);
 
   // clay bricks
-  public static final WallBuildingBlockObject DARK_BRICKS   = BLOCKS.registerWallBuilding("dark_bricks", Block.Properties.create(Material.ROCK, MaterialColor.RED).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject LAVA_BRICKS   = BLOCKS.registerWallBuilding("lava_bricks", Block.Properties.create(Material.ROCK, MaterialColor.ADOBE).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject DRAGON_BRICKS = BLOCKS.registerWallBuilding("dragon_bricks", Block.Properties.create(Material.ROCK, MaterialColor.OBSIDIAN).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject DARK_BRICKS   = BLOCKS.registerWallBuilding("dark_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_RED).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject LAVA_BRICKS   = BLOCKS.registerWallBuilding("lava_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject DRAGON_BRICKS = BLOCKS.registerWallBuilding("dragon_bricks", Block.Properties.of(Material.STONE, MaterialColor.PODZOL).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
 
   // porcelain bricks
-  public static final WallBuildingBlockObject PORCELAIN_BRICKS  = BLOCKS.registerWallBuilding("porcelain_bricks", Block.Properties.create(Material.ROCK, MaterialColor.SNOW).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject MONOCHROME_BRICKS = BLOCKS.registerWallBuilding("monochrome_bricks", Block.Properties.create(Material.ROCK, MaterialColor.STONE).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject GOLDEN_BRICKS     = BLOCKS.registerWallBuilding("golden_bricks", Block.Properties.create(Material.ROCK, MaterialColor.YELLOW).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject MARINE_BRICKS     = BLOCKS.registerWallBuilding("marine_bricks", Block.Properties.create(Material.ROCK, MaterialColor.LIGHT_BLUE).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject RAINBOW_BRICKS    = BLOCKS.registerWallBuilding("rainbow_bricks", Block.Properties.create(Material.ROCK, MaterialColor.GREEN).hardnessAndResistance(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject PORCELAIN_BRICKS  = BLOCKS.registerWallBuilding("porcelain_bricks", Block.Properties.of(Material.STONE, MaterialColor.SNOW).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject MONOCHROME_BRICKS = BLOCKS.registerWallBuilding("monochrome_bricks", Block.Properties.of(Material.STONE, MaterialColor.STONE).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject GOLDEN_BRICKS     = BLOCKS.registerWallBuilding("golden_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_YELLOW).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject MARINE_BRICKS     = BLOCKS.registerWallBuilding("marine_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_LIGHT_BLUE).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject RAINBOW_BRICKS    = BLOCKS.registerWallBuilding("rainbow_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_GREEN).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
 
 
   /* items */
@@ -145,7 +145,7 @@ public class Registration {
   public static final ItemObject<Item> PORCELAIN_BRICK = ITEMS.register("porcelain_brick", GROUP_PROPS);
 
   // tools
-  public static final ItemObject<Item> UNFIRED_CLAY_BUCKET           = ITEMS.register("unfired_clay_bucket", new Item.Properties().maxStackSize(16).group(GROUP));
+  public static final ItemObject<Item> UNFIRED_CLAY_BUCKET           = ITEMS.register("unfired_clay_bucket", new Item.Properties().stacksTo(16).tab(GROUP));
   public static final ItemObject<ClayBucketItem> CLAY_BUCKET         = ITEMS.register("clay_bucket", () -> new ClayBucketItem(false, GROUP_PROPS));
   public static final ItemObject<ClayBucketItem> CRACKED_CLAY_BUCKET = ITEMS.register("cracked_clay_bucket", () -> new ClayBucketItem(true, GROUP_PROPS));
   public static final ItemObject<Item> MILK_CLAY_BUCKET              = ITEMS.register("milk_clay_bucket", () -> new MilkClayBucketItem(false, UNSTACKABLE_PROPS));
@@ -160,7 +160,7 @@ public class Registration {
   public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEMS.register("clay_boots", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlotType.FEET, UNSTACKABLE_PROPS));
 
   // kiln block
-  public static final ItemObject<KilnBlock> KILN = BLOCKS.register("kiln", () -> new KilnBlock(terracottaProps(MaterialColor.ADOBE).setLightLevel(s -> s.get(KilnBlock.LIT) ? 13 : 0)), DEFAULT_BLOCK_ITEM);
+  public static final ItemObject<KilnBlock> KILN = BLOCKS.register("kiln", () -> new KilnBlock(terracottaProps(MaterialColor.COLOR_ORANGE).lightLevel(s -> s.getValue(KilnBlock.LIT) ? 13 : 0)), DEFAULT_BLOCK_ITEM);
   public static final RegistryObject<ContainerType<KilnContainer>> KILN_CONTAINER = CONTAINERS.register("kiln", KilnContainer::new);
   public static final RegistryObject<TileEntityType<KilnTileEntity>> KILN_TILE_ENTITY = TILE_ENTIITES.register("kiln", KilnTileEntity::new, KILN);
   // kiln recipes
@@ -170,20 +170,20 @@ public class Registration {
   /*
    * fluid handling
    */
-  private static final AbstractBlock.Properties CLAY_PROPERTIES = AbstractBlock.Properties.create(Material.CLAY).harvestTool(ToolType.SHOVEL).hardnessAndResistance(0.6F).sound(SoundType.GROUND).notSolid();
+  private static final AbstractBlock.Properties CLAY_PROPERTIES = AbstractBlock.Properties.of(Material.CLAY).harvestTool(ToolType.SHOVEL).strength(0.6F).sound(SoundType.GRAVEL).noOcclusion();
   private static final Function<Block,BlockItem> GAUGE_BLOCK_ITEM = FIXED_TOOLTIP.apply("gauge.tooltip");
-  public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.ADOBE).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), GAUGE_BLOCK_ITEM);
-  public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(AbstractBlock.Properties.create(Material.MISCELLANEOUS, MaterialColor.WHITE_TERRACOTTA).harvestTool(ToolType.PICKAXE).doesNotBlockMovement().hardnessAndResistance(0.5F).notSolid()), GAUGE_BLOCK_ITEM);
+  public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(AbstractBlock.Properties.of(Material.DECORATION, MaterialColor.COLOR_ORANGE).harvestTool(ToolType.PICKAXE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
+  public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(AbstractBlock.Properties.of(Material.DECORATION, MaterialColor.TERRACOTTA_WHITE).harvestTool(ToolType.PICKAXE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
 
   // cistern
   private static final Function<String,Function<Block,BlockItem>> CRACKABLE_BLOCK_ITEM = tooltip -> block -> new CrackableBlockItem(block, GROUP_PROPS, tooltip);
   private static final Function<Block,BlockItem> TERRACOTTA_CISTERN_BLOCK_ITEM = CRACKABLE_BLOCK_ITEM.apply("terracotta_cistern.tooltip");
   private static final Function<Block,BlockItem> PORCELAIN_CISTERN_BLOCK_ITEM = FIXED_TOOLTIP.apply("porcelain_cistern.tooltip");
   public static final ItemObject<CisternBlock> CLAY_CISTERN = BLOCKS.register("clay_cistern", () -> new CisternBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
-  public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).notSolid().tickRandomly(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
+  public static final ItemObject<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MaterialColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
+  public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion().randomTicks(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
   public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final EnumObject<DyeColor, FluidCisternBlock> PORCELAIN_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "porcelain_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).notSolid(), false), PORCELAIN_CISTERN_BLOCK_ITEM);
+  public static final EnumObject<DyeColor, FluidCisternBlock> PORCELAIN_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "porcelain_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion(), false), PORCELAIN_CISTERN_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<CisternTileEntity>> CISTERN_TILE_ENTITY = TILE_ENTIITES.register("cistern", CisternTileEntity::new, builder -> {
     builder.add(TERRACOTTA_CISTERN.get());
     builder.addAll(COLORED_CISTERN.values());
@@ -192,16 +192,16 @@ public class Registration {
 
   // faucet
   public static final ItemObject<FaucetBlock> CLAY_FAUCET = BLOCKS.register("clay_faucet", () -> new FaucetBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_faucet.tooltip"));
+  public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_faucet.tooltip"));
   public static final ItemObject<FaucetBlock> UNFIRED_FAUCET = BLOCKS.register("unfired_faucet", () -> new FaucetBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.WHITE_TERRACOTTA).notSolid(), false), TOOLTIP_BLOCK_ITEM);
+  public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.TERRACOTTA_WHITE).noOcclusion(), false), TOOLTIP_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<FaucetTileEntity>> FAUCET_TILE_ENTITY = TILE_ENTIITES.register("faucet", FaucetTileEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
 
   // channel
   public static final ItemObject<ChannelBlock> CLAY_CHANNEL = BLOCKS.register("clay_channel", () -> new ChannelBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.ADOBE).notSolid().tickRandomly(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_channel.tooltip"));
+  public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_channel.tooltip"));
   public static final ItemObject<ChannelBlock> UNFIRED_CHANNEL = BLOCKS.register("unfired_channel", () -> new ChannelBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
-  public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.WHITE_TERRACOTTA).notSolid(), false), TOOLTIP_BLOCK_ITEM);
+  public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.TERRACOTTA_WHITE).noOcclusion(), false), TOOLTIP_BLOCK_ITEM);
   public static final RegistryObject<TileEntityType<ChannelTileEntity>> CHANNEL_TILE_ENTITY = TILE_ENTIITES.register("channel", ChannelTileEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
   // clay repair
@@ -218,7 +218,7 @@ public class Registration {
    * @return  Block properties
    */
   private static AbstractBlock.Properties terracottaProps(MaterialColor color) {
-    return AbstractBlock.Properties.create(Material.ROCK, color).harvestTool(ToolType.PICKAXE).setRequiresTool().hardnessAndResistance(1.25F, 4.2F);
+    return AbstractBlock.Properties.of(Material.STONE, color).harvestTool(ToolType.PICKAXE).requiresCorrectToolForDrops().strength(1.25F, 4.2F);
   }
 
   /**
@@ -229,22 +229,22 @@ public class Registration {
   private static MaterialColor getTerracottaColor(DyeColor color) {
     switch (color) {
       default:
-      case WHITE:      return MaterialColor.WHITE_TERRACOTTA;
-      case ORANGE:     return MaterialColor.ORANGE_TERRACOTTA;
-      case MAGENTA:    return MaterialColor.MAGENTA_TERRACOTTA;
-      case LIGHT_BLUE: return MaterialColor.LIGHT_BLUE_TERRACOTTA;
-      case YELLOW:     return MaterialColor.YELLOW_TERRACOTTA;
-      case LIME:       return MaterialColor.LIME_TERRACOTTA;
-      case PINK:       return MaterialColor.PINK_TERRACOTTA;
-      case GRAY:       return MaterialColor.GRAY_TERRACOTTA;
-      case LIGHT_GRAY: return MaterialColor.LIGHT_GRAY_TERRACOTTA;
-      case CYAN:       return MaterialColor.CYAN_TERRACOTTA;
-      case PURPLE:     return MaterialColor.PURPLE_TERRACOTTA;
-      case BLUE:       return MaterialColor.BLUE_TERRACOTTA;
-      case BROWN:      return MaterialColor.BROWN_TERRACOTTA;
-      case GREEN:      return MaterialColor.GREEN_TERRACOTTA;
-      case RED:        return MaterialColor.RED_TERRACOTTA;
-      case BLACK:      return MaterialColor.BLACK_TERRACOTTA;
+      case WHITE:      return MaterialColor.TERRACOTTA_WHITE;
+      case ORANGE:     return MaterialColor.TERRACOTTA_ORANGE;
+      case MAGENTA:    return MaterialColor.TERRACOTTA_MAGENTA;
+      case LIGHT_BLUE: return MaterialColor.TERRACOTTA_LIGHT_BLUE;
+      case YELLOW:     return MaterialColor.TERRACOTTA_YELLOW;
+      case LIME:       return MaterialColor.TERRACOTTA_LIGHT_GREEN;
+      case PINK:       return MaterialColor.TERRACOTTA_PINK;
+      case GRAY:       return MaterialColor.TERRACOTTA_GRAY;
+      case LIGHT_GRAY: return MaterialColor.TERRACOTTA_LIGHT_GRAY;
+      case CYAN:       return MaterialColor.TERRACOTTA_CYAN;
+      case PURPLE:     return MaterialColor.TERRACOTTA_PURPLE;
+      case BLUE:       return MaterialColor.TERRACOTTA_BLUE;
+      case BROWN:      return MaterialColor.TERRACOTTA_BROWN;
+      case GREEN:      return MaterialColor.TERRACOTTA_GREEN;
+      case RED:        return MaterialColor.TERRACOTTA_RED;
+      case BLACK:      return MaterialColor.TERRACOTTA_BLACK;
     }
   }
 }

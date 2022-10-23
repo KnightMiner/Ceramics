@@ -121,15 +121,15 @@ public class CisternModel implements IModelGeometry<CisternModel> {
 		public T read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
 			SimpleBlockModel model = SimpleBlockModel.deserialize(deserializationContext, modelContents);
 			// parse fluid cuboid for each side
-			JsonObject fluidJson = JSONUtils.getJsonObject(modelContents, "fluids");
+			JsonObject fluidJson = JSONUtils.getAsJsonObject(modelContents, "fluids");
 			Map<Direction,FluidCuboid> fluids = new EnumMap<>(Direction.class);
 			// Y axis reused for base and extension
-			fluids.put(Direction.DOWN, FluidCuboid.fromJson(JSONUtils.getJsonObject(fluidJson, "base")));
-			fluids.put(Direction.UP, FluidCuboid.fromJson(JSONUtils.getJsonObject(fluidJson, "extension")));
+			fluids.put(Direction.DOWN, FluidCuboid.fromJson(JSONUtils.getAsJsonObject(fluidJson, "base")));
+			fluids.put(Direction.UP, FluidCuboid.fromJson(JSONUtils.getAsJsonObject(fluidJson, "extension")));
 			// sides as themselves
 			for (Direction direction : Plane.HORIZONTAL) {
-				if (fluidJson.has(direction.getString())) {
-					fluids.put(direction, FluidCuboid.fromJson(JSONUtils.getJsonObject(fluidJson, direction.getString())));
+				if (fluidJson.has(direction.getSerializedName())) {
+					fluids.put(direction, FluidCuboid.fromJson(JSONUtils.getAsJsonObject(fluidJson, direction.getSerializedName())));
 				}
 			}
 			return constructor.apply(model, fluids);

@@ -58,7 +58,7 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
 
   /** Gets the arrow for the given recipe */
   protected IDrawableAnimated getArrow(KilnRecipe recipe) {
-    int cookTime = recipe.getCookTime();
+    int cookTime = recipe.getCookingTime();
     if (cookTime <= 0) {
       cookTime = 100;
     }
@@ -100,7 +100,7 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   @Override
   public void setIngredients(KilnRecipe recipe, IIngredients ingredients) {
     ingredients.setInputIngredients(recipe.getIngredients());
-    ingredients.setOutput(VanillaTypes.ITEM, recipe.getRecipeOutput());
+    ingredients.setOutput(VanillaTypes.ITEM, recipe.getResultItem());
   }
 
   @Override
@@ -126,22 +126,22 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
     if (experience > 0.0F) {
       TranslationTextComponent experienceString = new TranslationTextComponent("gui.jei.category.smelting.experience", experience);
       Minecraft minecraft = Minecraft.getInstance();
-      FontRenderer fontRenderer = minecraft.fontRenderer;
-      int stringWidth = fontRenderer.getStringPropertyWidth(experienceString);
-      fontRenderer.func_243248_b(matrixStack, experienceString, (this.background.getWidth() - stringWidth), 0, 0xFF808080);
+      FontRenderer fontRenderer = minecraft.font;
+      int stringWidth = fontRenderer.width(experienceString);
+      fontRenderer.draw(matrixStack, experienceString, (this.background.getWidth() - stringWidth), 0, 0xFF808080);
     }
   }
 
   /** Draws the recipe cook time info */
   protected void drawCookTime(KilnRecipe recipe, MatrixStack matrixStack) {
-    int cookTime = recipe.getCookTime();
+    int cookTime = recipe.getCookingTime();
     if (cookTime > 0) {
       int cookTimeSeconds = cookTime / 20;
       TranslationTextComponent timeString = new TranslationTextComponent("gui.jei.category.smelting.time.seconds", cookTimeSeconds);
       Minecraft minecraft = Minecraft.getInstance();
-      FontRenderer fontRenderer = minecraft.fontRenderer;
-      int stringWidth = fontRenderer.getStringPropertyWidth(timeString);
-      fontRenderer.func_243248_b(matrixStack, timeString, (this.background.getWidth() - stringWidth), 45, 0xFF808080);
+      FontRenderer fontRenderer = minecraft.font;
+      int stringWidth = fontRenderer.width(timeString);
+      fontRenderer.draw(matrixStack, timeString, (this.background.getWidth() - stringWidth), 45, 0xFF808080);
     }
   }
 }

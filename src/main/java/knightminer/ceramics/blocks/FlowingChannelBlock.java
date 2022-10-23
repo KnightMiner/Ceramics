@@ -22,6 +22,8 @@ import slimeknights.mantle.util.TileEntityHelper;
 import javax.annotation.Nullable;
 import java.util.Random;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Channel extension that supports moving fluids
  */
@@ -45,7 +47,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	private static Direction fromOffset(BlockPos pos, BlockPos neighbor) {
 		BlockPos offset = neighbor.subtract(pos);
 		for (Direction direction : Direction.values()) {
-			if (direction.getDirectionVec().equals(offset)) {
+			if (direction.getNormal().equals(offset)) {
 				return direction;
 			}
 		}
@@ -58,7 +60,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	@Deprecated
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-		if (!worldIn.isRemote()) {
+		if (!worldIn.isClientSide()) {
 			TileEntityHelper.getTile(ChannelTileEntity.class, worldIn, pos)
 											.ifPresent(te -> te.removeCachedNeighbor(fromOffset(pos, fromPos)));
 		}
@@ -86,7 +88,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
 		if (crackable) {
 			ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
 		}
@@ -94,10 +96,10 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 
 	@Deprecated
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+	public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
 		if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
 			return ActionResultType.SUCCESS;
 		}
-		return super.onBlockActivated(state, world, pos, player, hand, hit);
+		return super.use(state, world, pos, player, hand, hit);
 	}
 }

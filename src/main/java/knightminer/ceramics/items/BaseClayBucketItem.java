@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Shared logic between the milk and fluid filled clay buckets
  */
@@ -62,9 +64,9 @@ public abstract class BaseClayBucketItem extends Item {
 
   @Override
   @OnlyIn(Dist.CLIENT)
-  public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+  public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
     if (isCracked) {
-      tooltip.add(new TranslationTextComponent(this.getTranslationKey() + ".tooltip").mergeStyle(TextFormatting.GRAY));
+      tooltip.add(new TranslationTextComponent(this.getDescriptionId() + ".tooltip").withStyle(TextFormatting.GRAY));
     }
   }
 
@@ -86,22 +88,22 @@ public abstract class BaseClayBucketItem extends Item {
    */
   protected static void renderBrokenItem(PlayerEntity player, ItemStack stack) {
     // play sound
-    World world = player.getEntityWorld();
-    world.playSound(player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.ENTITY_ITEM_BREAK, player.getSoundCategory(), 0.8F, 0.8F + world.rand.nextFloat() * 0.4F, false);
+    World world = player.getCommandSenderWorld();
+    world.playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BREAK, player.getSoundSource(), 0.8F, 0.8F + world.random.nextFloat() * 0.4F, false);
     // add particles
-    Random rand = player.getRNG();
+    Random rand = player.getRandom();
     ItemParticleData particle = new ItemParticleData(ParticleTypes.ITEM, stack);
     for(int i = 0; i < 5; ++i) {
       Vector3d offset = new Vector3d((rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
-      offset = offset.rotatePitch(-player.rotationPitch * DEGREE_TO_RAD);
-      offset = offset.rotateYaw(-player.rotationYaw * DEGREE_TO_RAD);
+      offset = offset.xRot(-player.xRot * DEGREE_TO_RAD);
+      offset = offset.yRot(-player.yRot * DEGREE_TO_RAD);
       Vector3d pos = new Vector3d((rand.nextFloat() - 0.5D) * 0.3D, -rand.nextFloat() * 0.6D - 0.3D, 0.6D);
-      pos = pos.rotatePitch(-player.rotationPitch * DEGREE_TO_RAD);
-      pos = pos.rotateYaw(-player.rotationYaw * DEGREE_TO_RAD);
-      pos = pos.add(player.getPosX(), player.getPosY() + player.getEyeHeight(), player.getPosZ());
+      pos = pos.xRot(-player.xRot * DEGREE_TO_RAD);
+      pos = pos.yRot(-player.yRot * DEGREE_TO_RAD);
+      pos = pos.add(player.getX(), player.getY() + player.getEyeHeight(), player.getZ());
       // spawnParticle is no-oped on server, need to use server specific variant
       if (world instanceof ServerWorld) {
-        ((ServerWorld)world).spawnParticle(particle, pos.x, pos.y, pos.z, 1, offset.x, offset.y + 0.05D, offset.z, 0.0D);
+        ((ServerWorld)world).sendParticles(particle, pos.x, pos.y, pos.z, 1, offset.x, offset.y + 0.05D, offset.z, 0.0D);
       } else {
         world.addParticle(particle, pos.x, pos.y, pos.z, offset.x, offset.y + 0.05D, offset.z);
       }
@@ -165,8 +167,8 @@ public abstract class BaseClayBucketItem extends Item {
    * @param stack   Stack to add
    */
   protected static void addItem(PlayerEntity player, ItemStack stack) {
-    if (!player.inventory.addItemStackToInventory(stack)) {
-      player.dropItem(stack, false);
+    if (!player.inventory.add(stack)) {
+      player.drop(stack, false);
     }
   }
 

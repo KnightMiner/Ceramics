@@ -29,20 +29,22 @@ import javax.annotation.Nullable;
 
 import static net.minecraft.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Decorative block to place on the side of a cistern, reads fluid value
  */
 public class GaugeBlock extends Block {
   private static final VoxelShape[] BOUNDS = {
-      makeCuboidShape( 4, 4,  0, 12, 12,  1),
-      makeCuboidShape(15, 4,  4, 16, 12, 12),
-      makeCuboidShape( 4, 4, 15, 12, 12, 16),
-      makeCuboidShape( 0, 4,  4,  1, 12, 12)
+      box( 4, 4,  0, 12, 12,  1),
+      box(15, 4,  4, 16, 12, 12),
+      box( 4, 4, 15, 12, 12, 16),
+      box( 0, 4,  4,  1, 12, 12)
   };
 
   public GaugeBlock(Properties builder) {
     super(builder);
-    this.setDefaultState(this.stateContainer.getBaseState().with(HORIZONTAL_FACING, Direction.NORTH));
+    this.registerDefaultState(this.stateDefinition.any().setValue(HORIZONTAL_FACING, Direction.NORTH));
   }
 
 
@@ -51,18 +53,18 @@ public class GaugeBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+  public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
     // display adjacent tank contents
-    if (!world.isRemote()) {
-      Direction side = state.get(HORIZONTAL_FACING);
-      TileEntity te = world.getTileEntity(pos.offset(side.getOpposite()));
+    if (!world.isClientSide()) {
+      Direction side = state.getValue(HORIZONTAL_FACING);
+      TileEntity te = world.getBlockEntity(pos.relative(side.getOpposite()));
       if (te != null) {
         te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side).ifPresent(handler -> {
           FluidStack fluid = handler.getFluidInTank(0);
           if (fluid.isEmpty()) {
-            player.sendStatusMessage(new TranslationTextComponent(Ceramics.lang("block", "gauge.empty")), true);
+            player.displayClientMessage(new TranslationTextComponent(Ceramics.lang("block", "gauge.empty")), true);
           } else {
-            player.sendStatusMessage(new TranslationTextComponent(Ceramics.lang("block", "gauge.contents"), fluid.getAmount(), fluid.getDisplayName()), true);
+            player.displayClientMessage(new TranslationTextComponent(Ceramics.lang("block", "gauge.contents"), fluid.getAmount(), fluid.getDisplayName()), true);
           }
         });
       }
@@ -78,29 +80,29 @@ public class GaugeBlock extends Block {
   @Deprecated
   @Override
   public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-    return BOUNDS[state.get(HORIZONTAL_FACING).getHorizontalIndex()];
+    return BOUNDS[state.getValue(HORIZONTAL_FACING).get2DDataValue()];
   }
 
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public boolean isValidPosition(BlockState state, IWorldReader world, BlockPos pos) {
-    Direction direction = state.get(HORIZONTAL_FACING);
-    TileEntity te = world.getTileEntity(pos.offset(direction.getOpposite()));
+  public boolean canSurvive(BlockState state, IWorldReader world, BlockPos pos) {
+    Direction direction = state.getValue(HORIZONTAL_FACING);
+    TileEntity te = world.getBlockEntity(pos.relative(direction.getOpposite()));
     return te != null && te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction).isPresent();
   }
 
   @Override
   @Nullable
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    BlockState state = this.getDefaultState();
-    IWorldReader world = context.getWorld();
-    BlockPos pos = context.getPos();
+    BlockState state = this.defaultBlockState();
+    IWorldReader world = context.getLevel();
+    BlockPos pos = context.getClickedPos();
     Direction[] nearestDir = context.getNearestLookingDirections();
     for (Direction direction : nearestDir) {
       if (direction.getAxis().isHorizontal()) {
-        state = state.with(HORIZONTAL_FACING, direction.getOpposite());
-        if (state.isValidPosition(world, pos)) {
+        state = state.setValue(HORIZONTAL_FACING, direction.getOpposite());
+        if (state.canSurvive(world, pos)) {
           return state;
         }
       }
@@ -112,26 +114,26 @@ public class GaugeBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
-    return facing.getOpposite() == state.get(HORIZONTAL_FACING) && !state.isValidPosition(worldIn, currentPos) ? Blocks.AIR.getDefaultState() : state;
+  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    return facing.getOpposite() == state.getValue(HORIZONTAL_FACING) && !state.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : state;
   }
 
   @Override
   @SuppressWarnings("deprecation")
   @Deprecated
   public BlockState rotate(BlockState state, Rotation rot) {
-    return state.with(HORIZONTAL_FACING, rot.rotate(state.get(HORIZONTAL_FACING)));
+    return state.setValue(HORIZONTAL_FACING, rot.rotate(state.getValue(HORIZONTAL_FACING)));
   }
 
   @Override
   @SuppressWarnings("deprecation")
   @Deprecated
   public BlockState mirror(BlockState state, Mirror mirror) {
-    return state.rotate(mirror.toRotation(state.get(HORIZONTAL_FACING)));
+    return state.rotate(mirror.getRotation(state.getValue(HORIZONTAL_FACING)));
   }
 
   @Override
-  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
     builder.add(HORIZONTAL_FACING);
   }
 }

@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public enum ArmorMaterials implements IArmorMaterial {
   // name, durability, protection, enchantability, toughness
-  CLAY("clay", 4, new int[]{1, 2, 3, 1}, 7, 0.0f, 0.0f, () -> Ingredient.fromItems(Registration.CLAY_PLATE));
+  CLAY("clay", 4, new int[]{1, 2, 3, 1}, 7, 0.0f, 0.0f, () -> Ingredient.of(Registration.CLAY_PLATE));
 
   // borrowed from vanilla
   private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
@@ -40,28 +40,28 @@ public enum ArmorMaterials implements IArmorMaterial {
   }
 
   @Override
-  public int getDurability(EquipmentSlotType slot) {
+  public int getDurabilityForSlot(EquipmentSlotType slot) {
     return MAX_DAMAGE_ARRAY[slot.getIndex()] * this.durabilityFactor;
   }
 
   @Override
-  public int getDamageReductionAmount(EquipmentSlotType slot) {
+  public int getDefenseForSlot(EquipmentSlotType slot) {
     return this.protection[slot.getIndex()];
   }
 
   @Override
-  public int getEnchantability() {
+  public int getEnchantmentValue() {
     return this.enchantability;
   }
 
   @Override
-  public SoundEvent getSoundEvent() {
-    return SoundEvents.ITEM_ARMOR_EQUIP_GENERIC;
+  public SoundEvent getEquipSound() {
+    return SoundEvents.ARMOR_EQUIP_GENERIC;
   }
 
   @Override
-  public Ingredient getRepairMaterial() {
-    return repairMaterial.getValue();
+  public Ingredient getRepairIngredient() {
+    return repairMaterial.get();
   }
 
   @OnlyIn(Dist.CLIENT)

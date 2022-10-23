@@ -49,7 +49,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 	/** Item overrides list, note overrides does not work through a model wrapper */
 	public static final ItemOverrideList OVERRIDES = new ItemOverrideList() {
 		@Override
-		public IBakedModel getOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
+		public IBakedModel resolve(IBakedModel model, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity livingEntity) {
 			int cracks = CrackableBlockItem.getCracks(stack);
 			if (cracks > 0 && model instanceof BakedModel) {
 				return ((BakedModel)model).getModel(cracks);
@@ -71,7 +71,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 		for (int i = 1; i <=5; i++) {
 			String name = "cracks_" + i;
 			RenderMaterial material = owner.resolveTexture(name);
-			if (Objects.equals(material.getTextureLocation(), MissingTextureSprite.getLocation())) {
+			if (Objects.equals(material.texture(), MissingTextureSprite.getLocation())) {
 				missingTextureErrors.add(Pair.of(name, owner.getModelName()));
 			}
 			textures.add(material);
@@ -93,11 +93,11 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 		newElements.addAll(elements);
 		for (BlockPart element : elements) {
 			Map<Direction,BlockPartFace> mapFaces = new HashMap<>();
-			for (Entry<Direction, BlockPartFace> entry : element.mapFaces.entrySet()) {
+			for (Entry<Direction, BlockPartFace> entry : element.faces.entrySet()) {
 				BlockPartFace face = entry.getValue();
-				mapFaces.put(entry.getKey(), new BlockPartFace(face.cullFace, -1, "cracks", face.blockFaceUV));
+				mapFaces.put(entry.getKey(), new BlockPartFace(face.cullForDirection, -1, "cracks", face.uv));
 			}
-			newElements.add(new BlockPart(element.positionFrom, element.positionTo, mapFaces, element.partRotation, element.shade));
+			newElements.add(new BlockPart(element.from, element.to, mapFaces, element.rotation, element.shade));
 		}
 
 		// wrap the original model

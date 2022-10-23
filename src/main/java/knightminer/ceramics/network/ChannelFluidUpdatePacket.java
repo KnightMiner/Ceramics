@@ -25,7 +25,7 @@ public class ChannelFluidUpdatePacket extends FluidUpdatePacket {
 
 	private static class HandleClient {
 		private static void handle(ChannelFluidUpdatePacket packet) {
-			TileEntityHelper.getTile(ChannelTileEntity.class, Minecraft.getInstance().world, packet.pos).ifPresent(te -> te.updateFluid(packet.fluid));
+			TileEntityHelper.getTile(ChannelTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.updateFluid(packet.fluid));
 		}
 	}
 }

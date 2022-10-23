@@ -55,17 +55,17 @@ public class CisternTileEntityRenderer extends TileEntityRenderer<CisternTileEnt
             for (Direction direction : Plane.HORIZONTAL) {
               // state and model must contain that direction
               FluidCuboid cuboid = model.getFluid(direction);
-              if (cuboid != null && state.get(CisternBlock.CONNECTIONS.get(direction))) {
+              if (cuboid != null && state.getValue(CisternBlock.CONNECTIONS.get(direction))) {
                 FluidRenderer.renderCuboid(matrices, builder, cuboid, still, flowing, cuboid.getFromScaled(), cuboid.getToScaled(), color, light, false);
               }
             }
           } else {
             // determine the relevant height of the center
-            FluidCuboid center = model.getCenterFluid(state.get(CisternBlock.EXTENSION));
+            FluidCuboid center = model.getCenterFluid(state.getValue(CisternBlock.EXTENSION));
             Vector3f from = center.getFromScaled();
             Vector3f to = center.getToScaled().copy();
-            float minY = from.getY();
-            to.setY(minY + amount * (to.getY() - minY) / (float)capacityPerLayer);
+            float minY = from.y();
+            to.setY(minY + amount * (to.y() - minY) / (float)capacityPerLayer);
             // render the center using Mantle's logic
             FluidRenderer.renderCuboid(matrices, builder, center, still, still, from, to, color, light, false);
 
@@ -73,15 +73,15 @@ public class CisternTileEntityRenderer extends TileEntityRenderer<CisternTileEnt
             for (Direction direction : Plane.HORIZONTAL) {
               // state and model must contain that direction
               FluidCuboid cuboid = model.getFluid(direction);
-              if (cuboid != null && state.get(CisternBlock.CONNECTIONS.get(direction))) {
+              if (cuboid != null && state.getValue(CisternBlock.CONNECTIONS.get(direction))) {
                 // bottom of the side must be smaller than the height to consider
                 Vector3f sFrom = cuboid.getFromScaled();
-                if (sFrom.getY() < to.getY()) {
+                if (sFrom.y() < to.y()) {
                   // if the side end is larger than the center, clamp it down
                   Vector3f sTo = cuboid.getToScaled();
-                  if (sTo.getY() > to.getY()) {
+                  if (sTo.y() > to.y()) {
                     sTo = sTo.copy();
-                    sTo.setY(to.getY());
+                    sTo.setY(to.y());
                   }
                   FluidRenderer.renderCuboid(matrices, builder, cuboid, still, still, sFrom, sTo, color, light, false);
                 }

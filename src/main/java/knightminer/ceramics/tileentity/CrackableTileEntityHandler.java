@@ -82,20 +82,20 @@ public class CrackableTileEntityHandler {
 			if (BaseClayBucketItem.doesCrack(fluid)) {
 				// after 5, break the block
 				if (cracks >= 5) {
-					World world = parent.getWorld();
+					World world = parent.getLevel();
 					if (world != null) {
-						world.destroyBlock(parent.getPos(), false);
+						world.destroyBlock(parent.getBlockPos(), false);
 						// if we have at least a bucket of fluid, place in world if possible
 						if (relevantAmount > FluidAttributes.BUCKET_VOLUME) {
-							BlockState state = fluid.getDefaultState().getBlockState();
+							BlockState state = fluid.defaultFluidState().createLegacyBlock();
 							if (state.getBlock() != Blocks.AIR) {
-								world.setBlockState(parent.getPos(), state);
+								world.setBlockAndUpdate(parent.getBlockPos(), state);
 							}
 							// if less, try to place a flowing fluid
 						} else if (fluid instanceof FlowingFluid) {
 							int level = Math.max(1, relevantAmount * 8 / FluidAttributes.BUCKET_VOLUME);
-							BlockState state = ((FlowingFluid) fluid).getFlowingFluidState(level, false).getBlockState();
-							world.setBlockState(parent.getPos(), state);
+							BlockState state = ((FlowingFluid) fluid).getFlowing(level, false).createLegacyBlock();
+							world.setBlockAndUpdate(parent.getBlockPos(), state);
 						}
 					}
 				} else {
@@ -129,12 +129,12 @@ public class CrackableTileEntityHandler {
 			this.parent.markDirtyFast();
 
 			// if client, refresh block, if server sync to client
-			World world = parent.getWorld();
+			World world = parent.getLevel();
 			if (world != null) {
-				BlockPos pos = parent.getPos();
-				if (world.isRemote()) {
+				BlockPos pos = parent.getBlockPos();
+				if (world.isClientSide()) {
 					BlockState state = parent.getBlockState();
-					world.notifyBlockUpdate(pos, state, state, 3);
+					world.sendBlockUpdated(pos, state, state, 3);
 				} else {
 					CeramicsNetwork.getInstance().sendToClientsAround(new CrackableCrackPacket(pos, this.cracks), world, pos);
 				}
@@ -221,22 +221,22 @@ public class CrackableTileEntityHandler {
 		 * @return  True if repaired, false for wrong repair item or no cracks
 		 */
 		static boolean tryRepair(IWorld world, BlockPos pos, PlayerEntity player, Hand hand) {
-			ItemStack held = player.getHeldItem(hand);
-			if (held.getItem().isIn(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
+			ItemStack held = player.getItemInHand(hand);
+			if (held.getItem().is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
 				return TileEntityHelper.getTile(ICrackableTileEntity.class, world, pos).filter(te -> {
 					CrackableTileEntityHandler handler = te.getCracksHandler();
 					int cracks = handler.getCracks();
 					if (handler.isActive() && cracks > 0) {
 						// play sound
-						world.playSound(player, pos, SoundType.GROUND.getPlaceSound(), SoundCategory.BLOCKS, 1, 1);
+						world.playSound(player, pos, SoundType.GRAVEL.getPlaceSound(), SoundCategory.BLOCKS, 1, 1);
 
-						if (!world.isRemote()) {
+						if (!world.isClientSide()) {
 							// repair halfway
 							handler.setCracks(Math.max(0, cracks - 3));
 							// take clay
 							if (!player.isCreative()) {
 								held.shrink(1);
-								player.setHeldItem(hand, held);
+								player.setItemInHand(hand, held);
 							}
 						}
 

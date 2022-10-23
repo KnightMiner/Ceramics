@@ -20,6 +20,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
 
+import net.minecraft.item.Item.Properties;
+
 /**
  * Clay bucket holding milk
  */
@@ -30,13 +32,13 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand hand) {
-    player.setActiveHand(hand);
-    return new ActionResult<>(ActionResultType.SUCCESS, player.getHeldItem(hand));
+  public ActionResult<ItemStack> use(World worldIn, PlayerEntity player, Hand hand) {
+    player.startUsingItem(hand);
+    return new ActionResult<>(ActionResultType.SUCCESS, player.getItemInHand(hand));
   }
 
   @Override
-  public UseAction getUseAction(ItemStack stack) {
+  public UseAction getUseAnimation(ItemStack stack) {
     return UseAction.DRINK;
   }
 
@@ -46,8 +48,8 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public ItemStack onItemUseFinish(ItemStack stack, World worldIn, LivingEntity entity) {
-    if (!worldIn.isRemote()) {
+  public ItemStack finishUsingItem(ItemStack stack, World worldIn, LivingEntity entity) {
+    if (!worldIn.isClientSide()) {
       // TODO: this is a hack until I find a better way to make it cure the same as milk
       entity.curePotionEffects(MILK_STACK);
     }
@@ -55,7 +57,7 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
     if (entity instanceof ServerPlayerEntity) {
       ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
       CriteriaTriggers.CONSUME_ITEM.trigger(serverplayerentity, stack);
-      serverplayerentity.addStat(Stats.ITEM_USED.get(this));
+      serverplayerentity.awardStat(Stats.ITEM_USED.get(this));
     }
     // if a player, empty a bucket
     if (entity instanceof PlayerEntity) {
@@ -69,8 +71,8 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public ITextComponent getDisplayName(ItemStack stack) {
-    return super.getDisplayName(stack).copyRaw().mergeStyle(TextFormatting.RED);
+  public ITextComponent getName(ItemStack stack) {
+    return super.getName(stack).plainCopy().withStyle(TextFormatting.RED);
   }
 
   /* Fluids */
@@ -89,8 +91,8 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   }
 
   @Override
-  public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> subItems) {
-    if (/*Config.bucketEnabled && */this.isInGroup(tab) && !isCracked) {
+  public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> subItems) {
+    if (/*Config.bucketEnabled && */this.allowdedIn(tab) && !isCracked) {
       subItems.add(new ItemStack(this));
     }
   }

@@ -35,7 +35,7 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 	private final Item item;
 	private final Ingredient repairIngredient;
 	public CrackedClayRepairRecipe(ResourceLocation id, IItemProvider item, Ingredient repairIngredient) {
-		super(id, Ceramics.locationName("clay_repair"), new ItemStack(item), NonNullList.from(Ingredient.EMPTY, Ingredient.fromStacks(setCracks(new ItemStack(item), 3)), repairIngredient));
+		super(id, Ceramics.locationName("clay_repair"), new ItemStack(item), NonNullList.of(Ingredient.EMPTY, Ingredient.of(setCracks(new ItemStack(item), 3)), repairIngredient));
 		this.item = item.asItem();
 		this.repairIngredient = repairIngredient;
 	}
@@ -45,8 +45,8 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 		if (!super.matches(inv, worldIn)) {
 			return false;
 		}
-		for (int i = 0; i < inv.getSizeInventory(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
+		for (int i = 0; i < inv.getContainerSize(); i++) {
+			ItemStack stack = inv.getItem(i);
 			if (stack.getItem() == item) {
 				return getCracks(stack) > 0;
 			}
@@ -55,16 +55,16 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 	}
 
 	@Override
-	public ItemStack getCraftingResult(CraftingInventory inv) {
-		for (int i = 0; i < inv.getSizeInventory(); i++) {
-			ItemStack stack = inv.getStackInSlot(i);
+	public ItemStack assemble(CraftingInventory inv) {
+		for (int i = 0; i < inv.getContainerSize(); i++) {
+			ItemStack stack = inv.getItem(i);
 			if (stack.getItem() == item) {
 				stack = stack.copy();
 				stack.setCount(1);
 				return setCracks(stack, Math.max(0, getCracks(stack) - 3));
 			}
 		}
-		return super.getCraftingResult(inv);
+		return super.assemble(inv);
 	}
 
 	@Override
@@ -75,23 +75,23 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 	/** Serializer class for this recipe */
 	public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<CrackedClayRepairRecipe> {
 		@Override
-		public CrackedClayRepairRecipe read(ResourceLocation id, JsonObject json) {
-			Item item = RecipeHelper.deserializeItem(JSONUtils.getString(json, "item"), "item", Item.class);
-			Ingredient ingredient = Ingredient.deserialize(JsonHelper.getElement(json, "ingredient"));
+		public CrackedClayRepairRecipe fromJson(ResourceLocation id, JsonObject json) {
+			Item item = RecipeHelper.deserializeItem(JSONUtils.getAsString(json, "item"), "item", Item.class);
+			Ingredient ingredient = Ingredient.fromJson(JsonHelper.getElement(json, "ingredient"));
 			return new CrackedClayRepairRecipe(id, item, ingredient);
 		}
 
 		@Override
-		public CrackedClayRepairRecipe read(ResourceLocation id, PacketBuffer buffer) {
+		public CrackedClayRepairRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) {
 			Item item = RecipeHelper.readItem(buffer);
-			Ingredient ingredient = Ingredient.read(buffer);
+			Ingredient ingredient = Ingredient.fromNetwork(buffer);
 			return new CrackedClayRepairRecipe(id, item, ingredient);
 		}
 
 		@Override
-		public void write(PacketBuffer buffer, CrackedClayRepairRecipe recipe) {
+		public void toNetwork(PacketBuffer buffer, CrackedClayRepairRecipe recipe) {
 			RecipeHelper.writeItem(buffer, recipe.item);
-			recipe.repairIngredient.write(buffer);
+			recipe.repairIngredient.toNetwork(buffer);
 		}
 	}
 
@@ -111,12 +111,12 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 			this.item = item.asItem();
 			this.ingredient = ingredient;
 			if (criteria != null) {
-				advancementBuilder = Advancement.Builder.builder()
-																								.withCriterion("has_item", criteria)
-																								.withParentId(new ResourceLocation("recipes/root"))
-																								.withCriterion("has_the_recipe", RecipeUnlockedTrigger.create(id))
-																								.withRewards(AdvancementRewards.Builder.recipe(id))
-																								.withRequirementsStrategy(IRequirementsStrategy.OR);
+				advancementBuilder = Advancement.Builder.advancement()
+																								.addCriterion("has_item", criteria)
+																								.parent(new ResourceLocation("recipes/root"))
+																								.addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
+																								.rewards(AdvancementRewards.Builder.recipe(id))
+																								.requirements(IRequirementsStrategy.OR);
 				advancementId = new ResourceLocation(id.getNamespace(), "recipes/clay_repair/" + id.getPath());
 			} else {
 				advancementBuilder = null;
@@ -125,33 +125,33 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 		}
 
 		@Override
-		public ResourceLocation getID() {
+		public ResourceLocation getId() {
 			return id;
 		}
 
 		@Override
-		public void serialize(JsonObject json) {
+		public void serializeRecipeData(JsonObject json) {
 			json.addProperty("item", Objects.requireNonNull(item.getRegistryName()).toString());
-			json.add("ingredient", ingredient.serialize());
+			json.add("ingredient", ingredient.toJson());
 		}
 
 		@Override
-		public IRecipeSerializer<?> getSerializer() {
+		public IRecipeSerializer<?> getType() {
 			return Registration.CLAY_REPAIR_RECIPE_SERIALIZER.get();
 		}
 
 		@Nullable
 		@Override
-		public JsonObject getAdvancementJson() {
+		public JsonObject serializeAdvancement() {
 			if (advancementBuilder != null) {
-				return advancementBuilder.serialize();
+				return advancementBuilder.serializeToJson();
 			}
 			return null;
 		}
 
 		@Nullable
 		@Override
-		public ResourceLocation getAdvancementID() {
+		public ResourceLocation getAdvancementId() {
 			return advancementId;
 		}
 	}

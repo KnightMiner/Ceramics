@@ -5,6 +5,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 /** Tank for channel contents */
 public class ChannelTank extends FluidTank {
 	private static final String TAG_LOCKED = "locked";

@@ -49,90 +49,90 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
   }
 
   @Override
-  protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
+  protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
     // recoloring terracotta
-    ICriterionInstance terracottaCriteria = hasItem(CeramicsTags.Items.COLORED_TERRACOTTA);
+    ICriterionInstance terracottaCriteria = has(CeramicsTags.Items.COLORED_TERRACOTTA);
     Registration.TERRACOTTA.forEach((color, item) ->
-      ShapedRecipeBuilder.shapedRecipe(item, 8)
-                         .key('B', CeramicsTags.Items.COLORED_TERRACOTTA)
-                         .key('D', color.getTag())
-                         .setGroup("stained_terracotta")
-                         .patternLine("BBB")
-                         .patternLine("BDB")
-                         .patternLine("BBB")
-                         .addCriterion("has_terracotta", terracottaCriteria)
-                         .build(consumer, location(item.getRegistryName().getPath() + "_recolor"))
+      ShapedRecipeBuilder.shaped(item, 8)
+                         .define('B', CeramicsTags.Items.COLORED_TERRACOTTA)
+                         .define('D', color.getTag())
+                         .group("stained_terracotta")
+                         .pattern("BBB")
+                         .pattern("BDB")
+                         .pattern("BBB")
+                         .unlockedBy("has_terracotta", terracottaCriteria)
+                         .save(consumer, location(item.getRegistryName().getPath() + "_recolor"))
     );
 
     // crafting porcelain
-    ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
-                          .addIngredient(Tags.Items.GEMS_QUARTZ)
-                          .addIngredient(Items.CLAY_BALL)
-                          .addIngredient(Items.CLAY_BALL)
-                          .addIngredient(Items.CLAY_BALL)
-                          .addCriterion("has_quartz", hasItem(Tags.Items.GEMS_QUARTZ))
-                          .build(consumer);
+    ShapelessRecipeBuilder.shapeless(Registration.UNFIRED_PORCELAIN, 4)
+                          .requires(Tags.Items.GEMS_QUARTZ)
+                          .requires(Items.CLAY_BALL)
+                          .requires(Items.CLAY_BALL)
+                          .requires(Items.CLAY_BALL)
+                          .unlockedBy("has_quartz", has(Tags.Items.GEMS_QUARTZ))
+                          .save(consumer);
 
     // unfired porcelain
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_PORCELAIN_BLOCK)
-                       .key('b', Registration.UNFIRED_PORCELAIN)
-                       .patternLine("bb")
-                       .patternLine("bb")
-                       .addCriterion("has_item", hasItem(Registration.UNFIRED_PORCELAIN))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.UNFIRED_PORCELAIN_BLOCK)
+                       .define('b', Registration.UNFIRED_PORCELAIN)
+                       .pattern("bb")
+                       .pattern("bb")
+                       .unlockedBy("has_item", has(Registration.UNFIRED_PORCELAIN))
+                       .save(consumer);
     // smelting porcelain
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN_BLOCK, Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE), 0.3f);
 
     // colored porcelain
-    ICriterionInstance porcelainCriteria = hasItem(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE));
+    ICriterionInstance porcelainCriteria = has(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE));
     Registration.PORCELAIN_BLOCK.forEach((color, item) ->
-      ShapedRecipeBuilder.shapedRecipe(item, 8)
-                         .key('B', CeramicsTags.Items.PORCELAIN)
-                         .key('D', color.getTag())
-                         .setGroup(locationString("dye_porcelain"))
-                         .patternLine("BBB")
-                         .patternLine("BDB")
-                         .patternLine("BBB")
-                         .addCriterion("has_porcelain", porcelainCriteria)
-                         .build(consumer)
+      ShapedRecipeBuilder.shaped(item, 8)
+                         .define('B', CeramicsTags.Items.PORCELAIN)
+                         .define('D', color.getTag())
+                         .group(locationString("dye_porcelain"))
+                         .pattern("BBB")
+                         .pattern("BDB")
+                         .pattern("BBB")
+                         .unlockedBy("has_porcelain", porcelainCriteria)
+                         .save(consumer)
     );
     // rainbow porcelain
     kilnFurnaceRecipe(consumer, CeramicsTags.Items.COLORED_PORCELAIN, Registration.RAINBOW_PORCELAIN.get(RainbowPorcelain.RED), 0.1f, location("rainbow_porcelain"));
 
     // smelt for full rainbow
-    ICriterionInstance hasTheRainbow = hasItem(CeramicsTags.Items.RAINBOW_PORCELAIN);
+    ICriterionInstance hasTheRainbow = has(CeramicsTags.Items.RAINBOW_PORCELAIN);
     Registration.RAINBOW_PORCELAIN.forEach((color, item) ->
-      SingleItemRecipeBuilder.stonecuttingRecipe(Ingredient.fromTag(CeramicsTags.Items.RAINBOW_PORCELAIN), item)
-                             .addCriterion("has_the_rainbow", hasTheRainbow)
-                             .build(consumer, item.getRegistryName())
+      SingleItemRecipeBuilder.stonecutting(Ingredient.of(CeramicsTags.Items.RAINBOW_PORCELAIN), item)
+                             .unlocks("has_the_rainbow", hasTheRainbow)
+                             .save(consumer, item.getRegistryName())
     );
 
     // bricks
     // vanilla brick block shortcuts
-    ICriterionInstance hasClayBrick = hasItem(Items.BRICK);
-    ShapedRecipeBuilder.shapedRecipe(Items.BRICK_SLAB)
-                       .key('b', Items.BRICK)
-                       .patternLine("bb")
-                       .addCriterion("has_bricks", hasClayBrick)
-                       .setGroup(Items.BRICK_SLAB.getRegistryName().getPath())
-                       .build(consumer, location("brick_slab_from_bricks"));
+    ICriterionInstance hasClayBrick = has(Items.BRICK);
+    ShapedRecipeBuilder.shaped(Items.BRICK_SLAB)
+                       .define('b', Items.BRICK)
+                       .pattern("bb")
+                       .unlockedBy("has_bricks", hasClayBrick)
+                       .group(Items.BRICK_SLAB.getRegistryName().getPath())
+                       .save(consumer, location("brick_slab_from_bricks"));
     // stairs shortcut
-    ShapedRecipeBuilder.shapedRecipe(Items.BRICK_STAIRS)
-                       .key('b', Items.BRICK)
-                       .patternLine("b  ")
-                       .patternLine("bb ")
-                       .patternLine("bbb")
-                       .addCriterion("has_bricks", hasClayBrick)
-                       .setGroup(Items.BRICK_STAIRS.getRegistryName().getPath())
-                       .build(consumer, location("brick_stairs_from_bricks"));
+    ShapedRecipeBuilder.shaped(Items.BRICK_STAIRS)
+                       .define('b', Items.BRICK)
+                       .pattern("b  ")
+                       .pattern("bb ")
+                       .pattern("bbb")
+                       .unlockedBy("has_bricks", hasClayBrick)
+                       .group(Items.BRICK_STAIRS.getRegistryName().getPath())
+                       .save(consumer, location("brick_stairs_from_bricks"));
     // block from slab
-    ShapedRecipeBuilder.shapedRecipe(Items.BRICKS)
-                       .key('B', Items.BRICK_SLAB)
-                       .patternLine("B")
-                       .patternLine("B")
-                       .addCriterion("has_item", hasItem(Items.BRICK_SLAB))
-                       .setGroup(Items.BRICKS.getRegistryName().getPath())
-                       .build(consumer, location("bricks_from_slab"));
+    ShapedRecipeBuilder.shaped(Items.BRICKS)
+                       .define('B', Items.BRICK_SLAB)
+                       .pattern("B")
+                       .pattern("B")
+                       .unlockedBy("has_item", has(Items.BRICK_SLAB))
+                       .group(Items.BRICKS.getRegistryName().getPath())
+                       .save(consumer, location("bricks_from_slab"));
 
     // dark bricks from smelting bricks
     eachBuilding(BRICKS, Registration.DARK_BRICKS, (input, output) ->
@@ -151,32 +151,32 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     // porcelain bricks
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN, Registration.PORCELAIN_BRICK, 0.3f);
     // using bricks
-    ICriterionInstance hasBricks = hasItem(Registration.PORCELAIN_BRICK);
-    ShapedRecipeBuilder.shapedRecipe(Registration.PORCELAIN_BRICKS)
-                       .key('b', Registration.PORCELAIN_BRICK)
-                       .patternLine("bb")
-                       .patternLine("bb")
-                       .addCriterion("has_bricks", hasBricks)
-                       .setGroup(Registration.PORCELAIN_BRICK.getRegistryName().toString())
-                       .build(consumer);
+    ICriterionInstance hasBricks = has(Registration.PORCELAIN_BRICK);
+    ShapedRecipeBuilder.shaped(Registration.PORCELAIN_BRICKS)
+                       .define('b', Registration.PORCELAIN_BRICK)
+                       .pattern("bb")
+                       .pattern("bb")
+                       .unlockedBy("has_bricks", hasBricks)
+                       .group(Registration.PORCELAIN_BRICK.getRegistryName().toString())
+                       .save(consumer);
     // slab shortcut
     IItemProvider porcelainSlab = Registration.PORCELAIN_BRICKS.getSlab();
-    ShapedRecipeBuilder.shapedRecipe(porcelainSlab)
-                       .key('b', Registration.PORCELAIN_BRICK)
-                       .patternLine("bb")
-                       .addCriterion("has_bricks", hasBricks)
-                       .setGroup(porcelainSlab.asItem().getRegistryName().toString())
-                       .build(consumer, suffix(porcelainSlab, "_from_bricks"));
+    ShapedRecipeBuilder.shaped(porcelainSlab)
+                       .define('b', Registration.PORCELAIN_BRICK)
+                       .pattern("bb")
+                       .unlockedBy("has_bricks", hasBricks)
+                       .group(porcelainSlab.asItem().getRegistryName().toString())
+                       .save(consumer, suffix(porcelainSlab, "_from_bricks"));
     // stairs shortcut
     IItemProvider porcelainStairs = Registration.PORCELAIN_BRICKS.getStairs();
-    ShapedRecipeBuilder.shapedRecipe(porcelainStairs)
-                       .key('b', Registration.PORCELAIN_BRICK)
-                       .patternLine("b  ")
-                       .patternLine("bb ")
-                       .patternLine("bbb")
-                       .addCriterion("has_bricks", hasBricks)
-                       .setGroup(porcelainStairs.asItem().getRegistryName().toString())
-                       .build(consumer, suffix(porcelainStairs, "_from_bricks"));
+    ShapedRecipeBuilder.shaped(porcelainStairs)
+                       .define('b', Registration.PORCELAIN_BRICK)
+                       .pattern("b  ")
+                       .pattern("bb ")
+                       .pattern("bbb")
+                       .unlockedBy("has_bricks", hasBricks)
+                       .group(porcelainStairs.asItem().getRegistryName().toString())
+                       .save(consumer, suffix(porcelainStairs, "_from_bricks"));
     registerSlabStairWall(consumer, Registration.PORCELAIN_BRICKS);
 
     // golden bricks
@@ -199,32 +199,32 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
 
     // buckets
     // unfired
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_BUCKET)
-                       .key('c', Items.CLAY_BALL)
-                       .patternLine("c c")
-                       .patternLine(" c ")
-                       .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.UNFIRED_CLAY_BUCKET)
+                       .define('c', Items.CLAY_BALL)
+                       .pattern("c c")
+                       .pattern(" c ")
+                       .unlockedBy("has_clay", has(Items.CLAY_BALL))
+                       .save(consumer);
     // fired
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_BUCKET, Registration.CLAY_BUCKET, 0.3f);
     // cracked
     kilnFurnaceRecipe(consumer, Registration.CLAY_BUCKET, Registration.CRACKED_CLAY_BUCKET, 0.2f);
 
     // cistern
-    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CISTERN, 2)
-                       .key('c', Items.CLAY_BALL)
-                       .patternLine("c c")
-                       .patternLine("c c")
-                       .patternLine("c c")
-                       .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
-                       .build(consumer);
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CISTERN, 2)
-                       .key('c', Registration.UNFIRED_PORCELAIN)
-                       .patternLine("c c")
-                       .patternLine("c c")
-                       .patternLine("c c")
-                       .addCriterion("has_clay", hasItem(Registration.UNFIRED_PORCELAIN))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.CLAY_CISTERN, 2)
+                       .define('c', Items.CLAY_BALL)
+                       .pattern("c c")
+                       .pattern("c c")
+                       .pattern("c c")
+                       .unlockedBy("has_clay", has(Items.CLAY_BALL))
+                       .save(consumer);
+    ShapedRecipeBuilder.shaped(Registration.UNFIRED_CISTERN, 2)
+                       .define('c', Registration.UNFIRED_PORCELAIN)
+                       .pattern("c c")
+                       .pattern("c c")
+                       .pattern("c c")
+                       .unlockedBy("has_clay", has(Registration.UNFIRED_PORCELAIN))
+                       .save(consumer);
     // fired
     kilnFurnaceRecipe(consumer, Registration.CLAY_CISTERN, Registration.TERRACOTTA_CISTERN, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE), 0.3f);
@@ -233,183 +233,183 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
     // colored
     Registration.COLORED_CISTERN.forEach((color, block) -> {
       // craft
-      ShapedRecipeBuilder.shapedRecipe(block, 4)
-                         .key('c', new NoNBTIngredient(Ingredient.fromTag(CeramicsTags.Items.TERRACOTTA_CISTERNS)))
-                         .key('d', color.getTag())
-                         .patternLine(" c ")
-                         .patternLine("cdc")
-                         .patternLine(" c ")
-                         .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
-                         .setGroup(Ceramics.locationName("colored_cisterns"))
-                         .build(consumer);
+      ShapedRecipeBuilder.shaped(block, 4)
+                         .define('c', new NoNBTIngredient(Ingredient.of(CeramicsTags.Items.TERRACOTTA_CISTERNS)))
+                         .define('d', color.getTag())
+                         .pattern(" c ")
+                         .pattern("cdc")
+                         .pattern(" c ")
+                         .unlockedBy("has_cistern", has(Registration.TERRACOTTA_CISTERN))
+                         .group(Ceramics.locationName("colored_cisterns"))
+                         .save(consumer);
       // repair
       clayRepair(consumer, block);
     });
     Registration.PORCELAIN_CISTERN.forEach((color, block) ->
-      ShapedRecipeBuilder.shapedRecipe(block, 4)
-                         .key('c', CeramicsTags.Items.PORCELAIN_CISTERNS)
-                         .key('d', color.getTag())
-                         .patternLine(" c ")
-                         .patternLine("cdc")
-                         .patternLine(" c ")
-                         .addCriterion("has_cistern", hasItem(Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE)))
-                         .setGroup(Ceramics.locationName("porcelain_cisterns"))
-                         .build(consumer)
+      ShapedRecipeBuilder.shaped(block, 4)
+                         .define('c', CeramicsTags.Items.PORCELAIN_CISTERNS)
+                         .define('d', color.getTag())
+                         .pattern(" c ")
+                         .pattern("cdc")
+                         .pattern(" c ")
+                         .unlockedBy("has_cistern", has(Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE)))
+                         .group(Ceramics.locationName("porcelain_cisterns"))
+                         .save(consumer)
     );
 
     // gauge
-    ShapedRecipeBuilder.shapedRecipe(Registration.TERRACOTTA_GAUGE, 4)
-                       .key('b', Items.BRICK)
-                       .key('p', Tags.Items.GLASS_PANES_COLORLESS)
-                       .patternLine(" b ")
-                       .patternLine("bpb")
-                       .patternLine(" b ")
-                       .addCriterion("has_cistern", hasItem(Registration.TERRACOTTA_CISTERN))
-                       .build(consumer);
-    ShapedRecipeBuilder.shapedRecipe(Registration.PORCELAIN_GAUGE, 4)
-                       .key('b', Registration.PORCELAIN_BRICK)
-                       .key('p', Tags.Items.GLASS_PANES_COLORLESS)
-                       .patternLine(" b ")
-                       .patternLine("bpb")
-                       .patternLine(" b ")
-                       .addCriterion("has_cistern", hasItem(Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE)))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.TERRACOTTA_GAUGE, 4)
+                       .define('b', Items.BRICK)
+                       .define('p', Tags.Items.GLASS_PANES_COLORLESS)
+                       .pattern(" b ")
+                       .pattern("bpb")
+                       .pattern(" b ")
+                       .unlockedBy("has_cistern", has(Registration.TERRACOTTA_CISTERN))
+                       .save(consumer);
+    ShapedRecipeBuilder.shaped(Registration.PORCELAIN_GAUGE, 4)
+                       .define('b', Registration.PORCELAIN_BRICK)
+                       .define('p', Tags.Items.GLASS_PANES_COLORLESS)
+                       .pattern(" b ")
+                       .pattern("bpb")
+                       .pattern(" b ")
+                       .unlockedBy("has_cistern", has(Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE)))
+                       .save(consumer);
 
 
     // faucet
-    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_FAUCET, 2)
-                       .key('c', Items.CLAY_BALL)
-                       .patternLine("ccc")
-                       .patternLine(" c ")
-                       .addCriterion("has_cistern", hasItem(Items.CLAY_BALL))
-                       .build(consumer);
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_FAUCET, 2)
-                       .key('c', Registration.UNFIRED_PORCELAIN)
-                       .patternLine("ccc")
-                       .patternLine(" c ")
-                       .addCriterion("has_cistern", hasItem(Registration.UNFIRED_PORCELAIN))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.CLAY_FAUCET, 2)
+                       .define('c', Items.CLAY_BALL)
+                       .pattern("ccc")
+                       .pattern(" c ")
+                       .unlockedBy("has_cistern", has(Items.CLAY_BALL))
+                       .save(consumer);
+    ShapedRecipeBuilder.shaped(Registration.UNFIRED_FAUCET, 2)
+                       .define('c', Registration.UNFIRED_PORCELAIN)
+                       .pattern("ccc")
+                       .pattern(" c ")
+                       .unlockedBy("has_cistern", has(Registration.UNFIRED_PORCELAIN))
+                       .save(consumer);
     kilnFurnaceRecipe(consumer, Registration.CLAY_FAUCET, Registration.TERRACOTTA_FAUCET, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_FAUCET, Registration.PORCELAIN_FAUCET, 0.3f);
     clayRepair(consumer, Registration.TERRACOTTA_FAUCET);
 
     // channel
-    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CHANNEL, 3)
-                       .key('p', Items.CLAY_BALL)
-                       .patternLine("ppp")
-                       .patternLine("ppp")
-                       .addCriterion("has_cistern", hasItem(Items.CLAY_BALL))
-                       .build(consumer);
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CHANNEL, 3)
-                       .key('p', Registration.UNFIRED_PORCELAIN)
-                       .patternLine("ppp")
-                       .patternLine("ppp")
-                       .addCriterion("has_cistern", hasItem(Registration.UNFIRED_PORCELAIN))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.CLAY_CHANNEL, 3)
+                       .define('p', Items.CLAY_BALL)
+                       .pattern("ppp")
+                       .pattern("ppp")
+                       .unlockedBy("has_cistern", has(Items.CLAY_BALL))
+                       .save(consumer);
+    ShapedRecipeBuilder.shaped(Registration.UNFIRED_CHANNEL, 3)
+                       .define('p', Registration.UNFIRED_PORCELAIN)
+                       .pattern("ppp")
+                       .pattern("ppp")
+                       .unlockedBy("has_cistern", has(Registration.UNFIRED_PORCELAIN))
+                       .save(consumer);
     kilnFurnaceRecipe(consumer, Registration.CLAY_CHANNEL, Registration.TERRACOTTA_CHANNEL, 0.3f);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CHANNEL, Registration.PORCELAIN_CHANNEL, 0.3f);
     clayRepair(consumer, Registration.TERRACOTTA_CHANNEL);
 
     // armor
     // clay plates
-    ShapedRecipeBuilder.shapedRecipe(Registration.UNFIRED_CLAY_PLATE, 2)
-                       .key('c', Items.CLAY_BALL)
-                       .patternLine("cc")
-                       .addCriterion("has_clay", hasItem(Items.CLAY_BALL))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.UNFIRED_CLAY_PLATE, 2)
+                       .define('c', Items.CLAY_BALL)
+                       .pattern("cc")
+                       .unlockedBy("has_clay", has(Items.CLAY_BALL))
+                       .save(consumer);
     kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_PLATE, Registration.CLAY_PLATE, 0.3f);
 
     // helmet
-    ICriterionInstance hasClayPlate = hasItem(CeramicsTags.Items.BRICK_PLATES);
-    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_HELMET)
-                       .key('c', CeramicsTags.Items.BRICK_PLATES)
-                       .patternLine("ccc")
-                       .patternLine("c c")
-                       .addCriterion("has_plate", hasClayPlate)
-                       .build(consumer);
+    ICriterionInstance hasClayPlate = has(CeramicsTags.Items.BRICK_PLATES);
+    ShapedRecipeBuilder.shaped(Registration.CLAY_HELMET)
+                       .define('c', CeramicsTags.Items.BRICK_PLATES)
+                       .pattern("ccc")
+                       .pattern("c c")
+                       .unlockedBy("has_plate", hasClayPlate)
+                       .save(consumer);
     // chestplate
-    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_CHESTPLATE)
-                       .key('c', CeramicsTags.Items.BRICK_PLATES)
-                       .patternLine("c c")
-                       .patternLine("ccc")
-                       .patternLine("ccc")
-                       .addCriterion("has_plate", hasClayPlate)
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.CLAY_CHESTPLATE)
+                       .define('c', CeramicsTags.Items.BRICK_PLATES)
+                       .pattern("c c")
+                       .pattern("ccc")
+                       .pattern("ccc")
+                       .unlockedBy("has_plate", hasClayPlate)
+                       .save(consumer);
     // leggings
-    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_LEGGINGS)
-                       .key('c', CeramicsTags.Items.BRICK_PLATES)
-                       .patternLine("ccc")
-                       .patternLine("c c")
-                       .patternLine("c c")
-                       .addCriterion("has_plate", hasClayPlate)
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.CLAY_LEGGINGS)
+                       .define('c', CeramicsTags.Items.BRICK_PLATES)
+                       .pattern("ccc")
+                       .pattern("c c")
+                       .pattern("c c")
+                       .unlockedBy("has_plate", hasClayPlate)
+                       .save(consumer);
     // boots
-    ShapedRecipeBuilder.shapedRecipe(Registration.CLAY_BOOTS)
-                       .key('c', CeramicsTags.Items.BRICK_PLATES)
-                       .patternLine("c c")
-                       .patternLine("c c")
-                       .addCriterion("has_plate", hasClayPlate)
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.CLAY_BOOTS)
+                       .define('c', CeramicsTags.Items.BRICK_PLATES)
+                       .pattern("c c")
+                       .pattern("c c")
+                       .unlockedBy("has_plate", hasClayPlate)
+                       .save(consumer);
 
     // clay uncrafting
-    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 4)
-                          .addIngredient(Items.CLAY)
-                          .addCriterion("has_unfired", hasItem(Items.CLAY))
-                          .setGroup(locationString("clay_uncrafting"))
-                          .build(consumer, location("clay_uncrafting_4"));
-    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 3)
-                          .addIngredient(Ingredient.fromItems(Registration.UNFIRED_CLAY_BUCKET, Registration.CLAY_CISTERN))
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_BUCKET))
-                          .setGroup(locationString("clay_uncrafting"))
-                          .build(consumer, location("clay_uncrafting_3"));
-    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 2)
-                          .addIngredient(Ingredient.fromItems(Registration.CLAY_FAUCET, Registration.CLAY_CHANNEL))
-                          .addCriterion("has_unfired", hasItem(Registration.CLAY_FAUCET))
-                          .setGroup(locationString("clay_uncrafting"))
-                          .build(consumer, location("clay_uncrafting_2"));
-    ShapelessRecipeBuilder.shapelessRecipe(Items.CLAY_BALL, 1)
-                          .addIngredient(Ingredient.fromItems(Registration.UNFIRED_CLAY_PLATE))
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CLAY_PLATE))
-                          .setGroup(locationString("clay_uncrafting"))
-                          .build(consumer, location("clay_uncrafting"));
+    ShapelessRecipeBuilder.shapeless(Items.CLAY_BALL, 4)
+                          .requires(Items.CLAY)
+                          .unlockedBy("has_unfired", has(Items.CLAY))
+                          .group(locationString("clay_uncrafting"))
+                          .save(consumer, location("clay_uncrafting_4"));
+    ShapelessRecipeBuilder.shapeless(Items.CLAY_BALL, 3)
+                          .requires(Ingredient.of(Registration.UNFIRED_CLAY_BUCKET, Registration.CLAY_CISTERN))
+                          .unlockedBy("has_unfired", has(Registration.UNFIRED_CLAY_BUCKET))
+                          .group(locationString("clay_uncrafting"))
+                          .save(consumer, location("clay_uncrafting_3"));
+    ShapelessRecipeBuilder.shapeless(Items.CLAY_BALL, 2)
+                          .requires(Ingredient.of(Registration.CLAY_FAUCET, Registration.CLAY_CHANNEL))
+                          .unlockedBy("has_unfired", has(Registration.CLAY_FAUCET))
+                          .group(locationString("clay_uncrafting"))
+                          .save(consumer, location("clay_uncrafting_2"));
+    ShapelessRecipeBuilder.shapeless(Items.CLAY_BALL, 1)
+                          .requires(Ingredient.of(Registration.UNFIRED_CLAY_PLATE))
+                          .unlockedBy("has_unfired", has(Registration.UNFIRED_CLAY_PLATE))
+                          .group(locationString("clay_uncrafting"))
+                          .save(consumer, location("clay_uncrafting"));
     // porcelain uncrafting
-    ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 4)
-                          .addIngredient(Registration.UNFIRED_PORCELAIN_BLOCK)
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_PORCELAIN_BLOCK))
-                          .setGroup(locationString("porcelain_uncrafting"))
-                          .build(consumer, location("porcelain_uncrafting_4"));
-    ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 2)
-                          .addIngredient(Ingredient.fromItems(Registration.UNFIRED_FAUCET, Registration.UNFIRED_CHANNEL))
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_FAUCET))
-                          .setGroup(locationString("porcelain_uncrafting"))
-                          .build(consumer, location("porcelain_uncrafting_2"));
-    ShapelessRecipeBuilder.shapelessRecipe(Registration.UNFIRED_PORCELAIN, 3)
-                          .addIngredient(Registration.UNFIRED_CISTERN)
-                          .addCriterion("has_unfired", hasItem(Registration.UNFIRED_CISTERN))
-                          .setGroup(locationString("porcelain_uncrafting"))
-                          .build(consumer, location("porcelain_uncrafting_3"));
+    ShapelessRecipeBuilder.shapeless(Registration.UNFIRED_PORCELAIN, 4)
+                          .requires(Registration.UNFIRED_PORCELAIN_BLOCK)
+                          .unlockedBy("has_unfired", has(Registration.UNFIRED_PORCELAIN_BLOCK))
+                          .group(locationString("porcelain_uncrafting"))
+                          .save(consumer, location("porcelain_uncrafting_4"));
+    ShapelessRecipeBuilder.shapeless(Registration.UNFIRED_PORCELAIN, 2)
+                          .requires(Ingredient.of(Registration.UNFIRED_FAUCET, Registration.UNFIRED_CHANNEL))
+                          .unlockedBy("has_unfired", has(Registration.UNFIRED_FAUCET))
+                          .group(locationString("porcelain_uncrafting"))
+                          .save(consumer, location("porcelain_uncrafting_2"));
+    ShapelessRecipeBuilder.shapeless(Registration.UNFIRED_PORCELAIN, 3)
+                          .requires(Registration.UNFIRED_CISTERN)
+                          .unlockedBy("has_unfired", has(Registration.UNFIRED_CISTERN))
+                          .group(locationString("porcelain_uncrafting"))
+                          .save(consumer, location("porcelain_uncrafting_3"));
     // compat, wish there was a better way to do this
-    ShapedRecipeBuilder.shapedRecipe(Blocks.CAKE)
-                       .key('M', CeramicsTags.Items.MILK_BUCKETS)
-                       .key('S', Items.SUGAR)
-                       .key('W', Items.WHEAT)
-                       .key('E', Items.EGG)
-                       .patternLine("MMM")
-                       .patternLine("SES")
-                       .patternLine("WWW")
-                       .addCriterion("has_egg", hasItem(Items.EGG))
-                       .build(consumer, location("cake"));
+    ShapedRecipeBuilder.shaped(Blocks.CAKE)
+                       .define('M', CeramicsTags.Items.MILK_BUCKETS)
+                       .define('S', Items.SUGAR)
+                       .define('W', Items.WHEAT)
+                       .define('E', Items.EGG)
+                       .pattern("MMM")
+                       .pattern("SES")
+                       .pattern("WWW")
+                       .unlockedBy("has_egg", has(Items.EGG))
+                       .save(consumer, location("cake"));
 
     // kiln - crafting
-    ShapedRecipeBuilder.shapedRecipe(Registration.KILN)
-                       .key('B', Items.BRICK)
-                       .key('F', Items.FURNACE)
-                       .key('H', Items.BRICKS)
-                       .patternLine("BBB")
-                       .patternLine("BFB")
-                       .patternLine("HHH")
-                       .addCriterion("has_brick", hasItem(Items.BRICK))
-                       .build(consumer);
+    ShapedRecipeBuilder.shaped(Registration.KILN)
+                       .define('B', Items.BRICK)
+                       .define('F', Items.FURNACE)
+                       .define('H', Items.BRICKS)
+                       .pattern("BBB")
+                       .pattern("BFB")
+                       .pattern("HHH")
+                       .unlockedBy("has_brick", has(Items.BRICK))
+                       .save(consumer);
 
     // add vanilla furnace recipes to the kiln
     // clay
@@ -532,55 +532,55 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
   private void registerSlabStairWall(Consumer<IFinishedRecipe> consumer, WallBuildingBlockObject building) {
     Item item = building.asItem();
     ResourceLocation location = item.getRegistryName();
-    ICriterionInstance hasBuilding = hasItem(ItemPredicate.Builder.create().item(item).build());
-    Ingredient ingredient = Ingredient.fromItems(item);
+    ICriterionInstance hasBuilding = inventoryTrigger(ItemPredicate.Builder.item().of(item).build());
+    Ingredient ingredient = Ingredient.of(item);
 
     // slab
     IItemProvider slab = building.getSlab();
-    ShapedRecipeBuilder.shapedRecipe(slab, 6)
-        .key('B', item)
-        .patternLine("BBB")
-        .addCriterion("has_item", hasBuilding)
-        .setGroup(slab.asItem().getRegistryName().toString())
-        .build(consumer, suffix(location, "_slab_crafting"));
-    SingleItemRecipeBuilder.stonecuttingRecipe(ingredient, slab, 2)
-                           .addCriterion("has_item", hasBuilding)
-                           .build(consumer, suffix(location, "_slab_stonecutter"));
+    ShapedRecipeBuilder.shaped(slab, 6)
+        .define('B', item)
+        .pattern("BBB")
+        .unlockedBy("has_item", hasBuilding)
+        .group(slab.asItem().getRegistryName().toString())
+        .save(consumer, suffix(location, "_slab_crafting"));
+    SingleItemRecipeBuilder.stonecutting(ingredient, slab, 2)
+                           .unlocks("has_item", hasBuilding)
+                           .save(consumer, suffix(location, "_slab_stonecutter"));
 
     // stairs
     IItemProvider stairs = building.getStairs();
-    ShapedRecipeBuilder.shapedRecipe(stairs, 4)
-        .key('B', item)
-        .patternLine("B  ")
-        .patternLine("BB ")
-        .patternLine("BBB")
-        .addCriterion("has_item", hasBuilding)
-        .setGroup(stairs.asItem().getRegistryName().toString())
-        .build(consumer, suffix(location, "_stairs_crafting"));
-    SingleItemRecipeBuilder.stonecuttingRecipe(ingredient, stairs)
-                           .addCriterion("has_item", hasBuilding)
-                           .build(consumer, suffix(location, "_stairs_stonecutter"));
+    ShapedRecipeBuilder.shaped(stairs, 4)
+        .define('B', item)
+        .pattern("B  ")
+        .pattern("BB ")
+        .pattern("BBB")
+        .unlockedBy("has_item", hasBuilding)
+        .group(stairs.asItem().getRegistryName().toString())
+        .save(consumer, suffix(location, "_stairs_crafting"));
+    SingleItemRecipeBuilder.stonecutting(ingredient, stairs)
+                           .unlocks("has_item", hasBuilding)
+                           .save(consumer, suffix(location, "_stairs_stonecutter"));
 
     // wall
     IItemProvider wall = building.getWall();
-    ShapedRecipeBuilder.shapedRecipe(wall, 6)
-        .key('B', item)
-        .patternLine("BBB")
-        .patternLine("BBB")
-        .addCriterion("has_item", hasBuilding)
-        .build(consumer, suffix(location, "_wall_crafting"));
-    SingleItemRecipeBuilder.stonecuttingRecipe(ingredient, wall)
-                           .addCriterion("has_item", hasBuilding)
-                           .build(consumer, suffix(location, "_wall_stonecutter"));
+    ShapedRecipeBuilder.shaped(wall, 6)
+        .define('B', item)
+        .pattern("BBB")
+        .pattern("BBB")
+        .unlockedBy("has_item", hasBuilding)
+        .save(consumer, suffix(location, "_wall_crafting"));
+    SingleItemRecipeBuilder.stonecutting(ingredient, wall)
+                           .unlocks("has_item", hasBuilding)
+                           .save(consumer, suffix(location, "_wall_stonecutter"));
 
     // block from slab, its bricks so its easy
-    ShapedRecipeBuilder.shapedRecipe(item)
-                       .key('B', slab)
-                       .patternLine("B")
-                       .patternLine("B")
-                       .addCriterion("has_item", hasItem(slab))
-                       .setGroup(location.toString())
-                       .build(consumer, suffix(location, "_from_slab"));
+    ShapedRecipeBuilder.shaped(item)
+                       .define('B', slab)
+                       .pattern("B")
+                       .pattern("B")
+                       .unlockedBy("has_item", has(slab))
+                       .group(location.toString())
+                       .save(consumer, suffix(location, "_from_slab"));
   }
 
   /**
@@ -592,17 +592,17 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param name        Recipe name
    */
   private void addBrickRecipe(Consumer<IFinishedRecipe> consumer, WallBuildingBlockObject from, Item ingredient, WallBuildingBlockObject to, String name) {
-    ICriterionInstance criteria = hasItem(ingredient);
+    ICriterionInstance criteria = has(ingredient);
     eachBuilding(from, to, (input, output) ->
-      ShapedRecipeBuilder.shapedRecipe(output, 8)
-                         .key('B', input)
-                         .key('i', ingredient)
-                         .patternLine("BBB")
-                         .patternLine("BiB")
-                         .patternLine("BBB")
-                         .addCriterion("has_" + name, criteria)
-                         .setGroup(output.asItem().getRegistryName().toString())
-                         .build(consumer, suffix(output, "_" + name))
+      ShapedRecipeBuilder.shaped(output, 8)
+                         .define('B', input)
+                         .define('i', ingredient)
+                         .pattern("BBB")
+                         .pattern("BiB")
+                         .pattern("BBB")
+                         .unlockedBy("has_" + name, criteria)
+                         .group(output.asItem().getRegistryName().toString())
+                         .save(consumer, suffix(output, "_" + name))
     );
   }
 
@@ -617,7 +617,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @return            Builder result
    */
   private static CookingRecipeBuilder kilnRecipe(Ingredient input, IItemProvider output, float experience, int cookTime) {
-    return CookingRecipeBuilder.cookingRecipe(input, output, experience, cookTime, Registration.KILN_SERIALIZER.get());
+    return CookingRecipeBuilder.cooking(input, output, experience, cookTime, Registration.KILN_SERIALIZER.get());
   }
 
   /**
@@ -631,8 +631,8 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    */
   private static void kilnRecipe(Consumer<IFinishedRecipe> consumer, Ingredient input, ICriterionInstance criteria, IItemProvider output, float experience, ResourceLocation name) {
     kilnRecipe(input, output, experience, 100)
-        .addCriterion("has_item", criteria)
-        .build(consumer, name);
+        .unlockedBy("has_item", criteria)
+        .save(consumer, name);
   }
 
   /**
@@ -643,7 +643,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param experience  Experience earned
    */
   private void kilnRecipe(Consumer<IFinishedRecipe> consumer, IItemProvider input, IItemProvider output, float experience) {
-    kilnRecipe(consumer, Ingredient.fromItems(input), hasItem(input), output, experience, location(output.asItem().getRegistryName().getPath() + "_kiln"));
+    kilnRecipe(consumer, Ingredient.of(input), has(input), output, experience, location(output.asItem().getRegistryName().getPath() + "_kiln"));
   }
 
   /**
@@ -654,7 +654,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param experience  Experience earned
    */
   private void kilnRecipe(Consumer<IFinishedRecipe> consumer, ITag<Item> input, IItemProvider output, float experience) {
-    kilnRecipe(consumer, Ingredient.fromTag(input), hasItem(input), output, experience, location(output.asItem().getRegistryName().getPath() + "_kiln"));
+    kilnRecipe(consumer, Ingredient.of(input), has(input), output, experience, location(output.asItem().getRegistryName().getPath() + "_kiln"));
   }
 
   /**
@@ -667,9 +667,9 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param name        Recipe name
    */
   private static void kilnFurnaceRecipe(Consumer<IFinishedRecipe> consumer, Ingredient input, ICriterionInstance criteria, IItemProvider output, float experience, ResourceLocation name) {
-    CookingRecipeBuilder.smeltingRecipe(input, output, experience, 200)
-                        .addCriterion("has_item", criteria)
-                        .build(consumer, suffix(name, "_smelting"));
+    CookingRecipeBuilder.smelting(input, output, experience, 200)
+                        .unlockedBy("has_item", criteria)
+                        .save(consumer, suffix(name, "_smelting"));
     kilnRecipe(consumer, input, criteria, output, experience, suffix(name, "_kiln"));
   }
 
@@ -682,7 +682,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param name        Recipe name
    */
   private void kilnFurnaceRecipe(Consumer<IFinishedRecipe> consumer, IItemProvider input, IItemProvider output, float experience, ResourceLocation name) {
-    kilnFurnaceRecipe(consumer, Ingredient.fromItems(input), hasItem(input), output, experience, name);
+    kilnFurnaceRecipe(consumer, Ingredient.of(input), has(input), output, experience, name);
   }
 
   /**
@@ -705,7 +705,7 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param name        Recipe name
    */
   private void kilnFurnaceRecipe(Consumer<IFinishedRecipe> consumer, ITag<Item> input, IItemProvider output, float experience, ResourceLocation name) {
-    kilnFurnaceRecipe(consumer, Ingredient.fromTag(input), hasItem(input), output, experience, name);
+    kilnFurnaceRecipe(consumer, Ingredient.of(input), has(input), output, experience, name);
   }
 
   /**
@@ -714,6 +714,6 @@ public class RecipeProvider extends net.minecraft.data.RecipeProvider {
    * @param repairable  Repairable item
    */
   private void clayRepair(Consumer<IFinishedRecipe> consumer, IItemProvider repairable) {
-    consumer.accept(new CrackedClayRepairRecipe.FinishedRecipe(suffix(repairable, "_repair"), repairable, Ingredient.fromTag(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR), hasItem(repairable)));
+    consumer.accept(new CrackedClayRepairRecipe.FinishedRecipe(suffix(repairable, "_repair"), repairable, Ingredient.of(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR), has(repairable)));
   }
 }

@@ -16,6 +16,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 /** BlockItem for crackable blocks to show cracked amount */
 public class CrackableBlockItem extends FixedTooltipBlockItem {
 	private static final String TOOLTIP_KEY = Ceramics.lang("tooltip", "cracked");
@@ -58,8 +60,8 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flag) {
-		super.addInformation(stack, worldIn, tooltip, flag);
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flag) {
+		super.appendHoverText(stack, worldIn, tooltip, flag);
 		int cracks = getCracks(stack);
 		if (cracks > 0) {
 			tooltip.add(new TranslationTextComponent(TOOLTIP_KEY, 6 - cracks, 6));

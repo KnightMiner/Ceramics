@@ -33,6 +33,8 @@ import static net.minecraft.state.properties.BlockStateProperties.NORTH;
 import static net.minecraft.state.properties.BlockStateProperties.SOUTH;
 import static net.minecraft.state.properties.BlockStateProperties.WEST;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Base block between unfired and fired cisterns. Extended for fluid variant
  */
@@ -51,13 +53,13 @@ public class CisternBlock extends Block {
   private static final VoxelShape[] BOUNDS_BASE;
   private static final VoxelShape[] BOUNDS_EXTENSION;
   // bounds for lever placement
-  private static final VoxelShape SOLIDNESS_BASE = VoxelShapes.combineAndSimplify(
-      VoxelShapes.fullCube(),
-      makeCuboidShape(3, 2, 3, 13, 16, 13),
+  private static final VoxelShape SOLIDNESS_BASE = VoxelShapes.join(
+      VoxelShapes.block(),
+      box(3, 2, 3, 13, 16, 13),
       IBooleanFunction.ONLY_FIRST);
-  private static final VoxelShape SOLIDNESS_EXTENSION = VoxelShapes.combineAndSimplify(
-      VoxelShapes.fullCube(),
-      makeCuboidShape(3, 0, 3, 13, 16, 13),
+  private static final VoxelShape SOLIDNESS_EXTENSION = VoxelShapes.join(
+      VoxelShapes.block(),
+      box(3, 0, 3, 13, 16, 13),
       IBooleanFunction.ONLY_FIRST);
 
   /**
@@ -75,10 +77,10 @@ public class CisternBlock extends Block {
    */
   private static VoxelShape[] makeBounds(VoxelShape base) {
     // extra edges for bounds of connection
-    VoxelShape connectionNorth = makeCuboidShape( 4, 4,  0, 12, 12,  1);
-    VoxelShape connectionSouth = makeCuboidShape( 4, 4, 15, 12, 12, 16);
-    VoxelShape connectionWest  = makeCuboidShape( 0, 4,  4,  1, 12, 12);
-    VoxelShape connectionEast  = makeCuboidShape(15, 4,  4, 16, 12, 12);
+    VoxelShape connectionNorth = box( 4, 4,  0, 12, 12,  1);
+    VoxelShape connectionSouth = box( 4, 4, 15, 12, 12, 16);
+    VoxelShape connectionWest  = box( 0, 4,  4,  1, 12, 12);
+    VoxelShape connectionEast  = box(15, 4,  4, 16, 12, 12);
     // array of booleans for iteration
     boolean[] bools = {false, true};
     // iterate over each combination of booleans
@@ -95,7 +97,7 @@ public class CisternBlock extends Block {
             if (east) bounds = VoxelShapes.or(bounds, connectionEast);
 
             // simplify the final bounds into the proper key
-            boundList[boundsKey(north, south, west, east)] = bounds.simplify();
+            boundList[boundsKey(north, south, west, east)] = bounds.optimize();
           }
         }
       }
@@ -105,20 +107,20 @@ public class CisternBlock extends Block {
 
   static {
     // base shapes
-    BOUNDS_BASE = makeBounds(VoxelShapes.combine(
+    BOUNDS_BASE = makeBounds(VoxelShapes.joinUnoptimized(
         VoxelShapes.or(
-            makeCuboidShape(2, 0, 2, 14,  1, 14),
-            makeCuboidShape(1, 1, 2, 15, 16, 14),
-            makeCuboidShape(2, 1, 1, 14, 16, 15)),
-        makeCuboidShape(3, 2, 3, 13, 16, 13),
+            box(2, 0, 2, 14,  1, 14),
+            box(1, 1, 2, 15, 16, 14),
+            box(2, 1, 1, 14, 16, 15)),
+        box(3, 2, 3, 13, 16, 13),
         IBooleanFunction.ONLY_FIRST));
 
     // extension shapes
-    BOUNDS_EXTENSION = makeBounds(VoxelShapes.combine(
+    BOUNDS_EXTENSION = makeBounds(VoxelShapes.joinUnoptimized(
         VoxelShapes.or(
-            makeCuboidShape(1, 0, 2, 15, 16, 14),
-            makeCuboidShape(2, 0, 1, 14, 16, 15)),
-        makeCuboidShape(3, 0, 3, 13, 16, 13),
+            box(1, 0, 2, 15, 16, 14),
+            box(2, 0, 1, 14, 16, 15)),
+        box(3, 0, 3, 13, 16, 13),
         IBooleanFunction.ONLY_FIRST));
   }
 
@@ -130,7 +132,7 @@ public class CisternBlock extends Block {
   /* Block state properties */
 
   @Override
-  protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+  protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
     builder.add(EXTENSION);
     for (Direction side : Plane.HORIZONTAL) {
       builder.add(CONNECTIONS.get(side));
@@ -140,7 +142,7 @@ public class CisternBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+  public boolean isPathfindable(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
     return false;
   }
 
@@ -150,11 +152,11 @@ public class CisternBlock extends Block {
   public BlockState rotate(BlockState state, Rotation rot) {
     switch(rot) {
       case CLOCKWISE_180:
-        return state.with(NORTH, state.get(SOUTH)).with(EAST, state.get(WEST)).with(SOUTH, state.get(NORTH)).with(WEST, state.get(EAST));
+        return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
       case COUNTERCLOCKWISE_90:
-        return state.with(NORTH, state.get(EAST)).with(EAST, state.get(SOUTH)).with(SOUTH, state.get(WEST)).with(WEST, state.get(NORTH));
+        return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
       case CLOCKWISE_90:
-        return state.with(NORTH, state.get(WEST)).with(EAST, state.get(NORTH)).with(SOUTH, state.get(EAST)).with(WEST, state.get(SOUTH));
+        return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
       default:
         return state;
     }
@@ -166,16 +168,16 @@ public class CisternBlock extends Block {
   public BlockState mirror(BlockState state, Mirror mirrorIn) {
     switch(mirrorIn) {
       case LEFT_RIGHT:
-        return state.with(NORTH, state.get(SOUTH)).with(SOUTH, state.get(NORTH));
+        return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
       case FRONT_BACK:
-        return state.with(EAST, state.get(WEST)).with(WEST, state.get(EAST));
+        return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
       default:
         return super.mirror(state, mirrorIn);
     }
   }
 
   private static boolean facingConnected(Direction facing, BlockState state, DirectionProperty property) {
-    return !state.hasProperty(property) || state.get(property) == facing;
+    return !state.hasProperty(property) || state.getValue(property) == facing;
   }
 
   /**
@@ -186,7 +188,7 @@ public class CisternBlock extends Block {
    */
   protected boolean isConnected(Direction facing, BlockState facingState) {
     // must be in tag
-    if (!facingState.isIn(CeramicsTags.Blocks.CISTERN_CONNECTIONS)) {
+    if (!facingState.is(CeramicsTags.Blocks.CISTERN_CONNECTIONS)) {
       return false;
     }
 
@@ -194,44 +196,44 @@ public class CisternBlock extends Block {
     Direction opposite = facing.getOpposite();
     BooleanProperty sideProp = CONNECTIONS.get(opposite);
     if (facingState.hasProperty(sideProp)) {
-      return facingState.get(sideProp);
+      return facingState.getValue(sideProp);
     }
     // channel connections
     EnumProperty<ChannelConnection> channelProp = ChannelBlock.DIRECTION_MAP.get(opposite);
     if (facingState.hasProperty(channelProp)) {
-      return facingState.get(channelProp) == ChannelConnection.OUT;
+      return facingState.getValue(channelProp) == ChannelConnection.OUT;
     }
     // if there is a face property and it is not wall, not connected
-    if (facingState.hasProperty(BlockStateProperties.FACE) && facingState.get(BlockStateProperties.FACE) != AttachFace.WALL) {
+    if (facingState.hasProperty(BlockStateProperties.ATTACH_FACE) && facingState.getValue(BlockStateProperties.ATTACH_FACE) != AttachFace.WALL) {
       return false;
     }
     // try relevant facing properties, if any are present must be facing this
     return facingConnected(facing, facingState, BlockStateProperties.HORIZONTAL_FACING)
         && facingConnected(facing, facingState, BlockStateProperties.FACING)
-        && facingConnected(facing, facingState, BlockStateProperties.FACING_EXCEPT_UP);
+        && facingConnected(facing, facingState, BlockStateProperties.FACING_HOPPER);
   }
 
   @Override
   public BlockState getStateForPlacement(BlockItemUseContext context) {
-    IBlockReader world = context.getWorld();
-    BlockPos pos = context.getPos();
-    return getDefaultState().with(EXTENSION, world.getBlockState(pos.down()).isIn(this))
-                            .with(NORTH, isConnected(Direction.NORTH, world.getBlockState(pos.north())))
-                            .with(SOUTH, isConnected(Direction.SOUTH, world.getBlockState(pos.south())))
-                            .with(WEST, isConnected(Direction.WEST, world.getBlockState(pos.west())))
-                            .with(EAST, isConnected(Direction.EAST, world.getBlockState(pos.east())));
+    IBlockReader world = context.getLevel();
+    BlockPos pos = context.getClickedPos();
+    return defaultBlockState().setValue(EXTENSION, world.getBlockState(pos.below()).is(this))
+                            .setValue(NORTH, isConnected(Direction.NORTH, world.getBlockState(pos.north())))
+                            .setValue(SOUTH, isConnected(Direction.SOUTH, world.getBlockState(pos.south())))
+                            .setValue(WEST, isConnected(Direction.WEST, world.getBlockState(pos.west())))
+                            .setValue(EAST, isConnected(Direction.EAST, world.getBlockState(pos.east())));
   }
 
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
     if (!facing.getAxis().isVertical()) {
       // barrel connects to
-      state = state.with(CONNECTIONS.get(facing), isConnected(facing, facingState));
+      state = state.setValue(CONNECTIONS.get(facing), isConnected(facing, facingState));
     } else if (facing == Direction.DOWN) {
       // extension if above another of the same block type
-      state = state.with(EXTENSION, facingState.isIn(this));
+      state = state.setValue(EXTENSION, facingState.is(this));
     }
     return state;
   }
@@ -240,14 +242,14 @@ public class CisternBlock extends Block {
   @SuppressWarnings("deprecation")
   @Deprecated
   public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-    VoxelShape[] boundList = state.get(EXTENSION) ? BOUNDS_EXTENSION : BOUNDS_BASE;
-    return boundList[boundsKey(state.get(NORTH), state.get(SOUTH), state.get(WEST), state.get(EAST))];
+    VoxelShape[] boundList = state.getValue(EXTENSION) ? BOUNDS_EXTENSION : BOUNDS_BASE;
+    return boundList[boundsKey(state.getValue(NORTH), state.getValue(SOUTH), state.getValue(WEST), state.getValue(EAST))];
   }
 
   // used to calculated side solidness for torch/lever placement, not collision
   @Override
   @Deprecated
-  public VoxelShape getCollisionShape(BlockState state, IBlockReader reader, BlockPos pos) {
-    return state.get(EXTENSION) ? SOLIDNESS_EXTENSION : SOLIDNESS_BASE;
+  public VoxelShape getBlockSupportShape(BlockState state, IBlockReader reader, BlockPos pos) {
+    return state.getValue(EXTENSION) ? SOLIDNESS_EXTENSION : SOLIDNESS_BASE;
   }
 }

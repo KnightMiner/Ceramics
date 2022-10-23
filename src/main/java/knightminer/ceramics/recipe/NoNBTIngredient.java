@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import net.minecraft.item.crafting.Ingredient.IItemList;
+
 /**
  * Ingredient extension that only matches if the stack has no NBT
  */
@@ -21,7 +23,7 @@ public class NoNBTIngredient extends Ingredient {
 	public static final Serializer SERIALIZER = new Serializer();
 
 	public NoNBTIngredient(Ingredient ingredient) {
-		this(Arrays.stream(ingredient.acceptedItems));
+		this(Arrays.stream(ingredient.values));
 	}
 
 	protected NoNBTIngredient(Stream<? extends IItemList> itemLists) {
@@ -39,8 +41,8 @@ public class NoNBTIngredient extends Ingredient {
 	}
 
 	@Override
-	public JsonElement serialize() {
-		JsonElement element = super.serialize();
+	public JsonElement toJson() {
+		JsonElement element = super.toJson();
 		JsonObject object;
 		if (element.isJsonObject()) {
 			object = element.getAsJsonObject();

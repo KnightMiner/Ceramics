@@ -8,6 +8,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 /**
  * Handles all tank behaviors for the cistern
  */

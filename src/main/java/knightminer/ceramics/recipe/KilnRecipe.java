@@ -13,7 +13,7 @@ public class KilnRecipe extends AbstractCookingRecipe {
   }
 
   @Override
-  public ItemStack getIcon() {
+  public ItemStack getToastSymbol() {
     return new ItemStack(Registration.KILN);
   }
 
