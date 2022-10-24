@@ -45,7 +45,7 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
     // elements
     this.background = guiHelper.createDrawable(RECIPE_GUI_VANILLA, 0, 114, 82, 54);
     this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Registration.KILN));
-    this.name = Ceramics.component("gui.category", "kiln");
+    this.name = Ceramics.component("gui.jei.category", "kiln");
     // animations
     IDrawableStatic staticFlame = guiHelper.createDrawable(RECIPE_GUI_VANILLA, 82, 114, 14, 14);
     this.animatedFlame = guiHelper.createAnimatedDrawable(staticFlame, 300, StartDirection.TOP, true);
@@ -107,8 +107,8 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
 
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, KilnRecipe recipe, IFocusGroup focuses) {
-    builder.addSlot(RecipeIngredientRole.INPUT, 0, 0).addIngredients(recipe.getInput());
-    builder.addSlot(RecipeIngredientRole.OUTPUT, 60, 18).addItemStack(recipe.getResultItem());
+    builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getInput());
+    builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(recipe.getResultItem());
   }
 
   @Override
