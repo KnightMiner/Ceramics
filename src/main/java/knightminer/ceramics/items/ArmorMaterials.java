@@ -7,8 +7,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Lazy;
 
 import java.util.function.Supplier;
@@ -64,7 +62,6 @@ public enum ArmorMaterials implements ArmorMaterial {
     return repairMaterial.get();
   }
 
-  @OnlyIn(Dist.CLIENT)
   @Override
   public String getName() {
     return this.name;

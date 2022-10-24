@@ -59,8 +59,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -107,7 +105,6 @@ public class Registration {
   /** Creative tab for all of Ceramics */
   private static final CreativeModeTab GROUP = new CreativeModeTab(Ceramics.MOD_ID) {
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ItemStack makeIcon() {
       return new ItemStack(PORCELAIN_BRICK);
     }

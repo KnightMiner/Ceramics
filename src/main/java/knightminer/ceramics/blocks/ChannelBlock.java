@@ -27,8 +27,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
@@ -333,7 +331,6 @@ public class ChannelBlock extends Block {
 
 	@Override
 	@Deprecated
-	@OnlyIn(Dist.CLIENT)
 	public boolean skipRendering(BlockState state, BlockState adjacentBlockState, Direction side) {
 		return side.getAxis().isHorizontal() && adjacentBlockState.is(this) && state.getValue(DIRECTION_MAP.get(side)).canFlow() && adjacentBlockState.getValue(DIRECTION_MAP.get(side.getOpposite())).canFlow();
 	}
