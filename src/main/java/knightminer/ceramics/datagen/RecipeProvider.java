@@ -180,7 +180,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     registerSlabStairWall(consumer, Registration.PORCELAIN_BRICKS);
 
     // golden bricks
-    addBrickRecipe(consumer, Registration.PORCELAIN_BRICKS, Items.GOLD_NUGGET, Registration.GOLDEN_BRICKS, "gold");
+    addBrickRecipe(consumer, Registration.PORCELAIN_BRICKS, Items.GOLD_INGOT, Registration.GOLDEN_BRICKS, "gold");
     registerSlabStairWall(consumer, Registration.GOLDEN_BRICKS);
 
     // marine bricks
