@@ -12,9 +12,10 @@ import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.items.BaseClayBucketItem;
-import knightminer.ceramics.items.ClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
+import knightminer.ceramics.items.EmptyClayBucketItem;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
+import knightminer.ceramics.items.FluidClayBucketItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
@@ -23,25 +24,37 @@ import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
-import knightminer.ceramics.util.ClayBucketCauldronInteraction;
+import knightminer.ceramics.util.EmptyFluidBucketCauldronInteraction;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SimpleCookingSerializer;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,7 +77,10 @@ import slimeknights.mantle.registration.object.EnumObject;
 import slimeknights.mantle.registration.object.ItemObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class Registration {
   private static final BlockDeferredRegister BLOCKS = new BlockDeferredRegister(Ceramics.MOD_ID);
@@ -151,11 +167,15 @@ public class Registration {
   public static final ItemObject<Item> PORCELAIN_BRICK = ITEMS.register("porcelain_brick", GROUP_PROPS);
 
   // tools
+  private static final Item.Properties EMPTY_PROPS = new Item.Properties().tab(GROUP).stacksTo(16);
   public static final ItemObject<Item> UNFIRED_CLAY_BUCKET           = ITEMS.register("unfired_clay_bucket", new Item.Properties().stacksTo(16).tab(GROUP));
-  public static final ItemObject<ClayBucketItem> CLAY_BUCKET         = ITEMS.register("clay_bucket", () -> new ClayBucketItem(false, GROUP_PROPS));
-  public static final ItemObject<ClayBucketItem> CRACKED_CLAY_BUCKET = ITEMS.register("cracked_clay_bucket", () -> new ClayBucketItem(true, GROUP_PROPS));
-  public static final ItemObject<BaseClayBucketItem> MILK_CLAY_BUCKET         = ITEMS.register("milk_clay_bucket", () -> new MilkClayBucketItem(false, UNSTACKABLE_PROPS));
-  public static final ItemObject<BaseClayBucketItem> CRACKED_MILK_CLAY_BUCKET = ITEMS.register("cracked_milk_clay_bucket", () -> new MilkClayBucketItem(true, UNSTACKABLE_PROPS));
+  public static final ItemObject<EmptyClayBucketItem> EMPTY_CLAY_BUCKET         = ITEMS.register("empty_clay_bucket",         () -> new EmptyClayBucketItem(false, EMPTY_PROPS));
+  public static final ItemObject<EmptyClayBucketItem> CRACKED_EMPTY_CLAY_BUCKET = ITEMS.register("cracked_empty_clay_bucket", () -> new EmptyClayBucketItem(true, EMPTY_PROPS));
+  private static final Supplier<Properties> BUCKET_PROPS = () -> new Item.Properties().tab(GROUP).stacksTo(1).craftRemainder(EMPTY_CLAY_BUCKET.get());
+  public static final ItemObject<FluidClayBucketItem> FLUID_CLAY_BUCKET         = ITEMS.register("fluid_clay_bucket",         () -> new FluidClayBucketItem(false, BUCKET_PROPS.get()));
+  public static final ItemObject<FluidClayBucketItem> CRACKED_FLUID_CLAY_BUCKET = ITEMS.register("cracked_fluid_clay_bucket", () -> new FluidClayBucketItem(true, UNSTACKABLE_PROPS));
+  public static final ItemObject<MilkClayBucketItem> MILK_CLAY_BUCKET           = ITEMS.register("milk_clay_bucket",          () -> new MilkClayBucketItem(false, BUCKET_PROPS.get()));
+  public static final ItemObject<MilkClayBucketItem> CRACKED_MILK_CLAY_BUCKET   = ITEMS.register("cracked_milk_clay_bucket",  () -> new MilkClayBucketItem(true, UNSTACKABLE_PROPS));
 
   // armor
   public static final ItemObject<Item> UNFIRED_CLAY_PLATE = ITEMS.register("unfired_clay_plate", GROUP_PROPS);
@@ -226,16 +246,33 @@ public class Registration {
   @SubscribeEvent
   static void commonSetup(FMLCommonSetupEvent event) {
     event.enqueueWork(() -> {
-      CauldronInteraction normalFluid = new ClayBucketCauldronInteraction(CLAY_BUCKET.get());
-      CauldronInteraction crackedFluid = new ClayBucketCauldronInteraction(CRACKED_CLAY_BUCKET.get());
-      // empty: need to fill from both types
-      CauldronInteraction.EMPTY.put(CLAY_BUCKET.get(),         normalFluid);
-      CauldronInteraction.EMPTY.put(CRACKED_CLAY_BUCKET.get(), crackedFluid);
-      // each type needs to empty into the bucket
-      CauldronInteraction.WATER.put(CLAY_BUCKET.get(),         normalFluid);
-      CauldronInteraction.WATER.put(CRACKED_CLAY_BUCKET.get(), crackedFluid);
-      CauldronInteraction.LAVA.put(CLAY_BUCKET.get(),         normalFluid);
-      CauldronInteraction.LAVA.put(CRACKED_CLAY_BUCKET.get(), crackedFluid);
+      record FillClayBucketCauldronInteraction(Predicate<BlockState> cauldron, ItemStack filledBucket, SoundEvent sound) implements CauldronInteraction {
+        @Override
+        public InteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
+          return CauldronInteraction.fillBucket(state, level, pos, player, hand, stack, filledBucket.copy(), cauldron, sound);
+        }
+      }
+
+      // filling buckets - not needed on empty cauldron
+      // TODO: this is pretty hardcoded, can this be generalized in any way?
+      Predicate<BlockState> full = state -> state.getValue(LayeredCauldronBlock.LEVEL) == 3;
+      CauldronInteraction.WATER.put(EMPTY_CLAY_BUCKET.get(),         new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withFluid(Fluids.WATER, false), SoundEvents.BUCKET_FILL));
+      CauldronInteraction.WATER.put(CRACKED_EMPTY_CLAY_BUCKET.get(), new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withFluid(Fluids.WATER, true),  SoundEvents.BUCKET_FILL));
+      CauldronInteraction.POWDER_SNOW.put(EMPTY_CLAY_BUCKET.get(),         new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withBlock(Blocks.POWDER_SNOW, false), SoundEvents.BUCKET_FILL_POWDER_SNOW));
+      CauldronInteraction.POWDER_SNOW.put(CRACKED_EMPTY_CLAY_BUCKET.get(), new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withBlock(Blocks.POWDER_SNOW, true),  SoundEvents.BUCKET_FILL_POWDER_SNOW));
+      CauldronInteraction fillLava = new FillClayBucketCauldronInteraction(state -> true, BaseClayBucketItem.withFluid(Fluids.LAVA, true), SoundEvents.BUCKET_FILL_LAVA);
+      CauldronInteraction.LAVA.put(EMPTY_CLAY_BUCKET.get(),         fillLava);
+      CauldronInteraction.LAVA.put(CRACKED_EMPTY_CLAY_BUCKET.get(), fillLava);
+
+      // emptying buckets - needed on all as fluid can replace existing
+      BiConsumer<ItemLike, CauldronInteraction> addAll = (item, interaction) -> {
+        CauldronInteraction.EMPTY.put(item.asItem(), interaction);
+        CauldronInteraction.WATER.put(item.asItem(), interaction);
+        CauldronInteraction.LAVA.put(item.asItem(), interaction);
+        CauldronInteraction.POWDER_SNOW.put(item.asItem(), interaction);
+      };
+      addAll.accept(FLUID_CLAY_BUCKET,         new EmptyFluidBucketCauldronInteraction(FLUID_CLAY_BUCKET.get()));
+      addAll.accept(CRACKED_FLUID_CLAY_BUCKET, new EmptyFluidBucketCauldronInteraction(CRACKED_FLUID_CLAY_BUCKET.get()));
     });
   }
 

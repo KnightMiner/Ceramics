@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "ceramics:empty_clay_bucket",
+    "ceramics:cracked_empty_clay_bucket"
+  ]
+}

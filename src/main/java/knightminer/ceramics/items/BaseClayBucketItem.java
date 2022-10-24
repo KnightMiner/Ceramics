@@ -2,35 +2,26 @@ package knightminer.ceramics.items;
 
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.util.FluidClayBucketWrapper;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import slimeknights.mantle.util.RegistryHelper;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -38,8 +29,6 @@ import java.util.Random;
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class BaseClayBucketItem extends Item {
-  /** Tag name for fluid in a bucket */
-  private static final String TAG_FLUID = "fluid";
   /** Constant used in rendering items breaking */
   private static final float DEGREE_TO_RAD = (float) Math.PI / 180f;
 
@@ -52,21 +41,27 @@ public abstract class BaseClayBucketItem extends Item {
     }
   }
 
+  /** Returns true if the given bucket is cracked */
+  public boolean isCracked() {
+    return isCracked;
+  }
+
+  /**
+   * Gets the fluid from the given clay bucket container
+   * @param stack  Bucket stack
+   * @return  Fluid contained in the container
+   */
+  public Fluid getFluid(ItemStack stack) {
+    return Fluids.EMPTY;
+  }
+
+  @Override
+  public Component getName(ItemStack stack) {
+    return super.getName(stack).plainCopy().withStyle(ChatFormatting.RED);
+  }
+
 
   /* Item methods */
-
-  @Override
-  public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-    return new FluidClayBucketWrapper(stack);
-  }
-
-  @Override
-  @OnlyIn(Dist.CLIENT)
-  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    if (isCracked) {
-      tooltip.add(new TranslatableComponent(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
-    }
-  }
 
   /**
    * Called when an item is destroyed, as in the stack changes from filled to empty
@@ -76,6 +71,13 @@ public abstract class BaseClayBucketItem extends Item {
     ItemStack original = event.getOriginal();
     if(original.getItem() == this) {
       renderBrokenItem(event.getPlayer(), event.getOriginal());
+    }
+  }
+
+  @Override
+  public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> subItems) {
+    if (this.allowdedIn(tab) && !isCracked) {
+      subItems.add(new ItemStack(this));
     }
   }
 
@@ -110,23 +112,6 @@ public abstract class BaseClayBucketItem extends Item {
 
 
   /* Bucket handling */
-
-  @Override
-  public boolean hasContainerItem(ItemStack stack) {
-    return !isCracked && !hasFluid(stack) && super.hasContainerItem(stack);
-  }
-
-  // TODO: perhaps separate filled and empty?
-  @Override
-  public ItemStack getContainerItem(ItemStack stack) {
-    if (isCracked) {
-      return ItemStack.EMPTY;
-    }
-    if (!hasFluid(stack)) {
-      return ItemStack.EMPTY;
-    }
-    return new ItemStack(Registration.CLAY_BUCKET);
-  }
 
   /**
    * Gets the empty bucket, based on the player's abilities
@@ -198,41 +183,18 @@ public abstract class BaseClayBucketItem extends Item {
   }
 
   /**
-   * Returns whether a bucket has fluid. Note the fluid may still be null if
-   * true due to milk buckets
-   */
-  public boolean hasFluid(ItemStack container) {
-    return getFluid(container) != Fluids.EMPTY;
-  }
-
-  /**
-   * Gets the fluid from the given clay bucket container
-   * @param stack  Bucket stack
-   * @return  Fluid contained in the container
-   */
-  public Fluid getFluid(ItemStack stack) {
-    CompoundTag tags = stack.getTag();
-    if(tags != null) {
-      Fluid fluid = ForgeRegistries.FLUIDS.getValue(new ResourceLocation(tags.getString(TAG_FLUID)));
-      return fluid == null ? Fluids.EMPTY : fluid;
-    }
-
-    return Fluids.EMPTY;
-  }
-
-  /**
    * Returns the stack with the specified fluid
    * @param fluid  Fluid for the bucket
    * @return  Clay bucket containing the given fluid
    */
-  public ItemStack withFluid(Fluid fluid) {
+  public static ItemStack withFluid(Fluid fluid, boolean isCracked) {
     // special case milk: returns the metadata version
     if (isMilk(fluid)) {
-      return withMilk();
+      return withMilk(isCracked);
     }
 
     // return
-    return setFluid(new ItemStack(isCracked || doesCrack(fluid) ? Registration.CRACKED_CLAY_BUCKET : Registration.CLAY_BUCKET), fluid);
+    return FluidClayBucketItem.setFluid(new ItemStack(isCracked || doesCrack(fluid) ? Registration.CRACKED_FLUID_CLAY_BUCKET : Registration.FLUID_CLAY_BUCKET), fluid);
   }
 
   /**
@@ -248,19 +210,8 @@ public abstract class BaseClayBucketItem extends Item {
    * Gets the bucket with milk based on the given cracked status
    * @return  Stack with milk
    */
-  protected ItemStack withMilk() {
+  protected static ItemStack withMilk(boolean isCracked) {
     return new ItemStack(isCracked ? Registration.CRACKED_MILK_CLAY_BUCKET : Registration.MILK_CLAY_BUCKET);
-  }
-
-  /**
-   * Sets the fluid for the given stack
-   * @param stack  Item stack instance
-   * @param fluid  Fluid instance
-   * @return  Modified stack
-   */
-  protected static ItemStack setFluid(ItemStack stack, Fluid fluid) {
-    stack.getOrCreateTag().putString(TAG_FLUID, Objects.requireNonNull(fluid.getRegistryName()).toString());
-    return stack;
   }
 
   /**

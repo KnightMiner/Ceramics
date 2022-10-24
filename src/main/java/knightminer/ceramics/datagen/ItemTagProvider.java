@@ -38,5 +38,11 @@ public class ItemTagProvider extends ItemTagsProvider {
     this.tag(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR).add(Items.CLAY_BALL);
     this.tag(CeramicsTags.Items.BRICK_PLATES).add(Registration.CLAY_PLATE.get());
     this.tag(CeramicsTags.Items.PLATES).addTag(CeramicsTags.Items.BRICK_PLATES);
+
+    // buckets
+    this.tag(CeramicsTags.Items.EMPTY_CLAY_BUCKETS).add(Registration.EMPTY_CLAY_BUCKET.asItem(), Registration.CRACKED_EMPTY_CLAY_BUCKET.asItem());
+    this.tag(CeramicsTags.Items.CLAY_BUCKETS).addTag(CeramicsTags.Items.EMPTY_CLAY_BUCKETS).add(
+        Registration.FLUID_CLAY_BUCKET.asItem(), Registration.CRACKED_FLUID_CLAY_BUCKET.asItem(),
+        Registration.MILK_CLAY_BUCKET.asItem(), Registration.CRACKED_MILK_CLAY_BUCKET.asItem());
   }
 }

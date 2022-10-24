@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "ceramics:cracked_clay_bucket_smelting"
+      "ceramics:empty_clay_bucket_kiln"
     ]
   },
   "criteria": {
@@ -12,7 +12,7 @@
         "items": [
           {
             "items": [
-              "ceramics:clay_bucket"
+              "ceramics:unfired_clay_bucket"
             ]
           }
         ]
@@ -21,7 +21,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "ceramics:cracked_clay_bucket_smelting"
+        "recipe": "ceramics:empty_clay_bucket_kiln"
       }
     }
   },

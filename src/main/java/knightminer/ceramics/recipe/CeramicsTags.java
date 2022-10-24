@@ -61,6 +61,9 @@ public class CeramicsTags {
     public static final TagKey<Item> PLATES = forgeTag("plates");
     public static final TagKey<Item> BRICK_PLATES = forgeTag("plates/brick");
 
+    public static final TagKey<Item> CLAY_BUCKETS = ceramicsTag("clay_buckets");
+    public static final TagKey<Item> EMPTY_CLAY_BUCKETS = ceramicsTag("clay_buckets/empty");
+
     private static TagKey<Item> ceramicsTag(String id) {
       return ItemTags.create(Ceramics.getResource(id));
     }
@@ -73,10 +76,12 @@ public class CeramicsTags {
   public static class Fluids {
     private static void init() {}
 
-    public static final TagKey<Fluid> HOT_FLUIDS = makeWrapperTag("hot_fluids");
-    public static final TagKey<Fluid> COOL_FLUIDS = makeWrapperTag("cool_fluids");
+    /** Override to make a fluid hot when it is normally cool */
+    public static final TagKey<Fluid> HOT_FLUIDS = ceramicsTag("hot_fluids");
+    /** Override to make a fluid cool when it is normally hot */
+    public static final TagKey<Fluid> COOL_FLUIDS = ceramicsTag("cool_fluids");
 
-    private static TagKey<Fluid> makeWrapperTag(String id) {
+    private static TagKey<Fluid> ceramicsTag(String id) {
       return FluidTags.create(Ceramics.getResource(id));
     }
   }

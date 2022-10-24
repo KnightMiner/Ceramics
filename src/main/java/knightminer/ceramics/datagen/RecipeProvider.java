@@ -206,9 +206,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                        .unlockedBy("has_clay", has(Items.CLAY_BALL))
                        .save(consumer);
     // fired
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_BUCKET, Registration.CLAY_BUCKET, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_BUCKET, Registration.EMPTY_CLAY_BUCKET, 0.3f);
     // cracked
-    kilnFurnaceRecipe(consumer, Registration.CLAY_BUCKET, Registration.CRACKED_CLAY_BUCKET, 0.2f);
+    kilnFurnaceRecipe(consumer, Registration.EMPTY_CLAY_BUCKET, Registration.CRACKED_EMPTY_CLAY_BUCKET, 0.2f);
 
     // cistern
     ShapedRecipeBuilder.shaped(Registration.CLAY_CISTERN, 2)

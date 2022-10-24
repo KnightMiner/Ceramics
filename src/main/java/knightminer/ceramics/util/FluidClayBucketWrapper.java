@@ -7,6 +7,8 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
+import javax.annotation.Nonnull;
+
 /**
  * Wrapper around a clay bucket to get the fluid stored
  */
@@ -15,11 +17,13 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
     super(container);
   }
 
+  @Nonnull
   @Override
   public FluidStack getFluid() {
     Item item = container.getItem();
-    if (item instanceof BaseClayBucketItem) {
-      return new FluidStack(((BaseClayBucketItem)item).getFluid(container), FluidAttributes.BUCKET_VOLUME);
+    // using base so it works with milk as well
+    if (item instanceof BaseClayBucketItem fluidBucket) {
+      return new FluidStack(fluidBucket.getFluid(container), FluidAttributes.BUCKET_VOLUME);
     }
     return FluidStack.EMPTY;
   }
@@ -30,8 +34,8 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
       container = container.getContainerItem();
     } else {
       Item item = container.getItem();
-      if (item instanceof BaseClayBucketItem) {
-        container = ((BaseClayBucketItem)item).withFluid(stack.getFluid());
+      if (item instanceof BaseClayBucketItem bucket) {
+        container = BaseClayBucketItem.withFluid(stack.getFluid(), bucket.isCracked());
       } else {
         container = ItemStack.EMPTY;
       }

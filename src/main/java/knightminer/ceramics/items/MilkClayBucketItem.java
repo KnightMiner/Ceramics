@@ -1,9 +1,6 @@
 package knightminer.ceramics.items;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.core.NonNullList;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -11,7 +8,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.UseAnim;
@@ -52,14 +48,12 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
       entity.curePotionEffects(MILK_STACK);
     }
     // update stats
-    if (entity instanceof ServerPlayer) {
-      ServerPlayer serverplayerentity = (ServerPlayer)entity;
-      CriteriaTriggers.CONSUME_ITEM.trigger(serverplayerentity, stack);
-      serverplayerentity.awardStat(Stats.ITEM_USED.get(this));
+    if (entity instanceof ServerPlayer serverPlayer) {
+      CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, stack);
+      serverPlayer.awardStat(Stats.ITEM_USED.get(this));
     }
     // if a player, empty a bucket
-    if (entity instanceof Player) {
-      Player player = (Player)entity;
+    if (entity instanceof Player player) {
       if (isCracked) {
         renderBrokenItem(player, stack);
       }
@@ -68,17 +62,7 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
     return stack;
   }
 
-  @Override
-  public Component getName(ItemStack stack) {
-    return super.getName(stack).plainCopy().withStyle(ChatFormatting.RED);
-  }
-
   /* Fluids */
-
-  @Override
-  public boolean hasFluid(ItemStack container) {
-    return true;
-  }
 
   @Override
   public Fluid getFluid(ItemStack stack) {
@@ -86,12 +70,5 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
       return ForgeMod.MILK.get();
     }
     return Fluids.EMPTY;
-  }
-
-  @Override
-  public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> subItems) {
-    if (/*Config.bucketEnabled && */this.allowdedIn(tab) && !isCracked) {
-      subItems.add(new ItemStack(this));
-    }
   }
 }

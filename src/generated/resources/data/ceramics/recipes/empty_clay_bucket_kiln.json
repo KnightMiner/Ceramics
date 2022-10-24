@@ -3,7 +3,7 @@
   "ingredient": {
     "item": "ceramics:unfired_clay_bucket"
   },
-  "result": "ceramics:clay_bucket",
+  "result": "ceramics:empty_clay_bucket",
   "experience": 0.3,
   "cookingtime": 100
 }

@@ -46,9 +46,9 @@ public class JEIPlugin implements IModPlugin {
 
   @Override
   public void registerItemSubtypes(ISubtypeRegistration registration) {
-    IIngredientSubtypeInterpreter<ItemStack> bucketInterpreter = (stack, context) -> BaseClayBucketItem.getSubtype(stack);
-    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CLAY_BUCKET.get(), bucketInterpreter);
-    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CRACKED_CLAY_BUCKET.get(), bucketInterpreter);
+    IIngredientSubtypeInterpreter<ItemStack> fluidInterpreter = (stack, context) -> BaseClayBucketItem.getSubtype(stack);
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.FLUID_CLAY_BUCKET.get(), fluidInterpreter);
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CRACKED_FLUID_CLAY_BUCKET.get(), fluidInterpreter);
 
     // separate different states of crackable clay
     IIngredientSubtypeInterpreter<ItemStack> crackableClay = (stack, context) -> CrackableBlockItem.getCracks(stack) > 0 ? "cracked" : "";
@@ -122,8 +122,8 @@ public class JEIPlugin implements IModPlugin {
   public void onRuntimeAvailable(IJeiRuntime runtime) {
     // add buckets to the ingredient list since JEI fills that list too soon
     NonNullList<ItemStack> buckets = NonNullList.create();
-    Registration.CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
-    Registration.CRACKED_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
+    Registration.FLUID_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
+    Registration.CRACKED_FLUID_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
     runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, buckets);
   }
 }

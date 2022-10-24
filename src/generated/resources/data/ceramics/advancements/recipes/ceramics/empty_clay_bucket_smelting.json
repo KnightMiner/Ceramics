@@ -2,7 +2,7 @@
   "parent": "minecraft:recipes/root",
   "rewards": {
     "recipes": [
-      "ceramics:clay_bucket_smelting"
+      "ceramics:empty_clay_bucket_smelting"
     ]
   },
   "criteria": {
@@ -21,7 +21,7 @@
     "has_the_recipe": {
       "trigger": "minecraft:recipe_unlocked",
       "conditions": {
-        "recipe": "ceramics:clay_bucket_smelting"
+        "recipe": "ceramics:empty_clay_bucket_smelting"
       }
     }
   },
