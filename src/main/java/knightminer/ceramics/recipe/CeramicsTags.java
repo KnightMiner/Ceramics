@@ -42,6 +42,9 @@ public class CeramicsTags {
     public static final TagKey<Block> PORCELAIN_CISTERNS = ceramicsTag("porcelain_cisterns");
     public static final TagKey<Block> CISTERN_CONNECTIONS = ceramicsTag("cistern_connections");
 
+    /** Blocks that when placed in a clay bucket crack it */
+    public static final TagKey<Block> BUCKET_CRACKING_BLOCKS = ceramicsTag("bucket_cracking_blocks");
+
     private static TagKey<Block> ceramicsTag(String id) {
       return BlockTags.create(Ceramics.getResource(id));
     }

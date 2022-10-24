@@ -1,5 +1,5 @@
 {
-  "loader": "ceramics:fluid_bucket",
+  "loader": "ceramics:solid_bucket",
   "parent": "forge:item/default",
   "textures": {
     "particle": "ceramics:item/clay_bucket/cracked_inner",

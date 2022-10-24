@@ -6,6 +6,8 @@ import knightminer.ceramics.client.gui.KilnScreen;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
+import knightminer.ceramics.items.FluidClayBucketItem;
+import knightminer.ceramics.items.SolidClayBucketItem;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.KilnRecipe;
 import mezz.jei.api.IModPlugin;
@@ -46,9 +48,12 @@ public class JEIPlugin implements IModPlugin {
 
   @Override
   public void registerItemSubtypes(ISubtypeRegistration registration) {
-    IIngredientSubtypeInterpreter<ItemStack> fluidInterpreter = (stack, context) -> BaseClayBucketItem.getSubtype(stack);
+    IIngredientSubtypeInterpreter<ItemStack> fluidInterpreter = (stack, context) -> BaseClayBucketItem.getSubtype(stack, FluidClayBucketItem.TAG_FLUID);
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.FLUID_CLAY_BUCKET.get(), fluidInterpreter);
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CRACKED_FLUID_CLAY_BUCKET.get(), fluidInterpreter);
+    IIngredientSubtypeInterpreter<ItemStack> blockInterpreter = (stack, context) -> SolidClayBucketItem.getSubtype(stack, SolidClayBucketItem.TAG_BLOCK);
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.SOLID_CLAY_BUCKET.get(), blockInterpreter);
+    registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CRACKED_SOLID_CLAY_BUCKET.get(), blockInterpreter);
 
     // separate different states of crackable clay
     IIngredientSubtypeInterpreter<ItemStack> crackableClay = (stack, context) -> CrackableBlockItem.getCracks(stack) > 0 ? "cracked" : "";
@@ -124,6 +129,8 @@ public class JEIPlugin implements IModPlugin {
     NonNullList<ItemStack> buckets = NonNullList.create();
     Registration.FLUID_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
     Registration.CRACKED_FLUID_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
+    Registration.SOLID_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
+    Registration.CRACKED_SOLID_CLAY_BUCKET.get().fillItemCategory(CreativeModeTab.TAB_SEARCH, buckets);
     runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, buckets);
   }
 }

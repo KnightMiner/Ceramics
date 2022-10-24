@@ -2,6 +2,7 @@ package knightminer.ceramics.items;
 
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
+import knightminer.ceramics.recipe.CeramicsTags.Blocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
@@ -198,6 +200,19 @@ public abstract class BaseClayBucketItem extends Item {
   }
 
   /**
+   * Returns the stack with the specified block
+   * @param block  Block for the bucket
+   * @return  Clay bucket containing the given fluid
+   */
+  public static ItemStack withBlock(Block block, boolean isCracked) {
+    return SolidClayBucketItem.setBlock(new ItemStack(
+        isCracked || RegistryHelper.contains(Blocks.BUCKET_CRACKING_BLOCKS, block)
+        ? Registration.CRACKED_SOLID_CLAY_BUCKET
+        : Registration.SOLID_CLAY_BUCKET
+    ), block);
+  }
+
+  /**
    * Checks if the given fluid is milk. May give inaccurate results before tags are loaded.
    * @param fluid  Fluid to check
    * @return  True if the fluid is milk
@@ -219,10 +234,10 @@ public abstract class BaseClayBucketItem extends Item {
    * @param stack  Stack instance to check
    * @return  String variant name
    */
-  public static String getSubtype(ItemStack stack) {
+  public static String getSubtype(ItemStack stack, String key) {
     if (stack.hasTag()) {
       assert stack.getTag() != null;
-      return stack.getTag().getString(TAG_FLUID);
+      return stack.getTag().getString(key);
     }
     return "minecraft:empty";
   }

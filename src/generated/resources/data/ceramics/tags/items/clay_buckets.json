@@ -4,6 +4,8 @@
     "#ceramics:clay_buckets/empty",
     "ceramics:fluid_clay_bucket",
     "ceramics:cracked_fluid_clay_bucket",
+    "ceramics:solid_clay_bucket",
+    "ceramics:cracked_solid_clay_bucket",
     "ceramics:milk_clay_bucket",
     "ceramics:cracked_milk_clay_bucket"
   ]

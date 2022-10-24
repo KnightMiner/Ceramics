@@ -33,6 +33,8 @@ public class BlockTagProvider extends BlockTagsProvider {
     TagsProvider.TagAppender<Block> coloredTerracotta = this.tag(CeramicsTags.Blocks.COLORED_TERRACOTTA);
     Registration.TERRACOTTA.values().forEach(coloredTerracotta::add);
 
+    this.tag(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS);
+
     // porcelain
     this.tag(BlockTags.ENDERMAN_HOLDABLE).add(Registration.UNFIRED_PORCELAIN_BLOCK.get());
     TagsProvider.TagAppender<Block> coloredPorcelain = this.tag(CeramicsTags.Blocks.COLORED_PORCELAIN);

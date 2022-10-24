@@ -17,6 +17,7 @@ import knightminer.ceramics.items.EmptyClayBucketItem;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.FluidClayBucketItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
+import knightminer.ceramics.items.SolidClayBucketItem;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.recipe.NoNBTIngredient;
@@ -25,6 +26,7 @@ import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
 import knightminer.ceramics.util.EmptyFluidBucketCauldronInteraction;
+import knightminer.ceramics.util.EmptySolidBucketCauldronInteraction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -176,6 +178,8 @@ public class Registration {
   public static final ItemObject<FluidClayBucketItem> CRACKED_FLUID_CLAY_BUCKET = ITEMS.register("cracked_fluid_clay_bucket", () -> new FluidClayBucketItem(true, UNSTACKABLE_PROPS));
   public static final ItemObject<MilkClayBucketItem> MILK_CLAY_BUCKET           = ITEMS.register("milk_clay_bucket",          () -> new MilkClayBucketItem(false, BUCKET_PROPS.get()));
   public static final ItemObject<MilkClayBucketItem> CRACKED_MILK_CLAY_BUCKET   = ITEMS.register("cracked_milk_clay_bucket",  () -> new MilkClayBucketItem(true, UNSTACKABLE_PROPS));
+  public static final ItemObject<SolidClayBucketItem> SOLID_CLAY_BUCKET         = ITEMS.register("solid_clay_bucket",         () -> new SolidClayBucketItem(false, BUCKET_PROPS.get()));
+  public static final ItemObject<SolidClayBucketItem> CRACKED_SOLID_CLAY_BUCKET = ITEMS.register("cracked_solid_clay_bucket", () -> new SolidClayBucketItem(true, UNSTACKABLE_PROPS));
 
   // armor
   public static final ItemObject<Item> UNFIRED_CLAY_PLATE = ITEMS.register("unfired_clay_plate", GROUP_PROPS);
@@ -245,6 +249,7 @@ public class Registration {
 
   @SubscribeEvent
   static void commonSetup(FMLCommonSetupEvent event) {
+    SolidClayBucketItem.loadBucketableBlocks();
     event.enqueueWork(() -> {
       record FillClayBucketCauldronInteraction(Predicate<BlockState> cauldron, ItemStack filledBucket, SoundEvent sound) implements CauldronInteraction {
         @Override
@@ -273,6 +278,8 @@ public class Registration {
       };
       addAll.accept(FLUID_CLAY_BUCKET,         new EmptyFluidBucketCauldronInteraction(FLUID_CLAY_BUCKET.get()));
       addAll.accept(CRACKED_FLUID_CLAY_BUCKET, new EmptyFluidBucketCauldronInteraction(CRACKED_FLUID_CLAY_BUCKET.get()));
+      addAll.accept(SOLID_CLAY_BUCKET,         new EmptySolidBucketCauldronInteraction(SOLID_CLAY_BUCKET.get()));
+      addAll.accept(CRACKED_SOLID_CLAY_BUCKET, new EmptySolidBucketCauldronInteraction(CRACKED_SOLID_CLAY_BUCKET.get()));
     });
   }
 

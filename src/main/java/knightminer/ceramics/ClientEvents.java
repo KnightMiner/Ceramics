@@ -53,7 +53,8 @@ public class ClientEvents {
 
   @SubscribeEvent
   static void registerModels(ModelRegistryEvent event) {
-    ModelLoaderRegistry.registerLoader(Ceramics.getResource("bucket"), ClayBucketModel.LOADER);
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("fluid_bucket"), ClayBucketModel.FLUID_LOADER);
+    ModelLoaderRegistry.registerLoader(Ceramics.getResource("solid_bucket"), ClayBucketModel.SOLID_LOADER);
     ModelLoaderRegistry.registerLoader(Ceramics.getResource("cistern"), CisternModel.LOADER);
     ModelLoaderRegistry.registerLoader(Ceramics.getResource("channel"), ChannelModel.LOADER);
     // cracked models
