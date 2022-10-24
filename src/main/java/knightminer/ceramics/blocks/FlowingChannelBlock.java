@@ -2,8 +2,8 @@ package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.tileentity.ChannelTileEntity;
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
+import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -38,13 +38,13 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		return new ChannelTileEntity(pos, state, crackable);
+		return new ChannelBlockEntity(pos, state, crackable);
 	}
 
 	@Nullable
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-		return BlockEntityHelper.serverTicker(level, type, Registration.CHANNEL_TILE_ENTITY.get(), ChannelTileEntity.SERVER_TICKER);
+		return BlockEntityHelper.serverTicker(level, type, Registration.CHANNEL_BLOCK_ENTITY.get(), ChannelBlockEntity.SERVER_TICKER);
 	}
 
 	private static Direction fromOffset(BlockPos pos, BlockPos neighbor) {
@@ -64,14 +64,14 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 		if (!worldIn.isClientSide()) {
-			BlockEntityHelper.get(ChannelTileEntity.class, worldIn, pos)
+			BlockEntityHelper.get(ChannelBlockEntity.class, worldIn, pos)
 											 .ifPresent(te -> te.removeCachedNeighbor(fromOffset(pos, fromPos)));
 		}
 	}
 
 	@Override
 	protected void activateTileEntity(BlockState state, Level world, BlockPos pos, Direction side) {
-		BlockEntityHelper.get(ChannelTileEntity.class, world, pos).ifPresent(te -> te.refreshNeighbor(state, side));
+		BlockEntityHelper.get(ChannelBlockEntity.class, world, pos).ifPresent(te -> te.refreshNeighbor(state, side));
 	}
 
 	/* Cracking */
@@ -86,7 +86,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	@Deprecated
 	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
 		if (isCrackable()) {
-			BlockEntityHelper.get(ChannelTileEntity.class, worldIn, pos).ifPresent(ChannelTileEntity::randomTick);
+			BlockEntityHelper.get(ChannelBlockEntity.class, worldIn, pos).ifPresent(ChannelBlockEntity::randomTick);
 		}
 	}
 

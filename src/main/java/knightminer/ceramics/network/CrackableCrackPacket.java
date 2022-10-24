@@ -1,6 +1,6 @@
 package knightminer.ceramics.network;
 
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -35,7 +35,7 @@ public class CrackableCrackPacket implements IThreadsafePacket {
 
 	private static class HandleClient {
 		private static void handle(CrackableCrackPacket packet) {
-			BlockEntityHelper.get(ICrackableTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.getCracksHandler().setCracks(packet.cracks));
+			BlockEntityHelper.get(ICrackableBlockEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.getCracksHandler().setCracks(packet.cracks));
 		}
 	}
 }

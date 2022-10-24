@@ -2,8 +2,8 @@ package knightminer.ceramics.plugin.jei;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.client.gui.KilnScreen;
-import knightminer.ceramics.container.KilnContainer;
+import knightminer.ceramics.client.screen.KilnScreen;
+import knightminer.ceramics.menu.KilnMenu;
 import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.items.FluidClayBucketItem;
@@ -114,8 +114,8 @@ public class JEIPlugin implements IModPlugin {
 
   @Override
   public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-    registration.addRecipeTransferHandler(KilnContainer.class, KilnCategory.TYPE,   KilnCategory.INPUT_SLOT, 1, 3, 36);
-    registration.addRecipeTransferHandler(KilnContainer.class, RecipeTypes.FUELING, KilnCategory.FUEL_SLOT,  1, 3, 36);
+    registration.addRecipeTransferHandler(KilnMenu.class, KilnCategory.TYPE, KilnCategory.INPUT_SLOT, 1, 3, 36);
+    registration.addRecipeTransferHandler(KilnMenu.class, RecipeTypes.FUELING, KilnCategory.FUEL_SLOT, 1, 3, 36);
   }
 
   @Override

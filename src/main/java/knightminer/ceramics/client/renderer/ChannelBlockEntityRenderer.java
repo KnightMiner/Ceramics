@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
+import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
 import knightminer.ceramics.client.model.ChannelModel;
-import knightminer.ceramics.tileentity.ChannelTileEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -24,11 +24,11 @@ import slimeknights.mantle.client.render.FluidRenderer;
 import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 
-public class ChannelTileEntityRenderer implements BlockEntityRenderer<ChannelTileEntity> {
-	public ChannelTileEntityRenderer(BlockEntityRendererProvider.Context context) {}
+public class ChannelBlockEntityRenderer implements BlockEntityRenderer<ChannelBlockEntity> {
+	public ChannelBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
 	@Override
-	public void render(ChannelTileEntity te, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlayIn)  {
+	public void render(ChannelBlockEntity te, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlayIn)  {
 		FluidStack fluid = te.getFluid();
 		if (fluid.isEmpty()) {
 			return;

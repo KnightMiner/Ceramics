@@ -1,14 +1,14 @@
 package knightminer.ceramics;
 
-import knightminer.ceramics.client.gui.KilnScreen;
 import knightminer.ceramics.client.model.ChannelModel;
 import knightminer.ceramics.client.model.CisternModel;
 import knightminer.ceramics.client.model.ClayBucketModel;
 import knightminer.ceramics.client.model.CrackedFluidsModel;
 import knightminer.ceramics.client.model.CrackedModel;
-import knightminer.ceramics.client.renderer.ChannelTileEntityRenderer;
-import knightminer.ceramics.client.renderer.CisternTileEntityRenderer;
-import knightminer.ceramics.client.renderer.FaucetTileEntityRenderer;
+import knightminer.ceramics.client.renderer.ChannelBlockEntityRenderer;
+import knightminer.ceramics.client.renderer.CisternBlockEntityRenderer;
+import knightminer.ceramics.client.renderer.FaucetBlockEntityRenderer;
+import knightminer.ceramics.client.screen.KilnScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
@@ -41,14 +41,14 @@ public class ClientEvents {
     ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
     ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
 
-    MenuScreens.register(Registration.KILN_CONTAINER.get(), KilnScreen::new);
+    MenuScreens.register(Registration.KILN_MENU.get(), KilnScreen::new);
   }
 
   @SubscribeEvent
   static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-    event.registerBlockEntityRenderer(Registration.CISTERN_TILE_ENTITY.get(), CisternTileEntityRenderer::new);
-    event.registerBlockEntityRenderer(Registration.FAUCET_TILE_ENTITY.get(), FaucetTileEntityRenderer::new);
-    event.registerBlockEntityRenderer(Registration.CHANNEL_TILE_ENTITY.get(), ChannelTileEntityRenderer::new);
+    event.registerBlockEntityRenderer(Registration.CISTERN_BLOCK_ENTITY.get(), CisternBlockEntityRenderer::new);
+    event.registerBlockEntityRenderer(Registration.FAUCET_BLOCK_ENTITY.get(), FaucetBlockEntityRenderer::new);
+    event.registerBlockEntityRenderer(Registration.CHANNEL_BLOCK_ENTITY.get(), ChannelBlockEntityRenderer::new);
   }
 
   @SubscribeEvent

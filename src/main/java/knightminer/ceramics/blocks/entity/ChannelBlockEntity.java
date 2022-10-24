@@ -1,12 +1,12 @@
-package knightminer.ceramics.tileentity;
+package knightminer.ceramics.blocks.entity;
 
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.ChannelFlowPacket;
 import knightminer.ceramics.network.ChannelFluidUpdatePacket;
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import knightminer.ceramics.util.tank.ChannelSideTank;
 import knightminer.ceramics.util.tank.ChannelTank;
 import knightminer.ceramics.util.tank.FillOnlyFluidHandler;
@@ -41,8 +41,8 @@ import java.util.Map;
 /**
  * Logic for channel fluid transfer
  */
-public class ChannelTileEntity extends MantleBlockEntity implements ICrackableTileEntity {
-	public static final BlockEntityTicker<ChannelTileEntity> SERVER_TICKER = (level, pos, state, te) -> te.tick(level, pos, state);
+public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity {
+	public static final BlockEntityTicker<ChannelBlockEntity> SERVER_TICKER = (level, pos, state, te) -> te.tick(level, pos, state);
 	/** Channel internal tank */
 	private final ChannelTank tank = new ChannelTank(75, this);
 	/** Handler to return from channel top */
@@ -67,14 +67,14 @@ public class ChannelTileEntity extends MantleBlockEntity implements ICrackableTi
 	private final byte[] isFlowing = new byte[5];
 
 	/** Crackable handling */
-	private final CrackableTileEntityHandler cracksHandler;
+	private final CrackableBlockEntityHandler cracksHandler;
 
-	public ChannelTileEntity(BlockPos pos, BlockState state, boolean crackable) {
-		super(Registration.CHANNEL_TILE_ENTITY.get(), pos, state);
-		cracksHandler = new CrackableTileEntityHandler(this, crackable);
+	public ChannelBlockEntity(BlockPos pos, BlockState state, boolean crackable) {
+		super(Registration.CHANNEL_BLOCK_ENTITY.get(), pos, state);
+		cracksHandler = new CrackableBlockEntityHandler(this, crackable);
 	}
 
-	public ChannelTileEntity(BlockPos pos, BlockState state) {
+	public ChannelBlockEntity(BlockPos pos, BlockState state) {
 		this(pos, state, false);
 	}
 
@@ -92,7 +92,7 @@ public class ChannelTileEntity extends MantleBlockEntity implements ICrackableTi
 	}
 
 	@Override
-	public CrackableTileEntityHandler getCracksHandler() {
+	public CrackableBlockEntityHandler getCracksHandler() {
 		return cracksHandler;
 	}
 
@@ -344,13 +344,13 @@ public class ChannelTileEntity extends MantleBlockEntity implements ICrackableTi
 			// if we have down and can flow, skip sides
 			boolean hasFlown = false;
 			if(state.getValue(ChannelBlock.DOWN)) {
-				hasFlown = trySide(Direction.DOWN, FaucetTileEntity.MB_PER_TICK);
+				hasFlown = trySide(Direction.DOWN, FaucetBlockEntity.MB_PER_TICK);
 			}
 			// try sides if we have any sides
 			int outputs = countOutputs(state);
 			if(!hasFlown && outputs > 0) {
 				// split the fluid evenly between sides
-				int flowRate = Mth.clamp(tank.getMaxUsable() / outputs, 1, FaucetTileEntity.MB_PER_TICK);
+				int flowRate = Mth.clamp(tank.getMaxUsable() / outputs, 1, FaucetBlockEntity.MB_PER_TICK);
 				// then transfer on each side
 				for(Direction side : Plane.HORIZONTAL) {
 					trySide(side, flowRate);

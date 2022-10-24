@@ -1,4 +1,4 @@
-package knightminer.ceramics.container;
+package knightminer.ceramics.menu;
 
 import knightminer.ceramics.Registration;
 import net.minecraft.client.RecipeBookCategories;
@@ -11,14 +11,14 @@ import net.minecraft.world.inventory.RecipeBookType;
 
 import java.util.List;
 
-public class KilnContainer extends AbstractFurnaceMenu {
+public class KilnMenu extends AbstractFurnaceMenu {
   @SuppressWarnings("unused")
-  public KilnContainer(int id, Inventory inventory, FriendlyByteBuf buffer) {
-    super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE.get(), RecipeBookType.FURNACE, id, inventory);
+  public KilnMenu(int id, Inventory inventory, FriendlyByteBuf buffer) {
+    super(Registration.KILN_MENU.get(), Registration.KILN_RECIPE.get(), RecipeBookType.FURNACE, id, inventory);
   }
 
-  public KilnContainer(int id, Inventory inventory, Container tileEntity, ContainerData furnaceData) {
-    super(Registration.KILN_CONTAINER.get(), Registration.KILN_RECIPE.get(), RecipeBookType.FURNACE, id, inventory, tileEntity, furnaceData);
+  public KilnMenu(int id, Inventory inventory, Container tileEntity, ContainerData furnaceData) {
+    super(Registration.KILN_MENU.get(), Registration.KILN_RECIPE.get(), RecipeBookType.FURNACE, id, inventory, tileEntity, furnaceData);
   }
 
   @Override

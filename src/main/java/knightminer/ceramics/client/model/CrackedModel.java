@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import knightminer.ceramics.items.CrackableBlockItem;
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -139,7 +139,7 @@ public class CrackedModel implements IModelGeometry<CrackedModel> {
 
 		@Override
 		public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random random, IModelData data) {
-			Integer cracks = data.getData(CrackableTileEntityHandler.PROPERTY);
+			Integer cracks = data.getData(CrackableBlockEntityHandler.PROPERTY);
 			if (cracks != null && cracks > 0) {
 				return getModel(cracks).getQuads(state, side, random, data);
 			}

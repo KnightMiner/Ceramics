@@ -9,7 +9,10 @@ import knightminer.ceramics.blocks.GaugeBlock;
 import knightminer.ceramics.blocks.KilnBlock;
 import knightminer.ceramics.blocks.PouringFaucetBlock;
 import knightminer.ceramics.blocks.RainbowPorcelain;
-import knightminer.ceramics.container.KilnContainer;
+import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
+import knightminer.ceramics.blocks.entity.CisternBlockEntity;
+import knightminer.ceramics.blocks.entity.FaucetBlockEntity;
+import knightminer.ceramics.blocks.entity.KilnBlockEntity;
 import knightminer.ceramics.items.ArmorMaterials;
 import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
@@ -18,13 +21,10 @@ import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.FluidClayBucketItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.items.SolidClayBucketItem;
+import knightminer.ceramics.menu.KilnMenu;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.recipe.NoNBTIngredient;
-import knightminer.ceramics.tileentity.ChannelTileEntity;
-import knightminer.ceramics.tileentity.CisternTileEntity;
-import knightminer.ceramics.tileentity.FaucetTileEntity;
-import knightminer.ceramics.tileentity.KilnTileEntity;
 import knightminer.ceramics.util.EmptyFluidBucketCauldronInteraction;
 import knightminer.ceramics.util.EmptySolidBucketCauldronInteraction;
 import net.minecraft.core.BlockPos;
@@ -85,8 +85,8 @@ import java.util.function.Supplier;
 public class Registration {
   private static final BlockDeferredRegister BLOCKS = new BlockDeferredRegister(Ceramics.MOD_ID);
   private static final ItemDeferredRegister ITEMS = new ItemDeferredRegister(Ceramics.MOD_ID);
-  private static final MenuTypeDeferredRegister CONTAINERS = new MenuTypeDeferredRegister(Ceramics.MOD_ID);
-  private static final BlockEntityTypeDeferredRegister TILE_ENTIITES = new BlockEntityTypeDeferredRegister(Ceramics.MOD_ID);
+  private static final MenuTypeDeferredRegister MENUS = new MenuTypeDeferredRegister(Ceramics.MOD_ID);
+  private static final BlockEntityTypeDeferredRegister BLOCK_ENTITIES = new BlockEntityTypeDeferredRegister(Ceramics.MOD_ID);
   private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, Ceramics.MOD_ID);
   private static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registry.RECIPE_TYPE_REGISTRY, Ceramics.MOD_ID);
 
@@ -95,8 +95,8 @@ public class Registration {
     IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
     BLOCKS.register(bus);
     ITEMS.register(bus);
-    CONTAINERS.register(bus);
-    TILE_ENTIITES.register(bus);
+    MENUS.register(bus);
+    BLOCK_ENTITIES.register(bus);
     RECIPE_SERIALIZERS.register(bus);
     RECIPE_TYPES.register(bus);
     bus.register(Registration.class);
@@ -188,8 +188,8 @@ public class Registration {
 
   // kiln block
   public static final ItemObject<KilnBlock> KILN = BLOCKS.register("kiln", () -> new KilnBlock(terracottaProps(MaterialColor.COLOR_ORANGE).lightLevel(s -> s.getValue(KilnBlock.LIT) ? 13 : 0)), DEFAULT_BLOCK_ITEM);
-  public static final RegistryObject<MenuType<KilnContainer>> KILN_CONTAINER = CONTAINERS.register("kiln", KilnContainer::new);
-  public static final RegistryObject<BlockEntityType<KilnTileEntity>> KILN_TILE_ENTITY = TILE_ENTIITES.register("kiln", KilnTileEntity::new, KILN);
+  public static final RegistryObject<MenuType<KilnMenu>> KILN_MENU = MENUS.register("kiln", KilnMenu::new);
+  public static final RegistryObject<BlockEntityType<KilnBlockEntity>> KILN_BLOCK_ENTITY = BLOCK_ENTITIES.register("kiln", KilnBlockEntity::new, KILN);
   // kiln recipes
   public static final RegistryObject<RecipeType<KilnRecipe>> KILN_RECIPE = RECIPE_TYPES.register("kiln", () -> new RecipeType<>() {
     @Override
@@ -216,7 +216,7 @@ public class Registration {
   public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion().randomTicks(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
   public static final ItemObject<CisternBlock> UNFIRED_CISTERN = BLOCKS.register("unfired_cistern", () -> new CisternBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final EnumObject<DyeColor, FluidCisternBlock> PORCELAIN_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "porcelain_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion(), false), PORCELAIN_CISTERN_BLOCK_ITEM);
-  public static final RegistryObject<BlockEntityType<CisternTileEntity>> CISTERN_TILE_ENTITY = TILE_ENTIITES.register("cistern", CisternTileEntity::new, builder -> {
+  public static final RegistryObject<BlockEntityType<CisternBlockEntity>> CISTERN_BLOCK_ENTITY = BLOCK_ENTITIES.register("cistern", CisternBlockEntity::new, builder -> {
     builder.add(TERRACOTTA_CISTERN.get());
     builder.addAll(COLORED_CISTERN.values());
     builder.addAll(PORCELAIN_CISTERN.values());
@@ -227,14 +227,14 @@ public class Registration {
   public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_faucet.tooltip"));
   public static final ItemObject<FaucetBlock> UNFIRED_FAUCET = BLOCKS.register("unfired_faucet", () -> new FaucetBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MaterialColor.TERRACOTTA_WHITE).noOcclusion(), false), TOOLTIP_BLOCK_ITEM);
-  public static final RegistryObject<BlockEntityType<FaucetTileEntity>> FAUCET_TILE_ENTITY = TILE_ENTIITES.register("faucet", FaucetTileEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
+  public static final RegistryObject<BlockEntityType<FaucetBlockEntity>> FAUCET_BLOCK_ENTITY = BLOCK_ENTITIES.register("faucet", FaucetBlockEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
 
   // channel
   public static final ItemObject<ChannelBlock> CLAY_CHANNEL = BLOCKS.register("clay_channel", () -> new ChannelBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_channel.tooltip"));
   public static final ItemObject<ChannelBlock> UNFIRED_CHANNEL = BLOCKS.register("unfired_channel", () -> new ChannelBlock(CLAY_PROPERTIES), DEFAULT_BLOCK_ITEM);
   public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MaterialColor.TERRACOTTA_WHITE).noOcclusion(), false), TOOLTIP_BLOCK_ITEM);
-  public static final RegistryObject<BlockEntityType<ChannelTileEntity>> CHANNEL_TILE_ENTITY = TILE_ENTIITES.register("channel", ChannelTileEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
+  public static final RegistryObject<BlockEntityType<ChannelBlockEntity>> CHANNEL_BLOCK_ENTITY = BLOCK_ENTITIES.register("channel", ChannelBlockEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
   // clay repair
   public static final RegistryObject<RecipeSerializer<?>> CLAY_REPAIR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("cracked_clay_repair", CrackedClayRepairRecipe.Serializer::new);

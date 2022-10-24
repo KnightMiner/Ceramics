@@ -1,7 +1,7 @@
 package knightminer.ceramics.blocks;
 
-import knightminer.ceramics.tileentity.CisternTileEntity;
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
+import knightminer.ceramics.blocks.entity.CisternBlockEntity;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -39,7 +39,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
 
   @Override
   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-    return new CisternTileEntity(pos, state, crackable);
+    return new CisternBlockEntity(pos, state, crackable);
   }
 
   /* Interaction */
@@ -76,7 +76,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
    * @param pos    Cistern extension position
    * @return  Optional containing base TE, or empty optional if base cannot be found
    */
-  private Optional<CisternTileEntity> findBase(Level world, BlockPos pos) {
+  private Optional<CisternBlockEntity> findBase(Level world, BlockPos pos) {
     BlockPos base = pos;
     BlockState checkState;
     do {
@@ -86,7 +86,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
 
     // if the position is a cistern, it means we found a base, return that position
     if (checkState.is(this)) {
-      return BlockEntityHelper.get(CisternTileEntity.class, world, base);
+      return BlockEntityHelper.get(CisternBlockEntity.class, world, base);
     }
     // not found, return nothing
     return Optional.empty();
@@ -102,7 +102,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
         ICrackableBlock.onBlockPlacedBy(world, pos, stack);
       }
     } else {
-      BlockEntityHelper.get(CisternTileEntity.class, world, pos).ifPresent(te -> {
+      BlockEntityHelper.get(CisternBlockEntity.class, world, pos).ifPresent(te -> {
         te.tryMerge(pos.above());
         // crackable handling
         if (crackable) {
@@ -120,7 +120,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
       if (state.getValue(EXTENSION)) {
         findBase(world, pos).ifPresent(te -> te.removeExtension(pos));
       } else {
-        BlockEntityHelper.get(CisternTileEntity.class, world, pos).ifPresent(te -> te.onBroken(this));
+        BlockEntityHelper.get(CisternBlockEntity.class, world, pos).ifPresent(te -> te.onBroken(this));
       }
       world.removeBlockEntity(pos);
     }
@@ -151,7 +151,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
   @Deprecated
   public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
     if (isCrackable() && random.nextInt(5) == 0) {
-      BlockEntityHelper.get(CisternTileEntity.class, worldIn, pos).ifPresent(CisternTileEntity::randomTick);
+      BlockEntityHelper.get(CisternBlockEntity.class, worldIn, pos).ifPresent(CisternBlockEntity::randomTick);
     }
   }
 }

@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
-import static knightminer.ceramics.tileentity.CrackableTileEntityHandler.TAG_CRACKS;
+import static knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.TAG_CRACKS;
 
 public class BlockLootTables extends BlockLoot {
   @Override

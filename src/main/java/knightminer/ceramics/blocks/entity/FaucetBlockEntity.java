@@ -1,9 +1,9 @@
-package knightminer.ceramics.tileentity;
+package knightminer.ceramics.blocks.entity;
 
 import knightminer.ceramics.Registration;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.FaucetActivationPacket;
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -29,8 +29,8 @@ import javax.annotation.Nonnull;
 
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
-public class FaucetTileEntity extends MantleBlockEntity implements ICrackableTileEntity {
-  public static final BlockEntityTicker<FaucetTileEntity> SERVER_TICKER = (level, pos, state, entity) -> entity.tick(level, pos, state);
+public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity {
+  public static final BlockEntityTicker<FaucetBlockEntity> SERVER_TICKER = (level, pos, state, entity) -> entity.tick(level, pos, state);
   /** Transfer rate of the faucet */
   public static final int MB_PER_TICK = 25;
   /** amount of MB to extract from the input at a time */
@@ -63,14 +63,14 @@ public class FaucetTileEntity extends MantleBlockEntity implements ICrackableTil
   private final NonNullConsumer<LazyOptional<IFluidHandler>> outputListener = new WeakConsumerWrapper<>(this, (self, handler) -> self.outputHandler = null);
 
   /** Crackable logic */
-  private final CrackableTileEntityHandler cracksHandler;
+  private final CrackableBlockEntityHandler cracksHandler;
 
-  public FaucetTileEntity(BlockPos pos, BlockState state, boolean crackable) {
-    super(Registration.FAUCET_TILE_ENTITY.get(), pos, state);
-    cracksHandler = new CrackableTileEntityHandler(this, crackable);
+  public FaucetBlockEntity(BlockPos pos, BlockState state, boolean crackable) {
+    super(Registration.FAUCET_BLOCK_ENTITY.get(), pos, state);
+    cracksHandler = new CrackableBlockEntityHandler(this, crackable);
   }
 
-  public FaucetTileEntity(BlockPos pos, BlockState state) {
+  public FaucetBlockEntity(BlockPos pos, BlockState state) {
     this(pos, state, false);
   }
 
@@ -164,7 +164,7 @@ public class FaucetTileEntity extends MantleBlockEntity implements ICrackableTil
   }
 
   @Override
-  public CrackableTileEntityHandler getCracksHandler() {
+  public CrackableBlockEntityHandler getCracksHandler() {
     return cracksHandler;
   }
 

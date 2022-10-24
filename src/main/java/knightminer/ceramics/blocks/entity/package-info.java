@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-package knightminer.ceramics.client.gui;
+package knightminer.ceramics.blocks.entity;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

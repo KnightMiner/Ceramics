@@ -1,6 +1,6 @@
 package knightminer.ceramics.util.tank;
 
-import knightminer.ceramics.tileentity.CisternTileEntity;
+import knightminer.ceramics.blocks.entity.CisternBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
@@ -15,9 +15,9 @@ public class CisternTank implements IFluidHandler, IFluidTank {
   /** Current fluid in tank */
   protected FluidStack fluid = FluidStack.EMPTY;
   /** Relevant tile entity */
-  protected final CisternTileEntity parent;
+  protected final CisternBlockEntity parent;
 
-  public CisternTank(CisternTileEntity parent) {
+  public CisternTank(CisternBlockEntity parent) {
     this.parent = parent;
   }
 

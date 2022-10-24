@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-package knightminer.ceramics.tileentity;
+package knightminer.ceramics.menu;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

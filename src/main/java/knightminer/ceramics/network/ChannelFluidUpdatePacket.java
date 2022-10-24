@@ -1,6 +1,6 @@
 package knightminer.ceramics.network;
 
-import knightminer.ceramics.tileentity.ChannelTileEntity;
+import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,7 +25,7 @@ public class ChannelFluidUpdatePacket extends FluidUpdatePacket {
 
 	private static class HandleClient {
 		private static void handle(ChannelFluidUpdatePacket packet) {
-			BlockEntityHelper.get(ChannelTileEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.updateFluid(packet.fluid));
+			BlockEntityHelper.get(ChannelBlockEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.updateFluid(packet.fluid));
 		}
 	}
 }

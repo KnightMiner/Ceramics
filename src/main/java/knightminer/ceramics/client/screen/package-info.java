@@ -1,6 +1,6 @@
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-package knightminer.ceramics.container;
+package knightminer.ceramics.client.screen;
 
 import net.minecraft.MethodsReturnNonnullByDefault;
 

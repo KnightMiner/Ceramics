@@ -1,7 +1,7 @@
-package knightminer.ceramics.tileentity;
+package knightminer.ceramics.blocks.entity;
 
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.container.KilnContainer;
+import knightminer.ceramics.menu.KilnMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -11,9 +11,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class KilnTileEntity extends AbstractFurnaceBlockEntity {
-  public KilnTileEntity(BlockPos pos, BlockState state) {
-    super(Registration.KILN_TILE_ENTITY.get(), pos, state, Registration.KILN_RECIPE.get());
+public class KilnBlockEntity extends AbstractFurnaceBlockEntity {
+  public KilnBlockEntity(BlockPos pos, BlockState state) {
+    super(Registration.KILN_BLOCK_ENTITY.get(), pos, state, Registration.KILN_RECIPE.get());
   }
 
   @Override
@@ -28,6 +28,6 @@ public class KilnTileEntity extends AbstractFurnaceBlockEntity {
   
   @Override
   protected AbstractContainerMenu createMenu(int id, Inventory player) {
-    return new KilnContainer(id, player, this, this.dataAccess);
+    return new KilnMenu(id, player, this, this.dataAccess);
   }
 }

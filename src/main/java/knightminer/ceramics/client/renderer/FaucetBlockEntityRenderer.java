@@ -3,7 +3,7 @@ package knightminer.ceramics.client.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import knightminer.ceramics.blocks.FaucetBlock;
-import knightminer.ceramics.tileentity.FaucetTileEntity;
+import knightminer.ceramics.blocks.entity.FaucetBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -26,11 +26,11 @@ import slimeknights.mantle.client.render.RenderingHelper;
 
 import java.util.function.Function;
 
-public class FaucetTileEntityRenderer implements BlockEntityRenderer<FaucetTileEntity> {
-  public FaucetTileEntityRenderer(BlockEntityRendererProvider.Context context) {}
+public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBlockEntity> {
+  public FaucetBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
   @Override
-  public void render(FaucetTileEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+  public void render(FaucetBlockEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
     FluidStack renderFluid = tileEntity.getRenderFluid();
     if (!tileEntity.isPouring() || renderFluid.isEmpty()) {
       return;

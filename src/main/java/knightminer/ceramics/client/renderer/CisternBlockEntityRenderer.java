@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import knightminer.ceramics.blocks.CisternBlock;
+import knightminer.ceramics.blocks.entity.CisternBlockEntity;
 import knightminer.ceramics.client.model.CisternModel;
-import knightminer.ceramics.tileentity.CisternTileEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -24,11 +24,11 @@ import slimeknights.mantle.client.render.MantleRenderTypes;
 /**
  * Renderer for cistern blocks
  */
-public class CisternTileEntityRenderer implements BlockEntityRenderer<CisternTileEntity> {
-  public CisternTileEntityRenderer(BlockEntityRendererProvider.Context context) {}
+public class CisternBlockEntityRenderer implements BlockEntityRenderer<CisternBlockEntity> {
+  public CisternBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
   @Override
-  public void render(CisternTileEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlay) {
+  public void render(CisternBlockEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlay) {
     FluidStack fluid = tileEntity.getPublicHandler().orElse(EmptyFluidHandler.INSTANCE).getFluidInTank(0);
     if (!fluid.isEmpty()) {
       int renderIndex = tileEntity.getRenderIndex();

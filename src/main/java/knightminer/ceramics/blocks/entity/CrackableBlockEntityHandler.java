@@ -1,4 +1,4 @@
-package knightminer.ceramics.tileentity;
+package knightminer.ceramics.blocks.entity;
 
 import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
@@ -28,7 +28,7 @@ import slimeknights.mantle.client.model.data.SinglePropertyData;
 import slimeknights.mantle.util.BlockEntityHelper;
 
 /** Common logic for all crackable fluid blocks */
-public class CrackableTileEntityHandler {
+public class CrackableBlockEntityHandler {
 	/** Shared model property for the different cracked blocks */
 	public static final ModelProperty<Integer> PROPERTY = new ModelProperty<>(i -> i >= 0 && i <= 5);
 	/** Tag for NBT */
@@ -43,7 +43,7 @@ public class CrackableTileEntityHandler {
 	/** Whether to use crackable logic, used to allow one class to handle both cases */
 	private boolean active;
 
-	public CrackableTileEntityHandler(MantleBlockEntity parent, boolean active) {
+	public CrackableBlockEntityHandler(MantleBlockEntity parent, boolean active) {
 		this.parent = parent;
 		this.active = active;
 	}
@@ -209,7 +209,7 @@ public class CrackableTileEntityHandler {
 
 		/** Helper to avoid having to write this line multiple times */
 		static void onBlockPlacedBy(LevelAccessor world, BlockPos pos, ItemStack stack) {
-			BlockEntityHelper.get(ICrackableTileEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
+			BlockEntityHelper.get(ICrackableBlockEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
 		}
 
 		/**
@@ -223,8 +223,8 @@ public class CrackableTileEntityHandler {
 		static boolean tryRepair(LevelAccessor world, BlockPos pos, Player player, InteractionHand hand) {
 			ItemStack held = player.getItemInHand(hand);
 			if (held.is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
-				return BlockEntityHelper.get(ICrackableTileEntity.class, world, pos).filter(te -> {
-					CrackableTileEntityHandler handler = te.getCracksHandler();
+				return BlockEntityHelper.get(ICrackableBlockEntity.class, world, pos).filter(te -> {
+					CrackableBlockEntityHandler handler = te.getCracksHandler();
 					int cracks = handler.getCracks();
 					if (handler.isActive() && cracks > 0) {
 						// play sound
@@ -250,8 +250,8 @@ public class CrackableTileEntityHandler {
 	}
 
 	/** Interface to make syncing easier */
-	public interface ICrackableTileEntity {
+	public interface ICrackableBlockEntity {
 		/** Gets the cracks handler for this TE */
-		CrackableTileEntityHandler getCracksHandler();
+		CrackableBlockEntityHandler getCracksHandler();
 	}
 }

@@ -1,6 +1,6 @@
 package knightminer.ceramics.network;
 
-import knightminer.ceramics.tileentity.FaucetTileEntity;
+import knightminer.ceramics.blocks.entity.FaucetBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -37,8 +37,8 @@ public class FaucetActivationPacket extends FluidUpdatePacket {
     private static void handle(FaucetActivationPacket packet) {
       assert Minecraft.getInstance().level != null;
       BlockEntity te = Minecraft.getInstance().level.getBlockEntity(packet.pos);
-      if (te instanceof FaucetTileEntity) {
-        ((FaucetTileEntity) te).onActivationPacket(packet.fluid, packet.isPouring);
+      if (te instanceof FaucetBlockEntity) {
+        ((FaucetBlockEntity) te).onActivationPacket(packet.fluid, packet.isPouring);
       }
     }
   }

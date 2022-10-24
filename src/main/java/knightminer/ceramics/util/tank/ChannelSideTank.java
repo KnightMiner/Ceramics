@@ -1,18 +1,16 @@
 package knightminer.ceramics.util.tank;
 
-import knightminer.ceramics.tileentity.ChannelTileEntity;
+import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraftforge.fluids.FluidStack;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 /** Tank for each side connection, for the sake of rendering */
 public class ChannelSideTank extends FillOnlyFluidHandler {
-	private final ChannelTileEntity channel;
+	private final ChannelBlockEntity channel;
 	private final Direction side;
 
-	public ChannelSideTank(ChannelTileEntity channel, ChannelTank tank, Direction side) {
+	public ChannelSideTank(ChannelBlockEntity channel, ChannelTank tank, Direction side) {
 		super(tank);
 		// only horizontals
 		assert side.getAxis() != Axis.Y;

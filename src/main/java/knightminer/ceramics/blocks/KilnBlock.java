@@ -1,7 +1,7 @@
 package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.tileentity.KilnTileEntity;
+import knightminer.ceramics.blocks.entity.KilnBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -28,19 +28,19 @@ public class KilnBlock extends AbstractFurnaceBlock {
   @Nullable
   @Override
   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-    return new KilnTileEntity(pos, state);
+    return new KilnBlockEntity(pos, state);
   }
 
   @Override
   @Nullable
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-    return createFurnaceTicker(pLevel, pBlockEntityType, Registration.KILN_TILE_ENTITY.get());
+    return createFurnaceTicker(pLevel, pBlockEntityType, Registration.KILN_BLOCK_ENTITY.get());
   }
   @Override
   protected void openContainer(Level world, BlockPos pos, Player player) {
     BlockEntity tile = world.getBlockEntity(pos);
-    if (tile instanceof KilnTileEntity) {
-      player.openMenu((KilnTileEntity)tile);
+    if (tile instanceof KilnBlockEntity) {
+      player.openMenu((KilnBlockEntity)tile);
     }
   }
 

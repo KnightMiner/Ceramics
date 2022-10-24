@@ -1,7 +1,7 @@
 package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -28,8 +28,8 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 	 */
 	public static int getCracks(ItemStack stack) {
 		CompoundTag nbt = stack.getTag();
-		if (nbt != null && nbt.contains(CrackableTileEntityHandler.TAG_CRACKS, Tag.TAG_ANY_NUMERIC)) {
-			return nbt.getInt(CrackableTileEntityHandler.TAG_CRACKS);
+		if (nbt != null && nbt.contains(CrackableBlockEntityHandler.TAG_CRACKS, Tag.TAG_ANY_NUMERIC)) {
+			return nbt.getInt(CrackableBlockEntityHandler.TAG_CRACKS);
 		}
 		return 0;
 	}
@@ -43,13 +43,13 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 		if (cracks == 0) {
 			CompoundTag nbt = stack.getTag();
 			if (nbt != null) {
-				nbt.remove(CrackableTileEntityHandler.TAG_CRACKS);
+				nbt.remove(CrackableBlockEntityHandler.TAG_CRACKS);
 				if (nbt.isEmpty()) {
 					stack.setTag(null);
 				}
 			}
 		} else {
-			stack.getOrCreateTag().putInt(CrackableTileEntityHandler.TAG_CRACKS, cracks);
+			stack.getOrCreateTag().putInt(CrackableBlockEntityHandler.TAG_CRACKS, cracks);
 		}
 		return stack;
 	}

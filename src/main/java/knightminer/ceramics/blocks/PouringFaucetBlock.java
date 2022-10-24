@@ -1,8 +1,8 @@
 package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.tileentity.CrackableTileEntityHandler.ICrackableBlock;
-import knightminer.ceramics.tileentity.FaucetTileEntity;
+import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlock;
+import knightminer.ceramics.blocks.entity.FaucetBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -43,13 +43,13 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
   @Nullable
   @Override
   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-    return new FaucetTileEntity(pos, state, crackable);
+    return new FaucetBlockEntity(pos, state, crackable);
   }
 
   @Nullable
   @Override
   public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-    return BlockEntityHelper.serverTicker(level, type, Registration.FAUCET_TILE_ENTITY.get(), FaucetTileEntity.SERVER_TICKER);
+    return BlockEntityHelper.serverTicker(level, type, Registration.FAUCET_BLOCK_ENTITY.get(), FaucetBlockEntity.SERVER_TICKER);
   }
 
   @SuppressWarnings("deprecation")
@@ -62,7 +62,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
     if (player.isShiftKeyDown()) {
       return InteractionResult.PASS;
     }
-    getFaucet(worldIn, pos).ifPresent(FaucetTileEntity::activate);
+    getFaucet(worldIn, pos).ifPresent(FaucetBlockEntity::activate);
     return InteractionResult.SUCCESS;
   }
 
@@ -83,7 +83,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
   @Deprecated
   @Override
   public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand) {
-    getFaucet(worldIn, pos).ifPresent(FaucetTileEntity::activate);
+    getFaucet(worldIn, pos).ifPresent(FaucetBlockEntity::activate);
   }
 
   /**
@@ -92,8 +92,8 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
    * @param pos    Faucet position
    * @return  Optional of faucet, empty if missing or wrong type
    */
-  private Optional<FaucetTileEntity> getFaucet(Level world, BlockPos pos) {
-    return BlockEntityHelper.get(FaucetTileEntity.class, world, pos);
+  private Optional<FaucetBlockEntity> getFaucet(Level world, BlockPos pos) {
+    return BlockEntityHelper.get(FaucetBlockEntity.class, world, pos);
   }
 
   /* Display */
@@ -134,7 +134,7 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
   @Deprecated
   public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
     if (isCrackable()) {
-      BlockEntityHelper.get(FaucetTileEntity.class, worldIn, pos).ifPresent(FaucetTileEntity::randomTick);
+      BlockEntityHelper.get(FaucetBlockEntity.class, worldIn, pos).ifPresent(FaucetBlockEntity::randomTick);
     }
   }
 
