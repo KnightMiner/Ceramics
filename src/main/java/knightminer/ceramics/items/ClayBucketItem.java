@@ -32,9 +32,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BucketPickup;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
@@ -90,13 +88,6 @@ public class ClayBucketItem extends BaseClayBucketItem {
 		if (world.mayInteract(player, pos) && player.mayUseItemAt(offset, direction, stack)) {
 			BlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
-			if (block == Blocks.CAULDRON && !player.isCrouching()) {
-				InteractionResultHolder<ItemStack> result = interactWithCauldron(world, pos, state, player, stack, fluid);
-				if (result.getResult() != InteractionResult.PASS) {
-					return result;
-				}
-			}
-
 			if (fluid == Fluids.EMPTY) {
 				if (block instanceof BucketPickup pickup) {
 
@@ -208,55 +199,6 @@ public class ClayBucketItem extends BaseClayBucketItem {
 			sound = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
 		}
 		world.playSound(player, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
-	}
-
-	/**
-	 * Interacts with a cauldron block
-	 * @param world   World instance
-	 * @param pos     Position of the cauldron
-	 * @param state   Cauldron state
-	 * @param player  Interacting player
-	 * @param stack   Bucket stack
-	 * @param fluid   Contained fluid
-	 * @return  Action result from interaction, pass means failed to interact with a cauldron
-	 */
-	private InteractionResultHolder<ItemStack> interactWithCauldron(Level world, BlockPos pos, BlockState state, @Nullable Player player, ItemStack stack, Fluid fluid) {
-		// TODO: cauldron interactions
-		// if the bucket is empty, try filling from the cauldron
-		int level = state.getValue(LayeredCauldronBlock.LEVEL);
-		if (fluid == Fluids.EMPTY) {
-			// if empty, try emptying
-			if(level == 3) {
-				// empty cauldron logic
-				if(player != null) {
-					player.awardStat(Stats.USE_CAULDRON);
-				}
-				if(!world.isClientSide()) {
-					world.setBlockAndUpdate(pos, Blocks.CAULDRON.defaultBlockState());
-				}
-				world.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-				return InteractionResultHolder.success(withFluid(Fluids.WATER));
-			}
-		} else if(fluid == Fluids.WATER) {
-			// fill cauldron if not full
-			if(level < 3) {
-				if(player != null) {
-					player.awardStat(Stats.FILL_CAULDRON);
-				}
-				if(!world.isClientSide) {
-					world.setBlockAndUpdate(pos, Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3));
-				}
-				world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-
-				// return empty bucket
-				return InteractionResultHolder.success(stack.getContainerItem());
-			}
-		} else {
-			// pass if not empty or water
-			return InteractionResultHolder.pass(stack);
-		}
-		// consume so we do not accidentally place water next to the cauldron, consistency with vanilla
-		return InteractionResultHolder.success(stack);
 	}
 
 	@Override

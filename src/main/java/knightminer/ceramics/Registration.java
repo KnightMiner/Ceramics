@@ -11,6 +11,7 @@ import knightminer.ceramics.blocks.PouringFaucetBlock;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.container.KilnContainer;
 import knightminer.ceramics.items.ArmorMaterials;
+import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.items.ClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
@@ -22,7 +23,9 @@ import knightminer.ceramics.tileentity.ChannelTileEntity;
 import knightminer.ceramics.tileentity.CisternTileEntity;
 import knightminer.ceramics.tileentity.FaucetTileEntity;
 import knightminer.ceramics.tileentity.KilnTileEntity;
+import knightminer.ceramics.util.ClayBucketCauldronInteraction;
 import net.minecraft.core.Registry;
+import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
@@ -47,6 +50,7 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -150,8 +154,8 @@ public class Registration {
   public static final ItemObject<Item> UNFIRED_CLAY_BUCKET           = ITEMS.register("unfired_clay_bucket", new Item.Properties().stacksTo(16).tab(GROUP));
   public static final ItemObject<ClayBucketItem> CLAY_BUCKET         = ITEMS.register("clay_bucket", () -> new ClayBucketItem(false, GROUP_PROPS));
   public static final ItemObject<ClayBucketItem> CRACKED_CLAY_BUCKET = ITEMS.register("cracked_clay_bucket", () -> new ClayBucketItem(true, GROUP_PROPS));
-  public static final ItemObject<Item> MILK_CLAY_BUCKET              = ITEMS.register("milk_clay_bucket", () -> new MilkClayBucketItem(false, UNSTACKABLE_PROPS));
-  public static final ItemObject<Item> CRACKED_MILK_CLAY_BUCKET      = ITEMS.register("cracked_milk_clay_bucket", () -> new MilkClayBucketItem(true, UNSTACKABLE_PROPS));
+  public static final ItemObject<BaseClayBucketItem> MILK_CLAY_BUCKET         = ITEMS.register("milk_clay_bucket", () -> new MilkClayBucketItem(false, UNSTACKABLE_PROPS));
+  public static final ItemObject<BaseClayBucketItem> CRACKED_MILK_CLAY_BUCKET = ITEMS.register("cracked_milk_clay_bucket", () -> new MilkClayBucketItem(true, UNSTACKABLE_PROPS));
 
   // armor
   public static final ItemObject<Item> UNFIRED_CLAY_PLATE = ITEMS.register("unfired_clay_plate", GROUP_PROPS);
@@ -217,6 +221,22 @@ public class Registration {
   @SubscribeEvent
   static void registerRecipeSerializer(RegistryEvent.Register<RecipeSerializer<?>> event) {
     CraftingHelper.register(Ceramics.getResource("no_nbt"), NoNBTIngredient.SERIALIZER);
+  }
+
+  @SubscribeEvent
+  static void commonSetup(FMLCommonSetupEvent event) {
+    event.enqueueWork(() -> {
+      CauldronInteraction normalFluid = new ClayBucketCauldronInteraction(CLAY_BUCKET.get());
+      CauldronInteraction crackedFluid = new ClayBucketCauldronInteraction(CRACKED_CLAY_BUCKET.get());
+      // empty: need to fill from both types
+      CauldronInteraction.EMPTY.put(CLAY_BUCKET.get(),         normalFluid);
+      CauldronInteraction.EMPTY.put(CRACKED_CLAY_BUCKET.get(), crackedFluid);
+      // each type needs to empty into the bucket
+      CauldronInteraction.WATER.put(CLAY_BUCKET.get(),         normalFluid);
+      CauldronInteraction.WATER.put(CRACKED_CLAY_BUCKET.get(), crackedFluid);
+      CauldronInteraction.LAVA.put(CLAY_BUCKET.get(),         normalFluid);
+      CauldronInteraction.LAVA.put(CRACKED_CLAY_BUCKET.get(), crackedFluid);
+    });
   }
 
   /**

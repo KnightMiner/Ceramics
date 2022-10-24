@@ -201,7 +201,7 @@ public abstract class BaseClayBucketItem extends Item {
    * Returns whether a bucket has fluid. Note the fluid may still be null if
    * true due to milk buckets
    */
-  protected boolean hasFluid(ItemStack container) {
+  public boolean hasFluid(ItemStack container) {
     return getFluid(container) != Fluids.EMPTY;
   }
 
