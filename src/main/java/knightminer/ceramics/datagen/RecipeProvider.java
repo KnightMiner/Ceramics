@@ -440,6 +440,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     kilnFurnaceRecipe(consumer, Blocks.COBBLESTONE_STAIRS, Blocks.STONE_STAIRS, 0.1f);
     kilnFurnaceRecipe(consumer, Blocks.STONE_SLAB, Blocks.SMOOTH_STONE_SLAB, 0.1f);
     kilnFurnaceRecipe(consumer, Blocks.QUARTZ_STAIRS, Blocks.SMOOTH_QUARTZ_STAIRS, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.BASALT, Blocks.SMOOTH_BASALT, 0.1f);
   }
 
 
