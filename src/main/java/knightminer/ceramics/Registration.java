@@ -146,19 +146,19 @@ public class Registration {
   // porcelain
   public static final EnumObject<DyeColor,Block> PORCELAIN_BLOCK = BLOCKS.registerEnum(DyeColor.values(), "porcelain", (color) -> new Block(Block.Properties.copy(TERRACOTTA.get(color))), DEFAULT_BLOCK_ITEM);
   public static final EnumObject<RainbowPorcelain,Block> RAINBOW_PORCELAIN = BLOCKS.registerEnum(RainbowPorcelain.values(), "rainbow_porcelain",
-      (color) -> new Block(Block.Properties.of(Material.STONE, color.getColor()).strength(2.0F, 6.0F)), TOOLTIP_BLOCK_ITEM);
+      (color) -> new Block(Block.Properties.of(Material.STONE, color.getColor()).strength(2.0F, 6.0F).requiresCorrectToolForDrops()), TOOLTIP_BLOCK_ITEM);
 
   // clay bricks
-  public static final WallBuildingBlockObject DARK_BRICKS   = BLOCKS.registerWallBuilding("dark_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_RED).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject LAVA_BRICKS   = BLOCKS.registerWallBuilding("lava_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject DRAGON_BRICKS = BLOCKS.registerWallBuilding("dragon_bricks", Block.Properties.of(Material.STONE, MaterialColor.PODZOL).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject DARK_BRICKS   = BLOCKS.registerWallBuilding("dark_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_RED).strength(2.0F, 6.0F).requiresCorrectToolForDrops(), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject LAVA_BRICKS   = BLOCKS.registerWallBuilding("lava_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_ORANGE).strength(2.0F, 6.0F).requiresCorrectToolForDrops(), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject DRAGON_BRICKS = BLOCKS.registerWallBuilding("dragon_bricks", Block.Properties.of(Material.STONE, MaterialColor.PODZOL).strength(2.0F, 6.0F).requiresCorrectToolForDrops(), DEFAULT_BLOCK_ITEM);
 
   // porcelain bricks
-  public static final WallBuildingBlockObject PORCELAIN_BRICKS  = BLOCKS.registerWallBuilding("porcelain_bricks", Block.Properties.of(Material.STONE, MaterialColor.SNOW).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject MONOCHROME_BRICKS = BLOCKS.registerWallBuilding("monochrome_bricks", Block.Properties.of(Material.STONE, MaterialColor.STONE).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject GOLDEN_BRICKS     = BLOCKS.registerWallBuilding("golden_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_YELLOW).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject MARINE_BRICKS     = BLOCKS.registerWallBuilding("marine_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_LIGHT_BLUE).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
-  public static final WallBuildingBlockObject RAINBOW_BRICKS    = BLOCKS.registerWallBuilding("rainbow_bricks", Block.Properties.of(Material.STONE, MaterialColor.COLOR_GREEN).strength(2.0F, 6.0F), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject PORCELAIN_BRICKS  = BLOCKS.registerWallBuilding("porcelain_bricks",  Block.Properties.of(Material.STONE, MaterialColor.SNOW).strength(2.0F, 6.0F).requiresCorrectToolForDrops(),             DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject MONOCHROME_BRICKS = BLOCKS.registerWallBuilding("monochrome_bricks", Block.Properties.of(Material.STONE, MaterialColor.STONE).strength(2.0F, 6.0F).requiresCorrectToolForDrops(),            DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject GOLDEN_BRICKS     = BLOCKS.registerWallBuilding("golden_bricks",     Block.Properties.of(Material.STONE, MaterialColor.COLOR_YELLOW).strength(2.0F, 6.0F).requiresCorrectToolForDrops(),     DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject MARINE_BRICKS     = BLOCKS.registerWallBuilding("marine_bricks",     Block.Properties.of(Material.STONE, MaterialColor.COLOR_LIGHT_BLUE).strength(2.0F, 6.0F).requiresCorrectToolForDrops(), DEFAULT_BLOCK_ITEM);
+  public static final WallBuildingBlockObject RAINBOW_BRICKS    = BLOCKS.registerWallBuilding("rainbow_bricks",    Block.Properties.of(Material.STONE, MaterialColor.COLOR_GREEN).strength(2.0F, 6.0F).requiresCorrectToolForDrops(),      DEFAULT_BLOCK_ITEM);
 
 
   /* items */
@@ -181,10 +181,10 @@ public class Registration {
   // armor
   public static final ItemObject<Item> UNFIRED_CLAY_PLATE = ITEMS.register("unfired_clay_plate", GROUP_PROPS);
   public static final ItemObject<Item> CLAY_PLATE = ITEMS.register("clay_plate", GROUP_PROPS);
-  public static final ItemObject<ArmorItem> CLAY_HELMET     = ITEMS.register("clay_helmet", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlot.HEAD, UNSTACKABLE_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_HELMET     = ITEMS.register("clay_helmet",     () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlot.HEAD,  UNSTACKABLE_PROPS));
   public static final ItemObject<ArmorItem> CLAY_CHESTPLATE = ITEMS.register("clay_chestplate", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlot.CHEST, UNSTACKABLE_PROPS));
-  public static final ItemObject<ArmorItem> CLAY_LEGGINGS   = ITEMS.register("clay_leggings", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlot.LEGS, UNSTACKABLE_PROPS));
-  public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEMS.register("clay_boots", () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlot.FEET, UNSTACKABLE_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_LEGGINGS   = ITEMS.register("clay_leggings",   () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlot.LEGS,  UNSTACKABLE_PROPS));
+  public static final ItemObject<ArmorItem> CLAY_BOOTS      = ITEMS.register("clay_boots",      () -> new ArmorItem(ArmorMaterials.CLAY, EquipmentSlot.FEET,  UNSTACKABLE_PROPS));
 
   // kiln block
   public static final ItemObject<KilnBlock> KILN = BLOCKS.register("kiln", () -> new KilnBlock(terracottaProps(MaterialColor.COLOR_ORANGE).lightLevel(s -> s.getValue(KilnBlock.LIT) ? 13 : 0)), DEFAULT_BLOCK_ITEM);
@@ -204,8 +204,8 @@ public class Registration {
    */
   private static final BlockBehaviour.Properties CLAY_PROPERTIES = BlockBehaviour.Properties.of(Material.CLAY).strength(0.6F).sound(SoundType.GRAVEL).noOcclusion();
   private static final Function<Block,BlockItem> GAUGE_BLOCK_ITEM = FIXED_TOOLTIP.apply("gauge.tooltip");
-  public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.COLOR_ORANGE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
-  public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.TERRACOTTA_WHITE).noCollission().strength(0.5F).noOcclusion()), GAUGE_BLOCK_ITEM);
+  public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.COLOR_ORANGE).noCollission().strength(0.5F).noOcclusion().requiresCorrectToolForDrops()), GAUGE_BLOCK_ITEM);
+  public static final ItemObject<GaugeBlock> PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(BlockBehaviour.Properties.of(Material.DECORATION, MaterialColor.TERRACOTTA_WHITE).noCollission().strength(0.5F).noOcclusion().requiresCorrectToolForDrops()), GAUGE_BLOCK_ITEM);
 
   // cistern
   private static final Function<String,Function<Block,BlockItem>> CRACKABLE_BLOCK_ITEM = tooltip -> block -> new CrackableBlockItem(block, GROUP_PROPS, tooltip);
