@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ccc",
-    " c "
-  ],
+  "category": "misc",
   "key": {
     "c": {
       "item": "minecraft:clay_ball"
     }
   },
+  "pattern": [
+    "ccc",
+    " c "
+  ],
   "result": {
-    "item": "ceramics:clay_faucet",
-    "count": 2
-  }
+    "count": 2,
+    "item": "ceramics:clay_faucet"
+  },
+  "show_notification": true
 }

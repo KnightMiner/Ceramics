@@ -1,11 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:dragon_bricks",
-  "pattern": [
-    "BBB",
-    "BiB",
-    "BBB"
-  ],
   "key": {
     "B": {
       "item": "minecraft:bricks"
@@ -14,8 +10,14 @@
       "item": "minecraft:dragon_breath"
     }
   },
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:dragon_bricks",
-    "count": 8
-  }
+    "count": 8,
+    "item": "ceramics:dragon_bricks"
+  },
+  "show_notification": true
 }

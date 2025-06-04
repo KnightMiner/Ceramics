@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cistern": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "ceramics:white_porcelain_cistern"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ceramics:white_porcelain_cistern"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_cistern",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ceramics:white_porcelain_cistern"
+    ]
+  },
+  "sends_telemetry_event": false
+}

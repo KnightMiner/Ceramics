@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ccc",
-    "c c",
-    "c c"
-  ],
+  "category": "equipment",
   "key": {
     "c": {
       "tag": "forge:plates/brick"
     }
   },
+  "pattern": [
+    "ccc",
+    "c c",
+    "c c"
+  ],
   "result": {
     "item": "ceramics:clay_leggings"
-  }
+  },
+  "show_notification": true
 }

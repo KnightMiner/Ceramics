@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "BBB",
-    "BBB"
-  ],
+  "category": "building",
   "key": {
     "B": {
       "item": "ceramics:marine_bricks"
     }
   },
+  "pattern": [
+    "BBB",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:marine_bricks_wall",
-    "count": 6
-  }
+    "count": 6,
+    "item": "ceramics:marine_bricks_wall"
+  },
+  "show_notification": true
 }

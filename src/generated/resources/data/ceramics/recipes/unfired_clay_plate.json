@@ -1,15 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "cc"
-  ],
+  "category": "misc",
   "key": {
     "c": {
       "item": "minecraft:clay_ball"
     }
   },
+  "pattern": [
+    "cc"
+  ],
   "result": {
-    "item": "ceramics:unfired_clay_plate",
-    "count": 2
-  }
+    "count": 2,
+    "item": "ceramics:unfired_clay_plate"
+  },
+  "show_notification": true
 }

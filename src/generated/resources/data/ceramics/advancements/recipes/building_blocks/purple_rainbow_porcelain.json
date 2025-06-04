@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_rainbow": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "ceramics:rainbow_porcelain"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "ceramics:purple_rainbow_porcelain"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_rainbow",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "ceramics:purple_rainbow_porcelain"
+    ]
+  },
+  "sends_telemetry_event": false
+}

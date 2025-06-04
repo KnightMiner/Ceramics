@@ -1,15 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "brick_slab",
-  "pattern": [
-    "bb"
-  ],
   "key": {
     "b": {
       "item": "minecraft:brick"
     }
   },
+  "pattern": [
+    "bb"
+  ],
   "result": {
     "item": "minecraft:brick_slab"
-  }
+  },
+  "show_notification": true
 }

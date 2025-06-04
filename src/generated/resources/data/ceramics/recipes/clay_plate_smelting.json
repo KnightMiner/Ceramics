@@ -1,9 +1,10 @@
 {
   "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.3,
   "ingredient": {
     "item": "ceramics:unfired_clay_plate"
   },
-  "result": "ceramics:clay_plate",
-  "experience": 0.3,
-  "cookingtime": 200
+  "result": "ceramics:clay_plate"
 }

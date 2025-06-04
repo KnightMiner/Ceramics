@@ -1,9 +1,10 @@
 {
   "type": "ceramics:kiln",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.3,
   "ingredient": {
     "item": "ceramics:unfired_porcelain"
   },
-  "result": "ceramics:porcelain_brick",
-  "experience": 0.3,
-  "cookingtime": 100
+  "result": "ceramics:porcelain_brick"
 }

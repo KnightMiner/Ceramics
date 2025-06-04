@@ -1,9 +1,10 @@
 {
   "type": "ceramics:kiln",
+  "category": "blocks",
+  "cookingtime": 100,
+  "experience": 0.3,
   "ingredient": {
     "item": "minecraft:clay"
   },
-  "result": "minecraft:terracotta",
-  "experience": 0.3,
-  "cookingtime": 100
+  "result": "minecraft:terracotta"
 }

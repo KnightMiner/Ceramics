@@ -1,18 +1,20 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:rainbow_bricks_stairs",
-  "pattern": [
-    "B  ",
-    "BB ",
-    "BBB"
-  ],
   "key": {
     "B": {
       "item": "ceramics:rainbow_bricks"
     }
   },
+  "pattern": [
+    "B  ",
+    "BB ",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:rainbow_bricks_stairs",
-    "count": 4
-  }
+    "count": 4,
+    "item": "ceramics:rainbow_bricks_stairs"
+  },
+  "show_notification": true
 }

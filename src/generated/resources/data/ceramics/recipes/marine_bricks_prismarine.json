@@ -1,11 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:marine_bricks",
-  "pattern": [
-    "BBB",
-    "BiB",
-    "BBB"
-  ],
   "key": {
     "B": {
       "item": "ceramics:porcelain_bricks"
@@ -14,8 +10,14 @@
       "item": "minecraft:prismarine_shard"
     }
   },
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:marine_bricks",
-    "count": 8
-  }
+    "count": 8,
+    "item": "ceramics:marine_bricks"
+  },
+  "show_notification": true
 }

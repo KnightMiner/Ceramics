@@ -1,10 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " b ",
-    "bpb",
-    " b "
-  ],
+  "category": "redstone",
   "key": {
     "b": {
       "item": "minecraft:brick"
@@ -13,8 +9,14 @@
       "tag": "forge:glass_panes/colorless"
     }
   },
+  "pattern": [
+    " b ",
+    "bpb",
+    " b "
+  ],
   "result": {
-    "item": "ceramics:terracotta_gauge",
-    "count": 4
-  }
+    "count": 4,
+    "item": "ceramics:terracotta_gauge"
+  },
+  "show_notification": true
 }

@@ -1,17 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:porcelain_bricks_stairs",
-  "pattern": [
-    "b  ",
-    "bb ",
-    "bbb"
-  ],
   "key": {
     "b": {
       "item": "ceramics:porcelain_brick"
     }
   },
+  "pattern": [
+    "b  ",
+    "bb ",
+    "bbb"
+  ],
   "result": {
     "item": "ceramics:porcelain_bricks_stairs"
-  }
+  },
+  "show_notification": true
 }

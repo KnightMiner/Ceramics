@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "building",
   "ingredients": [
     {
       "tag": "forge:gems/quartz"
@@ -15,7 +16,7 @@
     }
   ],
   "result": {
-    "item": "ceramics:unfired_porcelain",
-    "count": 4
+    "count": 4,
+    "item": "ceramics:unfired_porcelain"
   }
 }

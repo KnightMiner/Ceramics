@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ppp",
-    "ppp"
-  ],
+  "category": "misc",
   "key": {
     "p": {
       "item": "minecraft:clay_ball"
     }
   },
+  "pattern": [
+    "ppp",
+    "ppp"
+  ],
   "result": {
-    "item": "ceramics:clay_channel",
-    "count": 3
-  }
+    "count": 3,
+    "item": "ceramics:clay_channel"
+  },
+  "show_notification": true
 }

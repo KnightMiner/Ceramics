@@ -1,11 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "stained_terracotta",
-  "pattern": [
-    "BBB",
-    "BDB",
-    "BBB"
-  ],
   "key": {
     "B": {
       "tag": "ceramics:colored_terracotta"
@@ -14,8 +10,14 @@
       "tag": "forge:dyes/pink"
     }
   },
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
   "result": {
-    "item": "minecraft:pink_terracotta",
-    "count": 8
-  }
+    "count": 8,
+    "item": "minecraft:pink_terracotta"
+  },
+  "show_notification": true
 }

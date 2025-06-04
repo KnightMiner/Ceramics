@@ -1,9 +1,10 @@
 {
   "type": "minecraft:smelting",
+  "category": "blocks",
+  "cookingtime": 200,
+  "experience": 0.3,
   "ingredient": {
     "item": "ceramics:unfired_channel"
   },
-  "result": "ceramics:porcelain_channel",
-  "experience": 0.3,
-  "cookingtime": 200
+  "result": "ceramics:porcelain_channel"
 }

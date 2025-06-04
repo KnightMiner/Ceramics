@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "misc",
   "group": "ceramics:porcelain_uncrafting",
   "ingredients": [
     [
@@ -12,7 +13,7 @@
     ]
   ],
   "result": {
-    "item": "ceramics:unfired_porcelain",
-    "count": 2
+    "count": 2,
+    "item": "ceramics:unfired_porcelain"
   }
 }

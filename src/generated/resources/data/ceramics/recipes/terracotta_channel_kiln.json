@@ -1,9 +1,10 @@
 {
   "type": "ceramics:kiln",
+  "category": "blocks",
+  "cookingtime": 100,
+  "experience": 0.3,
   "ingredient": {
     "item": "ceramics:clay_channel"
   },
-  "result": "ceramics:terracotta_channel",
-  "experience": 0.3,
-  "cookingtime": 100
+  "result": "ceramics:terracotta_channel"
 }

@@ -1,15 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "c c",
-    " c "
-  ],
+  "category": "misc",
   "key": {
     "c": {
       "item": "minecraft:clay_ball"
     }
   },
+  "pattern": [
+    "c c",
+    " c "
+  ],
   "result": {
     "item": "ceramics:unfired_clay_bucket"
-  }
+  },
+  "show_notification": true
 }

@@ -1,15 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ccc",
-    "c c"
-  ],
+  "category": "equipment",
   "key": {
     "c": {
       "tag": "forge:plates/brick"
     }
   },
+  "pattern": [
+    "ccc",
+    "c c"
+  ],
   "result": {
     "item": "ceramics:clay_helmet"
-  }
+  },
+  "show_notification": true
 }

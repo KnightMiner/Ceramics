@@ -1,9 +1,10 @@
 {
   "type": "ceramics:kiln",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.3,
   "ingredient": {
     "item": "ceramics:unfired_clay_bucket"
   },
-  "result": "ceramics:empty_clay_bucket",
-  "experience": 0.3,
-  "cookingtime": 100
+  "result": "ceramics:empty_clay_bucket"
 }

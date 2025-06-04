@@ -1,11 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:monochrome_bricks_stairs",
-  "pattern": [
-    "BBB",
-    "BiB",
-    "BBB"
-  ],
   "key": {
     "B": {
       "item": "ceramics:porcelain_bricks_stairs"
@@ -14,8 +10,14 @@
       "item": "minecraft:ink_sac"
     }
   },
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:monochrome_bricks_stairs",
-    "count": 8
-  }
+    "count": 8,
+    "item": "ceramics:monochrome_bricks_stairs"
+  },
+  "show_notification": true
 }

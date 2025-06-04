@@ -1,8 +1,8 @@
 {
   "type": "minecraft:stonecutting",
+  "count": 2,
   "ingredient": {
     "item": "ceramics:marine_bricks"
   },
-  "result": "ceramics:marine_bricks_slab",
-  "count": 2
+  "result": "ceramics:marine_bricks_slab"
 }

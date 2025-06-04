@@ -1,15 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "bb",
-    "bb"
-  ],
+  "category": "building",
   "key": {
     "b": {
       "item": "ceramics:unfired_porcelain"
     }
   },
+  "pattern": [
+    "bb",
+    "bb"
+  ],
   "result": {
     "item": "ceramics:unfired_porcelain_block"
-  }
+  },
+  "show_notification": true
 }

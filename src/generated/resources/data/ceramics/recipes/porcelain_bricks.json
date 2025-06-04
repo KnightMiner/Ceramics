@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:porcelain_brick",
-  "pattern": [
-    "bb",
-    "bb"
-  ],
   "key": {
     "b": {
       "item": "ceramics:porcelain_brick"
     }
   },
+  "pattern": [
+    "bb",
+    "bb"
+  ],
   "result": {
     "item": "ceramics:porcelain_bricks"
-  }
+  },
+  "show_notification": true
 }

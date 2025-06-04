@@ -1,11 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:monochrome_bricks_slab",
-  "pattern": [
-    "BBB",
-    "BiB",
-    "BBB"
-  ],
   "key": {
     "B": {
       "item": "ceramics:porcelain_bricks_slab"
@@ -14,8 +10,14 @@
       "item": "minecraft:ink_sac"
     }
   },
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:monochrome_bricks_slab",
-    "count": 8
-  }
+    "count": 8,
+    "item": "ceramics:monochrome_bricks_slab"
+  },
+  "show_notification": true
 }

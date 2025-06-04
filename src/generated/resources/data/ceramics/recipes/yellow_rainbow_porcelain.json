@@ -1,8 +1,8 @@
 {
   "type": "minecraft:stonecutting",
+  "count": 1,
   "ingredient": {
     "tag": "ceramics:rainbow_porcelain"
   },
-  "result": "ceramics:yellow_rainbow_porcelain",
-  "count": 1
+  "result": "ceramics:yellow_rainbow_porcelain"
 }

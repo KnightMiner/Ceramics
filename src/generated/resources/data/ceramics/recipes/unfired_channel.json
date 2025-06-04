@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ppp",
-    "ppp"
-  ],
+  "category": "misc",
   "key": {
     "p": {
       "item": "ceramics:unfired_porcelain"
     }
   },
+  "pattern": [
+    "ppp",
+    "ppp"
+  ],
   "result": {
-    "item": "ceramics:unfired_channel",
-    "count": 3
-  }
+    "count": 3,
+    "item": "ceramics:unfired_channel"
+  },
+  "show_notification": true
 }

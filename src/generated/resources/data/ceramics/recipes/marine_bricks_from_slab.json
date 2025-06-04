@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:marine_bricks",
-  "pattern": [
-    "B",
-    "B"
-  ],
   "key": {
     "B": {
       "item": "ceramics:marine_bricks_slab"
     }
   },
+  "pattern": [
+    "B",
+    "B"
+  ],
   "result": {
     "item": "ceramics:marine_bricks"
-  }
+  },
+  "show_notification": true
 }

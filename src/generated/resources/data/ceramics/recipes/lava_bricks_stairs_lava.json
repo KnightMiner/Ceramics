@@ -1,11 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:lava_bricks_stairs",
-  "pattern": [
-    "BBB",
-    "BiB",
-    "BBB"
-  ],
   "key": {
     "B": {
       "item": "minecraft:brick_stairs"
@@ -14,8 +10,14 @@
       "item": "minecraft:lava_bucket"
     }
   },
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:lava_bricks_stairs",
-    "count": 8
-  }
+    "count": 8,
+    "item": "ceramics:lava_bricks_stairs"
+  },
+  "show_notification": true
 }

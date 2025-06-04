@@ -1,8 +1,8 @@
 {
   "type": "minecraft:stonecutting",
+  "count": 2,
   "ingredient": {
     "item": "ceramics:golden_bricks"
   },
-  "result": "ceramics:golden_bricks_slab",
-  "count": 2
+  "result": "ceramics:golden_bricks_slab"
 }

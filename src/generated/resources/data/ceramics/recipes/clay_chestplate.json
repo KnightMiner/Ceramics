@@ -1,16 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "c c",
-    "ccc",
-    "ccc"
-  ],
+  "category": "equipment",
   "key": {
     "c": {
       "tag": "forge:plates/brick"
     }
   },
+  "pattern": [
+    "c c",
+    "ccc",
+    "ccc"
+  ],
   "result": {
     "item": "ceramics:clay_chestplate"
-  }
+  },
+  "show_notification": true
 }

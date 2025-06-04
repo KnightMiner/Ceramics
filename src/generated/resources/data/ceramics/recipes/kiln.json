@@ -1,10 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "BBB",
-    "BFB",
-    "HHH"
-  ],
+  "category": "misc",
   "key": {
     "B": {
       "item": "minecraft:brick"
@@ -16,7 +12,13 @@
       "item": "minecraft:bricks"
     }
   },
+  "pattern": [
+    "BBB",
+    "BFB",
+    "HHH"
+  ],
   "result": {
     "item": "ceramics:kiln"
-  }
+  },
+  "show_notification": true
 }

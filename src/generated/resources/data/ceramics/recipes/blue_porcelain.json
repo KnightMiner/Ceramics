@@ -1,11 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "building",
   "group": "ceramics:dye_porcelain",
-  "pattern": [
-    "BBB",
-    "BDB",
-    "BBB"
-  ],
   "key": {
     "B": {
       "tag": "ceramics:porcelain_block"
@@ -14,8 +10,14 @@
       "tag": "forge:dyes/blue"
     }
   },
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
   "result": {
-    "item": "ceramics:blue_porcelain",
-    "count": 8
-  }
+    "count": 8,
+    "item": "ceramics:blue_porcelain"
+  },
+  "show_notification": true
 }
