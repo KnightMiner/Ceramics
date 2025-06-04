@@ -1,5 +1,6 @@
 package knightminer.ceramics.items;
 
+import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.util.FluidClayBucketWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -239,7 +240,7 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 	@Override
 	public void addVariants(Consumer<ItemStack> consumer) {
 		// add all fluids that the bucket can be filled with
-		for(Fluid fluid : ForgeRegistries.FLUIDS.getValues()) {
+		for (Fluid fluid : ForgeRegistries.FLUIDS.getValues()) {
 			// skip flowing fluids (we have still) and milks
 			// include cracked if cracked, non-cracked if not cracked
 			if (isVisible(fluid) && isCracked == doesCrack(fluid)) {
@@ -268,7 +269,6 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 		if (fluid == Fluids.EMPTY || isMilk(fluid)) {
 			return false;
 		}
-		return fluid.defaultFluidState().isSource();
+		return fluid.defaultFluidState().isSource() && !fluid.is(CeramicsTags.Fluids.HIDE_IN_BUCKET);
 	}
-
 }

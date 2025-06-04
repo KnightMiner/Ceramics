@@ -13,13 +13,14 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import slimeknights.mantle.util.RegistryHelper;
 
@@ -193,9 +194,9 @@ public abstract class BaseClayBucketItem extends Item {
     if (isMilk(fluid)) {
       return withMilk(isCracked);
     }
-
     // return
-    return FluidClayBucketItem.setFluid(new ItemStack(isCracked || doesCrack(fluid) ? Registration.CRACKED_FLUID_CLAY_BUCKET : Registration.FLUID_CLAY_BUCKET), fluid);
+    ItemLike item = isCracked || doesCrack(fluid) ? Registration.CRACKED_FLUID_CLAY_BUCKET : Registration.FLUID_CLAY_BUCKET;
+    return FluidClayBucketItem.setFluid(new ItemStack(item), fluid);
   }
 
   /**
@@ -217,7 +218,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  True if the fluid is milk
    */
   protected static boolean isMilk(Fluid fluid) {
-    return ForgeMod.MILK.isPresent() && fluid == ForgeMod.MILK.get();
+    return fluid.is(Tags.Fluids.MILK);
   }
 
   /**

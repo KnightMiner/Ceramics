@@ -1,6 +1,7 @@
 package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.util.FluidClayBucketWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
@@ -69,6 +71,10 @@ public class EmptyClayBucketItem extends BaseClayBucketItem {
 		if (world.mayInteract(player, pos) && player.mayUseItemAt(offset, direction, stack)) {
 			BlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
+			// if blacklisted, do nothing
+			if (block instanceof LiquidBlock liquidBlock && liquidBlock.getFluid().is(CeramicsTags.Fluids.BUCKET_BLACKLIST)) {
+				return InteractionResultHolder.fail(stack);
+			}
 			if (block instanceof BucketPickup pickup) {
 				ItemStack pickupStack = pickup.pickupBlock(world, pos, state);
 				ItemStack newStack;

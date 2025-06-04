@@ -1,6 +1,7 @@
 package knightminer.ceramics.util;
 
 import knightminer.ceramics.items.BaseClayBucketItem;
+import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -30,7 +31,7 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 
   @Override
   protected void setFluid(FluidStack stack) {
-    if(stack.isEmpty()) {
+    if (stack.isEmpty()) {
       container = container.getCraftingRemainingItem();
     } else {
       Item item = container.getItem();
@@ -40,5 +41,18 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
         container = ItemStack.EMPTY;
       }
     }
+  }
+
+
+  // blacklist
+
+  @Override
+  public boolean isFluidValid(int tank, FluidStack fluid) {
+    return !fluid.getFluid().is(CeramicsTags.Fluids.BUCKET_BLACKLIST);
+  }
+
+  @Override
+  public boolean canFillFluidType(FluidStack fluid) {
+    return !fluid.getFluid().is(CeramicsTags.Fluids.BUCKET_BLACKLIST) && !fluid.hasTag() && super.canFillFluidType(fluid);
   }
 }
