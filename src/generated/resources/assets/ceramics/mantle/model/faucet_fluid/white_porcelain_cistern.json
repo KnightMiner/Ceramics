@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "extension=false": "ceramics:templates/cistern",
+    "extension=true": "ceramics:templates/cistern_extension"
+  }
+}

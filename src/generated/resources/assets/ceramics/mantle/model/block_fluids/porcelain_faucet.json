@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "": "ceramics:templates/faucet",
+    "facing=down": "ceramics:templates/faucet_up"
+  }
+}

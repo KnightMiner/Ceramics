@@ -1,12 +1,3 @@
 {
-  "loader": "ceramics:cracked",
-  "parent": "ceramics:block/faucet/elements_side",
-  "textures": {
-    "tex": "block/terracotta",
-    "cracks_1": "ceramics:block/terracotta_cracks/1",
-    "cracks_2": "ceramics:block/terracotta_cracks/2",
-    "cracks_3": "ceramics:block/terracotta_cracks/3",
-    "cracks_4": "ceramics:block/terracotta_cracks/4",
-    "cracks_5": "ceramics:block/terracotta_cracks/5"
-  }
+  "parent": "ceramics:block/faucet/terracotta_side"
 }
