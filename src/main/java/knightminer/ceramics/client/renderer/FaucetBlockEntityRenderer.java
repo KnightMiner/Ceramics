@@ -14,16 +14,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
-import slimeknights.mantle.client.model.FaucetFluidLoader;
-import slimeknights.mantle.client.model.fluid.FluidCuboid;
-import slimeknights.mantle.client.model.fluid.FluidsModel;
-import slimeknights.mantle.client.model.util.ModelHelper;
+import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
 import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 
+import java.util.List;
 import java.util.function.Function;
 
 public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBlockEntity> {
@@ -44,29 +42,28 @@ public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBloc
 
     // fetch faucet model to determine where to render fluids
     BlockState state = tileEntity.getBlockState();
-    FluidsModel.Baked model = ModelHelper.getBakedModel(state, FluidsModel.Baked.class);
-    if (model != null) {
+    List<FluidCuboid> fluids = slimeknights.mantle.client.render.FluidCuboid.REGISTRY.get(state, List.of());
+    if (!fluids.isEmpty()) {
       // if side, rotate fluid model
       Direction direction = state.getValue(FaucetBlock.FACING);
       boolean isRotated = RenderingHelper.applyRotation(matrices, direction);
 
       // fluid props
-      FluidAttributes attributes = renderFluid.getFluid().getAttributes();
-      int color = attributes.getColor(renderFluid);
+      IClientFluidTypeExtensions client = IClientFluidTypeExtensions.of(renderFluid.getFluid());
+      int color = client.getTintColor(renderFluid);
       Function<ResourceLocation, TextureAtlasSprite> spriteGetter = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
-      TextureAtlasSprite still = spriteGetter.apply(attributes.getStillTexture(renderFluid));
-      TextureAtlasSprite flowing = spriteGetter.apply(attributes.getFlowingTexture(renderFluid));
-      boolean isGas = attributes.isGaseous(renderFluid);
-      combinedLightIn = FluidRenderer.withBlockLight(combinedLightIn, attributes.getLuminosity(renderFluid));
+      TextureAtlasSprite still = spriteGetter.apply(client.getStillTexture(renderFluid));
+      TextureAtlasSprite flowing = spriteGetter.apply(client.getFlowingTexture(renderFluid));
+      combinedLightIn = FluidRenderer.withBlockLight(combinedLightIn, renderFluid.getFluid().getFluidType().getLightLevel(renderFluid));
 
       // render all cubes in the model
       VertexConsumer buffer = bufferIn.getBuffer(MantleRenderTypes.FLUID);
-      for (FluidCuboid cube : model.getFluids()) {
-        FluidRenderer.renderCuboid(matrices, buffer, cube, 0, still, flowing, color, combinedLightIn, isGas);
+      for (FluidCuboid cube : fluids) {
+        FluidRenderer.renderCuboid(matrices, buffer, cube, 0, still, flowing, color, combinedLightIn, false);
       }
 
       // render into the block(s) below
-      FaucetFluidLoader.renderFaucetFluids(world, tileEntity.getBlockPos(), direction, matrices, buffer, still, flowing, color, combinedLightIn);
+      RenderingHelper.renderFaucetFluids(world, tileEntity.getBlockPos(), direction, matrices, buffer, still, flowing, color, combinedLightIn);
 
       // if rotated, pop back rotation
       if(isRotated) {

@@ -9,24 +9,23 @@ import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.RequirementsStrategy;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
-import slimeknights.mantle.recipe.helper.RecipeHelper;
+import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.util.JsonHelper;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 import static knightminer.ceramics.items.CrackableBlockItem.getCracks;
 import static knightminer.ceramics.items.CrackableBlockItem.setCracks;
@@ -35,7 +34,7 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 	private final Item item;
 	private final Ingredient repairIngredient;
 	public CrackedClayRepairRecipe(ResourceLocation id, ItemLike item, Ingredient repairIngredient) {
-		super(id, Ceramics.locationName("clay_repair"), new ItemStack(item), NonNullList.of(Ingredient.EMPTY, Ingredient.of(setCracks(new ItemStack(item), 3)), repairIngredient));
+		super(id, Ceramics.locationName("clay_repair"), CraftingBookCategory.MISC, new ItemStack(item), NonNullList.of(Ingredient.EMPTY, Ingredient.of(setCracks(new ItemStack(item), 3)), repairIngredient));
 		this.item = item.asItem();
 		this.repairIngredient = repairIngredient;
 	}
@@ -55,7 +54,7 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer inv) {
+	public ItemStack assemble(CraftingContainer inv, RegistryAccess access) {
 		for (int i = 0; i < inv.getContainerSize(); i++) {
 			ItemStack stack = inv.getItem(i);
 			if (stack.getItem() == item) {
@@ -64,7 +63,7 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 				return setCracks(stack, Math.max(0, getCracks(stack) - 3));
 			}
 		}
-		return super.assemble(inv);
+		return super.assemble(inv, access);
 	}
 
 	@Override
@@ -73,24 +72,24 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 	}
 
 	/** Serializer class for this recipe */
-	public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<CrackedClayRepairRecipe> {
+	public static class Serializer implements RecipeSerializer<CrackedClayRepairRecipe> {
 		@Override
 		public CrackedClayRepairRecipe fromJson(ResourceLocation id, JsonObject json) {
-			Item item = RecipeHelper.deserializeItem(GsonHelper.getAsString(json, "item"), "item", Item.class);
-			Ingredient ingredient = Ingredient.fromJson(JsonHelper.getElement(json, "ingredient"));
+			Item item = Loadables.ITEM.getIfPresent(json, "item");
+			Ingredient ingredient = Ingredient.fromJson(JsonHelper.getElement(json, "ingredient"), false);
 			return new CrackedClayRepairRecipe(id, item, ingredient);
 		}
 
 		@Override
 		public CrackedClayRepairRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buffer) {
-			Item item = RecipeHelper.readItem(buffer);
+			Item item = Loadables.ITEM.decode(buffer);
 			Ingredient ingredient = Ingredient.fromNetwork(buffer);
 			return new CrackedClayRepairRecipe(id, item, ingredient);
 		}
 
 		@Override
 		public void toNetwork(FriendlyByteBuf buffer, CrackedClayRepairRecipe recipe) {
-			RecipeHelper.writeItem(buffer, recipe.item);
+			Loadables.ITEM.encode(buffer, recipe.item);
 			recipe.repairIngredient.toNetwork(buffer);
 		}
 	}
@@ -131,7 +130,7 @@ public class CrackedClayRepairRecipe extends ShapelessRecipe {
 
 		@Override
 		public void serializeRecipeData(JsonObject json) {
-			json.addProperty("item", Objects.requireNonNull(item.getRegistryName()).toString());
+			json.addProperty("item", Loadables.ITEM.getString(item));
 			json.add("ingredient", ingredient.toJson());
 		}
 

@@ -3,7 +3,6 @@ package knightminer.ceramics.plugin.jei;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.mojang.blaze3d.vertex.PoseStack;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.KilnRecipe;
@@ -21,14 +20,17 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import slimeknights.mantle.client.SafeClientAccess;
+
+import java.util.Objects;
 
 public class KilnCategory implements IRecipeCategory<KilnRecipe> {
-  static final ResourceLocation UID = new ResourceLocation(Ceramics.MOD_ID, "kiln");
-  static final RecipeType<KilnRecipe> TYPE = new RecipeType<>(UID, KilnRecipe.class);
+  static final RecipeType<KilnRecipe> TYPE = new RecipeType<>(Ceramics.getResource("kiln"), KilnRecipe.class);
   private static final ResourceLocation RECIPE_GUI_VANILLA = new ResourceLocation("jei", "textures/gui/gui_vanilla.png");
   // slots
   static final int INPUT_SLOT = 0;
@@ -70,18 +72,6 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
 
   /* Properties */
 
-  @SuppressWarnings("removal")
-  @Override
-  public ResourceLocation getUid() {
-    return UID;
-  }
-
-  @SuppressWarnings("removal")
-  @Override
-  public Class<? extends KilnRecipe> getRecipeClass() {
-    return KilnRecipe.class;
-  }
-
   @Override
   public RecipeType<KilnRecipe> getRecipeType() {
     return TYPE;
@@ -108,40 +98,40 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   @Override
   public void setRecipe(IRecipeLayoutBuilder builder, KilnRecipe recipe, IFocusGroup focuses) {
     builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.getInput());
-    builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(recipe.getResultItem());
+    builder.addSlot(RecipeIngredientRole.OUTPUT, 61, 19).addItemStack(recipe.getResultItem(Objects.requireNonNullElse(SafeClientAccess.getRegistryAccess(), RegistryAccess.EMPTY)));
   }
 
   @Override
-  public void draw(KilnRecipe recipe, IRecipeSlotsView view, PoseStack matrixStack, double mouseX, double mouseY) {
-    this.animatedFlame.draw(matrixStack, 1, 20);
+  public void draw(KilnRecipe recipe, IRecipeSlotsView view, GuiGraphics graphics, double mouseX, double mouseY) {
+    this.animatedFlame.draw(graphics, 1, 20);
     IDrawableAnimated arrow = this.getArrow(recipe);
-    arrow.draw(matrixStack, 24, 18);
-    this.drawExperience(recipe, matrixStack);
-    this.drawCookTime(recipe, matrixStack);
+    arrow.draw(graphics, 24, 18);
+    this.drawExperience(recipe, graphics);
+    this.drawCookTime(recipe, graphics);
   }
 
   /** Draws the recipe experience info */
-  protected void drawExperience(KilnRecipe recipe, PoseStack matrixStack) {
+  protected void drawExperience(KilnRecipe recipe, GuiGraphics graphics) {
     float experience = recipe.getExperience();
     if (experience > 0.0F) {
-      TranslatableComponent experienceString = new TranslatableComponent("gui.jei.category.smelting.experience", experience);
+      Component experienceString = Component.translatable("gui.jei.category.smelting.experience", experience);
       Minecraft minecraft = Minecraft.getInstance();
       Font fontRenderer = minecraft.font;
       int stringWidth = fontRenderer.width(experienceString);
-      fontRenderer.draw(matrixStack, experienceString, (this.background.getWidth() - stringWidth), 0, 0xFF808080);
+      graphics.drawString(fontRenderer, experienceString, (this.background.getWidth() - stringWidth), 0, 0xFF808080, false);
     }
   }
 
   /** Draws the recipe cook time info */
-  protected void drawCookTime(KilnRecipe recipe, PoseStack matrixStack) {
+  protected void drawCookTime(KilnRecipe recipe, GuiGraphics graphics) {
     int cookTime = recipe.getCookingTime();
     if (cookTime > 0) {
       int cookTimeSeconds = cookTime / 20;
-      TranslatableComponent timeString = new TranslatableComponent("gui.jei.category.smelting.time.seconds", cookTimeSeconds);
+      Component timeString = Component.translatable("gui.jei.category.smelting.time.seconds", cookTimeSeconds);
       Minecraft minecraft = Minecraft.getInstance();
       Font fontRenderer = minecraft.font;
       int stringWidth = fontRenderer.width(timeString);
-      fontRenderer.draw(matrixStack, timeString, (this.background.getWidth() - stringWidth), 45, 0xFF808080);
+      graphics.drawString(fontRenderer, timeString, (this.background.getWidth() - stringWidth), 45, 0xFF808080, false);
     }
   }
 }

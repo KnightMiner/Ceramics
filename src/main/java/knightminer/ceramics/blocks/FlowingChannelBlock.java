@@ -7,6 +7,7 @@ import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackable
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,7 +24,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import slimeknights.mantle.util.BlockEntityHelper;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 /**
  * Channel extension that supports moving fluids
@@ -71,7 +71,9 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 
 	@Override
 	protected void activateTileEntity(BlockState state, Level world, BlockPos pos, Direction side) {
-		BlockEntityHelper.get(ChannelBlockEntity.class, world, pos).ifPresent(te -> te.refreshNeighbor(state, side));
+		if (world.getBlockEntity(pos) instanceof ChannelBlockEntity channel) {
+			channel.refreshNeighbor(state, side);
+		}
 	}
 
 	/* Cracking */
@@ -84,9 +86,9 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 	@SuppressWarnings("deprecation")
 	@Override
 	@Deprecated
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
-		if (isCrackable()) {
-			BlockEntityHelper.get(ChannelBlockEntity.class, worldIn, pos).ifPresent(ChannelBlockEntity::randomTick);
+	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+		if (isCrackable() && worldIn.getBlockEntity(pos) instanceof ChannelBlockEntity channel) {
+			channel.randomTick();
 		}
 	}
 

@@ -57,7 +57,7 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
       if (isCracked) {
         renderBrokenItem(player, stack);
       }
-      return updateBucket(stack, player, stack.getContainerItem());
+      return updateBucket(stack, player, stack.getCraftingRemainingItem());
     }
     return stack;
   }

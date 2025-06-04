@@ -5,7 +5,6 @@ import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -59,7 +58,7 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 		super.appendHoverText(stack, worldIn, tooltip, flag);
 		int cracks = getCracks(stack);
 		if (cracks > 0) {
-			tooltip.add(new TranslatableComponent(TOOLTIP_KEY, 6 - cracks, 6));
+			tooltip.add(Component.translatable(TOOLTIP_KEY, 6 - cracks, 6));
 		}
 	}
 

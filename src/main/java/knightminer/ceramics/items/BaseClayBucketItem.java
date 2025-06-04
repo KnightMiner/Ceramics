@@ -4,14 +4,13 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.CeramicsTags.Blocks;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -24,7 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import slimeknights.mantle.util.RegistryHelper;
 
-import java.util.Random;
+import java.util.function.Consumer;
 
 /**
  * Shared logic between the milk and fluid filled clay buckets
@@ -72,14 +71,14 @@ public abstract class BaseClayBucketItem extends Item {
   private void onItemDestroyed(PlayerDestroyItemEvent event) {
     ItemStack original = event.getOriginal();
     if(original.getItem() == this) {
-      renderBrokenItem(event.getPlayer(), event.getOriginal());
+      renderBrokenItem(event.getEntity(), event.getOriginal());
     }
   }
 
-  @Override
-  public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> subItems) {
-    if (this.allowdedIn(tab) && !isCracked) {
-      subItems.add(new ItemStack(this));
+  /** Adds variants of this item to creative tabs */
+  public void addVariants(Consumer<ItemStack> consumer) {
+    if (!isCracked) {
+      consumer.accept(new ItemStack(this));
     }
   }
 
@@ -93,7 +92,7 @@ public abstract class BaseClayBucketItem extends Item {
     Level world = player.getCommandSenderWorld();
     world.playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BREAK, player.getSoundSource(), 0.8F, 0.8F + world.random.nextFloat() * 0.4F, false);
     // add particles
-    Random rand = player.getRandom();
+    RandomSource rand = player.getRandom();
     ItemParticleOption particle = new ItemParticleOption(ParticleTypes.ITEM, stack);
     for(int i = 0; i < 5; ++i) {
       Vec3 offset = new Vec3((rand.nextFloat() - 0.5D) * 0.1D, Math.random() * 0.1D + 0.1D, 0.0D);
@@ -122,7 +121,7 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  Empty bucket, may be the original stack
    */
   protected static ItemStack emptyBucket(ItemStack stack, Player player) {
-    return !player.isCreative() ? stack.getContainerItem() : stack;
+    return !player.isCreative() ? stack.getCraftingRemainingItem() : stack;
   }
 
   /**
@@ -170,7 +169,7 @@ public abstract class BaseClayBucketItem extends Item {
       return false;
     }
     // if tags are loaded, we can get the most accurate results
-    boolean hotTemperature = fluid.getAttributes().getTemperature() >= 450;
+    boolean hotTemperature = fluid.getFluidType().getTemperature() >= 450;
     if (CeramicsTags.tagsLoaded()) {
       // if the temperature is hot, ensure its not tagged cool
       if (hotTemperature) {

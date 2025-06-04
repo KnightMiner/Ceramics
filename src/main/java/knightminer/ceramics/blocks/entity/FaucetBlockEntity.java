@@ -3,7 +3,8 @@ package knightminer.ceramics.blocks.entity;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.network.CeramicsNetwork;
-import knightminer.ceramics.network.FaucetActivationPacket;
+import knightminer.ceramics.network.FluidUpdatePacket;
+import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,11 +15,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullConsumer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
@@ -29,7 +30,7 @@ import javax.annotation.Nonnull;
 
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
-public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity {
+public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
   public static final BlockEntityTicker<FaucetBlockEntity> SERVER_TICKER = (level, pos, state, entity) -> entity.tick(level, pos, state);
   /** Transfer rate of the faucet */
   public static final int MB_PER_TICK = 25;
@@ -94,7 +95,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
     assert level != null;
     BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
     if (te != null) {
-      LazyOptional<IFluidHandler> handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+      LazyOptional<IFluidHandler> handler = te.getCapability(ForgeCapabilities.FLUID_HANDLER, side.getOpposite());
       if (handler.isPresent()) {
         return handler;
       }
@@ -170,7 +171,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
 
   @Nonnull
   @Override
-  public IModelData getModelData() {
+  public ModelData getModelData() {
     return cracksHandler.getModelData();
   }
 
@@ -256,7 +257,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
       // can we drain?
       IFluidHandler input = inputOptional.orElse(EmptyFluidHandler.INSTANCE);
       FluidStack drained = input.drain(PACKET_SIZE, FluidAction.SIMULATE);
-      if (!drained.isEmpty() && !drained.getFluid().getAttributes().isGaseous(drained)) {
+      if (!drained.isEmpty()) {
         // can we fill
         IFluidHandler output = outputOptional.orElse(EmptyFluidHandler.INSTANCE);
         int filled = output.fill(drained, FluidAction.SIMULATE);
@@ -361,8 +362,8 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
    */
   private void syncToClient(FluidStack fluid, boolean isPouring) {
     renderFluid = fluid.copy();
-    if (level instanceof ServerLevel) {
-      CeramicsNetwork.getInstance().sendToClientsAround(new FaucetActivationPacket(worldPosition, fluid, isPouring), (ServerLevel) level, getBlockPos());
+    if (level instanceof ServerLevel server) {
+      CeramicsNetwork.getInstance().sendToClientsAround(new FluidUpdatePacket(worldPosition, fluid, isPouring), server, worldPosition);
     }
   }
 
@@ -370,7 +371,8 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
    * Sets draining fluid to specified stack.
    * @param fluid new FluidStack
    */
-  public void onActivationPacket(FluidStack fluid, boolean isPouring) {
+  @Override
+  public void updateFluid(FluidStack fluid, boolean isPouring) {
     // pouring and powered are interchangable on the client
     this.faucetState = isPouring ? FaucetState.POURING : FaucetState.OFF;
     this.renderFluid = fluid;

@@ -2,7 +2,8 @@ package knightminer.ceramics.datagen;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
-import net.minecraft.data.loot.BlockLoot;
+import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootTable.Builder;
@@ -13,23 +14,29 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
-import java.util.Objects;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 import static knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.TAG_CRACKS;
 
-public class BlockLootTables extends BlockLoot {
-  @Override
-  protected Iterable<Block> getKnownBlocks() {
-    return ForgeRegistries.BLOCKS.getValues().stream()
-                                 .filter((block) -> Ceramics.MOD_ID.equals(Objects.requireNonNull(block.getRegistryName()).getNamespace()))
-                                 .collect(Collectors.toList());
+public class BlockLootTables extends BlockLootSubProvider {
+  protected BlockLootTables() {
+    super(Set.of(), FeatureFlags.REGISTRY.allFlags());
   }
 
   @Override
-  protected void addTables() {
+  protected Iterable<Block> getKnownBlocks() {
+    return ForgeRegistries.BLOCKS.getEntries().stream()
+      .filter(entry -> Ceramics.MOD_ID.equals(entry.getKey().location().getNamespace()))
+      .map(Entry::getValue)
+      .collect(Collectors.toList());
+  }
+
+  @Override
+  protected void generate() {
     IntFunction<Function<Block,Builder>> dropClay = count -> block -> createSingleItemTableWithSilkTouch(block, Items.CLAY_BALL, ConstantValue.exactly(count));
     IntFunction<Function<Block,Builder>> dropPorcelain = count -> block -> createSingleItemTableWithSilkTouch(block, Registration.UNFIRED_PORCELAIN, ConstantValue.exactly(count));
     Function<Block,Builder> dropSelfWithCracks = block -> createSingleItemTable(block).apply(CopyNbtFunction.copyData(ContextNbtProvider.BLOCK_ENTITY).copy(TAG_CRACKS, TAG_CRACKS, MergeStrategy.REPLACE));
@@ -78,7 +85,7 @@ public class BlockLootTables extends BlockLoot {
    */
   private void registerBuildingLootTable(WallBuildingBlockObject building) {
     dropSelf(building.get());
-    add(building.getSlab(), BlockLootTables::createSlabItemTable);
+    add(building.getSlab(), this::createSlabItemTable);
     dropSelf(building.getStairs());
     dropSelf(building.getWall());
   }

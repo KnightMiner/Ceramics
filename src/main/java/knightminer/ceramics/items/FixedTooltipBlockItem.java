@@ -3,7 +3,6 @@ package knightminer.ceramics.items;
 import knightminer.ceramics.Ceramics;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -20,7 +19,7 @@ public class FixedTooltipBlockItem extends BlockItem {
 	private final Component tooltipComponent;
 	public FixedTooltipBlockItem(Block blockIn, Properties builder, String tooltipSuffix) {
 		super(blockIn, builder);
-		tooltipComponent = new TranslatableComponent(Ceramics.lang("block", tooltipSuffix)).withStyle(ChatFormatting.GRAY);
+		tooltipComponent = Component.translatable(Ceramics.lang("block", tooltipSuffix)).withStyle(ChatFormatting.GRAY);
 	}
 
 	@Override

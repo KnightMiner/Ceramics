@@ -3,8 +3,8 @@ package knightminer.ceramics.util;
 import knightminer.ceramics.items.BaseClayBucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 import javax.annotation.Nonnull;
@@ -23,7 +23,7 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
     Item item = container.getItem();
     // using base so it works with milk as well
     if (item instanceof BaseClayBucketItem fluidBucket) {
-      return new FluidStack(fluidBucket.getFluid(container), FluidAttributes.BUCKET_VOLUME);
+      return new FluidStack(fluidBucket.getFluid(container), FluidType.BUCKET_VOLUME);
     }
     return FluidStack.EMPTY;
   }
@@ -31,7 +31,7 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
   @Override
   protected void setFluid(FluidStack stack) {
     if(stack.isEmpty()) {
-      container = container.getContainerItem();
+      container = container.getCraftingRemainingItem();
     } else {
       Item item = container.getItem();
       if (item instanceof BaseClayBucketItem bucket) {

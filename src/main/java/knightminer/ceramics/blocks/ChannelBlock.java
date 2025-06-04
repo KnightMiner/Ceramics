@@ -5,7 +5,6 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -27,7 +26,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 
 import javax.annotation.Nullable;
 import java.util.EnumMap;
@@ -35,11 +34,11 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ChannelBlock extends Block {
-	private static final Component SIDE_IN = new TranslatableComponent(Ceramics.lang("block", "channel.side.in"));
-	private static final Component SIDE_OUT = new TranslatableComponent(Ceramics.lang("block", "channel.side.out"));
-	private static final Component SIDE_NONE = new TranslatableComponent(Ceramics.lang("block", "channel.side.none"));
-	private static final Component DOWN_OUT = new TranslatableComponent(Ceramics.lang("block", "channel.down.out"));
-	private static final Component DOWN_NONE = new TranslatableComponent(Ceramics.lang("block", "channel.down.none"));
+	private static final Component SIDE_IN = Component.translatable(Ceramics.lang("block", "channel.side.in"));
+	private static final Component SIDE_OUT = Component.translatable(Ceramics.lang("block", "channel.side.out"));
+	private static final Component SIDE_NONE = Component.translatable(Ceramics.lang("block", "channel.side.none"));
+	private static final Component DOWN_OUT = Component.translatable(Ceramics.lang("block", "channel.down.out"));
+	private static final Component DOWN_NONE = Component.translatable(Ceramics.lang("block", "channel.down.none"));
 	private static final Map<ChannelConnection,Component> SIDE_CONNECTION = Util.make(new EnumMap<>(ChannelConnection.class), map -> {
 		map.put(ChannelConnection.IN, SIDE_IN);
 		map.put(ChannelConnection.OUT, SIDE_OUT);
@@ -151,7 +150,7 @@ public class ChannelBlock extends Block {
 	 */
 	private static boolean isFluidHandler(LevelAccessor world, Direction side, BlockPos pos) {
 		BlockEntity te = world.getBlockEntity(pos);
-		return te != null && te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side).isPresent();
+		return te != null && te.getCapability(ForgeCapabilities.FLUID_HANDLER, side).isPresent();
 	}
 
 	/**

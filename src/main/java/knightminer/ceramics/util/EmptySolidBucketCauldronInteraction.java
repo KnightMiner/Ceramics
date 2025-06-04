@@ -38,14 +38,14 @@ public class EmptySolidBucketCauldronInteraction extends EmptyClayBucketCauldron
 			// would use vanilla logic here, but it is dumb and insists on using a vanilla bucket
 			if (!level.isClientSide) {
 				// empty bucket
-				player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, stack.getContainerItem()));
+				player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, stack.getCraftingRemainingItem()));
 				// grant stats
 				player.awardStat(Stats.FILL_CAULDRON);
 				player.awardStat(Stats.ITEM_USED.get(bucket));
 				// update cauldron
 				level.setBlockAndUpdate(pos, cauldron);
 				// effects
-				level.playSound(null, pos, block.getSoundType(block.defaultBlockState()).getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
+				level.playSound(null, pos, block.defaultBlockState().getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
 				level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 			}
 			return InteractionResult.sidedSuccess(level.isClientSide);
@@ -78,6 +78,6 @@ public class EmptySolidBucketCauldronInteraction extends EmptyClayBucketCauldron
 		if (contents == Blocks.POWDER_SNOW) {
 			return SoundEvents.BUCKET_EMPTY_POWDER_SNOW;
 		}
-		return contents.getSoundType(contents.defaultBlockState()).getPlaceSound();
+		return contents.defaultBlockState().getSoundType().getPlaceSound();
 	}
 }

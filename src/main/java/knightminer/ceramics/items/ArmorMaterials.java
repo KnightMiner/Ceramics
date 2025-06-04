@@ -4,7 +4,7 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem.Type;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.util.Lazy;
@@ -13,10 +13,9 @@ import java.util.function.Supplier;
 
 public enum ArmorMaterials implements ArmorMaterial {
   // name, durability, protection, enchantability, toughness
-  CLAY("clay", 4, new int[]{1, 2, 3, 1}, 7, 0.0f, 0.0f, () -> Ingredient.of(Registration.CLAY_PLATE));
+  CLAY("clay", 4, new int[]{1, 3, 2, 1}, 7, 0.0f, 0.0f, () -> Ingredient.of(Registration.CLAY_PLATE));
 
-  // borrowed from vanilla
-  private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
+  private static final int[] MAX_DAMAGE_ARRAY = new int[]{11, 16, 15, 13};
 
   // armor fields
   private final String name;
@@ -38,13 +37,13 @@ public enum ArmorMaterials implements ArmorMaterial {
   }
 
   @Override
-  public int getDurabilityForSlot(EquipmentSlot slot) {
-    return MAX_DAMAGE_ARRAY[slot.getIndex()] * this.durabilityFactor;
+  public int getDurabilityForType(Type slot) {
+    return MAX_DAMAGE_ARRAY[slot.ordinal()] * this.durabilityFactor;
   }
 
   @Override
-  public int getDefenseForSlot(EquipmentSlot slot) {
-    return this.protection[slot.getIndex()];
+  public int getDefenseForType(Type slot) {
+    return this.protection[slot.ordinal()];
   }
 
   @Override

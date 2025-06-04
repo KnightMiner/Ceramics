@@ -1,76 +1,93 @@
 package knightminer.ceramics.client.model;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
+import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.items.SolidClayBucketItem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.BakedItemModel;
-import net.minecraftforge.client.model.CompositeModelState;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.ItemLayerModel;
-import net.minecraftforge.client.model.ItemTextureQuadConverter;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.PerspectiveMapWrapper;
+import net.minecraftforge.client.RenderTypeGroup;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.client.model.CompositeModel;
+import net.minecraftforge.client.model.DynamicFluidContainerModel;
+import net.minecraftforge.client.model.QuadTransformers;
 import net.minecraftforge.client.model.SimpleModelState;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.model.geometry.IGeometryBakingContext;
+import net.minecraftforge.client.model.geometry.IGeometryLoader;
+import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
+import net.minecraftforge.client.model.geometry.UnbakedGeometryHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.registries.ForgeRegistries;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import slimeknights.mantle.client.model.util.ColoredBlockModel;
+import slimeknights.mantle.client.model.util.MantleItemLayerModel;
 import slimeknights.mantle.client.model.util.ModelHelper;
-import slimeknights.mantle.util.JsonHelper;
+import slimeknights.mantle.data.loadable.Loadables;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 
 /**
- * This is largely based on Forges {@link net.minecraftforge.client.model.DynamicBucketModel}.
+ * This is largely based on Forges {@link net.minecraftforge.client.model.DynamicFluidContainerModel}.
  * The main difference is how it handles covers, as inset rather than outset, so transparent fluids render properly
  */
-public abstract class ClayBucketModel<T> implements IModelGeometry<ClayBucketModel<?>> {
+public abstract class ClayBucketModel<T> implements IUnbakedGeometry<ClayBucketModel<?>> {
   /** Loader instance */
-  public static final FluidLoader FLUID_LOADER = new FluidLoader();
+  public static final IGeometryLoader<ClayBucketModel<?>> FLUID_LOADER = ClayBucketModel::deserializeFluid;
   /** Loader instance */
-  public static final SolidLoader SOLID_LOADER = new SolidLoader();
+  public static final IGeometryLoader<ClayBucketModel<?>> SOLID_LOADER = ClayBucketModel::deserializeSolid;
+
+  /** Deserializes a fluid model from JSON */
+  public static ClayBucketModel<?> deserializeFluid(JsonObject json, JsonDeserializationContext context) {
+    Fluid fluid = Loadables.FLUID.getOrDefault(json, "fluid", Fluids.EMPTY);
+
+    // if true, flips gasses in the bucket
+    boolean flip = GsonHelper.getAsBoolean(json, "flip_gas", false);
+    if (json.has("flipGas")) {
+      flip = json.get("flipGas").getAsBoolean();
+    }
+    // if true, tints the fluid. Not really sure why you would not want this
+    boolean tint = GsonHelper.getAsBoolean(json, "apply_tint", true);
+    // create new model with correct liquid
+    return new FluidBucket(fluid, flip, tint);
+  }
+
+  /** Deserializes a block model from JSON */
+  public static ClayBucketModel<?> deserializeSolid(JsonObject json, JsonDeserializationContext context) {
+    Block block = Loadables.BLOCK.getOrDefault(json, "block", Blocks.AIR);
+    return new SolidBucket(block);
+  }
 
   // offsets that wil place the texture within the 3D item model, but always allow a visible liquid
-  private static final float NORTH_Z_INNER = 8.48f / 16f;
-  private static final float SOUTH_Z_INNER = 7.52f / 16f;
-  private static final float NORTH_Z_FLUID = 7.51f / 16f;
-  private static final float SOUTH_Z_FLUID = 8.49f / 16f;
-
+  // fluid is offset slightly away from front
+  private static final Transformation FLUID_TRANSFORM = new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, 1, 0.998f), new Quaternionf());
+  // inner is offset to the center, half a pixel back
+  private static final Transformation INNER_TRANSFORM = new Transformation(new Vector3f(0, 0, -0.5f/16f), new Quaternionf(), new Vector3f(1, 1, 1), new Quaternionf());
 
   /* Abstract methods */
 
@@ -93,6 +110,11 @@ public abstract class ClayBucketModel<T> implements IModelGeometry<ClayBucketMod
   protected abstract ResourceLocation getTexture();
 
   /** Gets the tint color for the contents */
+  protected int getLight() {
+    return 0;
+  }
+
+  /** Gets the tint color for the contents */
   protected int getColor() {
     return -1;
   }
@@ -100,105 +122,107 @@ public abstract class ClayBucketModel<T> implements IModelGeometry<ClayBucketMod
   /** Gets the contained contents */
   protected abstract T getContents(ItemStack stack);
 
-  protected abstract String getContentsName(T contents);
-
 
   /* Main logic */
 
-  /**
-   * Gets the material from the model config for a given name, or null if its not present
-   * @param owner  Model configuration
-   * @param name   Texture name
-   * @return  Material, or null if the material is missing
-   */
+  /** Gets the given sprite, or null if the texture is not present in the model */
   @Nullable
-  private static Material getMaterial(IModelConfiguration owner, String name) {
-    Material location = owner.resolveTexture(name);
-    if (MissingTextureAtlasSprite.getLocation().equals(location.texture())) {
-     return null;
+  private static TextureAtlasSprite getSprite(IGeometryBakingContext context, Function<Material,TextureAtlasSprite> spriteGetter, String key) {
+    if (context.hasMaterial(key)) {
+      return spriteGetter.apply(context.getMaterial(key));
     }
-    return location;
+    return null;
   }
 
   @Override
-  public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
-    Material particleLocation = getMaterial(owner, "particle");
+  public BakedModel bake(IGeometryBakingContext context, ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+    if (isEmpty(null)) {
+      overrides = new BucketFluidOverrides<>(context, this, modelState);
+    }
+    return bake(context, spriteGetter, modelState, overrides, modelLocation);
+  }
+
+  /** Bakes the final model */
+  private BakedModel bake(IGeometryBakingContext context, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
     // front texture, full 3D
-    Material baseLocation = getMaterial(owner, "base");
+    TextureAtlasSprite baseSprite = getSprite(context, spriteGetter, "base");
     // inner (texture in the middle, flat)
-    Material fluidMaskLocation = getMaterial(owner, "fluid");
+    TextureAtlasSprite maskSprite = spriteGetter.apply(context.getMaterial("fluid"));
     // inner (texture in the back, flat)
-    Material innerLocation = getMaterial(owner, "inner");
+    TextureAtlasSprite innerSprite = getSprite(context, spriteGetter, "inner");
 
-    // determine the transforms to use
-    ModelState transformsFromModel = owner.getCombinedTransform();
-    ImmutableMap<TransformType,Transformation> transformMap = PerspectiveMapWrapper.getTransforms(new CompositeModelState(transformsFromModel, modelTransform));
-
-    // particle has fallback if null based on a few other sprites
-    TextureAtlasSprite particleSprite = particleLocation != null ? spriteGetter.apply(particleLocation) : null;
+    // determine particle
+    TextureAtlasSprite particleSprite = getSprite(context, spriteGetter, "particle");
+    if (particleSprite == null) particleSprite = innerSprite;
+    if (particleSprite == null) particleSprite = baseSprite;
+    if (particleSprite == null) {
+      Ceramics.LOG.error("No valid particle sprite for fluid container model, you should supply either 'base' or 'particle'");
+      particleSprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation()));
+    }
 
     // if the fluid is lighter than air, will manipulate the initial state to be rotated 180 deg to turn it upside down
     if (shouldFlip()) {
-      modelTransform = new CompositeModelState(modelTransform, new SimpleModelState(new Transformation(null, new Quaternion(0, 0, 1, 0), null, null)));
+      modelState = new SimpleModelState(modelState.getRotation().compose(new Transformation(null, new Quaternionf(0, 0, 1, 0), null, null)));
     }
 
-    // start building quads
-    Transformation transform = modelTransform.getRotation();
-    ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-    if (isEmpty(null)) {
-      // if no fluid, just render the inner sprite, looks better
-      // use base if no inner sprite
-      if (innerLocation == null) innerLocation = baseLocation;
+    // start building the model
+    CompositeModel.Baked.Builder modelBuilder = CompositeModel.Baked.builder(context, particleSprite, overrides, context.getTransforms());
+    RenderTypeGroup renderTypes = DynamicFluidContainerModel.getLayerRenderTypes(false);
 
-      if (innerLocation != null) {
-        // this sprite will be used as particle
-        if (particleSprite == null) particleSprite = spriteGetter.apply(innerLocation);
+    // start building quads
+    if (isEmpty(null)) {
+      // if no fluid, just render the inner sprite or base sprite, looks better
+      TextureAtlasSprite emptySprite = innerSprite != null ? innerSprite : baseSprite;
+      if (innerSprite != null) {
         // add to builder
-        builder.addAll(ItemLayerModel.getQuadsForSprites(ImmutableList.of(innerLocation), transform, spriteGetter));
+        modelBuilder.addQuads(renderTypes, UnbakedGeometryHelper.bakeElements(
+          UnbakedGeometryHelper.createUnbakedItemElements(0, emptySprite.contents()),
+          $ -> emptySprite, modelState, modelLocation
+        ));
       }
     } else {
       // base is the outer cover, but is also the only layer in full 3D
-      if (baseLocation != null) {
-        builder.addAll(ItemLayerModel.getQuadsForSprites(ImmutableList.of(baseLocation), transform, spriteGetter));
+      if (baseSprite != null) {
+        modelBuilder.addQuads(renderTypes, UnbakedGeometryHelper.bakeElements(
+          UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents()),
+          $ -> baseSprite, modelState, modelLocation
+        ));
       }
 
-      // fluid is next one in
-      TextureAtlasSprite fluidSprite = spriteGetter.apply(ForgeHooksClient.getBlockMaterial(getTexture()));
-      if (particleSprite == null) particleSprite = fluidSprite;
-      if (fluidMaskLocation != null && fluidSprite != null) {
-        TextureAtlasSprite templateSprite = spriteGetter.apply(fluidMaskLocation);
-        if (templateSprite != null) {
-          int color = getColor();
-          builder.addAll(ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, color, 1));
-          builder.addAll(ItemTextureQuadConverter.convertTexture(transform, templateSprite, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, color, 1));
-        }
-      }
       // inner is at the back of the model behind the fluid
       // needs to be about a pixel back or in hand it gets cut off
       // inventory will not see this regardless
-      if (innerLocation != null) {
-        // inner (the actual item around the other two)
-        TextureAtlasSprite innerSprite = spriteGetter.apply(innerLocation);
-        builder.add(ItemTextureQuadConverter.genQuad(transform, 0, 0, 16, 16, NORTH_Z_INNER, innerSprite, Direction.NORTH, 0xFFFFFFFF, 2));
-        builder.add(ItemTextureQuadConverter.genQuad(transform, 0, 0, 16, 16, SOUTH_Z_INNER, innerSprite, Direction.SOUTH, 0xFFFFFFFF, 2));
+      if (innerSprite != null) {
+        modelBuilder.addQuads(renderTypes, MantleItemLayerModel.getQuadForGui(-1, -1, innerSprite, INNER_TRANSFORM, 0));
+      }
+
+      // fluid is next one in
+      TextureAtlasSprite fluidSprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, getTexture()));
+      if (fluidSprite != null) {
+        List<BakedQuad> quads = UnbakedGeometryHelper.bakeElements(
+          UnbakedGeometryHelper.createUnbakedItemMaskElements(1, maskSprite.contents()),
+          $ -> fluidSprite,
+          new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked()),
+          modelLocation
+        );
+        quads = quads.stream().filter(quad -> quad.getDirection().getAxis() == Axis.Z).toList();
+
+        // apply light
+        RenderTypeGroup fluidRenderTypes = renderTypes;
+        int light = getLight();
+        if (light > 0) {
+          fluidRenderTypes = DynamicFluidContainerModel.getLayerRenderTypes(true);
+          QuadTransformers.settingEmissivity(light).processInPlace(quads);
+        }
+        // apply color
+        int color = getColor();
+        if (color != -1) {
+          ColoredBlockModel.applyColorQuadTransformer(color).processInPlace(quads);
+        }
+        modelBuilder.addQuads(fluidRenderTypes, quads);
       }
     }
-
-    if (particleSprite == null) {
-      particleSprite = spriteGetter.apply(ModelLoaderRegistry.blockMaterial(MissingTextureAtlasSprite.getLocation()));
-    }
-
-    return new BakedBucketModel<>(bakery, owner, this, builder.build(), particleSprite, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), modelTransform, owner.isSideLit());
-  }
-
-  @Override
-  public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-    Set<Material> texs = Sets.newHashSet();
-    texs.add(owner.resolveTexture("particle"));
-    texs.add(owner.resolveTexture("base"));
-    texs.add(owner.resolveTexture("inner"));
-    texs.add(owner.resolveTexture("fluid"));
-    return texs;
+    return modelBuilder.build();
   }
 
   /** Clay bucket model for fluids */
@@ -219,7 +243,7 @@ public abstract class ClayBucketModel<T> implements IModelGeometry<ClayBucketMod
 
     @Override
     protected boolean shouldFlip() {
-      return flipGas && contents != Fluids.EMPTY && contents.getAttributes().isLighterThanAir();
+      return flipGas && contents != Fluids.EMPTY && contents.getFluidType().isLighterThanAir();
     }
 
     @Override
@@ -232,30 +256,37 @@ public abstract class ClayBucketModel<T> implements IModelGeometry<ClayBucketMod
 
     @Override
     protected ResourceLocation getTexture() {
-      return contents.getAttributes().getStillTexture();
+      return IClientFluidTypeExtensions.of(contents).getStillTexture();
+    }
+
+    @Override
+    protected int getLight() {
+      return isEmpty(null) ? 0 : contents.getFluidType().getLightLevel();
     }
 
     @Override
     protected int getColor() {
-      return tint ? contents.getAttributes().getColor() : -1;
+      return tint ? IClientFluidTypeExtensions.of(contents).getTintColor() : -1;
     }
 
     @Override
     protected Fluid getContents(ItemStack stack) {
-      return  FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY).getFluid();
-    }
-
-    @Override
-    protected String getContentsName(Fluid contents) {
-      return Objects.requireNonNull(contents.getRegistryName()).toString();
+      return FluidUtil.getFluidContained(stack).orElse(FluidStack.EMPTY).getFluid();
     }
   }
 
   /** Clay bucket model for blocks */
   private static class SolidBucket extends ClayBucketModel<Block> {
     private final Block contents;
+    private final int color;
     private SolidBucket(Block contents) {
       this.contents = contents;
+      Item item = contents.asItem();
+      if (item != Items.AIR) {
+        this.color = Minecraft.getInstance().getItemColors().getColor(new ItemStack(item), 0);
+      } else {
+        this.color = -1;
+      }
     }
 
     @Override
@@ -276,106 +307,53 @@ public abstract class ClayBucketModel<T> implements IModelGeometry<ClayBucketMod
       return ModelHelper.getParticleTexture(contents);
     }
 
+    @SuppressWarnings("deprecation")  // don't have world context
+    @Override
+    protected int getLight() {
+      return contents.defaultBlockState().getLightEmission();
+    }
+
+    @Override
+    public int getColor() {
+      return color;
+    }
+
     @Override
     protected Block getContents(ItemStack stack) {
       return stack.getItem() instanceof SolidClayBucketItem solidBucket ? solidBucket.getBlock(stack) : Blocks.AIR;
     }
-
-    @Override
-    protected String getContentsName(Block contents) {
-      return Objects.requireNonNull(contents.getRegistryName()).toString();
-    }
   }
 
-  /** Model loader logic */
-  private static class FluidLoader implements IModelLoader<ClayBucketModel<?>> {
-    @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {}
-
-    @Override
-    public ClayBucketModel<?> read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
-      Fluid fluid = Fluids.EMPTY;
-      if (modelContents.has("fluid")) {
-        fluid = JsonHelper.getAsEntry(ForgeRegistries.FLUIDS, modelContents, "fluid");
-      }
-
-      // if true, flips gasses in the bucket
-      boolean flip = false;
-      if (modelContents.has("flipGas")) {
-        flip = modelContents.get("flipGas").getAsBoolean();
-      }
-      // if true, tints the fluid. Not really sure why you would not want this
-      boolean tint = true;
-      if (modelContents.has("applyTint")) {
-        tint = modelContents.get("applyTint").getAsBoolean();
-      }
-      // create new model with correct liquid
-      return new FluidBucket(fluid, flip, tint);
-    }
-  }
-
-  /** Model loader logic */
-  private static class SolidLoader implements IModelLoader<ClayBucketModel<?>> {
-    @Override
-    public void onResourceManagerReload(ResourceManager resourceManager) {}
-
-    @Override
-    public ClayBucketModel<?> read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
-      Block block = Blocks.AIR;
-      if (modelContents.has("block")) {
-        block = JsonHelper.getAsEntry(ForgeRegistries.BLOCKS, modelContents, "block");
-      }
-      return new SolidBucket(block);
-    }
-  }
-
-  /** Handles adding in the model for a specific fluid, replacing the fluidless model */
-  private static final class ContainedFluidOverrideHandler extends ItemOverrides {
-    static final ContainedFluidOverrideHandler INSTANCE = new ContainedFluidOverrideHandler();
-
-    @Override
-    public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int seed) {
-      return ((BakedBucketModel<?>)originalModel).rebake(stack);
-    }
-  }
-
-  /** the dynamic bucket is based on the empty bucket */
-  private static final class BakedBucketModel<T> extends BakedItemModel {
+  /** Handles dynamically updating the model based on the fluid NBT */
+  private static final class BucketFluidOverrides<T> extends ItemOverrides {
     private static final ResourceLocation REBAKE_LOCATION = new ResourceLocation("ceramics:bucket_override");
 
-    private final ModelBakery bakery;
-    private final IModelConfiguration owner;
+    private final IGeometryBakingContext context;
     private final ClayBucketModel<T> parent;
-    private final Map<String, BakedModel> cache; // contains all the baked models since they'll never change
     private final ModelState originalTransform;
+    private final Map<T, BakedModel> cache = new HashMap<>(); // contains all the baked models since they'll never change
 
-    private BakedBucketModel(ModelBakery bakery, IModelConfiguration owner, ClayBucketModel<T> parent, ImmutableList<BakedQuad> quads,
-                       TextureAtlasSprite particle, ImmutableMap<TransformType, Transformation> transforms,
-                       Map<String, BakedModel> cache, boolean untransformed, ModelState originalTransform, boolean isSideLit) {
-      super(quads, particle, transforms, parent.isEmpty(null) ? ContainedFluidOverrideHandler.INSTANCE : ItemOverrides.EMPTY, untransformed, isSideLit);
-      this.bakery = bakery;
-      this.owner = owner;
+    private BucketFluidOverrides(IGeometryBakingContext context, ClayBucketModel<T> parent, ModelState originalTransform) {
+      this.context = context;
       this.parent = parent;
-      this.cache = cache;
       this.originalTransform = originalTransform;
     }
 
-    /** Rebakes the model using the given stack */
-    private BakedModel rebake(ItemStack stack) {
+    @Override
+    public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int seed) {
       T contents = parent.getContents(stack);
       // empty? return self
       if (parent.isEmpty(contents)) {
-        return this;
+        return originalModel;
       }
       // bake contents if not done so yet
-      String name = parent.getContentsName(contents);
-      if (!cache.containsKey(name)) {
+      if (!cache.containsKey(contents)) {
         ClayBucketModel<T> newContents = parent.withContents(contents);
-        BakedModel bakedModel = newContents.bake(owner, bakery, ForgeModelBakery.defaultTextureGetter(), originalTransform, ItemOverrides.EMPTY, REBAKE_LOCATION);
-        cache.put(name, bakedModel);
+        BakedModel bakedModel = newContents.bake(context, Material::sprite, originalTransform, ItemOverrides.EMPTY, REBAKE_LOCATION);
+        cache.put(contents, bakedModel);
         return bakedModel;
       }
-      return cache.get(name);
+      return cache.get(contents);
     }
   }
 }

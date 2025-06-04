@@ -5,12 +5,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -22,7 +20,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -39,15 +36,17 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.minecraftforge.common.ForgeI18n;
+import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.registries.ForgeRegistries;
+import slimeknights.mantle.data.loadable.Loadables;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Clay bucket that holds arbitrary fluids
@@ -116,8 +115,8 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 	private static void onLiquidPlaced(Player player, Fluid fluid, Level world, ItemStack stack, BlockPos pos) {
 		// TODO: is this bad?
 		Item item = fluid.getBucket();
-		if (item instanceof BucketItem) {
-			((BucketItem)item).checkExtraContent(player, world, stack, pos);
+		if (item instanceof BucketItem bucket) {
+			bucket.checkExtraContent(player, world, stack, pos);
 		}
 	}
 
@@ -146,7 +145,7 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 				}
 				return true;
 			} else {
-				if (!world.isClientSide() && replaceable && !state.getMaterial().isLiquid()) {
+				if (!world.isClientSide() && replaceable && !state.liquid()) {
 					world.destroyBlock(pos, true);
 				}
 
@@ -172,7 +171,7 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 	 * @param pos     Position of sound
 	 */
 	private static void playEmptySound(Fluid fluid, @Nullable Player player, LevelAccessor world, BlockPos pos) {
-		SoundEvent sound = fluid.getAttributes().getEmptySound();
+		SoundEvent sound = fluid.getFluidType().getSound(SoundActions.BUCKET_EMPTY);
 		if (sound == null) {
 			sound = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
 		}
@@ -205,7 +204,7 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 	 * @return  Modified stack
 	 */
 	protected static ItemStack setFluid(ItemStack stack, Fluid fluid) {
-		stack.getOrCreateTag().putString(TAG_FLUID, Objects.requireNonNull(fluid.getRegistryName()).toString());
+		stack.getOrCreateTag().putString(TAG_FLUID, Loadables.FLUID.getString(fluid));
 		return stack;
 	}
 
@@ -225,29 +224,26 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 		}
 		// if the specific fluid is translatable, use that
 		String key = this.getDescriptionId(stack);
-		ResourceLocation location = fluid.getRegistryName();
-		assert location != null;
+		ResourceLocation location = Loadables.FLUID.getKey(fluid);
 		String fluidKey = String.format("%s.%s.%s", key, location.getNamespace(), location.getPath());
 		MutableComponent component;
 		if (ForgeI18n.getPattern(fluidKey).equals(fluidKey)) {
-			component = new TranslatableComponent(key + ".filled", new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME).getDisplayName());
+			component = Component.translatable(key + ".filled", new FluidStack(fluid, FluidType.BUCKET_VOLUME).getDisplayName());
 		} else {
-			component = new TranslatableComponent(fluidKey);
+			component = Component.translatable(fluidKey);
 		}
 		// display name in red
 		return component.withStyle(ChatFormatting.RED);
 	}
 
 	@Override
-	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> subItems) {
-		if (this.allowdedIn(tab)) {
-			// add all fluids that the bucket can be filled with
-			for(Fluid fluid : ForgeRegistries.FLUIDS.getValues()) {
-				// skip flowing fluids (we have still) and milks
-				// include cracked if cracked, non-cracked if not cracked
-				if (isVisible(fluid) && isCracked == doesCrack(fluid)) {
-					subItems.add(setFluid(new ItemStack(this), fluid));
-				}
+	public void addVariants(Consumer<ItemStack> consumer) {
+		// add all fluids that the bucket can be filled with
+		for(Fluid fluid : ForgeRegistries.FLUIDS.getValues()) {
+			// skip flowing fluids (we have still) and milks
+			// include cracked if cracked, non-cracked if not cracked
+			if (isVisible(fluid) && isCracked == doesCrack(fluid)) {
+				consumer.accept(setFluid(new ItemStack(this), fluid));
 			}
 		}
 	}
@@ -255,7 +251,7 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		if (isCracked) {
-			tooltip.add(new TranslatableComponent(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
+			tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
 		}
 	}
 

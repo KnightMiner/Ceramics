@@ -19,25 +19,21 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import slimeknights.mantle.block.entity.MantleBlockEntity;
-import slimeknights.mantle.client.model.data.SinglePropertyData;
-import slimeknights.mantle.util.BlockEntityHelper;
 
 /** Common logic for all crackable fluid blocks */
 public class CrackableBlockEntityHandler {
 	/** Shared model property for the different cracked blocks */
-	public static final ModelProperty<Integer> PROPERTY = new ModelProperty<>(i -> i >= 0 && i <= 5);
+	public static final ModelProperty<Integer> CRACKS = new ModelProperty<>(i -> i >= 0 && i <= 5);
 	/** Tag for NBT */
 	public static final String TAG_CRACKS = "cracks";
 
 	/** Parent tile entity */
 	private final MantleBlockEntity parent;
-	/** Model data for the client */
-	private final IModelData data = new SinglePropertyData<>(PROPERTY, 0);
 	/** Current cracks value. Once it reaches 6 the block breaks */
 	private int cracks = 0;
 	/** Whether to use crackable logic, used to allow one class to handle both cases */
@@ -86,14 +82,14 @@ public class CrackableBlockEntityHandler {
 					if (world != null) {
 						world.destroyBlock(parent.getBlockPos(), false);
 						// if we have at least a bucket of fluid, place in world if possible
-						if (relevantAmount > FluidAttributes.BUCKET_VOLUME) {
+						if (relevantAmount > FluidType.BUCKET_VOLUME) {
 							BlockState state = fluid.defaultFluidState().createLegacyBlock();
 							if (state.getBlock() != Blocks.AIR) {
 								world.setBlockAndUpdate(parent.getBlockPos(), state);
 							}
 							// if less, try to place a flowing fluid
 						} else if (fluid instanceof FlowingFluid) {
-							int level = Math.max(1, relevantAmount * 8 / FluidAttributes.BUCKET_VOLUME);
+							int level = Math.max(1, relevantAmount * 8 / FluidType.BUCKET_VOLUME);
 							BlockState state = ((FlowingFluid) fluid).getFlowing(level, false).createLegacyBlock();
 							world.setBlockAndUpdate(parent.getBlockPos(), state);
 						}
@@ -116,7 +112,6 @@ public class CrackableBlockEntityHandler {
 		if (cracks > 5) cracks = 5;
 		if (cracks != this.cracks) {
 			this.cracks = cracks;
-			this.data.setData(PROPERTY, cracks);
 			this.parent.requestModelDataUpdate();
 			return true;
 		}
@@ -148,8 +143,8 @@ public class CrackableBlockEntityHandler {
 	}
 
 	/** Gets the model data for this TE */
-	public IModelData getModelData() {
-		return data;
+	public ModelData getModelData() {
+		return ModelData.builder().with(CRACKS, cracks).build();
 	}
 
 	/* Items */
@@ -209,7 +204,9 @@ public class CrackableBlockEntityHandler {
 
 		/** Helper to avoid having to write this line multiple times */
 		static void onBlockPlacedBy(LevelAccessor world, BlockPos pos, ItemStack stack) {
-			BlockEntityHelper.get(ICrackableBlockEntity.class, world, pos).ifPresent(te -> te.getCracksHandler().setCracks(stack));
+			if (world.getBlockEntity(pos) instanceof ICrackableBlockEntity crackable) {
+				crackable.getCracksHandler().setCracks(stack);
+			}
 		}
 
 		/**
@@ -222,28 +219,25 @@ public class CrackableBlockEntityHandler {
 		 */
 		static boolean tryRepair(LevelAccessor world, BlockPos pos, Player player, InteractionHand hand) {
 			ItemStack held = player.getItemInHand(hand);
-			if (held.is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR)) {
-				return BlockEntityHelper.get(ICrackableBlockEntity.class, world, pos).filter(te -> {
-					CrackableBlockEntityHandler handler = te.getCracksHandler();
-					int cracks = handler.getCracks();
-					if (handler.isActive() && cracks > 0) {
-						// play sound
-						world.playSound(player, pos, SoundType.GRAVEL.getPlaceSound(), SoundSource.BLOCKS, 1, 1);
+			if (held.is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR) && world.getBlockEntity(pos) instanceof ICrackableBlockEntity te) {
+				CrackableBlockEntityHandler handler = te.getCracksHandler();
+				int cracks = handler.getCracks();
+				if (handler.isActive() && cracks > 0) {
+					// play sound
+					world.playSound(player, pos, SoundType.GRAVEL.getPlaceSound(), SoundSource.BLOCKS, 1, 1);
 
-						if (!world.isClientSide()) {
-							// repair halfway
-							handler.setCracks(Math.max(0, cracks - 3));
-							// take clay
-							if (!player.isCreative()) {
-								held.shrink(1);
-								player.setItemInHand(hand, held);
-							}
+					if (!world.isClientSide()) {
+						// repair halfway
+						handler.setCracks(Math.max(0, cracks - 3));
+						// take clay
+						if (!player.isCreative()) {
+							held.shrink(1);
+							player.setItemInHand(hand, held);
 						}
-
-						return true;
 					}
-					return false;
-				}).isPresent();
+
+					return true;
+				}
 			}
 			return false;
 		}

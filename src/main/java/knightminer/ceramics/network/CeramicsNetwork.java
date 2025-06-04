@@ -38,9 +38,7 @@ public class CeramicsNetwork extends NetworkWrapper {
     if (INSTANCE == null) {
       INSTANCE = new CeramicsNetwork();
 
-      INSTANCE.registerPacket(CisternUpdatePacket.class, CisternUpdatePacket::new, NetworkDirection.PLAY_TO_CLIENT);
-      INSTANCE.registerPacket(FaucetActivationPacket.class, FaucetActivationPacket::new, NetworkDirection.PLAY_TO_CLIENT);
-      INSTANCE.registerPacket(ChannelFluidUpdatePacket.class, ChannelFluidUpdatePacket::new, NetworkDirection.PLAY_TO_CLIENT);
+      INSTANCE.registerPacket(FluidUpdatePacket.class, FluidUpdatePacket::new, NetworkDirection.PLAY_TO_CLIENT);
       INSTANCE.registerPacket(ChannelFlowPacket.class, ChannelFlowPacket::new, NetworkDirection.PLAY_TO_CLIENT);
       INSTANCE.registerPacket(CrackableCrackPacket.class, CrackableCrackPacket::new, NetworkDirection.PLAY_TO_CLIENT);
     }

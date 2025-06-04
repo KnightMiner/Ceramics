@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,8 +25,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import slimeknights.mantle.util.BlockEntityHelper;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.Random;
 
 /**
  * Pouring variant of the faucet block
@@ -62,7 +61,9 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
     if (player.isShiftKeyDown()) {
       return InteractionResult.PASS;
     }
-    getFaucet(worldIn, pos).ifPresent(FaucetBlockEntity::activate);
+    if (worldIn.getBlockEntity(pos) instanceof FaucetBlockEntity faucet) {
+      faucet.activate();
+    }
     return InteractionResult.SUCCESS;
   }
 
@@ -73,28 +74,21 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
     if (worldIn.isClientSide()) {
       return;
     }
-    getFaucet(worldIn, pos).ifPresent(faucet -> {
+    if (worldIn.getBlockEntity(pos) instanceof FaucetBlockEntity faucet) {
       faucet.neighborChanged(fromPos);
       faucet.handleRedstone(worldIn.hasNeighborSignal(pos));
-    });
+    }
   }
 
   @SuppressWarnings("deprecation")
   @Deprecated
   @Override
-  public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand) {
-    getFaucet(worldIn, pos).ifPresent(FaucetBlockEntity::activate);
+  public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource rand) {
+    if (worldIn.getBlockEntity(pos) instanceof FaucetBlockEntity faucet) {
+      faucet.activate();
+    }
   }
 
-  /**
-   * Gets the facuet tile entity at the given position
-   * @param world  World instance
-   * @param pos    Faucet position
-   * @return  Optional of faucet, empty if missing or wrong type
-   */
-  private Optional<FaucetBlockEntity> getFaucet(Level world, BlockPos pos) {
-    return BlockEntityHelper.get(FaucetBlockEntity.class, world, pos);
-  }
 
   /* Display */
 
@@ -113,12 +107,12 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
   }
 
   @Override
-  public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
-    getFaucet(worldIn, pos).ifPresent(faucet -> {
+  public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, RandomSource rand) {
+    if (worldIn.getBlockEntity(pos) instanceof FaucetBlockEntity faucet) {
       if (faucet.isPouring() && faucet.getRenderFluid().isEmpty() && rand.nextFloat() < 0.25F) {
         addParticles(stateIn, worldIn, pos);
       }
-    });
+    }
   }
 
 
@@ -132,9 +126,9 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
-    if (isCrackable()) {
-      BlockEntityHelper.get(FaucetBlockEntity.class, worldIn, pos).ifPresent(FaucetBlockEntity::randomTick);
+  public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+    if (isCrackable() && worldIn.getBlockEntity(pos) instanceof FaucetBlockEntity faucet) {
+      faucet.randomTick();
     }
   }
 

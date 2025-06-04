@@ -6,7 +6,8 @@ import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.network.CeramicsNetwork;
-import knightminer.ceramics.network.CisternUpdatePacket;
+import knightminer.ceramics.network.FluidUpdatePacket;
+import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
 import knightminer.ceramics.util.tank.CisternTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,24 +17,23 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullConsumer;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
 import slimeknights.mantle.block.entity.MantleBlockEntity;
-import slimeknights.mantle.util.BlockEntityHelper;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CisternBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity {
+public class CisternBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
   /** Max capacity per cistern block */
   private static final String TAG_FLUID = "fluid";
   private static final String TAG_EXTENSIONS = "extensions";
@@ -104,9 +104,9 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
   public int capacityPerLayer() {
     Block block = getBlockState().getBlock();
     if (Registration.PORCELAIN_CISTERN.contains(block)) {
-      return 6 * FluidAttributes.BUCKET_VOLUME;
+      return 6 * FluidType.BUCKET_VOLUME;
     }
-    return 4 * FluidAttributes.BUCKET_VOLUME;
+    return 4 * FluidType.BUCKET_VOLUME;
   }
 
   /**
@@ -125,7 +125,7 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
 
   @Nonnull
   @Override
-  public IModelData getModelData() {
+  public ModelData getModelData() {
     return cracksHandler.getModelData();
   }
 
@@ -173,8 +173,8 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
   public void tryMerge(BlockPos checkPos) {
     assert level != null;
     // check if there is another cistern above the new one that should also be connected
-    if (level.getBlockState(checkPos).is(getBlockState().getBlock())) {
-      BlockEntityHelper.get(CisternBlockEntity.class, level, checkPos).ifPresent(te -> te.makeExtension(this));
+    if (level.getBlockState(checkPos).is(getBlockState().getBlock()) && level.getBlockEntity(checkPos) instanceof CisternBlockEntity cistern) {
+      cistern.makeExtension(this);
     }
   }
 
@@ -233,7 +233,9 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
       int endIndex = (fluid.getAmount() - 1) / capacityPerLayer;
       // loop through indexes, updating them
       for (int i = startIndex; i <= endIndex; i++) {
-        BlockEntityHelper.get(ICrackableBlockEntity.class, level, worldPosition.above(i)).ifPresent(te -> te.getCracksHandler().fluidAdded(fluid));
+        if (level.getBlockEntity(worldPosition.above(i)) instanceof ICrackableBlockEntity crackable) {
+          crackable.getCracksHandler().fluidAdded(fluid);
+        }
       }
     }
   }
@@ -384,7 +386,7 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
   @Nonnull
   @Override
   public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
-    if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+    if (cap == ForgeCapabilities.FLUID_HANDLER) {
       return getPublicHandler().cast();
     }
     return super.getCapability(cap, side);
@@ -404,7 +406,7 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
    */
   public void onTankChanged(boolean shouldRefreshCapabilities) {
     if(level != null && !level.isClientSide) {
-      CeramicsNetwork.getInstance().sendToClientsAround(new CisternUpdatePacket(worldPosition, tank.getFluid(), shouldRefreshCapabilities), level, worldPosition);
+      CeramicsNetwork.getInstance().sendToClientsAround(new FluidUpdatePacket(worldPosition, tank.getFluid(), shouldRefreshCapabilities), level, worldPosition);
     }
   }
 
@@ -413,7 +415,8 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
    * @param fluid                      New fluid
    * @param shouldRefreshCapabilities  If true, capability handlers should be invalidated. Typically means the block was changed from extension to base
    */
-  public void updateFluidTo(FluidStack fluid, boolean shouldRefreshCapabilities) {
+  @Override
+  public void updateFluid(FluidStack fluid, boolean shouldRefreshCapabilities) {
     tank.setFluid(fluid);
     if (shouldRefreshCapabilities) {
       invalidateHandlers();

@@ -23,7 +23,7 @@ public class CisternTank implements IFluidHandler, IFluidTank {
 
   @Override
   public boolean isFluidValid(FluidStack stack) {
-    return !stack.getFluid().getAttributes().isGaseous(stack);
+    return true;
   }
 
   @Nonnull

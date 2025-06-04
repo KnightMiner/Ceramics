@@ -3,7 +3,7 @@ package knightminer.ceramics.blocks;
 import knightminer.ceramics.Ceramics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -22,8 +22,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
 
@@ -55,12 +55,12 @@ public class GaugeBlock extends Block {
       Direction side = state.getValue(HORIZONTAL_FACING);
       BlockEntity te = world.getBlockEntity(pos.relative(side.getOpposite()));
       if (te != null) {
-        te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side).ifPresent(handler -> {
+        te.getCapability(ForgeCapabilities.FLUID_HANDLER, side).ifPresent(handler -> {
           FluidStack fluid = handler.getFluidInTank(0);
           if (fluid.isEmpty()) {
-            player.displayClientMessage(new TranslatableComponent(Ceramics.lang("block", "gauge.empty")), true);
+            player.displayClientMessage(Component.translatable(Ceramics.lang("block", "gauge.empty")), true);
           } else {
-            player.displayClientMessage(new TranslatableComponent(Ceramics.lang("block", "gauge.contents"), fluid.getAmount(), fluid.getDisplayName()), true);
+            player.displayClientMessage(Component.translatable(Ceramics.lang("block", "gauge.contents"), fluid.getAmount(), fluid.getDisplayName()), true);
           }
         });
       }
@@ -85,7 +85,7 @@ public class GaugeBlock extends Block {
   public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
     Direction direction = state.getValue(HORIZONTAL_FACING);
     BlockEntity te = world.getBlockEntity(pos.relative(direction.getOpposite()));
-    return te != null && te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, direction).isPresent();
+    return te != null && te.getCapability(ForgeCapabilities.FLUID_HANDLER, direction).isPresent();
   }
 
   @Override

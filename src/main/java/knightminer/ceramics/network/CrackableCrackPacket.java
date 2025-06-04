@@ -1,25 +1,17 @@
 package knightminer.ceramics.network;
 
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent.Context;
+import slimeknights.mantle.client.SafeClientAccess;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.mantle.util.BlockEntityHelper;
 
-public class CrackableCrackPacket implements IThreadsafePacket {
-	private final BlockPos pos;
-	private final int cracks;
-
-	public CrackableCrackPacket(BlockPos pos, int cracks) {
-		this.pos = pos;
-		this.cracks = cracks;
-	}
-
+public record CrackableCrackPacket(BlockPos pos, int cracks) implements IThreadsafePacket {
 	public CrackableCrackPacket(FriendlyByteBuf buffer) {
-		this.pos = buffer.readBlockPos();
-		this.cracks = buffer.readVarInt();
+		this(buffer.readBlockPos(), buffer.readVarInt());
 	}
 
 	@Override
@@ -35,7 +27,10 @@ public class CrackableCrackPacket implements IThreadsafePacket {
 
 	private static class HandleClient {
 		private static void handle(CrackableCrackPacket packet) {
-			BlockEntityHelper.get(ICrackableBlockEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.getCracksHandler().setCracks(packet.cracks));
+			Level level = SafeClientAccess.getLevel();
+			if (BlockEntityHelper.isBlockLoaded(level, packet.pos) && level.getBlockEntity(packet.pos) instanceof ICrackableBlockEntity crackable) {
+				crackable.getCracksHandler().setCracks(packet.cracks);
+			}
 		}
 	}
 }

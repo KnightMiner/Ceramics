@@ -3,16 +3,13 @@ package knightminer.ceramics.items;
 import com.google.common.collect.ImmutableList;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SolidBucketItem;
@@ -23,12 +20,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.registries.ForgeRegistries;
+import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.util.RegistryHelper;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Consumer;
 
 public class SolidClayBucketItem extends BaseClayBucketItem {
 	/** List of all blocks that can be placed in buckets */
@@ -52,6 +50,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 		super(isCracked, props);
 	}
 
+	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
 		return null;
@@ -65,7 +64,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 			return InteractionResult.FAIL;
 		}
 
-		ItemStack resultStack = context.getItemInHand().getContainerItem();
+		ItemStack resultStack = context.getItemInHand().getCraftingRemainingItem();
 		InteractionResult result = blockItem.useOn(new BlockPlaceContext(context));
 		Player player = context.getPlayer();
 		if (result.consumesAction() && player != null && !player.isCreative()) {
@@ -99,7 +98,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	 * @return  Modified stack
 	 */
 	protected static ItemStack setBlock(ItemStack stack, Block block) {
-		stack.getOrCreateTag().putString(TAG_BLOCK, Objects.requireNonNull(block.getRegistryName()).toString());
+		stack.getOrCreateTag().putString(TAG_BLOCK, Loadables.BLOCK.getString(block));
 		return stack;
 	}
 
@@ -107,7 +106,8 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	/* Item stack properties */
 
 	@Override
-	public int getItemStackLimit(ItemStack stack) {
+	public int getMaxStackSize(ItemStack stack) {
+		// TODO: can we allow larger stack sizes for weird block stuff here?
 		return 1;
 	}
 
@@ -120,13 +120,12 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 		} else {
 			// if the specific block is translatable, use that
 			String key = this.getDescriptionId(stack);
-			ResourceLocation location = block.getRegistryName();
-			assert location != null;
+			ResourceLocation location = Loadables.BLOCK.getKey(block);
 			String blockKey = String.format("%s.%s.%s", key, location.getNamespace(), location.getPath());
 			if (ForgeI18n.getPattern(blockKey).equals(blockKey)) {
-				component = new TranslatableComponent(key + ".filled", new TranslatableComponent(block.getDescriptionId()));
+				component = Component.translatable(key + ".filled", Component.translatable(block.getDescriptionId()));
 			} else {
-				component = new TranslatableComponent(blockKey);
+				component = Component.translatable(blockKey);
 			}
 		}
 		// display name in red
@@ -134,12 +133,10 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	}
 
 	@Override
-	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> subItems) {
-		if (this.allowdedIn(tab)) {
-			for (Block block : BUCKETABLE_BLOCKS) {
-				if (isCracked == RegistryHelper.contains(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS, block)) {
-					subItems.add(setBlock(new ItemStack(this), block));
-				}
+	public void addVariants(Consumer<ItemStack> consumer) {
+		for (Block block : BUCKETABLE_BLOCKS) {
+			if (isCracked == RegistryHelper.contains(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS, block)) {
+				consumer.accept(setBlock(new ItemStack(this), block));
 			}
 		}
 	}

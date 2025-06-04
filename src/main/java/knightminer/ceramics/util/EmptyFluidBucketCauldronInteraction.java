@@ -2,14 +2,17 @@ package knightminer.ceramics.util;
 
 import knightminer.ceramics.items.FluidClayBucketItem;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.common.SoundActions;
 import slimeknights.mantle.datagen.MantleTags;
 
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 /**
  * Common logic to interaction with cauldrons
@@ -45,6 +48,6 @@ public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldron
 
 	@Override
 	protected SoundEvent getSound(Fluid contents) {
-		return contents.getAttributes().getEmptySound();
+		return Objects.requireNonNullElse(contents.getFluidType().getSound(SoundActions.BUCKET_EMPTY), SoundEvents.BUCKET_EMPTY);
 	}
 }

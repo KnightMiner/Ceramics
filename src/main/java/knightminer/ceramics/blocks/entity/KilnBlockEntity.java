@@ -4,7 +4,6 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.menu.KilnMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +17,7 @@ public class KilnBlockEntity extends AbstractFurnaceBlockEntity {
 
   @Override
   protected Component getDefaultName() {
-    return new TranslatableComponent("container.ceramics.kiln");
+    return Component.translatable("container.ceramics.kiln");
   }
 
   @Override

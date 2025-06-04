@@ -6,7 +6,8 @@ import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.ChannelFlowPacket;
-import knightminer.ceramics.network.ChannelFluidUpdatePacket;
+import knightminer.ceramics.network.FluidUpdatePacket;
+import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
 import knightminer.ceramics.util.tank.ChannelSideTank;
 import knightminer.ceramics.util.tank.ChannelTank;
 import knightminer.ceramics.util.tank.FillOnlyFluidHandler;
@@ -21,12 +22,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullConsumer;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.EmptyFluidHandler;
@@ -41,7 +42,7 @@ import java.util.Map;
 /**
  * Logic for channel fluid transfer
  */
-public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity {
+public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
 	public static final BlockEntityTicker<ChannelBlockEntity> SERVER_TICKER = (level, pos, state, te) -> te.tick(level, pos, state);
 	/** Channel internal tank */
 	private final ChannelTank tank = new ChannelTank(75, this);
@@ -98,7 +99,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 
 	@Nonnull
 	@Override
-	public IModelData getModelData() {
+	public ModelData getModelData() {
 		return cracksHandler.getModelData();
 	}
 
@@ -126,7 +127,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	@Nonnull
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
-		if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+		if (capability == ForgeCapabilities.FLUID_HANDLER) {
 			// top side gets the insert direct
 			if (side == null || side == Direction.UP) {
 				return topHandler.cast();
@@ -157,7 +158,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 		// must have a TE with a fluid handler
 		BlockEntity te = level.getBlockEntity(worldPosition.relative(side));
 		if (te != null) {
-			LazyOptional<IFluidHandler> handler = te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+			LazyOptional<IFluidHandler> handler = te.getCapability(ForgeCapabilities.FLUID_HANDLER, side.getOpposite());
 			if (handler.isPresent()) {
 				handler.addListener(neighborConsumers.computeIfAbsent(side, s -> new WeakConsumerWrapper<>(this, (self, lazy) -> self.neighborTanks.remove(s))));
 				return handler;
@@ -433,15 +434,12 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	 */
 	public void sendFluidUpdate() {
 		if (level != null && !level.isClientSide) {
-			CeramicsNetwork.getInstance().sendToClientsAround(new ChannelFluidUpdatePacket(worldPosition, getFluid()), level, worldPosition);
+			CeramicsNetwork.getInstance().sendToClientsAround(new FluidUpdatePacket(worldPosition, getFluid(), false), level, worldPosition);
 		}
 	}
 
-	/**
-	 * Updates the contained fluid from a packet
-	 * @param fluid  New fluid
-	 */
-	public void updateFluid(FluidStack fluid) {
+	@Override
+  public void updateFluid(FluidStack fluid, boolean unused) {
 		tank.setFluid(fluid);
 	}
 

@@ -4,15 +4,19 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.CeramicsTags.Blocks;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
+import java.util.concurrent.CompletableFuture;
+
 public class ItemTagProvider extends ItemTagsProvider {
-  public ItemTagProvider(DataGenerator gen, BlockTagsProvider blockTags, ExistingFileHelper helper) {
-    super(gen, blockTags, Ceramics.MOD_ID, helper);
+  public ItemTagProvider(PackOutput packOutput, CompletableFuture<Provider> lookupProvider, CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, ExistingFileHelper helper) {
+    super(packOutput, lookupProvider, blockTags, Ceramics.MOD_ID, helper);
   }
 
   @Override
@@ -21,7 +25,7 @@ public class ItemTagProvider extends ItemTagsProvider {
   }
 
   @Override
-  protected void addTags() {
+  protected void addTags(Provider provider) {
     this.copy(Blocks.COLORED_TERRACOTTA, CeramicsTags.Items.COLORED_TERRACOTTA);
     // porcelain
     this.copy(Blocks.PORCELAIN, CeramicsTags.Items.PORCELAIN);

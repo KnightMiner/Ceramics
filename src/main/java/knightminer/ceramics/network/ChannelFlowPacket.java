@@ -1,11 +1,12 @@
 package knightminer.ceramics.network;
 
 import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkEvent.Context;
+import slimeknights.mantle.client.SafeClientAccess;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.mantle.util.BlockEntityHelper;
 
@@ -40,7 +41,10 @@ public class ChannelFlowPacket implements IThreadsafePacket {
 
 	private static class HandleClient {
 		private static void handle(ChannelFlowPacket packet) {
-			BlockEntityHelper.get(ChannelBlockEntity.class, Minecraft.getInstance().level, packet.pos).ifPresent(te -> te.setFlow(packet.side, packet.flow));
+			Level level = SafeClientAccess.getLevel();
+			if (BlockEntityHelper.isBlockLoaded(level, packet.pos) && level.getBlockEntity(packet.pos) instanceof ChannelBlockEntity channel) {
+				channel.setFlow(packet.side, packet.flow);
+			}
 		}
 	}
 }

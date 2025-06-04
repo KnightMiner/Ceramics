@@ -5,6 +5,7 @@ import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackable
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,13 +17,11 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import slimeknights.mantle.util.BlockEntityHelper;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
-import java.util.Random;
 
 /**
  * Fired cistern block that can store fluids
@@ -58,7 +57,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
         BlockEntity te = world.getBlockEntity(pos);
         if (te != null) {
           // simply update the fluid handler capability
-            te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection())
+            te.getCapability(ForgeCapabilities.FLUID_HANDLER, hit.getDirection())
               .ifPresent(handler -> FluidUtil.interactWithFluidHandler(player, hand, handler));
         }
       }
@@ -76,7 +75,8 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
    * @param pos    Cistern extension position
    * @return  Optional containing base TE, or empty optional if base cannot be found
    */
-  private Optional<CisternBlockEntity> findBase(Level world, BlockPos pos) {
+  @Nullable
+  private CisternBlockEntity findBase(Level world, BlockPos pos) {
     BlockPos base = pos;
     BlockState checkState;
     do {
@@ -85,30 +85,31 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
     } while (checkState.is(this) && checkState.getValue(CisternBlock.EXTENSION));
 
     // if the position is a cistern, it means we found a base, return that position
-    if (checkState.is(this)) {
-      return BlockEntityHelper.get(CisternBlockEntity.class, world, base);
+    if (checkState.is(this) && world.getBlockEntity(base) instanceof CisternBlockEntity cistern) {
+      return cistern;
     }
     // not found, return nothing
-    return Optional.empty();
+    return null;
   }
 
   @Override
   public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
     if (state.getValue(CisternBlock.EXTENSION)) {
       // try to find a base cistern below if an extension
-      findBase(world, pos).ifPresent(te -> te.addExtension(pos));
+      CisternBlockEntity base = findBase(world, pos);
+      if (base != null) {
+        base.addExtension(pos);
+      }
       // crackable handling
       if (crackable) {
         ICrackableBlock.onBlockPlacedBy(world, pos, stack);
       }
-    } else {
-      BlockEntityHelper.get(CisternBlockEntity.class, world, pos).ifPresent(te -> {
-        te.tryMerge(pos.above());
-        // crackable handling
-        if (crackable) {
-          te.getCracksHandler().setCracks(stack);
-        }
-      });
+    } else if (world.getBlockEntity(pos) instanceof CisternBlockEntity cistern) {
+      cistern.tryMerge(pos.above());
+      // crackable handling
+      if (crackable) {
+        cistern.getCracksHandler().setCracks(stack);
+      }
     }
   }
 
@@ -118,7 +119,10 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
   public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
     if (state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())) {
       if (state.getValue(EXTENSION)) {
-        findBase(world, pos).ifPresent(te -> te.removeExtension(pos));
+        CisternBlockEntity base = findBase(world, pos);
+        if (base != null) {
+          base.removeExtension(pos);
+        }
       } else {
         BlockEntityHelper.get(CisternBlockEntity.class, world, pos).ifPresent(te -> te.onBroken(this));
       }
@@ -149,7 +153,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
   @SuppressWarnings("deprecation")
   @Override
   @Deprecated
-  public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random) {
+  public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
     if (isCrackable() && random.nextInt(5) == 0) {
       BlockEntityHelper.get(CisternBlockEntity.class, worldIn, pos).ifPresent(CisternBlockEntity::randomTick);
     }

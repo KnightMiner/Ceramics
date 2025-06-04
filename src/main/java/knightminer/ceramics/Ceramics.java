@@ -7,26 +7,27 @@ import knightminer.ceramics.datagen.LootTableProvider;
 import knightminer.ceramics.datagen.RecipeProvider;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.recipe.CeramicsTags;
+import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.registries.MissingMappingsEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import slimeknights.mantle.registration.RegistrationHelper;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("WeakerAccess")
 @Mod(Ceramics.MOD_ID)
@@ -40,21 +41,22 @@ public class Ceramics {
 		CeramicsNetwork.init();
 		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::gatherData);
-		MinecraftForge.EVENT_BUS.addGenericListener(Block.class, this::onMissingBlocks);
-		MinecraftForge.EVENT_BUS.addGenericListener(Item.class, this::onMissingItems);
+		MinecraftForge.EVENT_BUS.addListener(this::onMissingMappings);
 	}
 
 	private void gatherData(GatherDataEvent event) {
-		if (event.includeServer()) {
-			DataGenerator gen = event.getGenerator();
-			ExistingFileHelper helper = event.getExistingFileHelper();
-			BlockTagsProvider blockTags = new BlockTagProvider(gen, helper);
-			gen.addProvider(blockTags);
-			gen.addProvider(new ItemTagProvider(gen, blockTags, helper));
-			gen.addProvider(new FluidTagProvider(gen, helper));
-			gen.addProvider(new RecipeProvider(gen));
-			gen.addProvider(new LootTableProvider(gen));
-		}
+		boolean server = event.includeServer();
+		DataGenerator gen = event.getGenerator();
+		PackOutput packOutput = gen.getPackOutput();
+		ExistingFileHelper helper = event.getExistingFileHelper();
+		CompletableFuture<Provider> lookupProvider = event.getLookupProvider();
+
+		BlockTagProvider blockTags = new BlockTagProvider(packOutput, lookupProvider, helper);
+		gen.addProvider(server, blockTags);
+		gen.addProvider(server, new ItemTagProvider(packOutput, lookupProvider, blockTags.contentsGetter(), helper));
+		gen.addProvider(server, new FluidTagProvider(packOutput, lookupProvider, helper));
+		gen.addProvider(server, new RecipeProvider(packOutput));
+		gen.addProvider(server, new LootTableProvider(packOutput));
 	}
 
 	/** Maps a block name to a block */
@@ -67,13 +69,9 @@ public class Ceramics {
 	}
 
 	/** Missing block event */
-	private void onMissingBlocks(MissingMappings<Block> event) {
-		RegistrationHelper.handleMissingMappings(event, MOD_ID, this::missingBlock);
-	}
-
-	/** Missing item event */
-	private void onMissingItems(MissingMappings<Item> event) {
-		RegistrationHelper.handleMissingMappings(event, MOD_ID, name -> {
+	private void onMissingMappings(MissingMappingsEvent event) {
+		RegistrationHelper.handleMissingMappings(event, MOD_ID, Registries.BLOCK, this::missingBlock);
+		RegistrationHelper.handleMissingMappings(event, MOD_ID, Registries.ITEM, name -> {
 			ItemLike provider = missingBlock(name);
 			return provider == null ? null : provider.asItem();
 		});
@@ -115,6 +113,6 @@ public class Ceramics {
 	 * @return Language key
 	 */
 	public static Component component(String group, String name) {
-		return new TranslatableComponent(lang(group, name));
+		return Component.translatable(lang(group, name));
 	}
 }
