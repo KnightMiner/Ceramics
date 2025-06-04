@@ -1,148 +1,136 @@
-buildscript {
-  repositories {
-    maven { url = 'https://maven.minecraftforge.net' }
-    jcenter()
-    mavenCentral()
-    maven {
-      name "Parchment"
-      url "https://maven.parchmentmc.org"
-    }
-  }
-  dependencies {
-    classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-    classpath 'org.parchmentmc:librarian:1.+'
-  }
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 group = "knightminer"
-archivesBaseName = "Ceramics"
+base {
+  archivesName = "Ceramics"
+}
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-configurations {
-    deployerJars
+//adds the build number to the end of the version string if on a build server
+def mod_build = mod_version
+if (System.getenv().BUILD_NUMBER != null) {
+	mod_build += ".${System.getenv().BUILD_NUMBER}"
 }
-
-version = "${minecraft_version}-${mod_version}"
+version = "${minecraft_version}-${mod_build}"
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}, Version: ${version}"
 
 sourceSets {
   main { resources {
-    srcDirs "$rootDir/src/generated/resources"
-    //But exclude the cache of the generated data from what gets built
+    srcDirs "src/generated/resources"
+    // But exclude the cache of the generated data from what gets built
     exclude '.cache'
   } }
 }
 
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
 minecraft {
   mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+
+  // enableIdeaPrepareRuns = true
+  copyIdeResources = true
+    
   accessTransformer project.file("src/main/resources/META-INF/accesstransformer.cfg")
+  
   runs {
-    client {
+    // applies to all the run configs below
+    configureEach {
       workingDirectory project.file('run')
+
       // Recommended logging data for a userdev environment
-      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+      // The markers can be added/remove as needed separated by commas.
+      // "SCAN": For mods scan.
+      // "REGISTRIES": For firing of registry events.
+      // "REGISTRYDUMP": For getting the contents of all registries.
+      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP,CORE'
+
       // Recommended logging level for the console
+      // You can set various levels here.
+      // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
       property 'forge.logging.console.level', 'debug'
+      
       mods {
         ceramics {
           source sourceSets.main
         }
       }
+    }
+        
+    client {
     }
 
     server {
-      workingDirectory project.file('run')
-      // Recommended logging data for a userdev environment
-      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-      // Recommended logging level for the console
-      property 'forge.logging.console.level', 'debug'
-      mods {
-        ceramics {
-          source sourceSets.main
-        }
-      }
+      workingDirectory project.file('run/server')
+            
+      args '--nogui'
     }
 
     data {
-      workingDirectory project.file('run')
-      // Recommended logging data for a userdev environment
-      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-      // Recommended logging level for the console
-      property 'forge.logging.console.level', 'debug'
-      args '--mod', 'ceramics', '--all', '--output', file('src/generated/resources/')
-      mods {
-        ceramics {
-           source sourceSets.main
-        }
-      }
+      args '--mod', 'ceramics', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/'), '--existing-mod', 'mantle'
     }
   }
 }
 
 repositories {
-  // JEI and Mantle
+  // Mantle
   maven {
     name 'DVS1 Maven FS'
     url 'https://dvs1.progwml6.com/files/maven'
   }
+  // JEI
+  maven {
+      name 'BlameJared Maven'
+      url 'https://maven.blamejared.com'
+  }
+  // pull in Mantle builds for testing in dev changes
+  flatDir {
+    dir '../Mantle/build/libs'
+  }
+}
+
+configurations {
+    deployerJars
 }
 
 dependencies {
   minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+  
   implementation  fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_version}")
     
   // compile against the JEI API but do not include it at runtime
-  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}:api")
+  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
   // at runtime, use the full JEI jar
-  runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}:${jei_version}")
+  runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 }
 
-// process mods.toml to inject variables
-def modsTomlSpec = copySpec{
-  from(sourceSets.main.resources) {
-    include 'META-INF/mods.toml'
-    expand 'version': mod_version,
-            'loader_range': loader_range,
-            'minecraft_range': minecraft_range,
-            'forge_range': forge_range,
-            'mantle_range': mantle_range
-  }
-}
-// need to copy into each build directory, unfortunately does not seem easy to do this automatically
-def buildPaths = [
-        "$rootDir/out/production/resources", // IDEA
-        "$rootDir/bin", // Eclipse
-]
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+      'version': mod_version,
+      'loader_range': loader_range,
+      'minecraft_range': minecraft_range,
+      'forge_range': forge_range,
+      'mantle_range': mantle_range
+    ]
+    inputs.properties replaceProperties
 
-// task to add mods.toml to all relevant folders
-task replaceResources {
-  // copy for gradle
-  copy {
-    outputs.upToDateWhen { false }
-    with modsTomlSpec
-    into processResources.destinationDir
-  }
-  // copy for IDEs
-  buildPaths.each { path ->
-    if (new File(path).exists()) {
-      copy {
-        outputs.upToDateWhen { false }
-        with modsTomlSpec
-        into path
-      }
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
     }
-  }
 }
 
-processResources {
-  exclude 'META-INF/mods.toml'
-  finalizedBy replaceResources
-}
-
-jar {
+tasks.named('jar', Jar).configure {
   manifest {
     attributes([
       "Specification-Title": "Ceramics",
@@ -156,12 +144,39 @@ jar {
   }
 }
 
-// because the normal output has been made to be obfuscated
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    classifier = 'sources'
+jar.finalizedBy('reobfJar')
+
+java {
+    withSourcesJar()
+}
+
+sourcesJar {
+    exclude 'assets/**'
+    exclude 'data/**'
+    exclude 'pack.png'
+    exclude 'pack.mcmeta'
+    exclude 'META-INF/mods.toml'
 }
 
 artifacts {
     archives sourcesJar
+}
+
+publishing {
+    publications {
+        register('mavenJava', MavenPublication) {
+            artifact jar
+            artifact sourcesJar
+        }
+    }
+
+    repositories {
+        if (project.hasProperty('DEPLOY_DIR')) {
+            maven { url DEPLOY_DIR }
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
