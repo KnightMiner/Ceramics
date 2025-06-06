@@ -17,8 +17,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.fluids.FluidUtil;
+import slimeknights.mantle.fluid.FluidTransferHelper;
 import slimeknights.mantle.util.BlockEntityHelper;
 
 import javax.annotation.Nullable;
@@ -50,17 +49,7 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
     if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
       return InteractionResult.SUCCESS;
     }
-    // success if the item is a fluid handler, regardless of if fluid moved
-    if (FluidUtil.getFluidHandler(player.getItemInHand(hand)).isPresent()) {
-      // only server needs to do anything
-      if (!world.isClientSide()) {
-        BlockEntity te = world.getBlockEntity(pos);
-        if (te != null) {
-          // simply update the fluid handler capability
-            te.getCapability(ForgeCapabilities.FLUID_HANDLER, hit.getDirection())
-              .ifPresent(handler -> FluidUtil.interactWithFluidHandler(player, hand, handler));
-        }
-      }
+    if (FluidTransferHelper.interactWithTank(world, pos, player, hand, hit)) {
       return InteractionResult.SUCCESS;
     }
     return InteractionResult.PASS;
