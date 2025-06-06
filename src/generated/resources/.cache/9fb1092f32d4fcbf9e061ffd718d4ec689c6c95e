@@ -1,4 +1,4 @@
-// 1.20.1	2025-06-04T17:55:42.9712163	Recipes
+// 1.20.1	2025-06-06T00:24:01.6411722	Recipes
 44cabcd972d62a71dacf87e63dfb9dd70aa518cb data/ceramics/advancements/recipes/building_blocks/black_glazed_terracotta_kiln.json
 b8b9e964506dd4a5e293fed12bdab42333320921 data/ceramics/advancements/recipes/building_blocks/black_porcelain.json
 608f4a45f0e3adab4c74ff1452cdc28a2161cd3a data/ceramics/advancements/recipes/building_blocks/black_terracotta_recolor.json
@@ -381,7 +381,7 @@ d8caeefabc87f521ea309dd601a33d9615dcd509 data/ceramics/recipes/gray_terracotta_c
 01ea98a13ab6b70a353e4ad45c4da5eeae8d8f77 data/ceramics/recipes/green_terracotta_cistern.json
 ad046506eaf90d6eaafb1ca4501b895581371711 data/ceramics/recipes/green_terracotta_cistern_repair.json
 3105e40f48892c91323b2bedcd0d48f3c5d9c8f8 data/ceramics/recipes/green_terracotta_recolor.json
-60dc42b6920b31ccb381b1e0c8cc1c6634854a1b data/ceramics/recipes/kiln.json
+a16ebbcb2783fd44c644e8c3ffc87c3e7153e3f4 data/ceramics/recipes/kiln.json
 b8b708d769d5ad6042dfb561dad3f782a287d0b2 data/ceramics/recipes/lava_bricks_from_slab.json
 af29e214fa19ad4b905abb0ec2a87d33b1903a5a data/ceramics/recipes/lava_bricks_lava.json
 19ea795b73f64e19953b05a187f0dcaa334c2b06 data/ceramics/recipes/lava_bricks_slab_crafting.json

@@ -402,7 +402,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Registration.KILN)
                        .define('B', Items.BRICK)
                        .define('F', Items.FURNACE)
-                       .define('H', Items.BRICKS)
+                       .define('H', Items.TERRACOTTA)
                        .pattern("BBB")
                        .pattern("BFB")
                        .pattern("HHH")
