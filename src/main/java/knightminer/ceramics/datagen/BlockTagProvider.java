@@ -91,6 +91,8 @@ public class BlockTagProvider extends BlockTagsProvider {
     IntrinsicTagAppender<Block> porcelainCisterns = this.tag(CeramicsTags.Blocks.PORCELAIN_CISTERNS);
     Registration.PORCELAIN_CISTERN.forEach(block -> porcelainCisterns.add(block));
 
+    this.tag(CeramicsTags.Blocks.GAUGES).add(Registration.TERRACOTTA_GAUGE.get(), Registration.PORCELAIN_GAUGE.get());
+
     // pickaxe
     addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.PORCELAIN_BLOCK, Registration.RAINBOW_PORCELAIN);
     addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.KILN);

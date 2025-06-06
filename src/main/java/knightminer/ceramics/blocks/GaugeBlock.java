@@ -26,11 +26,18 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 /* Decorative block to place on the side of a cistern, reads fluid value */
 public class GaugeBlock extends Block {
+  public static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###,###.##", DecimalFormatSymbols.getInstance(Locale.US));
+  public static final String EMPTY_KEY = Ceramics.lang("block", "gauge.empty");
+  private static final String CONTENTS_KEY = Ceramics.lang("block", "gauge.contents");
+
   private static final VoxelShape[] BOUNDS = {
       box( 4, 4,  0, 12, 12,  1),
       box(15, 4,  4, 16, 12, 12),
@@ -57,10 +64,11 @@ public class GaugeBlock extends Block {
       if (te != null) {
         te.getCapability(ForgeCapabilities.FLUID_HANDLER, side).ifPresent(handler -> {
           FluidStack fluid = handler.getFluidInTank(0);
+          int capacity = handler.getTankCapacity(0);
           if (fluid.isEmpty()) {
-            player.displayClientMessage(Component.translatable(Ceramics.lang("block", "gauge.empty")), true);
+            player.displayClientMessage(Component.translatable(EMPTY_KEY, COMMA_FORMAT.format(capacity)), true);
           } else {
-            player.displayClientMessage(Component.translatable(Ceramics.lang("block", "gauge.contents"), fluid.getAmount(), fluid.getDisplayName()), true);
+            player.displayClientMessage(Component.translatable(CONTENTS_KEY, COMMA_FORMAT.format(fluid.getAmount()), COMMA_FORMAT.format(capacity), fluid.getDisplayName()), true);
           }
         });
       }
