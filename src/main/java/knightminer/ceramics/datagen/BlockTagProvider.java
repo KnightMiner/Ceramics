@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import slimeknights.mantle.datagen.MantleTags;
 import slimeknights.mantle.registration.object.EnumObject;
 import slimeknights.mantle.registration.object.ItemObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
@@ -91,7 +92,7 @@ public class BlockTagProvider extends BlockTagsProvider {
     IntrinsicTagAppender<Block> porcelainCisterns = this.tag(CeramicsTags.Blocks.PORCELAIN_CISTERNS);
     Registration.PORCELAIN_CISTERN.forEach(block -> porcelainCisterns.add(block));
 
-    this.tag(CeramicsTags.Blocks.GAUGES).add(Registration.TERRACOTTA_GAUGE.get(), Registration.PORCELAIN_GAUGE.get());
+    this.tag(MantleTags.Blocks.ATTACHED_GAUGES).add(Registration.TERRACOTTA_GAUGE.get(), Registration.PORCELAIN_GAUGE.get());
 
     // pickaxe
     addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.PORCELAIN_BLOCK, Registration.RAINBOW_PORCELAIN);

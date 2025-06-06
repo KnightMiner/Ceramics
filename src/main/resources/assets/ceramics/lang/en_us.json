@@ -90,8 +90,6 @@
     "block.ceramics.terracotta_gauge": "Gauge",
     "block.ceramics.porcelain_gauge": "Gauge",
     "block.ceramics.gauge.tooltip": "Place on a tank to read the contained fluid level",
-    "block.ceramics.gauge.empty": "Capacity: %s mb",
-    "block.ceramics.gauge.contents": "Contains: %s / %s mb %s",
 
     "block.ceramics.clay_cistern": "Clay Cistern",
     "block.ceramics.unfired_cistern": "Unfired Cistern",

@@ -1,5 +1,7 @@
 {
     "variants": {
+        "facing=up":    { "model": "ceramics:block/terracotta_gauge", "x":  90 },
+        "facing=down":  { "model": "ceramics:block/terracotta_gauge", "x": 270 },
         "facing=north": { "model": "ceramics:block/terracotta_gauge", "y": 180 },
         "facing=south": { "model": "ceramics:block/terracotta_gauge" },
         "facing=west":  { "model": "ceramics:block/terracotta_gauge", "y":  90 },

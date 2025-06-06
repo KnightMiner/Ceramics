@@ -1,15 +1,15 @@
-// 1.20.1	2025-06-05T20:43:15.910364	Ceramics Block Tags
+// 1.20.1	2025-06-06T02:14:48.8076269	Ceramics Block Tags
 30af5efed1f385c1cd5102f7ec11ba22063271b9 data/ceramics/tags/blocks/bricks.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/ceramics/tags/blocks/bucket_cracking_blocks.json
 78680fea9e0f913b4243d4ca23eca4a9b1503dd2 data/ceramics/tags/blocks/cistern_connections.json
 0c3731960e7e3293bdf2493dcf794a27c9e02898 data/ceramics/tags/blocks/colored_porcelain.json
 35669d9a1745444aaa7f92f4bc601069ea42ae6e data/ceramics/tags/blocks/colored_terracotta.json
-4c1c4d8306b83dd05b0fe1fdd0429d5bccc78f3d data/ceramics/tags/blocks/gauges.json
 ddce2609356fc0d2c639c1b4eda0bbf8c2f00fbf data/ceramics/tags/blocks/porcelain_block.json
 0e8f6a94ae3d57b26c439aea3fa05a01036c856f data/ceramics/tags/blocks/porcelain_cisterns.json
 e39892e49e30e1ad98c94e1e069bdf17e1680504 data/ceramics/tags/blocks/rainbow_porcelain.json
 f031c4b345a827a5f0061419c8d741732298507c data/ceramics/tags/blocks/terracotta_cisterns.json
 d2f53556cf668dab8e815afff5222fbe5d63970d data/forge/tags/blocks/needs_gold_tool.json
+4c1c4d8306b83dd05b0fe1fdd0429d5bccc78f3d data/mantle/tags/blocks/gauges/attached.json
 8d8e85073659cc0f44d90cf3a1c836e83bcc1ec2 data/minecraft/tags/blocks/enderman_holdable.json
 5fa216de3bd2193fb6334c060f5a6103f5c447e5 data/minecraft/tags/blocks/mineable/pickaxe.json
 8220f9e1beed9873663f989d984a26f574430687 data/minecraft/tags/blocks/mineable/shovel.json

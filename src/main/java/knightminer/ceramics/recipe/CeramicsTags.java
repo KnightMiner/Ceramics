@@ -42,9 +42,6 @@ public class CeramicsTags {
     public static final TagKey<Block> PORCELAIN_CISTERNS = ceramicsTag("porcelain_cisterns");
     public static final TagKey<Block> CISTERN_CONNECTIONS = ceramicsTag("cistern_connections");
 
-    /** Anything in this tag will render the contained fluid tooltip when targeted by the cursor */
-    public static final TagKey<Block> GAUGES = ceramicsTag("gauges");
-
     /** Blocks that when placed in a clay bucket crack it */
     public static final TagKey<Block> BUCKET_CRACKING_BLOCKS = ceramicsTag("bucket_cracking_blocks");
 

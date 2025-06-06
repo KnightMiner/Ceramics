@@ -1,5 +1,7 @@
 {
     "variants": {
+        "facing=up":    { "model": "ceramics:block/porcelain_gauge", "x":  90 },
+        "facing=down":  { "model": "ceramics:block/porcelain_gauge", "x": 270 },
         "facing=north": { "model": "ceramics:block/porcelain_gauge", "y": 180 },
         "facing=south": { "model": "ceramics:block/porcelain_gauge" },
         "facing=west":  { "model": "ceramics:block/porcelain_gauge", "y":  90 },
