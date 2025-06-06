@@ -17,7 +17,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,9 +42,9 @@ import java.util.Map;
  * Logic for channel fluid transfer
  */
 public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
-	public static final BlockEntityTicker<ChannelBlockEntity> SERVER_TICKER = (level, pos, state, te) -> te.tick(level, pos, state);
+	public static final BlockEntityTicker<ChannelBlockEntity> SERVER_TICKER = (level, pos, state, te) -> te.tick(state);
 	/** Channel internal tank */
-	private final ChannelTank tank = new ChannelTank(75, this);
+	private final ChannelTank tank = new ChannelTank(FaucetBlockEntity.MB_PER_TICK * 4, this);
 	/** Handler to return from channel top */
 	private final LazyOptional<IFluidHandler> topHandler = LazyOptional.of(() -> new FillOnlyFluidHandler(tank));
 	/** Tanks for inserting on each side */
@@ -111,15 +110,6 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 		if (!this.isRemoved()) {
 			if (neighborTanks.get(side) == capability) {
 				neighborTanks.remove(side);
-				// update the block state to no longer be pointing in that direction
-				if (level != null) {
-					BlockState currentState = getBlockState();
-					if (side == Direction.DOWN) {
-						level.setBlockAndUpdate(worldPosition, currentState.setValue(ChannelBlock.DOWN, false));
-					} else {
-						level.setBlockAndUpdate(worldPosition, currentState.setValue(ChannelBlock.DIRECTION_MAP.get(side), ChannelConnection.NONE));
-					}
-				}
 			}
 		}
 	}
@@ -160,7 +150,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 		if (te != null) {
 			LazyOptional<IFluidHandler> handler = te.getCapability(ForgeCapabilities.FLUID_HANDLER, side.getOpposite());
 			if (handler.isPresent()) {
-				handler.addListener(neighborConsumers.computeIfAbsent(side, s -> new WeakConsumerWrapper<>(this, (self, lazy) -> self.neighborTanks.remove(s))));
+				handler.addListener(neighborConsumers.computeIfAbsent(side, s -> new WeakConsumerWrapper<>(this, (self, lazy) -> self.invalidateSide(s, lazy))));
 				return handler;
 			}
 		}
@@ -337,11 +327,10 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	/**
 	 * Ticking logic
 	 */
-	public void tick(Level level, BlockPos pos, BlockState state) {
+	private void tick(BlockState state) {
 		// must have fluid first
 		FluidStack fluid = tank.getFluid();
 		if(!fluid.isEmpty()) {
-
 			// if we have down and can flow, skip sides
 			boolean hasFlown = false;
 			if(state.getValue(ChannelBlock.DOWN)) {

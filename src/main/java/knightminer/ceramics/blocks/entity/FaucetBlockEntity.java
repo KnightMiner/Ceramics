@@ -10,7 +10,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,7 +30,7 @@ import javax.annotation.Nonnull;
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
 public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
-  public static final BlockEntityTicker<FaucetBlockEntity> SERVER_TICKER = (level, pos, state, entity) -> entity.tick(level, pos, state);
+  public static final BlockEntityTicker<FaucetBlockEntity> SERVER_TICKER = (level, pos, state, entity) -> entity.tick();
   /** Transfer rate of the faucet */
   public static final int MB_PER_TICK = 25;
   /** amount of MB to extract from the input at a time */
@@ -224,7 +223,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
 
   /* Pouring */
 
-  public void tick(Level level, BlockPos pos, BlockState state) {
+  private void tick() {
     // nothing to do if not pouring
     if (faucetState == FaucetState.OFF) {
       return;
