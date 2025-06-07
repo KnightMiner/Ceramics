@@ -2,6 +2,7 @@ package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler;
+import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -15,6 +16,7 @@ import java.util.List;
 
 /** BlockItem for crackable blocks to show cracked amount */
 public class CrackableBlockItem extends FixedTooltipBlockItem {
+	private static final Component CRACKABLE = Ceramics.component("tooltip", "crackable").withStyle(ChatFormatting.GRAY);;
 	private static final String TOOLTIP_KEY = Ceramics.lang("tooltip", "cracked");
 	public CrackableBlockItem(Block blockIn, Properties builder, String tooltipSuffix) {
 		super(blockIn, builder, tooltipSuffix);
@@ -55,11 +57,12 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, worldIn, tooltip, flag);
 		int cracks = getCracks(stack);
 		if (cracks > 0) {
 			tooltip.add(Component.translatable(TOOLTIP_KEY, 6 - cracks, 6));
 		}
+		super.appendHoverText(stack, worldIn, tooltip, flag);
+		tooltip.add(CRACKABLE);
 	}
 
 	@Override

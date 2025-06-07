@@ -16,6 +16,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -122,7 +123,7 @@ public class Ceramics {
 	 * @param name Name within group
 	 * @return Language key
 	 */
-	public static Component component(String group, String name) {
+	public static MutableComponent component(String group, String name) {
 		return Component.translatable(lang(group, name));
 	}
 }

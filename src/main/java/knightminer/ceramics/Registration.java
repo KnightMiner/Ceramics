@@ -18,6 +18,7 @@ import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.items.EmptyClayBucketItem;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
 import knightminer.ceramics.items.FluidClayBucketItem;
+import knightminer.ceramics.items.HeatResistantBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.items.SolidClayBucketItem;
 import knightminer.ceramics.menu.KilnMenu;
@@ -124,13 +125,9 @@ public class Registration {
    */
   private static final Function<Block, BlockItem> DEFAULT_BLOCK_ITEM = (block) -> new BlockItem(block, new Item.Properties());
   /**
-   * Item block function using {@link BlockTooltipItem}
-   */
-  private static final Function<Block, BlockItem> TOOLTIP_BLOCK_ITEM = (block) -> new BlockTooltipItem(block, new Item.Properties());
-  /**
    * Item block function using {@link FixedTooltipBlockItem}
    */
-  private static final Function<String, Function<Block, BlockItem>> FIXED_TOOLTIP = name -> block -> new FixedTooltipBlockItem(block, new Item.Properties(), name);
+  private static final Function<String, Function<Block, BlockItem>> HEAT_RESISTANT = name -> block -> new HeatResistantBlockItem(block, new Item.Properties(), name);
 
   /**
    * Mapping for terracotta to make registration easier
@@ -160,7 +157,7 @@ public class Registration {
   // porcelain
   public static final EnumObject<DyeColor, Block> PORCELAIN_BLOCK = BLOCKS.registerEnum(DyeColor.values(), "porcelain", color -> new Block(Block.Properties.copy(TERRACOTTA.get(color))), DEFAULT_BLOCK_ITEM);
   public static final EnumObject<RainbowPorcelain, Block> RAINBOW_PORCELAIN = BLOCKS.registerEnum(RainbowPorcelain.values(), "rainbow_porcelain",
-    color -> new Block(Block.Properties.of().mapColor(color.getColor()).instrument(NoteBlockInstrument.BASEDRUM).strength(2.0F, 6.0F).requiresCorrectToolForDrops()), TOOLTIP_BLOCK_ITEM);
+    color -> new Block(Block.Properties.of().mapColor(color.getColor()).instrument(NoteBlockInstrument.BASEDRUM).strength(2.0F, 6.0F).requiresCorrectToolForDrops()), block -> new BlockTooltipItem(block, new Item.Properties()));
 
   // clay bricks
   public static final WallBuildingBlockObject DARK_BRICKS = BLOCKS.registerWallBuilding("dark_bricks", Block.Properties.of().mapColor(MapColor.COLOR_RED).instrument(NoteBlockInstrument.BASEDRUM).strength(2.0F, 6.0F).requiresCorrectToolForDrops(), DEFAULT_BLOCK_ITEM);
@@ -234,7 +231,7 @@ public class Registration {
   public static final ItemObject<GaugeBlock> TERRACOTTA_GAUGE, PORCELAIN_GAUGE;
 
   static {
-    Function<Block, BlockItem> GAUGE_BLOCK_ITEM = FIXED_TOOLTIP.apply("gauge.tooltip");
+    Function<Block, BlockItem> GAUGE_BLOCK_ITEM = block -> new FixedTooltipBlockItem(block, new Item.Properties(), "gauge.tooltip");
     BlockBehaviour.Properties GAUGE_PROPERTIES = BlockBehaviour.Properties.of().mapColor(MapColor.NONE).pushReaction(PushReaction.DESTROY).noCollission().strength(0.5F).noOcclusion().requiresCorrectToolForDrops();
     TERRACOTTA_GAUGE = BLOCKS.register("terracotta_gauge", () -> new GaugeBlock(GAUGE_PROPERTIES), GAUGE_BLOCK_ITEM);
     PORCELAIN_GAUGE = BLOCKS.register("porcelain_gauge", () -> new GaugeBlock(GAUGE_PROPERTIES), GAUGE_BLOCK_ITEM);
@@ -256,8 +253,8 @@ public class Registration {
 
   // cistern
   private static final Function<String,Function<Block,BlockItem>> CRACKABLE_BLOCK_ITEM = tooltip -> block -> new CrackableBlockItem(block, new Item.Properties(), tooltip);
-  private static final Function<Block,BlockItem> TERRACOTTA_CISTERN_BLOCK_ITEM = CRACKABLE_BLOCK_ITEM.apply("terracotta_cistern.tooltip");
-  private static final Function<Block,BlockItem> PORCELAIN_CISTERN_BLOCK_ITEM = FIXED_TOOLTIP.apply("porcelain_cistern.tooltip");
+  private static final Function<Block,BlockItem> TERRACOTTA_CISTERN_BLOCK_ITEM = CRACKABLE_BLOCK_ITEM.apply("cistern.tooltip");
+  private static final Function<Block,BlockItem> PORCELAIN_CISTERN_BLOCK_ITEM = HEAT_RESISTANT.apply("cistern.tooltip");
   public static final ItemObject<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
   public static final EnumObject<DyeColor, FluidCisternBlock> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion().randomTicks(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
   public static final EnumObject<DyeColor, FluidCisternBlock> PORCELAIN_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "porcelain_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion(), false), PORCELAIN_CISTERN_BLOCK_ITEM);
@@ -268,13 +265,13 @@ public class Registration {
   });
 
   // faucet
-  public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_faucet.tooltip"));
-  public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion(), false), TOOLTIP_BLOCK_ITEM);
+  public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("faucet.tooltip"));
+  public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion(), false), HEAT_RESISTANT.apply("faucet.tooltip"));
   public static final RegistryObject<BlockEntityType<FaucetBlockEntity>> FAUCET_BLOCK_ENTITY = BLOCK_ENTITIES.register("faucet", FaucetBlockEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
 
   // channel
-  public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("terracotta_channel.tooltip"));
-  public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion(), false), TOOLTIP_BLOCK_ITEM);
+  public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("channel.tooltip"));
+  public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion(), false), HEAT_RESISTANT.apply("channel.tooltip"));
   public static final RegistryObject<BlockEntityType<ChannelBlockEntity>> CHANNEL_BLOCK_ENTITY = BLOCK_ENTITIES.register("channel", ChannelBlockEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
   // clay repair
