@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ClipContext;
@@ -269,6 +270,7 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 		if (fluid == Fluids.EMPTY || isMilk(fluid)) {
 			return false;
 		}
-		return fluid.defaultFluidState().isSource() && !fluid.is(CeramicsTags.Fluids.HIDE_IN_BUCKET);
+		// must be a source, have a bucket, and not be hidden
+		return fluid.defaultFluidState().isSource() && fluid.getBucket() != Items.AIR && !fluid.is(CeramicsTags.Fluids.HIDE_IN_BUCKET);
 	}
 }
