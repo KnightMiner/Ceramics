@@ -17,15 +17,21 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.registries.ForgeRegistries;
 import slimeknights.mantle.data.loadable.Loadables;
+import slimeknights.mantle.item.ConstantFluidContainerWrapper;
+import slimeknights.mantle.recipe.helper.TagPreference;
 import slimeknights.mantle.util.RegistryHelper;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SolidClayBucketItem extends BaseClayBucketItem {
@@ -53,6 +59,13 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+		// TODO: can this be extracted to JSON?
+		if (getBlock(stack) == Blocks.POWDER_SNOW) {
+			Optional<Fluid> optional = TagPreference.getPreference(CeramicsTags.Fluids.POWDERED_SNOW);
+			if (optional.isPresent()) {
+				return new ConstantFluidContainerWrapper(new FluidStack(optional.get(), FluidType.BUCKET_VOLUME), stack);
+			}
+		}
 		return null;
 	}
 

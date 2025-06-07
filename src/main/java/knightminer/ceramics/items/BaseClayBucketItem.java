@@ -2,7 +2,6 @@ package knightminer.ceramics.items;
 
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.recipe.CeramicsTags.Blocks;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
@@ -16,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
@@ -190,12 +190,19 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  Clay bucket containing the given fluid
    */
   public static ItemStack withFluid(Fluid fluid, boolean isCracked) {
+    if (!isCracked) {
+      isCracked = doesCrack(fluid);
+    }
     // special case milk: returns the metadata version
     if (isMilk(fluid)) {
       return withMilk(isCracked);
     }
+    // TODO: can this be softcoded?
+    if (fluid.is(CeramicsTags.Fluids.POWDERED_SNOW)) {
+      return withBlock(Blocks.POWDER_SNOW, isCracked);
+    }
     // return
-    ItemLike item = isCracked || doesCrack(fluid) ? Registration.CRACKED_FLUID_CLAY_BUCKET : Registration.FLUID_CLAY_BUCKET;
+    ItemLike item = isCracked ? Registration.CRACKED_FLUID_CLAY_BUCKET : Registration.FLUID_CLAY_BUCKET;
     return FluidClayBucketItem.setFluid(new ItemStack(item), fluid);
   }
 
@@ -206,7 +213,7 @@ public abstract class BaseClayBucketItem extends Item {
    */
   public static ItemStack withBlock(Block block, boolean isCracked) {
     return SolidClayBucketItem.setBlock(new ItemStack(
-        isCracked || RegistryHelper.contains(Blocks.BUCKET_CRACKING_BLOCKS, block)
+        isCracked || RegistryHelper.contains(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS, block)
         ? Registration.CRACKED_SOLID_CLAY_BUCKET
         : Registration.SOLID_CLAY_BUCKET
     ), block);
