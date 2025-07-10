@@ -1,5 +1,6 @@
 package knightminer.ceramics.items;
 
+import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.util.FluidClayBucketWrapper;
 import net.minecraft.ChatFormatting;
@@ -255,6 +256,18 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 		if (isCracked) {
 			tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
 		}
+	}
+
+	@Override
+	public String getCreatorModId(ItemStack stack) {
+		Fluid fluid = getFluid(stack);
+		if (fluid != Fluids.EMPTY) {
+			String namespace = Loadables.FLUID.getKey(fluid).getNamespace();
+			if (!"minecraft".equals(namespace)) {
+				return namespace;
+			}
+		}
+		return Ceramics.MOD_ID;
 	}
 
 

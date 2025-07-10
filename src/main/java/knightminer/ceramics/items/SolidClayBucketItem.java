@@ -1,6 +1,7 @@
 package knightminer.ceramics.items;
 
 import com.google.common.collect.ImmutableList;
+import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -152,5 +153,17 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 				consumer.accept(setBlock(new ItemStack(this), block));
 			}
 		}
+	}
+
+	@Override
+	public String getCreatorModId(ItemStack stack) {
+		Block block = getBlock(stack);
+		if (block != Blocks.AIR) {
+			String namespace = Loadables.BLOCK.getKey(block).getNamespace();
+			if (!"minecraft".equals(namespace)) {
+				return namespace;
+			}
+		}
+		return Ceramics.MOD_ID;
 	}
 }
