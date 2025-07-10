@@ -1,6 +1,7 @@
 package knightminer.ceramics.util;
 
 import knightminer.ceramics.items.FluidClayBucketItem;
+import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
@@ -42,6 +43,9 @@ public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldron
 		}
 		if (fluid.is(MantleTags.Fluids.LAVA)) {
 			return Blocks.LAVA_CAULDRON.defaultBlockState();
+		}
+		if (fluid.is(CeramicsTags.Fluids.POWDERED_SNOW)) {
+			return Blocks.POWDER_SNOW_CAULDRON.defaultBlockState();
 		}
 		return null;
 	}
