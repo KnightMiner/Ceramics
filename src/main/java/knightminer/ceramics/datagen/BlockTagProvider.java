@@ -82,9 +82,9 @@ public class BlockTagProvider extends BlockTagsProvider {
     );
     // blocks that cisterns connect to
     this.tag(CeramicsTags.Blocks.CISTERN_CONNECTIONS)
-        .add(Registration.TERRACOTTA_GAUGE.get(), Registration.PORCELAIN_GAUGE.get(),
-             Registration.CLAY_FAUCET.get(), Registration.UNFIRED_FAUCET.get(), Registration.TERRACOTTA_FAUCET.get(), Registration.PORCELAIN_FAUCET.get(),
-             Registration.CLAY_CHANNEL.get(), Registration.UNFIRED_CHANNEL.get(), Registration.TERRACOTTA_CHANNEL.get(), Registration.PORCELAIN_CHANNEL.get());
+        .add(Registration.CLAY_FAUCET.get(), Registration.UNFIRED_FAUCET.get(), Registration.TERRACOTTA_FAUCET.get(), Registration.PORCELAIN_FAUCET.get(),
+             Registration.CLAY_CHANNEL.get(), Registration.UNFIRED_CHANNEL.get(), Registration.TERRACOTTA_CHANNEL.get(), Registration.PORCELAIN_CHANNEL.get())
+      .addTag(MantleTags.Blocks.ATTACHED_GAUGES);
     // list of all terracotta cisterns
     IntrinsicTagAppender<Block> terracottaCisterns = this.tag(CeramicsTags.Blocks.TERRACOTTA_CISTERNS)
                                                          .add(Registration.TERRACOTTA_CISTERN.get());
