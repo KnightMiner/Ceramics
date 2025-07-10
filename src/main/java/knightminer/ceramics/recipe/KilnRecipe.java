@@ -26,4 +26,9 @@ public class KilnRecipe extends AbstractCookingRecipe {
   public RecipeSerializer<?> getSerializer() {
     return Registration.KILN_SERIALIZER.get();
   }
+
+  @Override
+  public boolean isSpecial() {
+    return true;
+  }
 }
