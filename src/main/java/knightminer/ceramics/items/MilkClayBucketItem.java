@@ -1,6 +1,8 @@
 package knightminer.ceramics.items;
 
+import knightminer.ceramics.util.FluidClayBucketWrapper;
 import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -15,6 +17,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Clay bucket holding milk
@@ -29,6 +33,11 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
   public InteractionResultHolder<ItemStack> use(Level worldIn, Player player, InteractionHand hand) {
     player.startUsingItem(hand);
     return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
+  }
+
+  @Override
+  public @Nullable ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
+    return new FluidClayBucketWrapper(stack);
   }
 
   @Override
