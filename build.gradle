@@ -1,16 +1,25 @@
 plugins {
-    id 'eclipse'
-    id 'idea'
+    id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'net.neoforged.moddev' version '2.0.141'
+    id 'idea'
+}
+
+tasks.named('wrapper', Wrapper).configure {
+    // Define wrapper values here so as to not have to always do so when updating gradlew.properties.
+    // Switching this to Wrapper.DistributionType.ALL will download the full gradle sources that comes with
+    // documentation attached on cursor hover of gradle classes and methods. However, this comes with increased
+    // file size for Gradle. If you do switch this to ALL, run the Gradle wrapper task twice afterwards.
+    // (Verify by checking gradle/wrapper/gradle-wrapper.properties to see if distributionUrl now points to `-all`)
+    distributionType = Wrapper.DistributionType.BIN
 }
 
 group = "knightminer"
 base {
   archivesName = "Ceramics"
 }
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+// Mojang ships Java 21 to end users in 1.21.1, so mods should target Java 21.
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 //adds the build number to the end of the version string if on a build server
 def mod_build = mod_version
@@ -20,64 +29,82 @@ if (System.getenv().BUILD_NUMBER != null) {
 version = "${minecraft_version}-${mod_build}"
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}, Version: ${version}"
 
-sourceSets {
-  main { resources {
-    srcDirs "src/generated/resources"
-    // But exclude the cache of the generated data from what gets built
-    exclude '.cache'
-  } }
+sourceSets.main.resources {
+  srcDirs "src/generated/resources"
+  // But exclude the cache of the generated data from what gets built
+  exclude("src/generated/**/.cache") // datagen cache files
 }
 
 idea {
-    module {
-        downloadJavadoc = true
-        downloadSources = true
-    }
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
 }
 
-minecraft {
-  mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+neoForge {
+  version = project.neo_version
 
-  // enableIdeaPrepareRuns = true
-  copyIdeResources = true
-    
-  accessTransformer project.file("src/main/resources/META-INF/accesstransformer.cfg")
+  parchment {
+    mappingsVersion = project.parchment_version
+    minecraftVersion = project.parchment_minecraft
+  }
+
+  accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+  // Validate AT files and raise errors when they have invalid targets
+  validateAccessTransformers = false
   
   runs {
-    // applies to all the run configs below
-    configureEach {
-      workingDirectory project.file('run')
+    client {
+      client()
 
+      // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+      systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+      server()
+      programArgument '--nogui'
+      systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    // This run config launches GameTestServer and runs all registered gametests, then exits.
+    // By default, the server will crash when no gametests are provided.
+    // The gametest system is also enabled by default for other run configs under the /test command.
+    gameTestServer {
+      type = "gameTestServer"
+      systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+      data()
+
+      // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+      // gameDirectory = project.file('run-data')
+
+      // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+      programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath(), '--existing-mod', 'mantle'
+    }
+
+    // applies to all the run configs above
+    configureEach {
       // Recommended logging data for a userdev environment
       // The markers can be added/remove as needed separated by commas.
       // "SCAN": For mods scan.
       // "REGISTRIES": For firing of registry events.
       // "REGISTRYDUMP": For getting the contents of all registries.
-      property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP,CORE'
+      systemProperty 'forge.logging.markers', 'REGISTRIES'
 
       // Recommended logging level for the console
       // You can set various levels here.
       // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-      property 'forge.logging.console.level', 'debug'
-      
-      mods {
-        ceramics {
-          source sourceSets.main
-        }
-      }
+      logLevel = org.slf4j.event.Level.DEBUG
     }
-        
-    client {
-    }
+  }
 
-    server {
-      workingDirectory project.file('run/server')
-            
-      args '--nogui'
-    }
-
-    data {
-      args '--mod', 'ceramics', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/'), '--existing-mod', 'mantle'
+  mods {
+    "${mod_id}" {
+      sourceSet(sourceSets.main)
     }
   }
 }
@@ -85,12 +112,12 @@ minecraft {
 repositories {
   // Mantle
   maven {
-    name 'DVS1 Maven FS'
+    name 'SlimeKnights maven - Mantle'
     url 'https://dvs1.progwml6.com/files/maven'
   }
   // JEI
   maven {
-      name 'BlameJared Maven'
+      name 'BlameJared Maven - JEI'
       url 'https://maven.blamejared.com'
   }
   // pull in Mantle builds for testing in dev changes
@@ -100,35 +127,39 @@ repositories {
 }
 
 configurations {
-    deployerJars
+  runtimeClasspath.extendsFrom localRuntime
+  deployerJars
 }
 
 dependencies {
-  minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-  
-  implementation  fg.deobf("slimeknights.mantle:Mantle:${minecraft_version}-${mantle_version}")
+  implementation "slimeknights.mantle:Mantle:${minecraft_version}-${mantle_version}"
     
   // compile against the JEI API but do not include it at runtime
-  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
-  compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+  compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+  compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
   // at runtime, use the full JEI jar
-  runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+  runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
 }
 
-tasks.named('processResources', ProcessResources).configure {
-    var replaceProperties = [
-      'version': mod_version,
-      'loader_range': loader_range,
-      'minecraft_range': minecraft_range,
-      'forge_range': forge_range,
-      'mantle_range': mantle_range
-    ]
-    inputs.properties replaceProperties
-
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
-    }
+var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+  var replaceProperties = [
+    'version':         mod_version,
+    'loader_range':    loader_range,
+    'minecraft_range': minecraft_range,
+    'neo_range':       neo_range,
+    'mantle_range':    mantle_range
+  ]
+  inputs.properties replaceProperties
+  expand replaceProperties
+  from "src/main/templates"
+  into "build/generated/sources/modMetadata"
 }
+
+// Include the output of "generateModMetadata" as an input directory for the build
+// this works with both building through Gradle and the IDE.
+sourceSets.main.resources.srcDir generateModMetadata
+// To avoid having to run "generateModMetadata" manually, make it run on every project reload
+neoForge.ideSyncTask generateModMetadata
 
 tasks.named('jar', Jar).configure {
   manifest {
@@ -144,18 +175,16 @@ tasks.named('jar', Jar).configure {
   }
 }
 
-jar.finalizedBy('reobfJar')
-
 java {
-    withSourcesJar()
+  withSourcesJar()
 }
 
 sourcesJar {
-    exclude 'assets/**'
-    exclude 'data/**'
-    exclude 'pack.png'
-    exclude 'pack.mcmeta'
-    exclude 'META-INF/mods.toml'
+  exclude 'assets/**'
+  exclude 'data/**'
+  exclude 'pack.png'
+  exclude 'pack.mcmeta'
+  exclude 'META-INF/mods.toml'
 }
 
 artifacts {
@@ -163,20 +192,20 @@ artifacts {
 }
 
 publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            artifact jar
-            artifact sourcesJar
-        }
+  publications {
+    register('mavenJava', MavenPublication) {
+      artifact jar
+      artifact sourcesJar
     }
+  }
 
-    repositories {
-        if (project.hasProperty('DEPLOY_DIR')) {
-            maven { url DEPLOY_DIR }
-        }
+  repositories {
+    if (project.hasProperty('DEPLOY_DIR')) {
+      maven { url DEPLOY_DIR }
     }
+  }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+  options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }

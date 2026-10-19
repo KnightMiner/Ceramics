@@ -6,28 +6,27 @@ license="MIT"
 modId="ceramics"
 version="${version}"
 displayName="Ceramics"
-displayURL="https://minecraft.curseforge.com/projects/ceramics"
-# logoFile="examplemod.png"
+displayURL="https://slimeknights.github.io/projects/#ceramics"
 credits="Much of the code for clay buckets is based off the Forge universal bucket"
 authors="KnightMiner"
 description='''
 Mod adding additional early game and vanilla-like tools made of clay. Includes fluid transport, decoration, and ceramic tools.
 '''
-[[dependencies.ceramics]] 
-    modId="forge"
-    mandatory=true
-    versionRange="${forge_range}"
-    ordering="AFTER"
+[[dependencies.ceramics]]
+    modId="neoforge"
+    type="required"
+    versionRange="${neo_range}"
+    ordering="NONE"
     side="BOTH"
 [[dependencies.ceramics]]
     modId="minecraft"
-    mandatory=true
+    type="required"
     versionRange="${minecraft_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.ceramics]]
     modId="mantle"
-    mandatory=true
+    type="required"
     versionRange="${mantle_range}"
     ordering="NONE"
     side="BOTH"
