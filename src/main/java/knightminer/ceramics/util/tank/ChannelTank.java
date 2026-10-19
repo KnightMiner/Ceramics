@@ -2,8 +2,8 @@ package knightminer.ceramics.util.tank;
 
 import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /** Tank for channel contents */
 public class ChannelTank extends FluidTank {

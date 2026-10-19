@@ -4,7 +4,7 @@ import knightminer.ceramics.Ceramics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkDirection;
+import net.neoforged.neoforge.network.NetworkDirection;
 import slimeknights.mantle.network.NetworkWrapper;
 
 import javax.annotation.Nullable;

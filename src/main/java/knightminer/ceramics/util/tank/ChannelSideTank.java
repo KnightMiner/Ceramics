@@ -3,7 +3,7 @@ package knightminer.ceramics.util.tank;
 import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-import net.minecraftforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidStack;
 
 /** Tank for each side connection, for the sake of rendering */
 public class ChannelSideTank extends FillOnlyFluidHandler {

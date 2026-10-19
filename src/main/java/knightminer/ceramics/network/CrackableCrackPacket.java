@@ -4,7 +4,7 @@ import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackable
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkEvent.Context;
+import net.neoforged.neoforge.network.NetworkEvent.Context;
 import slimeknights.mantle.client.SafeClientAccess;
 import slimeknights.mantle.network.packet.IThreadsafePacket;
 import slimeknights.mantle.util.BlockEntityHelper;
