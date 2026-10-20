@@ -7,22 +7,20 @@ import knightminer.ceramics.client.renderer.CisternBlockEntityRenderer;
 import knightminer.ceramics.client.renderer.CisternFluids;
 import knightminer.ceramics.client.renderer.FaucetBlockEntityRenderer;
 import knightminer.ceramics.client.screen.KilnScreen;
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.neoforged.neoforge.api.distmarker.Dist;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent.RegisterGeometryLoaders;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
-import net.neoforged.neoforge.eventbus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.common.Mod.EventBusSubscriber.Bus;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import slimeknights.mantle.client.render.ChannelFluids;
 import slimeknights.mantle.client.render.FaucetFluid;
 
-@SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid=Ceramics.MOD_ID, bus=Bus.MOD, value=Dist.CLIENT)
+@EventBusSubscriber(modid=Ceramics.MOD_ID, value= Dist.CLIENT)
 public class ClientEvents {
   @SubscribeEvent
   static void registerReloadListeners(RegisterClientReloadListenersEvent event) {
@@ -34,14 +32,18 @@ public class ClientEvents {
   @SubscribeEvent
   static void setupClient(FMLClientSetupEvent event) {
     RenderType cutout = RenderType.cutout();
+    // TODO: move to JSON
     ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), cutout);
     ItemBlockRenderTypes.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), cutout);
     ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CISTERN.get(), cutout);
     Registration.COLORED_CISTERN.forEach(cistern -> ItemBlockRenderTypes.setRenderLayer(cistern, cutout));
     ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
     ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
+  }
 
-    MenuScreens.register(Registration.KILN_MENU.get(), KilnScreen::new);
+  @SubscribeEvent
+  static void registerScreens(RegisterMenuScreensEvent event) {
+    event.register(Registration.KILN_MENU.get(), KilnScreen::new);
   }
 
   @SubscribeEvent
@@ -53,8 +55,8 @@ public class ClientEvents {
 
   @SubscribeEvent
   static void registerModels(RegisterGeometryLoaders event) {
-    event.register("fluid_bucket", ClayBucketModel.FLUID_LOADER);
-    event.register("solid_bucket", ClayBucketModel.SOLID_LOADER);
-    event.register("cracked", CrackedModel.LOADER);
+    event.register(Ceramics.getResource("fluid_bucket"), ClayBucketModel.FLUID_LOADER);
+    event.register(Ceramics.getResource("solid_bucket"), ClayBucketModel.SOLID_LOADER);
+    event.register(Ceramics.getResource("cracked"), CrackedModel.LOADER);
   }
 }

@@ -12,26 +12,18 @@ import knightminer.ceramics.datagen.client.RenderFluidProvider;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.eventbus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.neoforged.neoforge.registries.MissingMappingsEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import slimeknights.mantle.registration.RegistrationHelper;
 
-import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("WeakerAccess")
@@ -40,13 +32,11 @@ public class Ceramics {
 	public static final String MOD_ID = "ceramics";
 	public static final Logger LOG = LogManager.getLogger(MOD_ID);
 
-	public Ceramics() {
-	  Registration.init();
+	public Ceramics(IEventBus modEventBus) {
+	  Registration.init(modEventBus);
 		CeramicsTags.init();
 		CeramicsNetwork.init();
-		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		bus.addListener(this::gatherData);
-		MinecraftForge.EVENT_BUS.addListener(this::onMissingMappings);
+		modEventBus.addListener(this::gatherData);
 	}
 
 	private void gatherData(GatherDataEvent event) {
@@ -70,25 +60,6 @@ public class Ceramics {
 		gen.addProvider(client, new CisternFluidProvider(packOutput));
 	}
 
-	/** Maps a block name to a block */
-	@Nullable
-	private Block missingBlock(String name) {
-		if ("gauge".equals(name)) {
-			return Registration.TERRACOTTA_GAUGE.get();
-		}
-		return null;
-	}
-
-	/** Missing block event */
-	private void onMissingMappings(MissingMappingsEvent event) {
-		RegistrationHelper.handleMissingMappings(event, MOD_ID, Registries.BLOCK, this::missingBlock);
-		RegistrationHelper.handleMissingMappings(event, MOD_ID, Registries.ITEM, name -> {
-			ItemLike provider = missingBlock(name);
-			return provider == null ? null : provider.asItem();
-		});
-	}
-
-
 	/**
 	 * Gets a resource locations as a string
 	 * @param name  Name for the location
@@ -104,7 +75,7 @@ public class Ceramics {
 	 * @return  Resource location for Ceramics
 	 */
 	public static ResourceLocation getResource(String name) {
-	  return new ResourceLocation(MOD_ID, name);
+	  return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
 	}
 
 	/**
@@ -114,7 +85,7 @@ public class Ceramics {
 	 * @return Language key
 	 */
 	public static String lang(String group, String name) {
-		return String.format("%s.%s.%s", group, MOD_ID, name);
+		return group + '.' + MOD_ID + '.' + name;
 	}
 
 	/**

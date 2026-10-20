@@ -1,7 +1,6 @@
 package knightminer.ceramics.recipe;
 
 import knightminer.ceramics.Ceramics;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
@@ -9,11 +8,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import slimeknights.mantle.Mantle;
-
-import java.util.function.Consumer;
 
 public class CeramicsTags {
   private static boolean tagsLoaded = false;
@@ -23,8 +20,7 @@ public class CeramicsTags {
     Blocks.init();
     Items.init();
     Fluids.init();
-    Consumer<TagsUpdatedEvent> onTagsLoaded = (event) -> tagsLoaded = true;
-    MinecraftForge.EVENT_BUS.addListener(onTagsLoaded);
+    NeoForge.EVENT_BUS.addListener(TagsUpdatedEvent.class, event -> tagsLoaded = true);
   }
 
   /** Returns true if tags have been loaded at least once. Will be false before the world is loaded */
@@ -57,13 +53,13 @@ public class CeramicsTags {
     public static final TagKey<Item> COLORED_PORCELAIN = ceramicsTag("colored_porcelain");
     public static final TagKey<Item> RAINBOW_PORCELAIN = ceramicsTag("rainbow_porcelain");
     public static final TagKey<Item> BRICKS = ceramicsTag("bricks");
-    public static final TagKey<Item> MILK_BUCKETS = forgeTag("buckets/milk");
+    public static final TagKey<Item> MILK_BUCKETS = commonTag("buckets/milk");
     public static final TagKey<Item> TERRACOTTA_CISTERNS = ceramicsTag("terracotta_cisterns");
     public static final TagKey<Item> PORCELAIN_CISTERNS = ceramicsTag("porcelain_cisterns");
     public static final TagKey<Item> TERRACOTTA_CRACK_REPAIR = ceramicsTag("terracotta_crack_repair");
 
-    public static final TagKey<Item> PLATES = forgeTag("plates");
-    public static final TagKey<Item> BRICK_PLATES = forgeTag("plates/brick");
+    public static final TagKey<Item> PLATES = commonTag("plates");
+    public static final TagKey<Item> BRICK_PLATES = commonTag("plates/brick");
 
     public static final TagKey<Item> CLAY_BUCKETS = ceramicsTag("clay_buckets");
     public static final TagKey<Item> EMPTY_CLAY_BUCKETS = ceramicsTag("clay_buckets/empty");
@@ -72,8 +68,8 @@ public class CeramicsTags {
       return ItemTags.create(Ceramics.getResource(id));
     }
 
-    private static TagKey<Item> forgeTag(String id) {
-      return ItemTags.create(new ResourceLocation("forge", id));
+    private static TagKey<Item> commonTag(String id) {
+      return ItemTags.create(Mantle.commonResource(id));
     }
   }
 
