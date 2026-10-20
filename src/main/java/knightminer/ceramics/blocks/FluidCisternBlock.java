@@ -7,7 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import slimeknights.mantle.fluid.FluidTransferHelper;
-import slimeknights.mantle.util.BlockEntityHelper;
 
 import javax.annotation.Nullable;
 
@@ -33,26 +32,25 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
   }
 
 
-  /* Tile entity */
+  /* Block entity */
 
   @Override
   public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     return new CisternBlockEntity(pos, state, crackable);
   }
 
+  
   /* Interaction */
 
-  @SuppressWarnings("deprecation")
-  @Deprecated
   @Override
-  public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-    if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
-      return InteractionResult.SUCCESS;
+  protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    if (crackable && ICrackableBlock.tryRepair(stack, level, pos, player, hand)) {
+      return ItemInteractionResult.SUCCESS;
     }
-    if (FluidTransferHelper.interactWithTank(world, pos, player, hand, hit)) {
-      return InteractionResult.SUCCESS;
+    if (FluidTransferHelper.interactWithTank(level, pos, player, hand, hit)) {
+      return ItemInteractionResult.SUCCESS;
     }
-    return InteractionResult.PASS;
+    return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
   }
 
 
@@ -89,40 +87,28 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
       if (base != null) {
         base.addExtension(pos);
       }
-      // crackable handling
-      if (crackable) {
-        ICrackableBlock.onBlockPlacedBy(world, pos, stack);
-      }
     } else if (world.getBlockEntity(pos) instanceof CisternBlockEntity cistern) {
       cistern.tryMerge(pos.above());
-      // crackable handling
-      if (crackable) {
-        cistern.getCracksHandler().setCracks(stack);
-      }
     }
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  @Deprecated
-  public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
+  protected void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving) {
     if (state.hasBlockEntity() && (!state.is(newState.getBlock()) || !newState.hasBlockEntity())) {
       if (state.getValue(EXTENSION)) {
         CisternBlockEntity base = findBase(world, pos);
         if (base != null) {
           base.removeExtension(pos);
         }
-      } else {
-        BlockEntityHelper.get(CisternBlockEntity.class, world, pos).ifPresent(te -> te.onBroken(this));
+      } else if (world.getBlockEntity(pos) instanceof CisternBlockEntity cistern) {
+        cistern.onBroken(this);
       }
       world.removeBlockEntity(pos);
     }
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  @Deprecated
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+  protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
     // overridden to remove down connection, we handle that conditionally in the TE
     if (!facing.getAxis().isVertical()) {
       // barrel connects to
@@ -139,12 +125,10 @@ public class FluidCisternBlock extends CisternBlock implements ICrackableBlock, 
     return crackable;
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  @Deprecated
-  public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
-    if (isCrackable() && random.nextInt(5) == 0) {
-      BlockEntityHelper.get(CisternBlockEntity.class, worldIn, pos).ifPresent(CisternBlockEntity::randomTick);
+  protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    if (isCrackable() && random.nextInt(5) == 0 && level.getBlockEntity(pos) instanceof CisternBlockEntity cistern) {
+      cistern.randomTick();
     }
   }
 }

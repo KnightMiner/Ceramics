@@ -1,12 +1,12 @@
 package knightminer.ceramics.blocks.entity;
 
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.common.util.LazyOptional;
 import net.neoforged.neoforge.common.util.NonNullConsumer;
@@ -22,14 +21,11 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
-import slimeknights.mantle.block.entity.MantleBlockEntity;
 import slimeknights.mantle.util.WeakConsumerWrapper;
-
-import javax.annotation.Nonnull;
 
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
 
-public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
+public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpdater {
   public static final BlockEntityTicker<FaucetBlockEntity> SERVER_TICKER = (level, pos, state, entity) -> entity.tick();
   /** Transfer rate of the faucet */
   public static final int MB_PER_TICK = 25;
@@ -62,16 +58,12 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
   /** Listner for when the output handler is invalidated */
   private final NonNullConsumer<LazyOptional<IFluidHandler>> outputListener = new WeakConsumerWrapper<>(this, (self, handler) -> self.outputHandler = null);
 
-  /** Crackable logic */
-  private final CrackableBlockEntityHandler cracksHandler;
-
   public FaucetBlockEntity(BlockPos pos, BlockState state, boolean crackable) {
-    super(Registration.FAUCET_BLOCK_ENTITY.get(), pos, state);
-    cracksHandler = new CrackableBlockEntityHandler(this, crackable);
+    super(Registration.FAUCET_BLOCK_ENTITY.get(), pos, state, crackable);
   }
 
   public FaucetBlockEntity(BlockPos pos, BlockState state) {
-    this(pos, state, false);
+    this(pos, state, isCrackable(state));
   }
 
   /**
@@ -79,7 +71,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
    */
   public void randomTick() {
     // using render fluid so it works for the brief ticks between "packets"
-    cracksHandler.updateCracks(renderFluid);
+    getCracksHandler().updateCracks(renderFluid);
   }
 
 
@@ -161,17 +153,6 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
    */
   public FluidStack getRenderFluid() {
     return renderFluid;
-  }
-
-  @Override
-  public CrackableBlockEntityHandler getCracksHandler() {
-    return cracksHandler;
-  }
-
-  @Nonnull
-  @Override
-  public ModelData getModelData() {
-    return cracksHandler.getModelData();
   }
 
 
@@ -267,7 +248,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
             this.drained = input.drain(filled, FluidAction.EXECUTE);
 
             // have the cracks handler check if this fluid cracks the faucet
-            this.cracksHandler.fluidAdded(this.drained);
+            this.getCracksHandler().fluidAdded(this.drained);
 
             // sync to clients if we have changes
             if (faucetState == FaucetState.OFF || !renderFluid.isFluidEqual(drained)) {
@@ -383,18 +364,17 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
   }
 
   @Override
-  protected void saveSynced(CompoundTag compound) {
-    super.saveSynced(compound);
+  protected void saveSynced(CompoundTag compound, HolderLookup.Provider registries) {
+    super.saveSynced(compound, registries);
     compound.putByte(TAG_STATE, (byte)faucetState.ordinal());
     if (!renderFluid.isEmpty()) {
       compound.put(TAG_RENDER_FLUID, renderFluid.writeToNBT(new CompoundTag()));
     }
-    cracksHandler.writeNBT(compound);
   }
 
   @Override
-  public void saveAdditional(CompoundTag compound) {
-    super.saveAdditional(compound);
+  public void saveAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+    super.saveAdditional(compound, registries);
     compound.putBoolean(TAG_STOP, stopPouring);
     compound.putBoolean(TAG_LAST_REDSTONE, lastRedstoneState);
     if (!drained.isEmpty()) {
@@ -403,9 +383,8 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
   }
 
   @Override
-  public void load(CompoundTag compound) {
-    super.load(compound);
-
+  protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registries) {
+    super.loadAdditional(compound, registries);
     faucetState = FaucetState.fromIndex(compound.getByte(TAG_STATE));
     stopPouring = compound.getBoolean(TAG_STOP);
     lastRedstoneState = compound.getBoolean(TAG_LAST_REDSTONE);
@@ -420,7 +399,6 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
     } else {
       renderFluid = FluidStack.EMPTY;
     }
-    cracksHandler.readNBT(getBlockState(), compound);
   }
 
   private enum FaucetState {

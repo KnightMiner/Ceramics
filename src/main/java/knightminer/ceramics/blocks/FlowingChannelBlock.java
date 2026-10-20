@@ -9,8 +9,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -47,6 +46,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 		return BlockEntityHelper.serverTicker(level, type, Registration.CHANNEL_BLOCK_ENTITY.get(), ChannelBlockEntity.SERVER_TICKER);
 	}
 
+	/** Gets the direction from the given pair of positions */
 	private static Direction fromOffset(BlockPos pos, BlockPos neighbor) {
 		BlockPos offset = neighbor.subtract(pos);
 		for (Direction direction : Direction.values()) {
@@ -58,14 +58,11 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 		return Direction.DOWN;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+	protected void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-		if (!worldIn.isClientSide()) {
-			BlockEntityHelper.get(ChannelBlockEntity.class, worldIn, pos)
-											 .ifPresent(te -> te.removeCachedNeighbor(fromOffset(pos, fromPos)));
+		if (!worldIn.isClientSide() && worldIn.getBlockEntity(pos) instanceof ChannelBlockEntity channel) {
+			channel.removeCachedNeighbor(fromOffset(pos, fromPos));
 		}
 	}
 
@@ -76,6 +73,7 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 		}
 	}
 
+
 	/* Cracking */
 
 	@Override
@@ -83,28 +81,18 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 		return crackable;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	@Deprecated
-	public void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
+	protected void randomTick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random) {
 		if (isCrackable() && worldIn.getBlockEntity(pos) instanceof ChannelBlockEntity channel) {
 			channel.randomTick();
 		}
 	}
 
 	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-		if (crackable) {
-			ICrackableBlock.onBlockPlacedBy(worldIn, pos, stack);
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (crackable && ICrackableBlock.tryRepair(stack, level, pos, player, hand)) {
+			return ItemInteractionResult.SUCCESS;
 		}
-	}
-
-	@Deprecated
-	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (crackable && ICrackableBlock.tryRepair(world, pos, player, hand)) {
-			return InteractionResult.SUCCESS;
-		}
-		return super.use(state, world, pos, player, hand, hit);
+		return super.useItemOn(stack, state, level, pos, player, hand, hit);
 	}
 }

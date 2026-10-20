@@ -1,11 +1,12 @@
 package knightminer.ceramics.blocks.entity;
 
+import knightminer.ceramics.Registration;
 import knightminer.ceramics.items.BaseClayBucketItem;
-import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CrackableCrackPacket;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -16,6 +17,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
@@ -147,26 +149,26 @@ public class CrackableBlockEntityHandler {
 		return ModelData.builder().with(CRACKS, cracks).build();
 	}
 
+
 	/* Items */
 
-	/**
-	 * Sets the cracked state of the block
-	 * @param stack  Stack to crack
-	 */
-	public void setItemNBT(ItemStack stack) {
+	/** Runs in {@link BlockEntity#collectImplicitComponents(DataComponentMap.Builder)} to set item data. */
+	public void collectImplicitComponents(DataComponentMap.Builder components) {
 		if (active && cracks > 0) {
-			stack.getOrCreateTag().putInt(TAG_CRACKS, cracks);
+			components.set(Registration.CRACKS, (byte) Math.min(cracks, 5));
 		}
 	}
 
-	/**
-	 * Sets the cracks state from the item stack
-	 * @param stack  Stack
-	 */
-	public void setCracks(ItemStack stack) {
+	/** Runs in {@link BlockEntity#applyImplicitComponents(BlockEntity.DataComponentInput)} to copy item data. */
+	public void applyImplicitComponents(BlockEntity.DataComponentInput input) {
 		if (active) {
-			setCracksRaw(CrackableBlockItem.getCracks(stack));
+			setCracksRaw(input.getOrDefault(Registration.CRACKS, (byte)0));
 		}
+	}
+
+	/** Runs in {@link BlockEntity#removeComponentsFromTag(CompoundTag)} to remove the cracks data. */
+	public void removeComponentsFromTag(CompoundTag tag) {
+		tag.remove(TAG_CRACKS);
 	}
 
 
@@ -178,7 +180,7 @@ public class CrackableBlockEntityHandler {
 	 */
 	public void readNBT(BlockState state, CompoundTag nbt) {
 		Block block = state.getBlock();
-		if (block instanceof ICrackableBlock && ((ICrackableBlock)block).isCrackable()) {
+		if (block instanceof ICrackableBlock crackable && crackable.isCrackable()) {
 			this.active = true;
 			setCracksRaw(nbt.getInt(TAG_CRACKS));
 		} else {
@@ -202,23 +204,17 @@ public class CrackableBlockEntityHandler {
 		/** Determines if this version of the block is crackable */
 		boolean isCrackable();
 
-		/** Helper to avoid having to write this line multiple times */
-		static void onBlockPlacedBy(LevelAccessor world, BlockPos pos, ItemStack stack) {
-			if (world.getBlockEntity(pos) instanceof ICrackableBlockEntity crackable) {
-				crackable.getCracksHandler().setCracks(stack);
-			}
-		}
-
 		/**
 		 * Attempts to repair a crackable block
-		 * @param world    World instance
-		 * @param pos      Position of crackable block
-		 * @param player   Player interacting
-		 * @param hand     Hand used
-		 * @return  True if repaired, false for wrong repair item or no cracks
+		 *
+		 * @param held   Held item stack instance
+		 * @param world  World instance
+		 * @param pos    Position of crackable block
+		 * @param player Player interacting
+		 * @param hand   Hand used
+		 * @return True if repaired, false for wrong repair item or no cracks
 		 */
-		static boolean tryRepair(LevelAccessor world, BlockPos pos, Player player, InteractionHand hand) {
-			ItemStack held = player.getItemInHand(hand);
+		static boolean tryRepair(ItemStack held, LevelAccessor world, BlockPos pos, Player player, InteractionHand hand) {
 			if (held.is(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR) && world.getBlockEntity(pos) instanceof ICrackableBlockEntity te) {
 				CrackableBlockEntityHandler handler = te.getCracksHandler();
 				int cracks = handler.getCracks();

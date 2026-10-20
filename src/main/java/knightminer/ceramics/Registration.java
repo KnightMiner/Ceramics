@@ -1,5 +1,6 @@
 package knightminer.ceramics;
 
+import com.mojang.serialization.Codec;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.blocks.FaucetBlock;
@@ -28,8 +29,10 @@ import knightminer.ceramics.util.EmptySolidBucketCauldronInteraction;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -96,6 +99,7 @@ public class Registration {
   private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Ceramics.MOD_ID);
   private static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, Ceramics.MOD_ID);
   private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Ceramics.MOD_ID);
+  private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Ceramics.MOD_ID);
 
   /**
    * Initializes the registries with the forge mod bus
@@ -109,6 +113,7 @@ public class Registration {
     RECIPE_SERIALIZERS.register(bus);
     RECIPE_TYPES.register(bus);
     CREATIVE_TABS.register(bus);
+    DATA_COMPONENTS.register(bus);
     bus.register(Registration.class);
   }
 
@@ -237,6 +242,10 @@ public class Registration {
   /*
    * fluid handling
    */
+  public static final DeferredHolder<DataComponentType<?>,DataComponentType<Byte>> CRACKS = DATA_COMPONENTS.register("cracks", () -> DataComponentType.<Byte>builder()
+    .persistent(Codec.BYTE.validate(Codec.checkRange((byte)1, (byte)5)))
+    .networkSynchronized(ByteBufCodecs.BYTE)
+    .build());
   // gauge
   public static final DeferredBlock<GaugeBlock> TERRACOTTA_GAUGE, PORCELAIN_GAUGE;
 

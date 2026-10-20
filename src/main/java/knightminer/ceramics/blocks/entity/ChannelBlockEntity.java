@@ -3,7 +3,6 @@ package knightminer.ceramics.blocks.entity;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
-import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.ChannelFlowPacket;
 import knightminer.ceramics.network.FluidUpdatePacket;
@@ -15,13 +14,13 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Plane;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.capabilities.Capability;
 import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.common.util.LazyOptional;
@@ -30,7 +29,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
-import slimeknights.mantle.block.entity.MantleBlockEntity;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import javax.annotation.Nonnull;
@@ -41,7 +39,7 @@ import java.util.Map;
 /**
  * Logic for channel fluid transfer
  */
-public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
+public class ChannelBlockEntity extends CrackableBlockEntity implements FluidUpdater {
 	public static final BlockEntityTicker<ChannelBlockEntity> SERVER_TICKER = (level, pos, state, te) -> te.tick(state);
 	/** Channel internal tank */
 	private final ChannelTank tank = new ChannelTank(FaucetBlockEntity.MB_PER_TICK * 4, this);
@@ -66,16 +64,12 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	/** Stores if the channel is currently flowing, set to 2 to allow a small buffer */
 	private final byte[] isFlowing = new byte[5];
 
-	/** Crackable handling */
-	private final CrackableBlockEntityHandler cracksHandler;
-
 	public ChannelBlockEntity(BlockPos pos, BlockState state, boolean crackable) {
-		super(Registration.CHANNEL_BLOCK_ENTITY.get(), pos, state);
-		cracksHandler = new CrackableBlockEntityHandler(this, crackable);
+		super(Registration.CHANNEL_BLOCK_ENTITY.get(), pos, state));
 	}
 
 	public ChannelBlockEntity(BlockPos pos, BlockState state) {
-		this(pos, state, false);
+		this(pos, state, isCrackable(state));
 	}
 
 	/**
@@ -89,17 +83,6 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	@Override
 	public AABB getRenderBoundingBox() {
 		return new AABB(worldPosition.getX(), worldPosition.getY() - 1, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 1, worldPosition.getZ() + 1);
-	}
-
-	@Override
-	public CrackableBlockEntityHandler getCracksHandler() {
-		return cracksHandler;
-	}
-
-	@Nonnull
-	@Override
-	public ModelData getModelData() {
-		return cracksHandler.getModelData();
 	}
 
 
@@ -226,7 +209,7 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	 * Called on random tick to increase or decrease cracks level
 	 */
 	public void randomTick() {
-		cracksHandler.updateCracks(tank.getFluid());
+		getCracksHandler().updateCracks(tank.getFluid());
 	}
 
 
@@ -438,16 +421,15 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	}
 
 	@Override
-	protected void saveSynced(CompoundTag nbt) {
-		super.saveSynced(nbt);
+	protected void saveSynced(CompoundTag nbt, HolderLookup.Provider registries) {
+		super.saveSynced(nbt, registries);
 		nbt.putByteArray(TAG_IS_FLOWING, isFlowing);
 		nbt.put(TAG_TANK, tank.writeToNBT(new CompoundTag()));
-		cracksHandler.writeNBT(nbt);
 	}
 
 	@Override
-	public void load(CompoundTag nbt) {
-		super.load(nbt);
+	public void loadAdditional(CompoundTag nbt, HolderLookup.Provider registries) {
+		super.loadAdditional(nbt, registries);
 
 		// isFlowing
 		if (nbt.contains(TAG_IS_FLOWING)) {
@@ -468,6 +450,5 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 		// tank
 		CompoundTag tankTag = nbt.getCompound(TAG_TANK);
 		tank.readFromNBT(tankTag);
-		cracksHandler.readNBT(getBlockState(), nbt);
 	}
 }

@@ -1,10 +1,8 @@
 package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
-import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler;
+import knightminer.ceramics.Registration;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -16,7 +14,7 @@ import java.util.List;
 
 /** BlockItem for crackable blocks to show cracked amount */
 public class CrackableBlockItem extends FixedTooltipBlockItem {
-	private static final Component CRACKABLE = Ceramics.component("tooltip", "crackable").withStyle(ChatFormatting.GRAY);;
+	private static final Component CRACKABLE = Ceramics.component("tooltip", "crackable").withStyle(ChatFormatting.GRAY);
 	private static final String TOOLTIP_KEY = Ceramics.lang("tooltip", "cracked");
 	public CrackableBlockItem(Block blockIn, Properties builder, String tooltipSuffix) {
 		super(blockIn, builder, tooltipSuffix);
@@ -28,11 +26,7 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 	 * @return  Cracks
 	 */
 	public static int getCracks(ItemStack stack) {
-		CompoundTag nbt = stack.getTag();
-		if (nbt != null && nbt.contains(CrackableBlockEntityHandler.TAG_CRACKS, Tag.TAG_ANY_NUMERIC)) {
-			return nbt.getInt(CrackableBlockEntityHandler.TAG_CRACKS);
-		}
-		return 0;
+		return stack.getOrDefault(Registration.CRACKS, (byte)0);
 	}
 
 	/**
@@ -41,16 +35,10 @@ public class CrackableBlockItem extends FixedTooltipBlockItem {
 	 * @param cracks  New cracks value
 	 */
 	public static ItemStack setCracks(ItemStack stack, int cracks) {
-		if (cracks == 0) {
-			CompoundTag nbt = stack.getTag();
-			if (nbt != null) {
-				nbt.remove(CrackableBlockEntityHandler.TAG_CRACKS);
-				if (nbt.isEmpty()) {
-					stack.setTag(null);
-				}
-			}
+		if (cracks <= 0) {
+			stack.remove(Registration.CRACKS);
 		} else {
-			stack.getOrCreateTag().putInt(CrackableBlockEntityHandler.TAG_CRACKS, cracks);
+			stack.set(Registration.CRACKS, (byte) Math.min(cracks, 5));
 		}
 		return stack;
 	}

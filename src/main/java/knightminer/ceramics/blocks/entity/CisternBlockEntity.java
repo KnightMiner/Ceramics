@@ -11,13 +11,13 @@ import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
 import knightminer.ceramics.util.tank.CisternTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.common.capabilities.Capability;
 import net.neoforged.neoforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.common.util.LazyOptional;
@@ -27,13 +27,12 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
-import slimeknights.mantle.block.entity.MantleBlockEntity;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class CisternBlockEntity extends MantleBlockEntity implements ICrackableBlockEntity, FluidUpdater {
+public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpdater {
   /** Max capacity per cistern block */
   private static final String TAG_FLUID = "fluid";
   private static final String TAG_EXTENSIONS = "extensions";
@@ -56,16 +55,12 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
   /** Consumer for when the parent invalidates */
   private final NonNullConsumer<LazyOptional<IFluidHandler>> invalidationListener = new WeakConsumerWrapper<>(this, (te, handler) -> te.invalidateHandlers());
 
-  /** Cracking logic */
-  private final CrackableBlockEntityHandler cracksHandler;
-
   public CisternBlockEntity(BlockPos pos, BlockState state, boolean crackable) {
-    super(Registration.CISTERN_BLOCK_ENTITY.get(), pos, state);
-    cracksHandler = new CrackableBlockEntityHandler(this, crackable);
+    super(Registration.CISTERN_BLOCK_ENTITY.get(), pos, state, crackable);
   }
 
   public CisternBlockEntity(BlockPos pos, BlockState state) {
-    this(pos, state, false);
+    this(pos, state, isCrackable(state));
   }
 
   /* Getters */
@@ -116,17 +111,6 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
    */
   public final int capacityFor(int height) {
     return height * capacityPerLayer();
-  }
-
-  @Override
-  public CrackableBlockEntityHandler getCracksHandler() {
-    return cracksHandler;
-  }
-
-  @Nonnull
-  @Override
-  public ModelData getModelData() {
-    return cracksHandler.getModelData();
   }
 
 
@@ -225,7 +209,7 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
 
     // if cracking is active and the fluid cracks the block, crack all blocks impacted by the fluid
     FluidStack fluid = tank.getFluid();
-    if (cracksHandler.isActive() && level != null && !level.isClientSide() && BaseClayBucketItem.doesCrack(fluid.getFluid())) {
+    if (getCracksHandler().isActive() && level != null && !level.isClientSide() && BaseClayBucketItem.doesCrack(fluid.getFluid())) {
       int capacityPerLayer = capacityPerLayer();
       // first index needing an update
       int startIndex = (fluid.getAmount() - amountAdded + capacityPerLayer - 1) / capacityPerLayer;
@@ -299,6 +283,7 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
 
   /** Called on random block tick to update the heat */
   public void randomTick() {
+    CrackableBlockEntityHandler cracksHandler = getCracksHandler();
     if (cracksHandler.isActive()) {
       if (getBlockState().getValue(CisternBlock.EXTENSION)) {
         // extensions: if fluid does not reach here, treat as empty
@@ -432,27 +417,25 @@ public class CisternBlockEntity extends MantleBlockEntity implements ICrackableB
   /* Serialization */
 
   @Override
-  public void load(CompoundTag tags) {
-    super.load(tags);
+  protected void loadAdditional(CompoundTag tags, HolderLookup.Provider registries) {
+    super.loadAdditional(tags, registries);
     extensions = tags.getInt(TAG_EXTENSIONS);
     if (tags.contains(TAG_FLUID, Tag.TAG_COMPOUND)) {
       tank.readFromNBT(tags.getCompound(TAG_FLUID));
     }
-    cracksHandler.readNBT(getBlockState(), tags);
   }
 
   @Override
-  protected void saveSynced(CompoundTag compound) {
-    super.saveSynced(compound);
+  protected void saveSynced(CompoundTag tags, HolderLookup.Provider registries) {
+    super.saveSynced(tags, registries);
     if (tank.getFluidAmount() > 0) {
-      compound.put(TAG_FLUID, tank.writeToNBT());
+      tags.put(TAG_FLUID, tank.writeToNBT());
     }
-    cracksHandler.writeNBT(compound);
   }
 
   @Override
-  public void saveAdditional(CompoundTag compound) {
-    super.saveAdditional(compound);
-    compound.putInt(TAG_EXTENSIONS, extensions);
+  public void saveAdditional(CompoundTag tags, HolderLookup.Provider registries) {
+    super.saveAdditional(tags, registries);
+    tags.putInt(TAG_EXTENSIONS, extensions);
   }
 }

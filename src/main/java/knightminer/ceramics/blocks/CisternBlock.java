@@ -2,28 +2,28 @@ package knightminer.ceramics.blocks;
 
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
 import knightminer.ceramics.recipe.CeramicsTags;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Plane;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Plane;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
-import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -137,43 +137,31 @@ public class CisternBlock extends Block {
     }
   }
 
-  @SuppressWarnings("deprecation")
-  @Deprecated
   @Override
-  public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
+  protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
     return false;
   }
 
-  @SuppressWarnings("deprecation")
-  @Deprecated
   @Override
-  public BlockState rotate(BlockState state, Rotation rot) {
-    switch(rot) {
-      case CLOCKWISE_180:
-        return state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)).setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
-      case COUNTERCLOCKWISE_90:
-        return state.setValue(NORTH, state.getValue(EAST)).setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)).setValue(WEST, state.getValue(NORTH));
-      case CLOCKWISE_90:
-        return state.setValue(NORTH, state.getValue(WEST)).setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)).setValue(WEST, state.getValue(SOUTH));
-      default:
-        return state;
-    }
+  protected BlockState rotate(BlockState state, Rotation rot) {
+    return switch (rot) {
+      case CLOCKWISE_180       -> state.setValue(NORTH, state.getValue(SOUTH)).setValue(EAST, state.getValue(WEST)) .setValue(SOUTH, state.getValue(NORTH)).setValue(WEST, state.getValue(EAST));
+      case COUNTERCLOCKWISE_90 -> state.setValue(NORTH, state.getValue(EAST)) .setValue(EAST, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(WEST)) .setValue(WEST, state.getValue(NORTH));
+      case CLOCKWISE_90        -> state.setValue(NORTH, state.getValue(WEST)) .setValue(EAST, state.getValue(NORTH)).setValue(SOUTH, state.getValue(EAST)) .setValue(WEST, state.getValue(SOUTH));
+      default -> state;
+    };
   }
 
-  @SuppressWarnings("deprecation")
-  @Deprecated
   @Override
-  public BlockState mirror(BlockState state, Mirror mirrorIn) {
-    switch(mirrorIn) {
-      case LEFT_RIGHT:
-        return state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
-      case FRONT_BACK:
-        return state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
-      default:
-        return super.mirror(state, mirrorIn);
-    }
+  protected BlockState mirror(BlockState state, Mirror mirrorIn) {
+    return switch (mirrorIn) {
+      case LEFT_RIGHT -> state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
+      case FRONT_BACK -> state.setValue(EAST,  state.getValue(WEST)) .setValue(WEST,  state.getValue(EAST));
+      default -> super.mirror(state, mirrorIn);
+    };
   }
 
+  /** Checks if the block is connected for the given direction property */
   private static boolean facingConnected(Direction facing, BlockState state, DirectionProperty property) {
     return !state.hasProperty(property) || state.getValue(property) == facing;
   }
@@ -222,10 +210,8 @@ public class CisternBlock extends Block {
                             .setValue(EAST, isConnected(Direction.EAST, world.getBlockState(pos.east())));
   }
 
-  @SuppressWarnings("deprecation")
   @Override
-  @Deprecated
-  public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
+  protected BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
     if (!facing.getAxis().isVertical()) {
       // barrel connects to
       state = state.setValue(CONNECTIONS.get(facing), isConnected(facing, facingState));
@@ -237,17 +223,14 @@ public class CisternBlock extends Block {
   }
 
   @Override
-  @SuppressWarnings("deprecation")
-  @Deprecated
-  public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+  protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
     VoxelShape[] boundList = state.getValue(EXTENSION) ? BOUNDS_EXTENSION : BOUNDS_BASE;
     return boundList[boundsKey(state.getValue(NORTH), state.getValue(SOUTH), state.getValue(WEST), state.getValue(EAST))];
   }
 
   // used to calculated side solidness for torch/lever placement, not collision
   @Override
-  @Deprecated
-  public VoxelShape getBlockSupportShape(BlockState state, BlockGetter reader, BlockPos pos) {
+  protected VoxelShape getBlockSupportShape(BlockState state, BlockGetter reader, BlockPos pos) {
     return state.getValue(EXTENSION) ? SOLIDNESS_EXTENSION : SOLIDNESS_BASE;
   }
 }

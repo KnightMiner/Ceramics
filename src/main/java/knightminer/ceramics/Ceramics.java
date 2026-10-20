@@ -11,7 +11,7 @@ import knightminer.ceramics.datagen.client.FaucetFluidProvider;
 import knightminer.ceramics.datagen.client.RenderFluidProvider;
 import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.recipe.CeramicsTags;
-import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.network.chat.Component;
@@ -44,7 +44,7 @@ public class Ceramics {
 		DataGenerator gen = event.getGenerator();
 		PackOutput packOutput = gen.getPackOutput();
 		ExistingFileHelper helper = event.getExistingFileHelper();
-		CompletableFuture<Provider> lookupProvider = event.getLookupProvider();
+		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
 		BlockTagProvider blockTags = new BlockTagProvider(packOutput, lookupProvider, helper);
 		gen.addProvider(server, blockTags);
@@ -52,7 +52,7 @@ public class Ceramics {
 		gen.addProvider(server, new ItemTagProvider(packOutput, lookupProvider, blockTags.contentsGetter(), helper));
 		gen.addProvider(server, new FluidTagProvider(packOutput, lookupProvider, helper));
 		gen.addProvider(server, new RecipeProvider(packOutput));
-		gen.addProvider(server, new LootTableProvider(packOutput));
+		gen.addProvider(server, new LootTableProvider(packOutput, lookupProvider));
 
 		boolean client = event.includeClient();
 		gen.addProvider(client, new RenderFluidProvider(packOutput));
