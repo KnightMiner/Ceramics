@@ -51,7 +51,7 @@ public class Ceramics {
 		gen.addProvider(server, new BlockEntityTagProvider(packOutput, lookupProvider, helper));
 		gen.addProvider(server, new ItemTagProvider(packOutput, lookupProvider, blockTags.contentsGetter(), helper));
 		gen.addProvider(server, new FluidTagProvider(packOutput, lookupProvider, helper));
-		gen.addProvider(server, new RecipeProvider(packOutput));
+		gen.addProvider(server, new RecipeProvider(packOutput, lookupProvider));
 		gen.addProvider(server, new LootTableProvider(packOutput, lookupProvider));
 
 		boolean client = event.includeClient();
