@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+/** Block entity for {@link knightminer.ceramics.blocks.KilnBlock} handling {@link knightminer.ceramics.recipe.KilnRecipe} */
 public class KilnBlockEntity extends AbstractFurnaceBlockEntity {
   public KilnBlockEntity(BlockPos pos, BlockState state) {
     super(Registration.KILN_BLOCK_ENTITY.get(), pos, state, Registration.KILN_RECIPE.get());

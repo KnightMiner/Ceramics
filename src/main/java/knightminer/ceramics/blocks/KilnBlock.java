@@ -1,5 +1,6 @@
 package knightminer.ceramics.blocks;
 
+import com.mojang.serialization.MapCodec;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.entity.KilnBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -19,10 +20,17 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 
+/** Furnace alternative that works on ceramics and glass */
 public class KilnBlock extends AbstractFurnaceBlock {
+  private static final MapCodec<KilnBlock> CODEC = simpleCodec(KilnBlock::new);
 
   public KilnBlock(Properties props) {
     super(props);
+  }
+
+  @Override
+  protected MapCodec<? extends KilnBlock> codec() {
+    return CODEC;
   }
 
   @Nullable

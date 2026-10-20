@@ -27,12 +27,12 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import slimeknights.mantle.client.SafeClientAccess;
+import slimeknights.mantle.recipe.MultiNamedRecipe;
+import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.util.RegistryHelper;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ import java.util.function.Consumer;
 public class JEIPlugin implements IModPlugin {
   @Override
   public ResourceLocation getPluginUid() {
-    return new ResourceLocation(Ceramics.MOD_ID, "jei_plugin");
+    return Ceramics.getResource("jei_plugin");
   }
 
   @Override
@@ -70,40 +70,29 @@ public class JEIPlugin implements IModPlugin {
     registration.addRecipeCategories(new KilnCategory(registration.getJeiHelpers().getGuiHelper()));
   }
 
-  @SuppressWarnings("deprecation")
   @Override
   public void registerRecipes(IRecipeRegistration registration) {
     ClientLevel world = Minecraft.getInstance().level;
     assert world != null;
     RecipeManager recipeManager = world.getRecipeManager();
-    List<KilnRecipe> results = new ArrayList<>();
     RegistryAccess access = Objects.requireNonNullElse(SafeClientAccess.getRegistryAccess(), RegistryAccess.EMPTY);
-    for (Recipe<Container> recipe : recipeManager.byType(Registration.KILN_RECIPE.get()).values()) {
-      // ignore dynamic
-      if (recipe.isSpecial()) {
-        continue;
-      }
+    List<NamedRecipe<KilnRecipe>> results = MultiNamedRecipe.streamNamedRecipes(world.registryAccess(), recipeManager, Registration.KILN_RECIPE.get(), KilnRecipe.class)
+      .filter(holder -> {
+        KilnRecipe recipe = holder.recipe();
 
-      // validate output
-      ItemStack output = recipe.getResultItem(access);
-      if (output.isEmpty()) {
-        Ceramics.LOG.error("Invalid kiln recipe {}, no output", recipe.getId());
-        continue;
-      }
-      List<Ingredient> ingredients = recipe.getIngredients();
-      if (ingredients.size() != 1) {
-        Ceramics.LOG.error("Invalid kiln recipe {}, wrong number of inputs", recipe.getId());
-        continue;
-      }
-
-      // recipe type
-      if (!(recipe instanceof KilnRecipe kilnRecipe)) {
-        Ceramics.LOG.error("Invalid kiln recipe {}, wrong class", recipe.getId());
-        continue;
-      }
-      // add to list
-      results.add(kilnRecipe);
-    }
+        // validate output
+        ItemStack output = recipe.getResultItem(access);
+        if (output.isEmpty()) {
+          Ceramics.LOG.error("Invalid kiln recipe {}, no output", holder.id());
+          return false;
+        }
+        List<Ingredient> ingredients = recipe.getIngredients();
+        if (ingredients.size() != 1) {
+          Ceramics.LOG.error("Invalid kiln recipe {}, wrong number of inputs", holder.id());
+          return false;
+        }
+        return true;
+      }).toList();
     registration.addRecipes(KilnCategory.TYPE, results);
 
     // clay repair info

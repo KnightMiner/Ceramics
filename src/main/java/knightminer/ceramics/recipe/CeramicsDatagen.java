@@ -1,6 +1,5 @@
 package knightminer.ceramics.recipe;
 
-import knightminer.ceramics.Registration;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.world.item.BlockItem;
@@ -19,6 +18,6 @@ public class CeramicsDatagen {
 
   /** Creates a kiln recipe builder */
   public static SimpleCookingRecipeBuilder kilnRecipe(Ingredient input, RecipeCategory category, ItemLike output, float experience, int cookTime) {
-    return new SimpleCookingRecipeBuilder(category, determineKilnCategory(output), output, input, experience, cookTime, Registration.KILN_SERIALIZER.get());
+    return new SimpleCookingRecipeBuilder(category, determineKilnCategory(output), output, input, experience, cookTime, KilnRecipe::new);
   }
 }

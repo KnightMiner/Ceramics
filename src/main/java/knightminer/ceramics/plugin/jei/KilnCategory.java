@@ -5,7 +5,6 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.KilnRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -13,66 +12,37 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
-import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.category.AbstractRecipeCategory;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import slimeknights.mantle.client.SafeClientAccess;
+import slimeknights.mantle.recipe.NamedRecipe;
 
 import java.util.Objects;
 
 /** Category to show kilns in JEI. Basically a copy of the vanilla furnace category */
-public class KilnCategory implements IRecipeCategory<KilnRecipe> {
-  static final RecipeType<KilnRecipe> TYPE = new RecipeType<>(Ceramics.getResource("kiln"), KilnRecipe.class);
+public class KilnCategory extends AbstractRecipeCategory<NamedRecipe<KilnRecipe>> {
+  static final RecipeType<NamedRecipe<KilnRecipe>> TYPE = new RecipeType<>(Ceramics.getResource("kiln"), NamedRecipe.<KilnRecipe>recipeClass());
   // slots
   static final int INPUT_SLOT = 0;
   static final int FUEL_SLOT = 1;
-  // elements
-  private final IDrawable icon;
-  private final Component name;
-
   KilnCategory(IGuiHelper guiHelper) {
-    // elements
-    this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Registration.KILN));
-    this.name = Ceramics.component("gui.jei.category", "kiln");
+    super(TYPE,
+      Ceramics.component("gui.jei.category", "kiln"),
+      guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Registration.KILN)),
+      82, 54
+    );
   }
-
-
-  /* Properties */
-
-  @Override
-  public RecipeType<KilnRecipe> getRecipeType() {
-    return TYPE;
-  }
-
-  @Override
-  public Component getTitle() {
-    return this.name;
-  }
-
-  @Override
-  public IDrawable getIcon() {
-    return this.icon;
-  }
-
-  @Override
-  public int getWidth() {
-    return 82;
-  }
-
-  @Override
-  public int getHeight() {
-    return 54;
-  }
-
 
 
   /* Recipe */
 
   @Override
-  public void setRecipe(IRecipeLayoutBuilder builder, KilnRecipe recipe, IFocusGroup focuses) {
+  public void setRecipe(IRecipeLayoutBuilder builder, NamedRecipe<KilnRecipe> holder, IFocusGroup focuses) {
     // input
+    KilnRecipe recipe = holder.recipe();
     builder.addInputSlot(1, 1)
       .setStandardSlotBackground()
       .addIngredients(recipe.getInput());
@@ -86,14 +56,15 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   }
 
   @Override
-  public void createRecipeExtras(IRecipeExtrasBuilder builder, KilnRecipe recipe, IFocusGroup focuses) {
+  public void createRecipeExtras(IRecipeExtrasBuilder builder, NamedRecipe<KilnRecipe> holder, IFocusGroup focuses) {
+    KilnRecipe recipe = holder.recipe();
     int cookTime = recipe.getCookingTime();
     if (cookTime <= 0) {
       cookTime = 100;
     }
-    builder.addAnimatedRecipeArrow(cookTime)
+    builder.addAnimatedRecipeArrowWidget(cookTime)
       .setPosition(26, 17);
-    builder.addAnimatedRecipeFlame(300)
+    builder.addAnimatedRecipeFlameWidget(300)
       .setPosition(1, 20);
 
     addExperience(builder, recipe);
@@ -127,12 +98,12 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
   }
 
   @Override
-  public boolean isHandled(KilnRecipe recipe) {
-    return !recipe.isSpecial();
+  public boolean isHandled(NamedRecipe<KilnRecipe> recipe) {
+    return !recipe.recipe().isSpecial();
   }
 
   @Override
-  public ResourceLocation getRegistryName(KilnRecipe recipe) {
-    return recipe.getId();
+  public ResourceLocation getRegistryName(NamedRecipe<KilnRecipe> recipe) {
+    return recipe.id();
   }
 }
