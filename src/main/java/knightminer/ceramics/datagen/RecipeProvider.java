@@ -3,18 +3,19 @@ package knightminer.ceramics.datagen;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
-import knightminer.ceramics.recipe.CeramicsDatagen;
 import knightminer.ceramics.recipe.CeramicsTags;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe.Finished;
+import knightminer.ceramics.recipe.KilnRecipeBuilder;
 import knightminer.ceramics.recipe.NoNBTIngredient;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
@@ -79,7 +80,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                        .unlockedBy("has_item", has(Registration.UNFIRED_PORCELAIN))
                        .save(consumer);
     // smelting porcelain
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN_BLOCK, RecipeCategory.BUILDING_BLOCKS, Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE), 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN_BLOCK, Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE), 0.3f);
 
     // colored porcelain
     CriterionTriggerInstance porcelainCriteria = has(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE));
@@ -95,7 +96,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                          .save(consumer)
     );
     // rainbow porcelain
-    kilnFurnaceRecipe(consumer, CeramicsTags.Items.COLORED_PORCELAIN, RecipeCategory.BUILDING_BLOCKS, Registration.RAINBOW_PORCELAIN.get(RainbowPorcelain.RED), 0.1f, location("rainbow_porcelain"));
+    kilnFurnaceRecipe(consumer, CeramicsTags.Items.COLORED_PORCELAIN, Registration.RAINBOW_PORCELAIN.get(RainbowPorcelain.RED), 0.1f, location("rainbow_porcelain"));
 
     // smelt for full rainbow
     CriterionTriggerInstance hasTheRainbow = has(CeramicsTags.Items.RAINBOW_PORCELAIN);
@@ -134,7 +135,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     // dark bricks from smelting bricks
     eachBuilding(BRICKS, Registration.DARK_BRICKS, (input, output) ->
-      kilnFurnaceRecipe(consumer, input, RecipeCategory.BUILDING_BLOCKS, output, 0.1f)
+      kilnFurnaceRecipe(consumer, input, output, 0.1f)
     );
     registerSlabStairWall(consumer, Registration.DARK_BRICKS);
 
@@ -147,7 +148,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     registerSlabStairWall(consumer, Registration.DRAGON_BRICKS);
 
     // porcelain bricks
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN, RecipeCategory.MISC, Registration.PORCELAIN_BRICK, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_PORCELAIN, Registration.PORCELAIN_BRICK, 0.3f);
     // using bricks
     CriterionTriggerInstance hasBricks = has(Registration.PORCELAIN_BRICK);
     ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, Registration.PORCELAIN_BRICKS)
@@ -191,7 +192,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     // rainbow
     eachBuilding(Registration.PORCELAIN_BRICKS, Registration.RAINBOW_BRICKS, (input, output) ->
-      kilnFurnaceRecipe(consumer, input, RecipeCategory.BUILDING_BLOCKS, output, 0.1f)
+      kilnFurnaceRecipe(consumer, input, output, 0.1f)
     );
     registerSlabStairWall(consumer, Registration.RAINBOW_BRICKS);
 
@@ -204,9 +205,9 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                        .unlockedBy("has_clay", has(Items.CLAY_BALL))
                        .save(consumer);
     // fired
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_BUCKET, RecipeCategory.TOOLS, Registration.EMPTY_CLAY_BUCKET, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_BUCKET, Registration.EMPTY_CLAY_BUCKET, 0.3f);
     // cracked
-    kilnFurnaceRecipe(consumer, Registration.EMPTY_CLAY_BUCKET, RecipeCategory.TOOLS, Registration.CRACKED_EMPTY_CLAY_BUCKET, 0.2f);
+    kilnFurnaceRecipe(consumer, Registration.EMPTY_CLAY_BUCKET, Registration.CRACKED_EMPTY_CLAY_BUCKET, 0.2f);
 
     // cistern
     ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, Registration.CLAY_CISTERN, 2)
@@ -224,8 +225,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                        .unlockedBy("has_clay", has(Registration.UNFIRED_PORCELAIN))
                        .save(consumer);
     // fired
-    kilnFurnaceRecipe(consumer, Registration.CLAY_CISTERN, RecipeCategory.REDSTONE, Registration.TERRACOTTA_CISTERN, 0.3f);
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, RecipeCategory.REDSTONE, Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE), 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.CLAY_CISTERN, Registration.TERRACOTTA_CISTERN, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CISTERN, Registration.PORCELAIN_CISTERN.get(DyeColor.WHITE), 0.3f);
     // repair
     clayRepair(consumer, Registration.TERRACOTTA_CISTERN);
     // colored
@@ -287,8 +288,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                        .pattern(" c ")
                        .unlockedBy("has_cistern", has(Registration.UNFIRED_PORCELAIN))
                        .save(consumer);
-    kilnFurnaceRecipe(consumer, Registration.CLAY_FAUCET, RecipeCategory.REDSTONE, Registration.TERRACOTTA_FAUCET, 0.3f);
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_FAUCET, RecipeCategory.REDSTONE, Registration.PORCELAIN_FAUCET, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.CLAY_FAUCET, Registration.TERRACOTTA_FAUCET, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_FAUCET, Registration.PORCELAIN_FAUCET, 0.3f);
     clayRepair(consumer, Registration.TERRACOTTA_FAUCET);
 
     // channel
@@ -304,8 +305,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                        .pattern("ppp")
                        .unlockedBy("has_cistern", has(Registration.UNFIRED_PORCELAIN))
                        .save(consumer);
-    kilnFurnaceRecipe(consumer, Registration.CLAY_CHANNEL, RecipeCategory.REDSTONE, Registration.TERRACOTTA_CHANNEL, 0.3f);
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CHANNEL, RecipeCategory.REDSTONE, Registration.PORCELAIN_CHANNEL, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.CLAY_CHANNEL, Registration.TERRACOTTA_CHANNEL, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CHANNEL, Registration.PORCELAIN_CHANNEL, 0.3f);
     clayRepair(consumer, Registration.TERRACOTTA_CHANNEL);
 
     // armor
@@ -315,7 +316,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                        .pattern("cc")
                        .unlockedBy("has_clay", has(Items.CLAY_BALL))
                        .save(consumer);
-    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_PLATE, RecipeCategory.MISC, Registration.CLAY_PLATE, 0.3f);
+    kilnFurnaceRecipe(consumer, Registration.UNFIRED_CLAY_PLATE, Registration.CLAY_PLATE, 0.3f);
 
     // helmet
     CriterionTriggerInstance hasClayPlate = has(CeramicsTags.Items.BRICK_PLATES);
@@ -411,34 +412,34 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
     // add vanilla furnace recipes to the kiln
     // clay
-    kilnRecipe(consumer, Items.CLAY_BALL, RecipeCategory.MISC, Items.BRICK, 0.3f);
-    kilnRecipe(consumer, Blocks.CLAY, RecipeCategory.BUILDING_BLOCKS, Blocks.TERRACOTTA, 0.3f);
+    kilnRecipe(consumer, Items.CLAY_BALL, Items.BRICK, 0.3f);
+    kilnRecipe(consumer, Blocks.CLAY, Blocks.TERRACOTTA, 0.3f);
     Registration.TERRACOTTA.forEach((color, input) ->
-      kilnRecipe(consumer, input, RecipeCategory.BUILDING_BLOCKS, GLAZED_TERRACOTTA.get(color), 0.1f)
+      kilnRecipe(consumer, input, GLAZED_TERRACOTTA.get(color), 0.1f)
     );
     // sand and glass
-    kilnRecipe(consumer, ItemTags.SAND, RecipeCategory.BUILDING_BLOCKS, Blocks.GLASS, 0.1f);
-    kilnRecipe(consumer, Blocks.SANDSTONE, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_SANDSTONE, 0.1f);
-    kilnRecipe(consumer, Blocks.RED_SANDSTONE, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_RED_SANDSTONE, 0.1f);
+    kilnRecipe(consumer, ItemTags.SAND, Blocks.GLASS, 0.1f);
+    kilnRecipe(consumer, Blocks.SANDSTONE, Blocks.SMOOTH_SANDSTONE, 0.1f);
+    kilnRecipe(consumer, Blocks.RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE, 0.1f);
     // rock
-    kilnRecipe(consumer, Blocks.COBBLESTONE, RecipeCategory.BUILDING_BLOCKS, Blocks.STONE, 0.1f);
-    kilnRecipe(consumer, Blocks.STONE, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_STONE, 0.1f);
-    kilnRecipe(consumer, Blocks.STONE_BRICKS, RecipeCategory.BUILDING_BLOCKS, Blocks.CRACKED_STONE_BRICKS, 0.1f);
-    kilnRecipe(consumer, Blocks.NETHERRACK, RecipeCategory.BUILDING_BLOCKS, Items.NETHER_BRICK, 0.1f);
-    kilnRecipe(consumer, Blocks.QUARTZ_BLOCK, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_QUARTZ, 0.1f);
+    kilnRecipe(consumer, Blocks.COBBLESTONE, Blocks.STONE, 0.1f);
+    kilnRecipe(consumer, Blocks.STONE, Blocks.SMOOTH_STONE, 0.1f);
+    kilnRecipe(consumer, Blocks.STONE_BRICKS, Blocks.CRACKED_STONE_BRICKS, 0.1f);
+    kilnRecipe(consumer, Blocks.NETHERRACK, Items.NETHER_BRICK, 0.1f);
+    kilnRecipe(consumer, Blocks.QUARTZ_BLOCK, Blocks.SMOOTH_QUARTZ, 0.1f);
 
     // add recipes to smelt slabs and stairs directly for relevant blocks
     // sand
-    kilnFurnaceRecipe(consumer, Blocks.SANDSTONE_SLAB, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_SANDSTONE_SLAB, 0.1f);
-    kilnFurnaceRecipe(consumer, Blocks.SANDSTONE_STAIRS, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_SANDSTONE_STAIRS, 0.1f);
-    kilnFurnaceRecipe(consumer, Blocks.RED_SANDSTONE_SLAB, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_RED_SANDSTONE_SLAB, 0.1f);
-    kilnFurnaceRecipe(consumer, Blocks.RED_SANDSTONE_STAIRS, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_RED_SANDSTONE_STAIRS, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.SANDSTONE_SLAB, Blocks.SMOOTH_SANDSTONE_SLAB, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.SANDSTONE_STAIRS, Blocks.SMOOTH_SANDSTONE_STAIRS, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.RED_SANDSTONE_SLAB, Blocks.SMOOTH_RED_SANDSTONE_SLAB, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.RED_SANDSTONE_STAIRS, Blocks.SMOOTH_RED_SANDSTONE_STAIRS, 0.1f);
     // rock
-    kilnFurnaceRecipe(consumer, Blocks.COBBLESTONE_SLAB, RecipeCategory.BUILDING_BLOCKS, Blocks.STONE_SLAB, 0.1f);
-    kilnFurnaceRecipe(consumer, Blocks.COBBLESTONE_STAIRS, RecipeCategory.BUILDING_BLOCKS, Blocks.STONE_STAIRS, 0.1f);
-    kilnFurnaceRecipe(consumer, Blocks.STONE_SLAB, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_STONE_SLAB, 0.1f);
-    kilnFurnaceRecipe(consumer, Blocks.QUARTZ_STAIRS, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_QUARTZ_STAIRS, 0.1f);
-    kilnFurnaceRecipe(consumer, Blocks.BASALT, RecipeCategory.BUILDING_BLOCKS, Blocks.SMOOTH_BASALT, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.COBBLESTONE_SLAB, Blocks.STONE_SLAB, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.COBBLESTONE_STAIRS, Blocks.STONE_STAIRS, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.STONE_SLAB, Blocks.SMOOTH_STONE_SLAB, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.QUARTZ_STAIRS, Blocks.SMOOTH_QUARTZ_STAIRS, 0.1f);
+    kilnFurnaceRecipe(consumer, Blocks.BASALT, Blocks.SMOOTH_BASALT, 0.1f);
   }
 
 
@@ -622,99 +623,97 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
 
   /* Kiln recipes */
 
+  /** Creates a kiln builder for the given inputs. */
+  private static KilnRecipeBuilder kilnBuilder(Ingredient input, Criterion<?> criteria, ItemLike output, float experience) {
+    return KilnRecipeBuilder.builder(output)
+      .requires(input)
+      .experience(experience)
+      .unlockedBy("has_item", criteria);
+  }
+
   /**
    * Shortcut to add a kiln recipe
    * @param consumer    Recipe consumer
    * @param input       Recipe input
-   * @param category    Recipe category
    * @param criteria    Criteria to unlock the recipe
    * @param output      Recipe output
    * @param experience  Experience earned
    * @param name        Recipe name
    */
-  private static void kilnRecipe(Consumer<FinishedRecipe> consumer, Ingredient input, CriterionTriggerInstance criteria, RecipeCategory category, ItemLike output, float experience, ResourceLocation name) {
-    CeramicsDatagen.kilnRecipe(input, category, output, experience, 100)
-        .unlockedBy("has_item", criteria)
-        .save(consumer, name);
+  private static void kilnRecipe(RecipeOutput consumer, Ingredient input, Criterion<?> criteria, ItemLike output, float experience, ResourceLocation name) {
+    kilnBuilder(input, criteria, output, experience).save(consumer, name);
   }
 
   /**
    * Adds a kiln recipe for vanilla item
    * @param consumer    Recipe consumer
    * @param input       Recipe input item
-   * @param category    Recipe category
    * @param output      Recipe output
    * @param experience  Experience earned
    */
-  private void kilnRecipe(Consumer<FinishedRecipe> consumer, ItemLike input, RecipeCategory category, ItemLike output, float experience) {
-    kilnRecipe(consumer, Ingredient.of(input), has(input), category, output, experience, suffix(output, "_kiln"));
+  private void kilnRecipe(RecipeOutput consumer, ItemLike input, ItemLike output, float experience) {
+    kilnRecipe(consumer, Ingredient.of(input), has(input), output, experience, suffix(output, "_kiln"));
   }
 
   /**
    * Adds a kiln recipe for vanilla item
    * @param consumer    Recipe consumer
    * @param input       Recipe input tag
-   * @param category    Recipe category
    * @param output      Recipe output
    * @param experience  Experience earned
    */
-  private void kilnRecipe(Consumer<FinishedRecipe> consumer, TagKey<Item> input, RecipeCategory category, ItemLike output, float experience) {
-    kilnRecipe(consumer, Ingredient.of(input), has(input), category, output, experience, suffix(output, "_kiln"));
+  private void kilnRecipe(RecipeOutput consumer, TagKey<Item> input, ItemLike output, float experience) {
+    kilnRecipe(consumer, Ingredient.of(input), has(input), output, experience, suffix(output, "_kiln"));
   }
 
   /**
    * Adds a new recipe to both the kiln and the furnace
    * @param consumer    Recipe consumer
    * @param input       Recipe input
-   * @param category    Recipe category
    * @param criteria    Criteria to unlock the recipe
    * @param output      Recipe output
    * @param experience  Experience earned
    * @param name        Recipe name
    */
-  private static void kilnFurnaceRecipe(Consumer<FinishedRecipe> consumer, Ingredient input, CriterionTriggerInstance criteria, RecipeCategory category, ItemLike output, float experience, ResourceLocation name) {
-    SimpleCookingRecipeBuilder.smelting(input, category, output, experience, 200)
-                        .unlockedBy("has_item", criteria)
-                        .save(consumer, suffix(name, "_smelting"));
-    kilnRecipe(consumer, input, criteria, category, output, experience, suffix(name, "_kiln"));
+  private static void kilnFurnaceRecipe(RecipeOutput consumer, Ingredient input, Criterion<?> criteria, ItemLike output, float experience, ResourceLocation name) {
+    kilnBuilder(input, criteria, output, experience)
+      .saveSmelting(consumer, suffix(name, "_smelting"))
+      .saveKiln(consumer, suffix(name, "_kiln"));
   }
 
   /**
    * Adds a new recipe to both the kiln and the furnace using the output's registry name to name the recipe
    * @param consumer    Recipe consumer
    * @param input       Recipe item input
-   * @param category    Recipe category
    * @param output      Recipe output
    * @param experience  Experience earned
    * @param name        Recipe name
    */
-  private void kilnFurnaceRecipe(Consumer<FinishedRecipe> consumer, ItemLike input, RecipeCategory category, ItemLike output, float experience, ResourceLocation name) {
-    kilnFurnaceRecipe(consumer, Ingredient.of(input), has(input), category, output, experience, name);
+  private void kilnFurnaceRecipe(RecipeOutput consumer, ItemLike input, ItemLike output, float experience, ResourceLocation name) {
+    kilnFurnaceRecipe(consumer, Ingredient.of(input), has(input), output, experience, name);
   }
 
   /**
    * Adds a new recipe to both the kiln and the furnace using the output's registry name to name the recipe
    * @param consumer    Recipe consumer
    * @param input       Recipe item input
-   * @param category    Recipe category
    * @param output      Recipe output
    * @param experience  Experience earned
    */
-  private void kilnFurnaceRecipe(Consumer<FinishedRecipe> consumer, ItemLike input, RecipeCategory category, ItemLike output, float experience) {
-    kilnFurnaceRecipe(consumer, input, category, output, experience, location(output));
+  private void kilnFurnaceRecipe(RecipeOutput consumer, ItemLike input, ItemLike output, float experience) {
+    kilnFurnaceRecipe(consumer, input, output, experience, location(output));
   }
 
   /**
    * Adds a new recipe to both the kiln and the furnace using the output's registry name to name the recipe
    * @param consumer    Recipe consumer
    * @param input       Recipe tag input
-   * @param category    Recipe category
    * @param output      Recipe output
    * @param experience  Experience earned
    * @param name        Recipe name
    */
-  private void kilnFurnaceRecipe(Consumer<FinishedRecipe> consumer, TagKey<Item> input, RecipeCategory category, ItemLike output, float experience, ResourceLocation name) {
-    kilnFurnaceRecipe(consumer, Ingredient.of(input), has(input), category, output, experience, name);
+  private void kilnFurnaceRecipe(RecipeOutput consumer, TagKey<Item> input, ItemLike output, float experience, ResourceLocation name) {
+    kilnFurnaceRecipe(consumer, Ingredient.of(input), has(input), output, experience, name);
   }
 
   /**
