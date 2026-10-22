@@ -4,9 +4,9 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
+import knightminer.ceramics.recipe.CrackableIngredient;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipeBuilder;
 import knightminer.ceramics.recipe.KilnRecipeBuilder;
-import knightminer.ceramics.recipe.NoNBTIngredient;
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.core.HolderLookup;
@@ -232,7 +232,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     Registration.COLORED_CISTERN.forEach((color, block) -> {
       // craft
       ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block, 4)
-                         .define('c', new NoNBTIngredient(Ingredient.of(CeramicsTags.Items.TERRACOTTA_CISTERNS)))
+                         .define('c', CrackableIngredient.uncracked(CeramicsTags.Items.TERRACOTTA_CISTERNS))
                          .define('d', color.getTag())
                          .pattern(" c ")
                          .pattern("cdc")

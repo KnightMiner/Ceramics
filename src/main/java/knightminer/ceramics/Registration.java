@@ -22,6 +22,7 @@ import knightminer.ceramics.items.HeatResistantBlockItem;
 import knightminer.ceramics.items.MilkClayBucketItem;
 import knightminer.ceramics.items.SolidClayBucketItem;
 import knightminer.ceramics.menu.KilnMenu;
+import knightminer.ceramics.recipe.CrackableIngredient;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.util.EmptyFluidBucketCauldronInteraction;
@@ -67,11 +68,12 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import slimeknights.mantle.block.GaugeBlock;
 import slimeknights.mantle.item.tooltip.BlockTooltipItem;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
@@ -98,6 +100,7 @@ public class Registration {
   private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Ceramics.MOD_ID);
   private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Ceramics.MOD_ID);
   private static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, Ceramics.MOD_ID);
+  private static final DeferredRegister<IngredientType<?>> INGREDIENTS = DeferredRegister.create(NeoForgeRegistries.Keys.INGREDIENT_TYPES, Ceramics.MOD_ID);
   private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Ceramics.MOD_ID);
   private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Ceramics.MOD_ID);
 
@@ -112,6 +115,7 @@ public class Registration {
     ARMOR_MATERIALS.register(bus);
     RECIPE_SERIALIZERS.register(bus);
     RECIPE_TYPES.register(bus);
+    INGREDIENTS.register(bus);
     CREATIVE_TABS.register(bus);
     DATA_COMPONENTS.register(bus);
     bus.register(Registration.class);
@@ -296,13 +300,8 @@ public class Registration {
   // clay repair
   public static final DeferredHolder<RecipeSerializer<?>,RecipeSerializer<CrackedClayRepairRecipe>> CLAY_REPAIR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("cracked_clay_repair", () -> LoadableRecipeSerializer.of(CrackedClayRepairRecipe.LOADABLE));
 
-  @SubscribeEvent
-  static void registerRecipeSerializer(RegisterEvent event) {
-    if (event.getRegistryKey() == Registries.RECIPE_SERIALIZER) {
-      // TODO: ingredient registration
-      // CraftingHelper.register(Ceramics.getResource("no_nbt"), NoNBTIngredient.SERIALIZER);
-    }
-  }
+  // ingredients
+  public static final DeferredHolder<IngredientType<?>,IngredientType<CrackableIngredient>> CRACKABLE_INGREDIENT = INGREDIENTS.register("crackable", () -> new IngredientType<>(CrackableIngredient.CODEC, CrackableIngredient.STREAM_CODEC));
 
   @SubscribeEvent
   static void commonSetup(FMLCommonSetupEvent event) {
