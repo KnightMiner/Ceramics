@@ -1,7 +1,6 @@
 package knightminer.ceramics.blocks.entity;
 
 import knightminer.ceramics.Registration;
-import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
 import net.minecraft.core.BlockPos;
@@ -9,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,6 +19,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
+import slimeknights.mantle.network.PacketHelper;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import static knightminer.ceramics.blocks.FaucetBlock.FACING;
@@ -342,8 +341,8 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
    */
   private void syncToClient(FluidStack fluid, boolean isPouring) {
     renderFluid = fluid.copy();
-    if (level instanceof ServerLevel server) {
-      CeramicsNetwork.getInstance().sendToClientsAround(new FluidUpdatePacket(worldPosition, fluid, isPouring), server, worldPosition);
+    if (level != null && !level.isClientSide) {
+      PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new FluidUpdatePacket(worldPosition, fluid, isPouring));
     }
   }
 

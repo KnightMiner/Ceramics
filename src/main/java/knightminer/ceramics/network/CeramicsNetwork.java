@@ -1,58 +1,31 @@
 package knightminer.ceramics.network;
 
-import knightminer.ceramics.Ceramics;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkDirection;
-import slimeknights.mantle.network.NetworkWrapper;
-
-import javax.annotation.Nullable;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.jetbrains.annotations.ApiStatus.Internal;
+import slimeknights.mantle.network.ISimplePacket;
 
 /**
  * Handler for all packets internal to Ceramics
  */
-public class CeramicsNetwork extends NetworkWrapper {
-  /** Network instance, created in {@link #init()} */
-  private static CeramicsNetwork INSTANCE;
-
-  private CeramicsNetwork() {
-    super(Ceramics.getResource("network"));
-  }
-
+public class CeramicsNetwork {
   /**
-   * Gets the instance of the network
-   * @return  Network instance
+   * Network instance:
+   * <ul>
+   * <li>21.0: Initial 1.21.1 release</li>
+   * </ul>
    */
-  public static CeramicsNetwork getInstance() {
-    if (INSTANCE == null) {
-      throw new IllegalStateException("Attempt to get network instance before initialization");
-    }
-    return INSTANCE;
-  }
+  private static final String VERSION = "21.0";
 
   /**
    * Initializes the network, should be called during mod construct
    */
-  public static void init() {
-    if (INSTANCE == null) {
-      INSTANCE = new CeramicsNetwork();
+  @Internal
+  public static void register(RegisterPayloadHandlersEvent event) {
+    PayloadRegistrar registrar = event.registrar(VERSION);
 
-      INSTANCE.registerPacket(FluidUpdatePacket.class, FluidUpdatePacket::new, NetworkDirection.PLAY_TO_CLIENT);
-      INSTANCE.registerPacket(ChannelFlowPacket.class, ChannelFlowPacket::new, NetworkDirection.PLAY_TO_CLIENT);
-      INSTANCE.registerPacket(CrackableCrackPacket.class, CrackableCrackPacket::new, NetworkDirection.PLAY_TO_CLIENT);
-    }
-  }
-
-  /**
-   * Sends a packet to all clients around a point, automatically checking the server world cast
-   * @param msg    Packet
-   * @param world  World instance
-   * @param pos    Position
-   */
-  public void sendToClientsAround(Object msg, @Nullable Level world, BlockPos pos) {
-    if (world instanceof ServerLevel) {
-      sendToClientsAround(msg, (ServerLevel) world, pos);
-    }
+    registrar.playToClient(FluidUpdatePacket.TYPE, FluidUpdatePacket.CODEC, ISimplePacket.handle());
+    registrar.playToClient(ChannelFlowPacket.TYPE, ChannelFlowPacket.CODEC, ISimplePacket.handle());
+    registrar.playToClient(CrackableCrackPacket.TYPE, CrackableCrackPacket.CODEC, ISimplePacket.handle());
   }
 }

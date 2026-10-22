@@ -1,36 +1,34 @@
 package knightminer.ceramics.network;
 
+import io.netty.buffer.ByteBuf;
+import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.NetworkEvent.Context;
-import slimeknights.mantle.client.SafeClientAccess;
-import slimeknights.mantle.network.packet.IThreadsafePacket;
-import slimeknights.mantle.util.BlockEntityHelper;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import slimeknights.mantle.network.BlockEntityPacket;
 
-public record CrackableCrackPacket(BlockPos pos, int cracks) implements IThreadsafePacket {
-	public CrackableCrackPacket(FriendlyByteBuf buffer) {
-		this(buffer.readBlockPos(), buffer.readVarInt());
+/** Packet used when a crackable block becomes more cracked. */
+public record CrackableCrackPacket(BlockPos pos, int cracks) implements BlockEntityPacket<ICrackableBlockEntity> {
+	public static final Type<CrackableCrackPacket> TYPE = new Type<>(Ceramics.getResource("crackable_crack"));
+	public static final StreamCodec<ByteBuf,CrackableCrackPacket> CODEC = StreamCodec.composite(
+		BlockPos.STREAM_CODEC, CrackableCrackPacket::pos,
+		ByteBufCodecs.VAR_INT, CrackableCrackPacket::cracks,
+		CrackableCrackPacket::new);
+
+	@Override
+	public Type<CrackableCrackPacket> type() {
+		return TYPE;
 	}
 
 	@Override
-	public void encode(FriendlyByteBuf buffer) {
-		buffer.writeBlockPos(pos);
-		buffer.writeVarInt(cracks);
+	public Class<ICrackableBlockEntity> blockEntityType() {
+		return ICrackableBlockEntity.class;
 	}
 
 	@Override
-	public void handleThreadsafe(Context context) {
-		HandleClient.handle(this);
-	}
-
-	private static class HandleClient {
-		private static void handle(CrackableCrackPacket packet) {
-			Level level = SafeClientAccess.getLevel();
-			if (BlockEntityHelper.isBlockLoaded(level, packet.pos) && level.getBlockEntity(packet.pos) instanceof ICrackableBlockEntity crackable) {
-				crackable.getCracksHandler().setCracks(packet.cracks);
-			}
-		}
+	public void handleBlockEntity(IPayloadContext context, ICrackableBlockEntity crackable) {
+		crackable.getCracksHandler().setCracks(cracks);
 	}
 }

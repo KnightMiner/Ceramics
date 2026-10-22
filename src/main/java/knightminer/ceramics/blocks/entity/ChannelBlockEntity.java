@@ -3,7 +3,6 @@ package knightminer.ceramics.blocks.entity;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.ChannelBlock;
 import knightminer.ceramics.blocks.ChannelBlock.ChannelConnection;
-import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.ChannelFlowPacket;
 import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
@@ -29,6 +28,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
+import slimeknights.mantle.network.PacketHelper;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import javax.annotation.Nonnull;
@@ -65,7 +65,7 @@ public class ChannelBlockEntity extends CrackableBlockEntity implements FluidUpd
 	private final byte[] isFlowing = new byte[5];
 
 	public ChannelBlockEntity(BlockPos pos, BlockState state, boolean crackable) {
-		super(Registration.CHANNEL_BLOCK_ENTITY.get(), pos, state));
+		super(Registration.CHANNEL_BLOCK_ENTITY.get(), pos, state);
 	}
 
 	public ChannelBlockEntity(BlockPos pos, BlockState state) {
@@ -242,7 +242,7 @@ public class ChannelBlockEntity extends CrackableBlockEntity implements FluidUpd
 		isFlowing[index] = (byte)(flowing ? 2 : 0);
 
 		// send packet to client if it changed
-		if(wasFlowing != flowing && level != null && !level.isClientSide) {
+		if(wasFlowing != flowing) {
 			syncFlowToClient(side, flowing);
 		}
 	}
@@ -301,7 +301,9 @@ public class ChannelBlockEntity extends CrackableBlockEntity implements FluidUpd
 	 * @param flowing  Flowing state to sync
 	 */
 	private void syncFlowToClient(Direction side, boolean flowing) {
-		CeramicsNetwork.getInstance().sendToClientsAround(new ChannelFlowPacket(worldPosition, side, flowing), level, worldPosition);
+		if (level != null && !level.isClientSide) {
+			PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new ChannelFlowPacket(worldPosition, side, flowing));
+		}
 	}
 
 
@@ -406,7 +408,7 @@ public class ChannelBlockEntity extends CrackableBlockEntity implements FluidUpd
 	 */
 	public void sendFluidUpdate() {
 		if (level != null && !level.isClientSide) {
-			CeramicsNetwork.getInstance().sendToClientsAround(new FluidUpdatePacket(worldPosition, getFluid(), false), level, worldPosition);
+			PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new FluidUpdatePacket(worldPosition, getFluid(), false));
 		}
 	}
 

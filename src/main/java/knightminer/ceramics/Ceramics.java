@@ -21,6 +21,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,7 +36,7 @@ public class Ceramics {
 	public Ceramics(IEventBus modEventBus) {
 	  Registration.init(modEventBus);
 		CeramicsTags.init();
-		CeramicsNetwork.init();
+		modEventBus.addListener(RegisterPayloadHandlersEvent.class, CeramicsNetwork::register);
 		modEventBus.addListener(this::gatherData);
 	}
 

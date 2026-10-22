@@ -5,7 +5,6 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.items.BaseClayBucketItem;
-import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.FluidUpdatePacket;
 import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
 import knightminer.ceramics.util.tank.CisternTank;
@@ -27,6 +26,7 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction;
 import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
+import slimeknights.mantle.network.PacketHelper;
 import slimeknights.mantle.util.WeakConsumerWrapper;
 
 import javax.annotation.Nonnull;
@@ -391,7 +391,7 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
    */
   public void onTankChanged(boolean shouldRefreshCapabilities) {
     if(level != null && !level.isClientSide) {
-      CeramicsNetwork.getInstance().sendToClientsAround(new FluidUpdatePacket(worldPosition, tank.getFluid(), shouldRefreshCapabilities), level, worldPosition);
+      PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new FluidUpdatePacket(worldPosition, tank.getFluid(), shouldRefreshCapabilities));
     }
   }
 

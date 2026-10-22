@@ -2,7 +2,6 @@ package knightminer.ceramics.blocks.entity;
 
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.items.BaseClayBucketItem;
-import knightminer.ceramics.network.CeramicsNetwork;
 import knightminer.ceramics.network.CrackableCrackPacket;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.core.BlockPos;
@@ -26,6 +25,7 @@ import net.neoforged.neoforge.client.model.data.ModelProperty;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import slimeknights.mantle.block.entity.MantleBlockEntity;
+import slimeknights.mantle.network.PacketHelper;
 
 /** Common logic for all crackable fluid blocks */
 public class CrackableBlockEntityHandler {
@@ -133,7 +133,7 @@ public class CrackableBlockEntityHandler {
 					BlockState state = parent.getBlockState();
 					world.sendBlockUpdated(pos, state, state, 3);
 				} else {
-					CeramicsNetwork.getInstance().sendToClientsAround(new CrackableCrackPacket(pos, this.cracks), world, pos);
+					PacketHelper.sendToPlayersTrackingPosition(world, pos, new CrackableCrackPacket(pos, this.cracks));
 				}
 			}
 		}
