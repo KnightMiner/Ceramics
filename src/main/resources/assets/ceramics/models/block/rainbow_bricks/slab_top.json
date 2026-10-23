@@ -1,8 +1,6 @@
 {
-    "parent": "block/slab_top",
-    "textures": {
-        "bottom": "ceramics:block/rainbow_bricks",
-        "top": "ceramics:block/rainbow_bricks",
-        "side": "ceramics:block/rainbow_bricks"
-    }
+  "parent": "ceramics:block/template/slab_top",
+  "textures": {
+    "texture": "ceramics:block/rainbow_bricks"
+  }
 }

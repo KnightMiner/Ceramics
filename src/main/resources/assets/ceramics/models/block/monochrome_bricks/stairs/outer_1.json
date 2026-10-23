@@ -1,8 +1,6 @@
 {
-    "parent": "block/outer_stairs",
-    "textures": {
-        "bottom": "ceramics:block/monochrome_bricks/1",
-        "top": "ceramics:block/monochrome_bricks/1",
-        "side": "ceramics:block/monochrome_bricks/1"
-    }
+  "parent": "ceramics:block/template/stairs_outer",
+  "textures": {
+    "texture": "ceramics:block/monochrome_bricks/1"
+  }
 }

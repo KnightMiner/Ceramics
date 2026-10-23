@@ -1,8 +1,6 @@
 {
-    "parent": "block/slab",
-    "textures": {
-        "bottom": "ceramics:block/porcelain_bricks",
-        "top": "ceramics:block/porcelain_bricks",
-        "side": "ceramics:block/porcelain_bricks"
-    }
+  "parent": "ceramics:block/template/slab_bottom",
+  "textures": {
+    "texture": "ceramics:block/porcelain_bricks"
+  }
 }

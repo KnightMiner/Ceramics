@@ -1,8 +1,6 @@
 {
-    "parent": "block/slab",
-    "textures": {
-        "bottom": "ceramics:block/monochrome_bricks/4",
-        "top": "ceramics:block/monochrome_bricks/4",
-        "side": "ceramics:block/monochrome_bricks/4"
-    }
+  "parent": "ceramics:block/template/slab_bottom",
+  "textures": {
+    "texture": "ceramics:block/monochrome_bricks/4"
+  }
 }

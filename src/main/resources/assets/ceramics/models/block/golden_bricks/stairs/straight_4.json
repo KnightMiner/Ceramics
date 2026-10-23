@@ -1,8 +1,6 @@
 {
-    "parent": "block/stairs",
-    "textures": {
-        "bottom": "ceramics:block/golden_bricks/4",
-        "top": "ceramics:block/golden_bricks/4",
-        "side": "ceramics:block/golden_bricks/4"
-    }
+  "parent": "ceramics:block/template/stairs_straight",
+  "textures": {
+    "texture": "ceramics:block/golden_bricks/4"
+  }
 }

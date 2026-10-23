@@ -1,8 +1,6 @@
 {
-    "parent": "block/inner_stairs",
-    "textures": {
-        "bottom": "ceramics:block/marine_bricks/2",
-        "top": "ceramics:block/marine_bricks/2",
-        "side": "ceramics:block/marine_bricks/2"
-    }
+  "parent": "ceramics:block/template/stairs_inner",
+  "textures": {
+    "texture": "ceramics:block/marine_bricks/2"
+  }
 }
