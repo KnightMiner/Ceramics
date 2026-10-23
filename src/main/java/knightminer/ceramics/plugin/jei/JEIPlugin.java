@@ -21,7 +21,6 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
-import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
@@ -38,10 +37,8 @@ import slimeknights.mantle.recipe.MultiNamedRecipe;
 import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.util.RegistryHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 @SuppressWarnings("unused")
 @JeiPlugin
@@ -147,18 +144,5 @@ public class JEIPlugin implements IModPlugin {
   @Override
   public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
     registration.addRecipeCatalyst(new ItemStack(Registration.KILN), KilnCategory.TYPE, RecipeTypes.FUELING);
-  }
-
-  @Override
-  public void onRuntimeAvailable(IJeiRuntime runtime) {
-    // add buckets to the ingredient list since JEI fills that list too soon
-    // TODO: is this still needed?
-    List<ItemStack> buckets = new ArrayList<>();
-    Consumer<ItemStack> consumer = buckets::add;
-    Registration.FLUID_CLAY_BUCKET.get().addVariants(consumer);
-    Registration.CRACKED_FLUID_CLAY_BUCKET.get().addVariants(consumer);
-    Registration.SOLID_CLAY_BUCKET.get().addVariants(consumer);
-    Registration.CRACKED_SOLID_CLAY_BUCKET.get().addVariants(consumer);
-    runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, buckets);
   }
 }
