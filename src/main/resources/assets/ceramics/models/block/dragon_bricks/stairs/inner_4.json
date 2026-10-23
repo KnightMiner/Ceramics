@@ -1,8 +1,6 @@
 {
-    "parent": "block/inner_stairs",
-    "textures": {
-        "bottom": "ceramics:block/dragon_bricks/4",
-        "top": "ceramics:block/dragon_bricks/4",
-        "side": "ceramics:block/dragon_bricks/4"
-    }
+  "parent": "ceramics:block/dragon_bricks/stairs/inner",
+  "textures": {
+    "texture": "ceramics:block/dragon_bricks/4"
+  }
 }

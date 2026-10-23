@@ -1,0 +1,9 @@
+{
+  "loader": "mantle:colored_block",
+  "parent": "ceramics:block/template/stairs_inner",
+  "colors": [
+    { "luminosity": 7 },
+    { "luminosity": 7 },
+    { "luminosity": 7 }
+  ]
+}
