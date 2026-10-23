@@ -139,6 +139,7 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
       case POWERED -> {
         faucetState = FaucetState.OFF;
         syncToClient(FluidStack.EMPTY, false);
+        setChangedFast();
       }
       // pouring means we stop pouring as soon as possible
       case POURING -> stopPouring = true;
@@ -160,6 +161,7 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
         faucetState = FaucetState.OFF;
         syncToClient(FluidStack.EMPTY, false);
       }
+      setChangedFast();
     }
   }
 
@@ -173,6 +175,7 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
       // if powered and we can transfer, schedule transfer for next tick
     } else if (faucetState == FaucetState.POWERED && doTransfer(false)) {
       faucetState = FaucetState.POURING;
+      setChangedFast();
       return;
     }
 
@@ -230,11 +233,14 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
 
       // if powered, keep faucet running
       if (lastRedstoneState) {
-        // sync if either we were not pouring before (particle effects), or if the client thinks we have fluid
-        if (execute && (faucetState == FaucetState.OFF || !renderFluid.isEmpty())) {
-          syncToClient(FluidStack.EMPTY, true);
+        if (execute) {
+          // sync if either we were not pouring before (particle effects), or if the client thinks we have fluid
+          if (faucetState == FaucetState.OFF || !renderFluid.isEmpty()) {
+            syncToClient(FluidStack.EMPTY, true);
+          }
+          faucetState = FaucetState.POWERED;
+          setChangedFast();
         }
-        faucetState = FaucetState.POWERED;
         return false;
       }
     }
@@ -271,6 +277,7 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
         this.drained.shrink(filled);
         fillStack.setAmount(filled);
         output.fill(fillStack, IFluidHandler.FluidAction.EXECUTE);
+        setChangedFast();
       }
     }
     else {
@@ -285,10 +292,11 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
   private void reset() {
     stopPouring = false;
     drained = FluidStack.EMPTY;
-    if (faucetState != FaucetState.OFF || !FluidStack.isSameFluidSameComponents(renderFluid, drained)) {
+    if (faucetState != FaucetState.OFF || !renderFluid.isEmpty()) {
       faucetState = FaucetState.OFF;
       syncToClient(FluidStack.EMPTY, false);
     }
+    setChangedFast();
   }
 
 
@@ -302,6 +310,7 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
   private void syncToClient(FluidStack fluid, boolean isPouring) {
     renderFluid = fluid.copy();
     if (level != null && !level.isClientSide) {
+      setChangedFast();
       PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new FluidUpdatePacket(worldPosition, fluid, isPouring));
     }
   }

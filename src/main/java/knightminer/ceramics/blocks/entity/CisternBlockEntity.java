@@ -374,6 +374,7 @@ public class CisternBlockEntity extends CrackableBlockEntity {
   /** Called when the tank contents change */
   public void onTankChanged(boolean refreshHandler) {
     if (level != null && !level.isClientSide) {
+      setChangedFast();
       PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new CisternFluidUpdatePacket(worldPosition, tank.getFluid(), refreshHandler, extensions));
     }
   }
@@ -381,6 +382,7 @@ public class CisternBlockEntity extends CrackableBlockEntity {
   /** Called when the size changes without a tank contents change */
   public void onSizeChange() {
     if (level != null && !level.isClientSide) {
+      setChangedFast();
       PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new CisternSizeUpdatePacket(worldPosition, extensions));
     }
   }
@@ -440,10 +442,5 @@ public class CisternBlockEntity extends CrackableBlockEntity {
       tags.put(TAG_FLUID, tank.writeToNBT(registries));
     }
     tags.putInt(TAG_EXTENSIONS, extensions);
-  }
-
-  @Override
-  public void saveAdditional(CompoundTag tags, HolderLookup.Provider registries) {
-    super.saveAdditional(tags, registries);
   }
 }

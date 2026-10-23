@@ -244,6 +244,7 @@ public class ChannelBlockEntity extends CrackableBlockEntity implements FluidUpd
 	 */
 	private void syncFlowToClient(Direction side, boolean flowing) {
 		if (level != null && !level.isClientSide) {
+			setChangedFast();
 			PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new ChannelFlowPacket(worldPosition, side, flowing));
 		}
 	}

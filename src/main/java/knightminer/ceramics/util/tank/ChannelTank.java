@@ -68,6 +68,11 @@ public class ChannelTank extends FluidTank {
 	}
 
 	@Override
+	protected void onContentsChanged() {
+		parent.setChangedFast();
+	}
+
+	@Override
 	public FluidTank readFromNBT(HolderLookup.Provider registries, CompoundTag nbt) {
 		this.locked = nbt.getInt(TAG_LOCKED);
 		super.readFromNBT(registries, nbt);
