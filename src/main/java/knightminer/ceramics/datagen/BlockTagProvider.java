@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.registries.DeferredBlock;
 import slimeknights.mantle.datagen.MantleTags;
 import slimeknights.mantle.registration.object.EnumObject;
-import slimeknights.mantle.registration.object.ItemObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
 import java.util.concurrent.CompletableFuture;
@@ -93,6 +93,10 @@ public class BlockTagProvider extends BlockTagsProvider {
     Registration.PORCELAIN_CISTERN.forEach(block -> porcelainCisterns.add(block));
 
     this.tag(MantleTags.Blocks.ATTACHED_GAUGES).add(Registration.TERRACOTTA_GAUGE.get(), Registration.PORCELAIN_GAUGE.get());
+    this.tag(MantleTags.Blocks.HIDES_GAUGE_AMOUNT).add(
+      Registration.TERRACOTTA_FAUCET.get(), Registration.PORCELAIN_FAUCET.get(),
+      Registration.TERRACOTTA_CHANNEL.get(), Registration.PORCELAIN_CHANNEL.get()
+    );
 
     // pickaxe
     addTag(BlockTags.MINEABLE_WITH_PICKAXE, Registration.PORCELAIN_BLOCK, Registration.RAINBOW_PORCELAIN);
@@ -114,14 +118,14 @@ public class BlockTagProvider extends BlockTagsProvider {
     addTag(BlockTags.MINEABLE_WITH_SHOVEL, Registration.CLAY_CHANNEL, Registration.UNFIRED_CHANNEL);
   }
 
-  @SafeVarargs
-  private <T extends Block> void addTag(TagKey<Block> tag, ItemObject<T>... blocks) {
+  private void addTag(TagKey<Block> tag, DeferredBlock<?>... blocks) {
     IntrinsicTagAppender<Block> appender = this.tag(tag);
-    for (ItemObject<T> block : blocks) {
+    for (DeferredBlock<?> block : blocks) {
       appender.add(block.get());
     }
   }
 
+  @SuppressWarnings("SameParameterValue")
   @SafeVarargs
   private<T extends Block> void addTag(TagKey<Block> tag, EnumObject<?, T>... blocks) {
     IntrinsicTagAppender<Block> appender = this.tag(tag);

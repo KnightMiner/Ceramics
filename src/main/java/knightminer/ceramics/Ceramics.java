@@ -1,6 +1,5 @@
 package knightminer.ceramics;
 
-import knightminer.ceramics.datagen.BlockEntityTagProvider;
 import knightminer.ceramics.datagen.BlockTagProvider;
 import knightminer.ceramics.datagen.FluidTagProvider;
 import knightminer.ceramics.datagen.ItemTagProvider;
@@ -49,7 +48,6 @@ public class Ceramics {
 
 		BlockTagProvider blockTags = new BlockTagProvider(packOutput, lookupProvider, helper);
 		gen.addProvider(server, blockTags);
-		gen.addProvider(server, new BlockEntityTagProvider(packOutput, lookupProvider, helper));
 		gen.addProvider(server, new ItemTagProvider(packOutput, lookupProvider, blockTags.contentsGetter(), helper));
 		gen.addProvider(server, new FluidTagProvider(packOutput, lookupProvider, helper));
 		gen.addProvider(server, new RecipeProvider(packOutput, lookupProvider));
