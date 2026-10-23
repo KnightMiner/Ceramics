@@ -7,12 +7,9 @@ import knightminer.ceramics.client.renderer.CisternBlockEntityRenderer;
 import knightminer.ceramics.client.renderer.CisternFluids;
 import knightminer.ceramics.client.renderer.FaucetBlockEntityRenderer;
 import knightminer.ceramics.client.screen.KilnScreen;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.ModelEvent.RegisterGeometryLoaders;
 import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
@@ -27,18 +24,6 @@ public class ClientEvents {
     FaucetFluid.initialize(event);
     ChannelFluids.initialize(event);
     event.registerReloadListener(CisternFluids.REGISTRY);
-  }
-
-  @SubscribeEvent
-  static void setupClient(FMLClientSetupEvent event) {
-    RenderType cutout = RenderType.cutout();
-    // TODO: move to JSON
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), cutout);
-    ItemBlockRenderTypes.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), cutout);
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CISTERN.get(), cutout);
-    Registration.COLORED_CISTERN.forEach(cistern -> ItemBlockRenderTypes.setRenderLayer(cistern, cutout));
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
   }
 
   @SubscribeEvent
