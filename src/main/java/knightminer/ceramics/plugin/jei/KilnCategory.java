@@ -122,9 +122,9 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
     if (cookTime > 0) {
       int cookTimeSeconds = cookTime / 20;
       Component timeString = Component.translatable("gui.jei.category.smelting.time.seconds", cookTimeSeconds);
-      builder.addText(timeString, getWidth() - 20, 10)
-        .setPosition(0, 0, getWidth(), getHeight(), HorizontalAlignment.RIGHT, VerticalAlignment.BOTTOM)
-        .setTextAlignment(HorizontalAlignment.RIGHT)
+      builder.addText(timeString, getWidth() - 42, 10)
+        .setPosition(0, 0, getWidth(), getHeight(), HorizontalAlignment.CENTER, VerticalAlignment.BOTTOM)
+        .setTextAlignment(HorizontalAlignment.CENTER)
         .setTextAlignment(VerticalAlignment.BOTTOM)
         .setColor(0xFF808080);
     }
