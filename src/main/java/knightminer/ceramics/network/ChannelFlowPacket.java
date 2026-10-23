@@ -8,9 +8,11 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.network.BlockEntityPacket;
 
 /** Packet for when the flowing state changes on a channel side */
+@Internal
 public record ChannelFlowPacket(BlockPos pos, Direction side, boolean flow) implements BlockEntityPacket<ChannelBlockEntity> {
 	public static final Type<ChannelFlowPacket> TYPE = new Type<>(Ceramics.getResource("channel_flow"));
 	public static final StreamCodec<RegistryFriendlyByteBuf,ChannelFlowPacket> CODEC = StreamCodec.composite(

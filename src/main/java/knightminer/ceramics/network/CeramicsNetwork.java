@@ -25,6 +25,8 @@ public class CeramicsNetwork {
     PayloadRegistrar registrar = event.registrar(VERSION);
 
     registrar.playToClient(FluidUpdatePacket.TYPE, FluidUpdatePacket.CODEC, ISimplePacket.handle());
+    registrar.playToClient(CisternFluidUpdatePacket.TYPE, CisternFluidUpdatePacket.CODEC, ISimplePacket.handle());
+    registrar.playToClient(CisternSizeUpdatePacket.TYPE, CisternSizeUpdatePacket.CODEC, ISimplePacket.handle());
     registrar.playToClient(ChannelFlowPacket.TYPE, ChannelFlowPacket.CODEC, ISimplePacket.handle());
     registrar.playToClient(CrackableCrackPacket.TYPE, CrackableCrackPacket.CODEC, ISimplePacket.handle());
   }

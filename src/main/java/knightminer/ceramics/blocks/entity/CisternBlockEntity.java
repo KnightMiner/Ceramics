@@ -5,13 +5,14 @@ import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.CisternBlock;
 import knightminer.ceramics.blocks.entity.CrackableBlockEntityHandler.ICrackableBlockEntity;
 import knightminer.ceramics.items.BaseClayBucketItem;
-import knightminer.ceramics.network.FluidUpdatePacket;
-import knightminer.ceramics.network.FluidUpdatePacket.FluidUpdater;
+import knightminer.ceramics.network.CisternFluidUpdatePacket;
+import knightminer.ceramics.network.CisternSizeUpdatePacket;
 import knightminer.ceramics.util.tank.CisternTank;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,7 +25,7 @@ import slimeknights.mantle.network.PacketHelper;
 
 import javax.annotation.Nullable;
 
-public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpdater {
+public class CisternBlockEntity extends CrackableBlockEntity {
   /** Max capacity per cistern block */
   private static final String TAG_FLUID = "fluid";
   private static final String TAG_EXTENSIONS = "extensions";
@@ -102,13 +103,23 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
   }
 
   /** Invalidates capabilities for all extensions starting from the given index */
-  private void invalidateExtensions() {
-    if (level != null) {
-      for (int i = 1; i < extensions; i++) {
-        if (level.getBlockEntity(worldPosition.above(i)) instanceof CisternBlockEntity be) {
-          be.invalidateHandler();
+  private static void invalidateExtensions(Level level, BlockPos pos, int start, int end, boolean clearContents) {
+    for (int i = start; i <= end; i++) {
+      if (level.getBlockEntity(pos.above(i)) instanceof CisternBlockEntity be) {
+        be.invalidateHandler();
+        // if requested, clear out tank and extensions. Only used client side
+        if (clearContents && be.getBlockState().getValue(CisternBlock.EXTENSION)) {
+          be.tank.setFluid(FluidStack.EMPTY);
+          be.extensions = 0;
         }
       }
+    }
+  }
+
+  /** Invalidates capabilities for all extensions starting from the given index */
+  private void invalidateExtensions() {
+    if (level != null) {
+      invalidateExtensions(level, worldPosition, 1, extensions, false);
     }
   }
 
@@ -147,13 +158,16 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
   /**
    * Attempts to merge a cistern at the given position with this one
    * @param checkPos  Position to check
+   * @return true if it merged with the above cistern.
    */
-  public void tryMerge(BlockPos checkPos) {
+  public boolean tryMerge(BlockPos checkPos) {
     assert level != null;
     // check if there is another cistern above the new one that should also be connected
     if (level.getBlockState(checkPos).is(getBlockState().getBlock()) && level.getBlockEntity(checkPos) instanceof CisternBlockEntity cistern) {
       cistern.makeExtension(this);
+      return true;
     }
+    return false;
   }
 
   /**
@@ -167,9 +181,10 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
     int newExtensions = extPos.getY() - worldPosition.getY();
     if (newExtensions > extensions) {
       extensions = newExtensions;
-
       // check if there is another cistern above the new one that should also be connected
-      tryMerge(extPos.above());
+      if (!tryMerge(extPos.above())) {
+        onSizeChange();
+      }
     }
   }
 
@@ -194,7 +209,9 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
       // our new extensions simply one less than the removed index
       extensions = removed - 1;
       // shrink the fluid if needed
-      tank.validateAmount();
+      if (!tank.validateAmount()) {
+        onSizeChange();
+      }
     }
   }
 
@@ -237,7 +254,12 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
         BlockEntity te = level.getBlockEntity(worldPosition.below());
         if (te instanceof CisternBlockEntity parent) {
           // fetch handler from the parent, which will fetch from its parent and so on
-          fluidHandler = parent.getFluidHandler();
+          IFluidHandler parentHandler = parent.getFluidHandler();
+          // don't cache an empty parent
+          if (parentHandler == EmptyFluidHandler.INSTANCE) {
+            return EmptyFluidHandler.INSTANCE;
+          }
+          fluidHandler = parentHandler;
           // render index is the render index of the tank below plus 1, nifty trick
           heightIndex = parent.getHeightIndex() + 1;
         } else {
@@ -287,14 +309,13 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
     // extra data from parent
     this.extensions = extensions;
     tank.setFluid(fluid);
-    // notify client and any listening blocks of changes
-    onTankChanged(true);
-    heightIndex = 0;
     // update block state in world
     level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CisternBlock.EXTENSION, false));
     invalidateHandler();
     // invalidate all our new extensions so they parent to us
     invalidateExtensions();
+    // notify client of changes
+    onTankChanged(true);
   }
 
   /**
@@ -313,8 +334,12 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
    */
   protected void mergeCisterns(FluidStack fluid, int newExtensions) {
     extensions += newExtensions;
+    // if given a new fluid, fill it into the new taller tank
     if (!fluid.isEmpty()) {
       tank.fill(fluid, FluidAction.EXECUTE);
+    } else {
+      // otherwise just update size client side
+      onSizeChange();
     }
   }
 
@@ -335,53 +360,58 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
 
       // invalidate ourself
       tank.setFluid(FluidStack.EMPTY);
-      onTankChanged(true);
       invalidateHandler();
       // invalidate everyone above - they have a new parent
       invalidateExtensions();
       extensions = 0;
+      // no need to sync, the parent took care of it
     }
   }
 
 
   /* Networking */
 
-  /**
-   * Called when the tank contents change
-   */
-  public void onTankChanged(boolean shouldRefreshCapabilities) {
+  /** Called when the tank contents change */
+  public void onTankChanged(boolean refreshHandler) {
     if (level != null && !level.isClientSide) {
-      PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new FluidUpdatePacket(worldPosition, tank.getFluid(), shouldRefreshCapabilities));
+      PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new CisternFluidUpdatePacket(worldPosition, tank.getFluid(), refreshHandler, extensions));
+    }
+  }
+
+  /** Called when the size changes without a tank contents change */
+  public void onSizeChange() {
+    if (level != null && !level.isClientSide) {
+      PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new CisternSizeUpdatePacket(worldPosition, extensions));
     }
   }
 
   /**
    * Called client side to update the tank fluid
-   * @param fluid                      New fluid
-   * @param refreshHandlers  If true, capability handlers should be invalidated. Typically, means the block was changed from extension to base
+   *
+   * @param fluid          New fluid
+   * @param refreshHandler If true, invalidates our handler
+   * @param extensions     Number of extensions in the serverside tank
    */
-  @Override
-  public void updateFluid(FluidStack fluid, boolean refreshHandlers) {
+  public void updateFluid(FluidStack fluid, boolean refreshHandler, int extensions) {
     tank.setFluid(fluid);
-    if (refreshHandlers) {
+    if (refreshHandler) {
       invalidateHandler();
-      // cannot use invalidateExtensions as that number is not present client side
-      if (level != null) {
-        Block block = getBlockState().getBlock();
-        int max = level.getMaxBuildHeight();
-        for (int i = 1; i < max; i++) {
-          BlockPos pos = worldPosition.above(i);
-          BlockState state = level.getBlockState(pos);
-          // if its an extension, need to invaliate it
-          if (state.is(block) && state.getValue(CisternBlock.EXTENSION)) {
-            if (level.getBlockEntity(pos) instanceof CisternBlockEntity cistern) {
-              cistern.invalidateHandler();
-            }
-          } else {
-            // not an extension? that is the end of the tower
-            break;
-          }
-        }
+    }
+    updateSize(extensions);
+  }
+
+  /**
+   * Called client side to update the tank size
+   * @param extensions  Number of extensions in the serverside tank
+   */
+  public void updateSize(int extensions) {
+    if (level != null && this.extensions != extensions) {
+      int oldExtensions = this.extensions;
+      this.extensions = extensions;
+      // if we added new extensions, refresh them
+      // no need to update if we lost extensions, those will be handled by a separate packet
+      if (oldExtensions < extensions) {
+        invalidateExtensions(level, worldPosition, oldExtensions, extensions, true);
       }
     }
   }
@@ -409,11 +439,11 @@ public class CisternBlockEntity extends CrackableBlockEntity implements FluidUpd
     if (tank.getFluidAmount() > 0) {
       tags.put(TAG_FLUID, tank.writeToNBT(registries));
     }
+    tags.putInt(TAG_EXTENSIONS, extensions);
   }
 
   @Override
   public void saveAdditional(CompoundTag tags, HolderLookup.Provider registries) {
     super.saveAdditional(tags, registries);
-    tags.putInt(TAG_EXTENSIONS, extensions);
   }
 }
