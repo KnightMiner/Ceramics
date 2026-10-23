@@ -20,11 +20,14 @@ import net.minecraft.world.item.ItemStack;
 import slimeknights.mantle.client.SafeClientAccess;
 import slimeknights.mantle.recipe.NamedRecipe;
 
+import java.util.List;
 import java.util.Objects;
 
 /** Category to show kilns in JEI. Basically a copy of the vanilla furnace category */
 public class KilnCategory extends AbstractRecipeCategory<NamedRecipe<KilnRecipe>> {
   static final RecipeType<NamedRecipe<KilnRecipe>> TYPE = new RecipeType<>(Ceramics.getResource("kiln"), NamedRecipe.<KilnRecipe>recipeClass());
+  /** List of fuels for the fuel slot. Will be an empty list during initial lookup. */
+  static List<ItemStack> FUELS = List.of();
   // slots
   static final int INPUT_SLOT = 0;
   static final int FUEL_SLOT = 1;
@@ -48,7 +51,8 @@ public class KilnCategory extends AbstractRecipeCategory<NamedRecipe<KilnRecipe>
       .addIngredients(recipe.getInput());
     // fuel
     builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 1, 37)
-      .setStandardSlotBackground();
+      .setStandardSlotBackground()
+      .addItemStacks(FUELS);
     // output
     builder.addOutputSlot(61, 19)
       .setOutputSlotBackground()
