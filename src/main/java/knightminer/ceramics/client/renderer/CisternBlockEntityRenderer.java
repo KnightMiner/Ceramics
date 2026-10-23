@@ -13,7 +13,6 @@ import net.minecraft.core.Direction.Plane;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.templates.EmptyFluidHandler;
 import org.joml.Vector3f;
 import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
@@ -27,9 +26,9 @@ public class CisternBlockEntityRenderer implements BlockEntityRenderer<CisternBl
 
   @Override
   public void render(CisternBlockEntity tileEntity, float partialTicks, PoseStack matrices, MultiBufferSource buffer, int light, int combinedOverlay) {
-    FluidStack fluid = tileEntity.getPublicHandler().orElse(EmptyFluidHandler.INSTANCE).getFluidInTank(0);
+    FluidStack fluid = tileEntity.getFluidHandler().getFluidInTank(0);
     if (!fluid.isEmpty()) {
-      int renderIndex = tileEntity.getRenderIndex();
+      int renderIndex = tileEntity.getHeightIndex();
       // capacity for gives us the minimum amount to start rendering in this segement
       // render nothing beyond the base capacity
       int amount = fluid.getAmount() - tileEntity.capacityFor(renderIndex);
