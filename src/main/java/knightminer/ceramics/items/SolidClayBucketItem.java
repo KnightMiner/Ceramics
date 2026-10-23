@@ -118,9 +118,9 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 			ResourceLocation location = Loadables.BLOCK.getKey(block);
 			String blockKey = String.format("%s.%s.%s", key, location.getNamespace(), location.getPath());
 			if (TranslationHelper.canTranslate(blockKey)) {
-				component = Component.translatable(key + ".filled", Component.translatable(block.getDescriptionId()));
-			} else {
 				component = Component.translatable(blockKey);
+			} else {
+				component = Component.translatable(key + ".filled", Component.translatable(block.getDescriptionId()));
 			}
 		}
 		// display name in red

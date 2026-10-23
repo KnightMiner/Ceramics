@@ -218,9 +218,9 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 		String fluidKey = String.format("%s.%s.%s", key, location.getNamespace(), location.getPath());
 		MutableComponent component;
 		if (TranslationHelper.canTranslate(fluidKey)) {
-			component = Component.translatable(key + ".filled", new FluidStack(fluid, FluidType.BUCKET_VOLUME).getHoverName());
-		} else {
 			component = Component.translatable(fluidKey);
+		} else {
+			component = Component.translatable(key + ".filled", new FluidStack(fluid, FluidType.BUCKET_VOLUME).getHoverName());
 		}
 		// display name in red
 		return component.withStyle(ChatFormatting.RED);
