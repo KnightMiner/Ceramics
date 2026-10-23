@@ -21,6 +21,7 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import mezz.jei.api.registration.ISubtypeRegistration;
+import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
@@ -122,5 +123,11 @@ public class JEIPlugin implements IModPlugin {
   @Override
   public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
     registration.addRecipeCatalyst(new ItemStack(Registration.KILN), KilnCategory.TYPE, RecipeTypes.FUELING);
+  }
+
+  @Override
+  public void onRuntimeAvailable(IJeiRuntime runtime) {
+    // fetch the JEI fuel list to show in the kiln category fuel slot
+    KilnCategory.FUELS = runtime.getRecipeManager().createRecipeLookup(RecipeTypes.FUELING).includeHidden().get().flatMap(r -> r.getInputs().stream()).toList();
   }
 }
