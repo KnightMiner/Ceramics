@@ -1,6 +1,26 @@
 {
-    "parent": "block/template_wall_side",
-    "textures": {
-        "wall": "ceramics:block/lava_bricks"
+  "parent": "ceramics:block/lava_bricks/base",
+  "elements": [
+    { "from": [ 5, 0, 0 ],
+      "to": [ 11, 14, 8 ],
+      "faces": {
+        "down":  { "texture": "#lava", "cullface": "down" },
+        "up":    { "texture": "#lava" },
+        "north": { "texture": "#lava", "cullface": "north" },
+        "west":  { "texture": "#lava" },
+        "east":  { "texture": "#lava" }
+      },
+      "forge_data": { "block_light": 14 }
+    },
+    { "from": [ 5, 0, 0 ],
+      "to": [ 11, 14, 8 ],
+      "faces": {
+        "down":  { "texture": "#overlay", "cullface": "down" },
+        "up":    { "texture": "#overlay" },
+        "north": { "texture": "#overlay", "cullface": "north" },
+        "west":  { "texture": "#overlay" },
+        "east":  { "texture": "#overlay" }
+      }
     }
+  ]
 }

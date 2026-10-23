@@ -1,0 +1,9 @@
+{
+  "parent": "block/block",
+  "render_type": "cutout",
+  "textures": {
+    "particle": "ceramics:block/lava_bricks",
+    "lava":     "ceramics:block/lava_bricks",
+    "overlay":  "ceramics:block/lava_bricks_overlay"
+  }
+}
