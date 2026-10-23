@@ -52,7 +52,7 @@ public class KilnRecipeBuilder extends CookingRecipeBuilder<KilnRecipeBuilder> {
     if (ingredient == Ingredient.EMPTY) {
       throw new IllegalStateException("Ingredient must be set");
     }
-    output.accept(id, new KilnRecipe(group, category, ingredient, result, experience, cookingTime), buildOptionalAdvancement(output, id, "cooking"));
+    output.accept(id, new KilnRecipe(group, category, ingredient, result, experience, cookingTime / 2), buildOptionalAdvancement(output, id, "cooking"));
     return this;
   }
 
