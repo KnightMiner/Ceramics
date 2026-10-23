@@ -1,6 +1,28 @@
 {
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "ceramics:block/lava_bricks"
+  "parent": "ceramics:block/lava_bricks/base",
+  "elements": [
+    { "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#lava", "cullface": "down"  },
+        "up":    { "texture": "#lava", "cullface": "up"    },
+        "north": { "texture": "#lava", "cullface": "north" },
+        "south": { "texture": "#lava", "cullface": "south" },
+        "west":  { "texture": "#lava", "cullface": "west"  },
+        "east":  { "texture": "#lava", "cullface": "east"  }
+      },
+      "neoforge_data": { "block_light": 14 }
+    },
+    { "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "down":  { "texture": "#overlay", "cullface": "down"  },
+        "up":    { "texture": "#overlay", "cullface": "up"    },
+        "north": { "texture": "#overlay", "cullface": "north" },
+        "south": { "texture": "#overlay", "cullface": "south" },
+        "west":  { "texture": "#overlay", "cullface": "west"  },
+        "east":  { "texture": "#overlay", "cullface": "east"  }
+      }
     }
+  ]
 }
