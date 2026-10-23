@@ -27,6 +27,7 @@ import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
 import knightminer.ceramics.util.EmptyFluidBucketCauldronInteraction;
 import knightminer.ceramics.util.EmptySolidBucketCauldronInteraction;
+import knightminer.ceramics.util.FluidClayBucketWrapper;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
@@ -62,12 +63,15 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -75,7 +79,9 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import slimeknights.mantle.block.GaugeBlock;
+import slimeknights.mantle.data.codec.MantleCodecs;
 import slimeknights.mantle.item.tooltip.BlockTooltipItem;
+import slimeknights.mantle.network.codec.MantleStreamCodecs;
 import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 import slimeknights.mantle.registration.deferred.BlockDeferredRegister;
 import slimeknights.mantle.registration.deferred.BlockEntityTypeDeferredRegister;
@@ -189,6 +195,11 @@ public class Registration {
   public static final DeferredItem<Item> PORCELAIN_BRICK = ITEMS.register("porcelain_brick");
 
   // tools
+  /** Fluid contents for the fluid clay bucket */
+  public static final DeferredHolder<DataComponentType<?>,DataComponentType<Fluid>> FLUID = DATA_COMPONENTS.register("fluid", () -> DataComponentType.<Fluid>builder().persistent(MantleCodecs.NON_EMPTY_FLUID).networkSynchronized(MantleStreamCodecs.FLUID).build());
+  /** Block contents for the solid clay bucket */
+  public static final DeferredHolder<DataComponentType<?>,DataComponentType<Block>> BLOCK = DATA_COMPONENTS.register("block", () -> DataComponentType.<Block>builder().persistent(MantleCodecs.NON_AIR_BLOCK).networkSynchronized(MantleStreamCodecs.BLOCK).build());
+
   public static final DeferredItem<Item> UNFIRED_CLAY_BUCKET;
   public static final DeferredItem<EmptyClayBucketItem> EMPTY_CLAY_BUCKET, CRACKED_EMPTY_CLAY_BUCKET;
   public static final DeferredItem<FluidClayBucketItem> FLUID_CLAY_BUCKET, CRACKED_FLUID_CLAY_BUCKET;
@@ -303,6 +314,17 @@ public class Registration {
   // ingredients
   public static final DeferredHolder<IngredientType<?>,IngredientType<CrackableIngredient>> CRACKABLE_INGREDIENT = INGREDIENTS.register("crackable", () -> new IngredientType<>(CrackableIngredient.CODEC, CrackableIngredient.STREAM_CODEC));
 
+
+  @SubscribeEvent
+  static void registerCapabilities(RegisterCapabilitiesEvent event) {
+    event.registerItem(Capabilities.FluidHandler.ITEM, (stack, context) -> new FluidClayBucketWrapper(stack),
+      EMPTY_CLAY_BUCKET, CRACKED_EMPTY_CLAY_BUCKET,
+      FLUID_CLAY_BUCKET, CRACKED_FLUID_CLAY_BUCKET
+    );
+    event.registerItem(Capabilities.FluidHandler.ITEM, SolidClayBucketItem.CAPABILITY_PROVIDER, SOLID_CLAY_BUCKET, CRACKED_SOLID_CLAY_BUCKET);
+    event.registerItem(Capabilities.FluidHandler.ITEM, MilkClayBucketItem.CAPABILITY_PROVIDER, MILK_CLAY_BUCKET, CRACKED_MILK_CLAY_BUCKET);
+  }
+
   @SubscribeEvent
   static void commonSetup(FMLCommonSetupEvent event) {
     SolidClayBucketItem.loadBucketableBlocks();
@@ -333,10 +355,10 @@ public class Registration {
         CauldronInteraction.LAVA.map().put(item.asItem(), interaction);
         CauldronInteraction.POWDER_SNOW.map().put(item.asItem(), interaction);
       };
-      addAll.accept(FLUID_CLAY_BUCKET,         new EmptyFluidBucketCauldronInteraction(FLUID_CLAY_BUCKET.get()));
-      addAll.accept(CRACKED_FLUID_CLAY_BUCKET, new EmptyFluidBucketCauldronInteraction(CRACKED_FLUID_CLAY_BUCKET.get()));
-      addAll.accept(SOLID_CLAY_BUCKET,         new EmptySolidBucketCauldronInteraction(SOLID_CLAY_BUCKET.get()));
-      addAll.accept(CRACKED_SOLID_CLAY_BUCKET, new EmptySolidBucketCauldronInteraction(CRACKED_SOLID_CLAY_BUCKET.get()));
+      addAll.accept(FLUID_CLAY_BUCKET,         EmptyFluidBucketCauldronInteraction.INSTANCE);
+      addAll.accept(CRACKED_FLUID_CLAY_BUCKET, EmptyFluidBucketCauldronInteraction.INSTANCE);
+      addAll.accept(SOLID_CLAY_BUCKET,         EmptySolidBucketCauldronInteraction.INSTANCE);
+      addAll.accept(CRACKED_SOLID_CLAY_BUCKET, EmptySolidBucketCauldronInteraction.INSTANCE);
     });
   }
 

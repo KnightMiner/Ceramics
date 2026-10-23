@@ -2,9 +2,11 @@ package knightminer.ceramics.items;
 
 import com.google.common.collect.ImmutableList;
 import knightminer.ceramics.Ceramics;
+import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -19,15 +21,15 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.common.ForgeI18n;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import slimeknights.mantle.data.loadable.Loadables;
-import slimeknights.mantle.item.ConstantFluidContainerWrapper;
+import slimeknights.mantle.item.ConstantItemFluidHandler;
 import slimeknights.mantle.recipe.helper.TagPreference;
 import slimeknights.mantle.util.RegistryHelper;
+import slimeknights.mantle.util.TranslationHelper;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -42,7 +44,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	/** Loads all bucketable blocks from the item registry */
 	public static void loadBucketableBlocks() {
 		ImmutableList.Builder<Block> builder = ImmutableList.builder();
-		for (Item item : ForgeRegistries.ITEMS) {
+		for (Item item : BuiltInRegistries.ITEM) {
 			if (item instanceof SolidBucketItem solidBucket) {
 				builder.add(solidBucket.getBlock());
 			}
@@ -50,24 +52,8 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 		BUCKETABLE_BLOCKS = builder.build();
 	}
 
-	/** Tag name for block in a bucket */
-	public static final String TAG_BLOCK = "block";
-
 	public SolidClayBucketItem(boolean isCracked, Properties props) {
 		super(isCracked, props);
-	}
-
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		// TODO: can this be extracted to JSON?
-		if (getBlock(stack) == Blocks.POWDER_SNOW) {
-			Optional<Fluid> optional = TagPreference.getPreference(CeramicsTags.Fluids.POWDERED_SNOW);
-			if (optional.isPresent()) {
-				return new ConstantFluidContainerWrapper(new FluidStack(optional.get(), FluidType.BUCKET_VOLUME), stack);
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -95,14 +81,8 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	 * @param stack  Bucket stack
 	 * @return  Block contained in the container, air if invalid
 	 */
-	public Block getBlock(ItemStack stack) {
-		CompoundTag tags = stack.getTag();
-		if(tags != null) {
-			Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(tags.getString(TAG_BLOCK)));
-			return block == null ? Blocks.AIR : block;
-		}
-
-		return Blocks.AIR;
+	public static Block getBlock(ItemStack stack) {
+		return stack.getOrDefault(Registration.BLOCK, Blocks.AIR);
 	}
 
 	/**
@@ -111,8 +91,9 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	 * @param block  BLock instance
 	 * @return  Modified stack
 	 */
-	protected static ItemStack setBlock(ItemStack stack, Block block) {
-		stack.getOrCreateTag().putString(TAG_BLOCK, Loadables.BLOCK.getString(block));
+	protected static ItemStack setBlock(ItemStack stack, Block block, DataComponentPatch components) {
+		stack.applyComponents(components.forget(FORGET));
+		stack.set(Registration.BLOCK, block);
 		return stack;
 	}
 
@@ -136,7 +117,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 			String key = this.getDescriptionId(stack);
 			ResourceLocation location = Loadables.BLOCK.getKey(block);
 			String blockKey = String.format("%s.%s.%s", key, location.getNamespace(), location.getPath());
-			if (ForgeI18n.getPattern(blockKey).equals(blockKey)) {
+			if (TranslationHelper.canTranslate(blockKey)) {
 				component = Component.translatable(key + ".filled", Component.translatable(block.getDescriptionId()));
 			} else {
 				component = Component.translatable(blockKey);
@@ -150,7 +131,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	public void addVariants(Consumer<ItemStack> consumer) {
 		for (Block block : BUCKETABLE_BLOCKS) {
 			if (isCracked == RegistryHelper.contains(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS, block)) {
-				consumer.accept(setBlock(new ItemStack(this), block));
+				consumer.accept(setBlock(new ItemStack(this), block, DataComponentPatch.EMPTY));
 			}
 		}
 	}
@@ -166,4 +147,22 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 		}
 		return Ceramics.MOD_ID;
 	}
+
+	/** Capability provider for solid bucket items */
+	public static final ICapabilityProvider<ItemStack, Void, IFluidHandlerItem> CAPABILITY_PROVIDER = new ICapabilityProvider<>() {
+		@Nullable
+		@Override
+		public IFluidHandlerItem getCapability(ItemStack stack, @Nullable Void context) {
+			// TODO: can this be extracted to JSON?
+			if (getBlock(stack) == Blocks.POWDER_SNOW) {
+				Optional<Fluid> optional = TagPreference.getPreference(CeramicsTags.Fluids.POWDERED_SNOW);
+				if (optional.isPresent()) {
+					FluidStack fluid = new FluidStack(optional.get(), FluidType.BUCKET_VOLUME);
+					fluid.applyComponents(stack.getComponentsPatch().forget(FORGET));
+					return new ConstantItemFluidHandler(fluid, stack);
+				}
+			}
+			return null;
+		}
+	};
 }

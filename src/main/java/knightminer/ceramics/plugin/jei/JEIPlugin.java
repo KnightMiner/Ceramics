@@ -3,7 +3,6 @@ package knightminer.ceramics.plugin.jei;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.client.screen.KilnScreen;
-import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.items.FluidClayBucketItem;
 import knightminer.ceramics.items.SolidClayBucketItem;
@@ -14,7 +13,8 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.UidContext;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -30,7 +30,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import slimeknights.mantle.client.SafeClientAccess;
+import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.recipe.MultiNamedRecipe;
 import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.util.RegistryHelper;
@@ -50,15 +53,45 @@ public class JEIPlugin implements IModPlugin {
 
   @Override
   public void registerItemSubtypes(ISubtypeRegistration registration) {
-    IIngredientSubtypeInterpreter<ItemStack> fluidInterpreter = (stack, context) -> BaseClayBucketItem.getSubtype(stack, FluidClayBucketItem.TAG_FLUID);
+    ISubtypeInterpreter<ItemStack> fluidInterpreter = new ISubtypeInterpreter<>() {
+      @Override
+      public Fluid getSubtypeData(ItemStack stack, UidContext context) {
+        return FluidClayBucketItem.getFluid(stack);
+      }
+
+      @Override
+      public String getLegacyStringSubtypeInfo(ItemStack stack, UidContext context) {
+        return Loadables.FLUID.getString(getSubtypeData(stack, context));
+      }
+    };
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.FLUID_CLAY_BUCKET.get(), fluidInterpreter);
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CRACKED_FLUID_CLAY_BUCKET.get(), fluidInterpreter);
-    IIngredientSubtypeInterpreter<ItemStack> blockInterpreter = (stack, context) -> SolidClayBucketItem.getSubtype(stack, SolidClayBucketItem.TAG_BLOCK);
+    ISubtypeInterpreter<ItemStack> blockInterpreter = new ISubtypeInterpreter<>() {
+      @Override
+      public Block getSubtypeData(ItemStack stack, UidContext context) {
+        return SolidClayBucketItem.getBlock(stack);
+      }
+
+      @Override
+      public String getLegacyStringSubtypeInfo(ItemStack ingredient, UidContext context) {
+        return Loadables.BLOCK.getString(getSubtypeData(ingredient, context));
+      }
+    };
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.SOLID_CLAY_BUCKET.get(), blockInterpreter);
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.CRACKED_SOLID_CLAY_BUCKET.get(), blockInterpreter);
 
     // separate different states of crackable clay
-    IIngredientSubtypeInterpreter<ItemStack> crackableClay = (stack, context) -> CrackableBlockItem.getCracks(stack) > 0 ? "cracked" : "";
+    ISubtypeInterpreter<ItemStack> crackableClay = new ISubtypeInterpreter<>() {
+      @Override
+      public Integer getSubtypeData(ItemStack stack, UidContext context) {
+        return CrackableBlockItem.getCracks(stack);
+      }
+
+      @Override
+      public String getLegacyStringSubtypeInfo(ItemStack stack, UidContext context) {
+        return Integer.toString(getSubtypeData(stack, context));
+      }
+    };
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.TERRACOTTA_CISTERN.asItem(), crackableClay);
     Registration.COLORED_CISTERN.forEach(block -> registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, block.asItem(), crackableClay));
     registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, Registration.TERRACOTTA_FAUCET.asItem(), crackableClay);

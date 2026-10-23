@@ -3,6 +3,8 @@ package knightminer.ceramics.items;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -19,18 +21,21 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import slimeknights.mantle.util.RegistryHelper;
 
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Shared logic between the milk and fluid filled clay buckets
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class BaseClayBucketItem extends Item {
+  /** Helper for {@link net.minecraft.core.component.DataComponentPatch#forget(Predicate)} to remove contents before copying components. */
+  public static final Predicate<DataComponentType<?>> FORGET = type -> type == Registration.FLUID.get() || type == Registration.BLOCK.get();
   /** Constant used in rendering items breaking */
   private static final float DEGREE_TO_RAD = (float) Math.PI / 180f;
 
@@ -39,22 +44,13 @@ public abstract class BaseClayBucketItem extends Item {
     super(props);
     this.isCracked = isCracked;
     if (isCracked) {
-      MinecraftForge.EVENT_BUS.addListener(this::onItemDestroyed);
+      NeoForge.EVENT_BUS.addListener(this::onItemDestroyed);
     }
   }
 
   /** Returns true if the given bucket is cracked */
   public boolean isCracked() {
     return isCracked;
-  }
-
-  /**
-   * Gets the fluid from the given clay bucket container
-   * @param stack  Bucket stack
-   * @return  Fluid contained in the container
-   */
-  public Fluid getFluid(ItemStack stack) {
-    return Fluids.EMPTY;
   }
 
   @Override
@@ -71,7 +67,7 @@ public abstract class BaseClayBucketItem extends Item {
    */
   private void onItemDestroyed(PlayerDestroyItemEvent event) {
     ItemStack original = event.getOriginal();
-    if(original.getItem() == this) {
+    if (original.getItem() == this) {
       renderBrokenItem(event.getEntity(), event.getOriginal());
     }
   }
@@ -89,8 +85,9 @@ public abstract class BaseClayBucketItem extends Item {
    * @param stack  Item breaking
    */
   protected static void renderBrokenItem(Player player, ItemStack stack) {
+    // TODO: can we replace this with a packet that runs the vanilla method?
     // play sound
-    Level world = player.getCommandSenderWorld();
+    Level world = player.level();
     world.playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_BREAK, player.getSoundSource(), 0.8F, 0.8F + world.random.nextFloat() * 0.4F, false);
     // add particles
     RandomSource rand = player.getRandom();
@@ -186,10 +183,12 @@ public abstract class BaseClayBucketItem extends Item {
 
   /**
    * Returns the stack with the specified fluid
-   * @param fluid  Fluid for the bucket
+   * @param fluid       Fluid for the bucket
+   * @param isCracked   If the bucket is currently cracked
+   * @param components  Components to add to the fluid
    * @return  Clay bucket containing the given fluid
    */
-  public static ItemStack withFluid(Fluid fluid, boolean isCracked) {
+  public static ItemStack withFluid(Fluid fluid, boolean isCracked, DataComponentPatch components) {
     if (!isCracked) {
       isCracked = doesCrack(fluid);
     }
@@ -199,24 +198,46 @@ public abstract class BaseClayBucketItem extends Item {
     }
     // TODO: can this be softcoded?
     if (fluid.is(CeramicsTags.Fluids.POWDERED_SNOW)) {
-      return withBlock(Blocks.POWDER_SNOW, isCracked);
+      return withBlock(Blocks.POWDER_SNOW, isCracked, components);
     }
     // return
     ItemLike item = isCracked ? Registration.CRACKED_FLUID_CLAY_BUCKET : Registration.FLUID_CLAY_BUCKET;
-    return FluidClayBucketItem.setFluid(new ItemStack(item), fluid);
+    return FluidClayBucketItem.setFluid(new ItemStack(item), fluid, components);
+  }
+
+  /**
+   * Returns the stack with the specified fluid and no extra components
+   * @param fluid       Fluid for the bucket
+   * @param isCracked   If the bucket is currently cracked
+   * @return  Clay bucket containing the given fluid
+   */
+  public static ItemStack withFluid(Fluid fluid, boolean isCracked) {
+    return withFluid(fluid, isCracked, DataComponentPatch.EMPTY);
   }
 
   /**
    * Returns the stack with the specified block
    * @param block  Block for the bucket
+   * @param isCracked   If the bucket is currently cracked
+   * @param components  Components to add to the fluid
    * @return  Clay bucket containing the given fluid
    */
-  public static ItemStack withBlock(Block block, boolean isCracked) {
-    return SolidClayBucketItem.setBlock(new ItemStack(
+  public static ItemStack withBlock(Block block, boolean isCracked, DataComponentPatch components) {
+    return SolidClayBucketItem.setBlock((
         isCracked || RegistryHelper.contains(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS, block)
         ? Registration.CRACKED_SOLID_CLAY_BUCKET
         : Registration.SOLID_CLAY_BUCKET
-    ), block);
+    ).toStack(), block, components);
+  }
+
+  /**
+   * Returns the stack with the specified fluid and no extra components
+   * @param block  Block for the bucket
+   * @param isCracked   If the bucket is currently cracked
+   * @return  Clay bucket containing the given fluid
+   */
+  public static ItemStack withBlock(Block block, boolean isCracked) {
+    return withBlock(block, isCracked, DataComponentPatch.EMPTY);
   }
 
   /**
@@ -233,19 +254,6 @@ public abstract class BaseClayBucketItem extends Item {
    * @return  Stack with milk
    */
   protected static ItemStack withMilk(boolean isCracked) {
-    return new ItemStack(isCracked ? Registration.CRACKED_MILK_CLAY_BUCKET : Registration.MILK_CLAY_BUCKET);
-  }
-
-  /**
-   * Gets a string variant name for the given stack
-   * @param stack  Stack instance to check
-   * @return  String variant name
-   */
-  public static String getSubtype(ItemStack stack, String key) {
-    if (stack.hasTag()) {
-      assert stack.getTag() != null;
-      return stack.getTag().getString(key);
-    }
-    return "minecraft:empty";
+    return (isCracked ? Registration.CRACKED_MILK_CLAY_BUCKET : Registration.MILK_CLAY_BUCKET).toStack();
   }
 }

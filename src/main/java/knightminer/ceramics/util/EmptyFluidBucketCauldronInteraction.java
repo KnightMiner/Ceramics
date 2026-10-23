@@ -19,14 +19,13 @@ import java.util.Objects;
  * Common logic to interaction with cauldrons
  */
 public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldronInteraction<Fluid> {
-	private final FluidClayBucketItem bucket;
-	public EmptyFluidBucketCauldronInteraction(FluidClayBucketItem bucket) {
-		this.bucket = bucket;
-	}
+	public static final EmptyFluidBucketCauldronInteraction INSTANCE = new EmptyFluidBucketCauldronInteraction();
+
+	private EmptyFluidBucketCauldronInteraction() {}
 
 	@Override
 	protected Fluid getContents(ItemStack stack) {
-		return bucket.getFluid(stack);
+		return FluidClayBucketItem.getFluid(stack);
 	}
 
 	/**

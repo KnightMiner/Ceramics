@@ -7,7 +7,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -24,15 +24,14 @@ import javax.annotation.Nullable;
  * Common logic to interaction with cauldrons
  */
 public class EmptySolidBucketCauldronInteraction extends EmptyClayBucketCauldronInteraction<Block> {
-	private final SolidClayBucketItem bucket;
-	public EmptySolidBucketCauldronInteraction(SolidClayBucketItem bucket) {
-		this.bucket = bucket;
-	}
+	public static final EmptySolidBucketCauldronInteraction INSTANCE = new EmptySolidBucketCauldronInteraction();
+
+	private EmptySolidBucketCauldronInteraction() {}
 
 	@Override
-	public InteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
+	public ItemInteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
 		// fill cauldron from bucket
-		Block block = bucket.getBlock(stack);
+		Block block = SolidClayBucketItem.getBlock(stack);
 		BlockState cauldron = getFullCauldron(block);
 		if (cauldron != null) {
 			// would use vanilla logic here, but it is dumb and insists on using a vanilla bucket
@@ -41,21 +40,21 @@ public class EmptySolidBucketCauldronInteraction extends EmptyClayBucketCauldron
 				player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, stack.getCraftingRemainingItem()));
 				// grant stats
 				player.awardStat(Stats.FILL_CAULDRON);
-				player.awardStat(Stats.ITEM_USED.get(bucket));
+				player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
 				// update cauldron
 				level.setBlockAndUpdate(pos, cauldron);
 				// effects
 				level.playSound(null, pos, block.defaultBlockState().getSoundType().getPlaceSound(), SoundSource.BLOCKS, 1.0F, 1.0F);
 				level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
 			}
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	@Override
 	protected Block getContents(ItemStack stack) {
-		return bucket.getBlock(stack);
+		return SolidClayBucketItem.getBlock(stack);
 	}
 
 	/**

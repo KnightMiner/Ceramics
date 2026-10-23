@@ -1,6 +1,7 @@
 package knightminer.ceramics.util;
 
 import knightminer.ceramics.items.BaseClayBucketItem;
+import knightminer.ceramics.items.FluidClayBucketItem;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -22,9 +23,11 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
   @Override
   public FluidStack getFluid() {
     Item item = container.getItem();
-    // using base so it works with milk as well
-    if (item instanceof BaseClayBucketItem fluidBucket) {
-      return new FluidStack(fluidBucket.getFluid(container), FluidType.BUCKET_VOLUME);
+    // TODO: split empty capability from full?
+    if (item instanceof FluidClayBucketItem) {
+      FluidStack fluid = new FluidStack(FluidClayBucketItem.getFluid(container), FluidType.BUCKET_VOLUME);
+      fluid.applyComponents(container.getComponentsPatch().forget(BaseClayBucketItem.FORGET));
+      return fluid;
     }
     return FluidStack.EMPTY;
   }
@@ -36,7 +39,7 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
     } else {
       Item item = container.getItem();
       if (item instanceof BaseClayBucketItem bucket) {
-        container = BaseClayBucketItem.withFluid(stack.getFluid(), bucket.isCracked());
+        container = BaseClayBucketItem.withFluid(stack.getFluid(), bucket.isCracked(), stack.getComponentsPatch());
       } else {
         container = ItemStack.EMPTY;
       }
@@ -53,6 +56,6 @@ public class FluidClayBucketWrapper extends FluidBucketWrapper {
 
   @Override
   public boolean canFillFluidType(FluidStack fluid) {
-    return !fluid.getFluid().is(CeramicsTags.Fluids.BUCKET_BLACKLIST) && !fluid.hasTag() && super.canFillFluidType(fluid);
+    return !fluid.getFluid().is(CeramicsTags.Fluids.BUCKET_BLACKLIST) && super.canFillFluidType(fluid);
   }
 }

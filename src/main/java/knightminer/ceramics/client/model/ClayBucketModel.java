@@ -135,15 +135,15 @@ public abstract class ClayBucketModel<T> implements IUnbakedGeometry<ClayBucketM
   }
 
   @Override
-  public BakedModel bake(IGeometryBakingContext context, ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+  public BakedModel bake(IGeometryBakingContext context, ModelBaker bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
     if (isEmpty(null)) {
       overrides = new BucketFluidOverrides<>(context, this, modelState);
     }
-    return bake(context, spriteGetter, modelState, overrides, modelLocation);
+    return bake(context, spriteGetter, modelState, overrides);
   }
 
   /** Bakes the final model */
-  private BakedModel bake(IGeometryBakingContext context, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides, ResourceLocation modelLocation) {
+  private BakedModel bake(IGeometryBakingContext context, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelState, ItemOverrides overrides) {
     // front texture, full 3D
     TextureAtlasSprite baseSprite = getSprite(context, spriteGetter, "base");
     // inner (texture in the middle, flat)
@@ -176,16 +176,16 @@ public abstract class ClayBucketModel<T> implements IUnbakedGeometry<ClayBucketM
       if (innerSprite != null) {
         // add to builder
         modelBuilder.addQuads(renderTypes, UnbakedGeometryHelper.bakeElements(
-          UnbakedGeometryHelper.createUnbakedItemElements(0, emptySprite.contents()),
-          $ -> emptySprite, modelState, modelLocation
+          UnbakedGeometryHelper.createUnbakedItemElements(0, emptySprite),
+          $ -> emptySprite, modelState
         ));
       }
     } else {
       // base is the outer cover, but is also the only layer in full 3D
       if (baseSprite != null) {
         modelBuilder.addQuads(renderTypes, UnbakedGeometryHelper.bakeElements(
-          UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite.contents()),
-          $ -> baseSprite, modelState, modelLocation
+          UnbakedGeometryHelper.createUnbakedItemElements(0, baseSprite),
+          $ -> baseSprite, modelState
         ));
       }
 
@@ -200,10 +200,9 @@ public abstract class ClayBucketModel<T> implements IUnbakedGeometry<ClayBucketM
       TextureAtlasSprite fluidSprite = spriteGetter.apply(new Material(InventoryMenu.BLOCK_ATLAS, getTexture()));
       if (fluidSprite != null) {
         List<BakedQuad> quads = UnbakedGeometryHelper.bakeElements(
-          UnbakedGeometryHelper.createUnbakedItemMaskElements(1, maskSprite.contents()),
+          UnbakedGeometryHelper.createUnbakedItemMaskElements(1, maskSprite),
           $ -> fluidSprite,
-          new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked()),
-          modelLocation
+          new SimpleModelState(modelState.getRotation().compose(FLUID_TRANSFORM), modelState.isUvLocked())
         );
         quads = quads.stream().filter(quad -> quad.getDirection().getAxis() == Axis.Z).toList();
 
@@ -320,14 +319,12 @@ public abstract class ClayBucketModel<T> implements IUnbakedGeometry<ClayBucketM
 
     @Override
     protected Block getContents(ItemStack stack) {
-      return stack.getItem() instanceof SolidClayBucketItem solidBucket ? solidBucket.getBlock(stack) : Blocks.AIR;
+      return SolidClayBucketItem.getBlock(stack);
     }
   }
 
   /** Handles dynamically updating the model based on the fluid NBT */
   private static final class BucketFluidOverrides<T> extends ItemOverrides {
-    private static final ResourceLocation REBAKE_LOCATION = new ResourceLocation("ceramics:bucket_override");
-
     private final IGeometryBakingContext context;
     private final ClayBucketModel<T> parent;
     private final ModelState originalTransform;
@@ -349,7 +346,7 @@ public abstract class ClayBucketModel<T> implements IUnbakedGeometry<ClayBucketM
       // bake contents if not done so yet
       if (!cache.containsKey(contents)) {
         ClayBucketModel<T> newContents = parent.withContents(contents);
-        BakedModel bakedModel = newContents.bake(context, Material::sprite, originalTransform, ItemOverrides.EMPTY, REBAKE_LOCATION);
+        BakedModel bakedModel = newContents.bake(context, Material::sprite, originalTransform, ItemOverrides.EMPTY);
         cache.put(contents, bakedModel);
         return bakedModel;
       }

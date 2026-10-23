@@ -2,12 +2,10 @@ package knightminer.ceramics.items;
 
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.util.FluidClayBucketWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -32,13 +30,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
-import net.neoforged.neoforge.common.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.event.ForgeEventFactory;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public class EmptyClayBucketItem extends BaseClayBucketItem {
+
 	public EmptyClayBucketItem(boolean isCracked, Properties props) {
 		super(isCracked, props);
 	}
@@ -50,12 +46,6 @@ public class EmptyClayBucketItem extends BaseClayBucketItem {
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		BlockHitResult trace = getPlayerPOVHitResult(world, player, ClipContext.Fluid.SOURCE_ONLY);
-
-		// fire Forge event for bucket use
-		InteractionResultHolder<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
-		if (ret != null) {
-			return ret;
-		}
 
 		// if we missed, do nothing
 		if (trace.getType() != Type.BLOCK) {
@@ -72,26 +62,18 @@ public class EmptyClayBucketItem extends BaseClayBucketItem {
 			BlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
 			// if blacklisted, do nothing
-			if (block instanceof LiquidBlock liquidBlock && liquidBlock.getFluid().is(CeramicsTags.Fluids.BUCKET_BLACKLIST)) {
+			if (block instanceof LiquidBlock liquidBlock && liquidBlock.fluid.is(CeramicsTags.Fluids.BUCKET_BLACKLIST)) {
 				return InteractionResultHolder.fail(stack);
 			}
 			if (block instanceof BucketPickup pickup) {
-				ItemStack pickupStack = pickup.pickupBlock(world, pos, state);
+				ItemStack pickupStack = pickup.pickupBlock(player, world, pos, state);
 				ItemStack newStack;
 				if (pickupStack.getItem() instanceof BucketItem bucket) {
-					ItemStack result = withFluid(bucket.getFluid(), isCracked);
-					CompoundTag tag = pickupStack.getTag();
-					if (tag != null && !tag.contains(FluidClayBucketItem.TAG_FLUID)) {
-						result.getOrCreateTag().merge(tag);
-					}
+					ItemStack result = withFluid(bucket.content, isCracked, pickupStack.getComponentsPatch());
 					newStack = ItemUtils.createFilledResult(stack, player, result);
 				} else if (pickupStack.getItem() instanceof SolidBucketItem bucket) {
 					world.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
-					ItemStack result = withBlock(bucket.getBlock(), isCracked);
-					CompoundTag tag = pickupStack.getTag();
-					if (tag != null && !tag.contains(SolidClayBucketItem.TAG_BLOCK)) {
-						result.getOrCreateTag().merge(tag);
-					}
+					ItemStack result = withBlock(bucket.getBlock(), isCracked, pickupStack.getComponentsPatch());
 					newStack = ItemUtils.createFilledResult(stack, player, result);
 				} else {
 					// unfortunately, nothing we can do in this case, can logically only handle blocks and fluids
@@ -128,16 +110,11 @@ public class EmptyClayBucketItem extends BaseClayBucketItem {
 		return InteractionResult.PASS;
 	}
 
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-		return new FluidClayBucketWrapper(stack);
-	}
-
 
 	/* Stack properties */
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
 	}
 }
