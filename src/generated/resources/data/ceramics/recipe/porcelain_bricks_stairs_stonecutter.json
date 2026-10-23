@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "ceramics:porcelain_bricks"
+  },
+  "result": {
+    "count": 1,
+    "id": "ceramics:porcelain_bricks_stairs"
+  }
+}

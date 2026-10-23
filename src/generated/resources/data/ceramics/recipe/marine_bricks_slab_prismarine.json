@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:marine_bricks_slab",
+  "key": {
+    "B": {
+      "item": "ceramics:porcelain_bricks_slab"
+    },
+    "i": {
+      "item": "minecraft:prismarine_shard"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
+  "result": {
+    "count": 8,
+    "id": "ceramics:marine_bricks_slab"
+  }
+}

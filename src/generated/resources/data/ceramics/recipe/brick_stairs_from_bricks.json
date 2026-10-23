@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "brick_stairs",
+  "key": {
+    "b": {
+      "item": "minecraft:brick"
+    }
+  },
+  "pattern": [
+    "b  ",
+    "bb ",
+    "bbb"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:brick_stairs"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "minecraft:brick_slab"
+  },
+  "result": {
+    "count": 1,
+    "id": "ceramics:dark_bricks_slab"
+  }
+}

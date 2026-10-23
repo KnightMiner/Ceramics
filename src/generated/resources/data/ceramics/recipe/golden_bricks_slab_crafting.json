@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:golden_bricks_slab",
+  "key": {
+    "B": {
+      "item": "ceramics:golden_bricks"
+    }
+  },
+  "pattern": [
+    "BBB"
+  ],
+  "result": {
+    "count": 6,
+    "id": "ceramics:golden_bricks_slab"
+  }
+}

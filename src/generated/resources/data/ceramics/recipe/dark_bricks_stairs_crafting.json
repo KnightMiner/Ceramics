@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:dark_bricks_stairs",
+  "key": {
+    "B": {
+      "item": "ceramics:dark_bricks"
+    }
+  },
+  "pattern": [
+    "B  ",
+    "BB ",
+    "BBB"
+  ],
+  "result": {
+    "count": 4,
+    "id": "ceramics:dark_bricks_stairs"
+  }
+}

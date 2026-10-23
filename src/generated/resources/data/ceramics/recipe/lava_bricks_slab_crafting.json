@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:lava_bricks_slab",
+  "key": {
+    "B": {
+      "item": "ceramics:lava_bricks"
+    }
+  },
+  "pattern": [
+    "BBB"
+  ],
+  "result": {
+    "count": 6,
+    "id": "ceramics:lava_bricks_slab"
+  }
+}

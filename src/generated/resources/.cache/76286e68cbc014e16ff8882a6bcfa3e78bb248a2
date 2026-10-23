@@ -1,5 +1,5 @@
-// 1.20.1	2025-06-07T06:14:58.9935714	Ceramics Fluid Tags
-100d0e77d135691ae3862d188e41234f767ee0b0 data/ceramics/tags/fluids/bucket_blacklist.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/ceramics/tags/fluids/cool_fluids.json
-c981d635c7a774d9fe2ed99abf7a804ca744a301 data/ceramics/tags/fluids/hide_in_bucket.json
-35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/ceramics/tags/fluids/hot_fluids.json
+// 1.21.1	2026-10-23T00:52:32.281846	Ceramics Fluid Tags
+69e69e631e52de754800d12390738968938a1c6b data/ceramics/tags/fluid/bucket_blacklist.json
+35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/ceramics/tags/fluid/cool_fluids.json
+129520ccdfbf7f24cf0934870c624325f155c3e0 data/ceramics/tags/fluid/hide_in_bucket.json
+35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/ceramics/tags/fluid/hot_fluids.json

@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "ceramics:rainbow_bricks"
-  },
-  "result": "ceramics:rainbow_bricks_slab"
-}

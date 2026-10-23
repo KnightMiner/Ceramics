@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "group": "ceramics:porcelain_uncrafting",
+  "ingredients": [
+    {
+      "item": "ceramics:unfired_porcelain_block"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "ceramics:unfired_porcelain"
+  }
+}

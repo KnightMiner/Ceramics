@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "tag": "ceramics:rainbow_porcelain"
+  },
+  "result": {
+    "count": 1,
+    "id": "ceramics:green_rainbow_porcelain"
+  }
+}

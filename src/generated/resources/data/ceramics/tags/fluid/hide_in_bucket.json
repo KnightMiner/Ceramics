@@ -1,0 +1,13 @@
+{
+  "values": [
+    "#ceramics:bucket_blacklist",
+    {
+      "id": "#c:powdered_snow",
+      "required": false
+    },
+    {
+      "id": "#c:hidden_from_recipe_viewers",
+      "required": false
+    }
+  ]
+}

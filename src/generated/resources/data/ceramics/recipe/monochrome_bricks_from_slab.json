@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:monochrome_bricks",
+  "key": {
+    "B": {
+      "item": "ceramics:monochrome_bricks_slab"
+    }
+  },
+  "pattern": [
+    "B",
+    "B"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ceramics:monochrome_bricks"
+  }
+}

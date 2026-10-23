@@ -1,0 +1,10 @@
+{
+  "type": "ceramics:kiln",
+  "category": "misc",
+  "cooking_time": 100,
+  "experience": 0.1,
+  "ingredient": {
+    "tag": "ceramics:colored_porcelain"
+  },
+  "result": "ceramics:red_rainbow_porcelain"
+}

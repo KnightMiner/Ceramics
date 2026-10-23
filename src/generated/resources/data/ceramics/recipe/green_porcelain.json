@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:dye_porcelain",
+  "key": {
+    "B": {
+      "tag": "ceramics:porcelain_block"
+    },
+    "D": {
+      "tag": "c:dyes/green"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BDB",
+    "BBB"
+  ],
+  "result": {
+    "count": 8,
+    "id": "ceramics:green_porcelain"
+  }
+}

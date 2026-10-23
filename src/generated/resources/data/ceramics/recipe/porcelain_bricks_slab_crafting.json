@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:porcelain_bricks_slab",
+  "key": {
+    "B": {
+      "item": "ceramics:porcelain_bricks"
+    }
+  },
+  "pattern": [
+    "BBB"
+  ],
+  "result": {
+    "count": 6,
+    "id": "ceramics:porcelain_bricks_slab"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "ceramics:porcelain_cisterns",
+  "key": {
+    "c": {
+      "tag": "ceramics:porcelain_cisterns"
+    },
+    "d": {
+      "tag": "c:dyes/light_gray"
+    }
+  },
+  "pattern": [
+    " c ",
+    "cdc",
+    " c "
+  ],
+  "result": {
+    "count": 4,
+    "id": "ceramics:light_gray_porcelain_cistern"
+  }
+}

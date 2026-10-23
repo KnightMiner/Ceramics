@@ -1,0 +1,10 @@
+{
+  "type": "ceramics:kiln",
+  "category": "misc",
+  "cooking_time": 100,
+  "experience": 0.1,
+  "ingredient": {
+    "item": "ceramics:porcelain_bricks_wall"
+  },
+  "result": "ceramics:rainbow_bricks_wall"
+}

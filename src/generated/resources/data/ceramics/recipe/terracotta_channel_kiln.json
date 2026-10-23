@@ -1,0 +1,10 @@
+{
+  "type": "ceramics:kiln",
+  "category": "misc",
+  "cooking_time": 100,
+  "experience": 0.3,
+  "ingredient": {
+    "item": "ceramics:clay_channel"
+  },
+  "result": "ceramics:terracotta_channel"
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.3,
+  "ingredient": {
+    "item": "ceramics:clay_channel"
+  },
+  "result": {
+    "count": 1,
+    "id": "ceramics:terracotta_channel"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:golden_bricks_stairs",
+  "key": {
+    "B": {
+      "item": "ceramics:porcelain_bricks_stairs"
+    },
+    "i": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BiB",
+    "BBB"
+  ],
+  "result": {
+    "count": 8,
+    "id": "ceramics:golden_bricks_stairs"
+  }
+}

@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "ceramics:monochrome_bricks"
-  },
-  "result": "ceramics:monochrome_bricks_slab"
-}

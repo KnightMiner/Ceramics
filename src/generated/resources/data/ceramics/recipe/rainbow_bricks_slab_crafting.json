@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "ceramics:rainbow_bricks_slab",
+  "key": {
+    "B": {
+      "item": "ceramics:rainbow_bricks"
+    }
+  },
+  "pattern": [
+    "BBB"
+  ],
+  "result": {
+    "count": 6,
+    "id": "ceramics:rainbow_bricks_slab"
+  }
+}

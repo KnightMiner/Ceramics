@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "c": {
+      "tag": "c:plates/brick"
+    }
+  },
+  "pattern": [
+    "ccc",
+    "c c",
+    "c c"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ceramics:clay_leggings"
+  }
+}

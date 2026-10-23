@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:brick"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "H": {
+      "item": "minecraft:terracotta"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "BFB",
+    "HHH"
+  ],
+  "result": {
+    "count": 1,
+    "id": "ceramics:kiln"
+  }
+}

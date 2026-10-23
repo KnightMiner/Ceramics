@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "ceramics:dark_bricks"
+  },
+  "result": {
+    "count": 1,
+    "id": "ceramics:dark_bricks_wall"
+  }
+}
