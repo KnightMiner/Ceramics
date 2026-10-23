@@ -261,24 +261,29 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
         IFluidHandler output = outputOptional.orElse(EmptyFluidHandler.INSTANCE);
         int filled = output.fill(drained, FluidAction.SIMULATE);
         if (filled > 0) {
-          // fill if requested
-          if (execute) {
-            // drain the liquid and transfer it, buffer the amount for delay
-            this.drained = input.drain(filled, FluidAction.EXECUTE);
+          // ensure we can actually fill in our min increment, deals with handlers like copper cans
+          // can skip this step if we already received a small enough number
+          drained.setAmount(MB_PER_TICK); // done using this fluid stack's original size, so save some memory and reuse
+          if (filled <= MB_PER_TICK || output.fill(drained, FluidAction.SIMULATE) > 0) {
+            // execute if requested
+            if (execute) {
+              // drain the liquid and transfer it, buffer the amount for delay
+              this.drained = input.drain(filled, FluidAction.EXECUTE);
 
-            // have the cracks handler check if this fluid cracks the faucet
-            this.cracksHandler.fluidAdded(this.drained);
+              // have the cracks handler check if this fluid cracks the faucet
+              this.cracksHandler.fluidAdded(this.drained);
 
-            // sync to clients if we have changes
-            if (faucetState == FaucetState.OFF || !renderFluid.isFluidEqual(drained)) {
-              syncToClient(this.drained, true);
+              // sync to clients if we have changes
+              if (faucetState == FaucetState.OFF || !renderFluid.isFluidEqual(drained)) {
+                syncToClient(this.drained, true);
+              }
+              faucetState = FaucetState.POURING;
+
+              // pour after initial packet, in case we end up resetting later
+              pour();
             }
-            faucetState = FaucetState.POURING;
-
-            // pour after initial packet, in case we end up resetting later
-            pour();
+            return true;
           }
-          return true;
         }
       }
 
