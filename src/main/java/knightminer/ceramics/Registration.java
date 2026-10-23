@@ -422,7 +422,7 @@ public class Registration {
     CRACKED_FLUID_CLAY_BUCKET.get().addVariants(consumer);
     MILK_CLAY_BUCKET.get().addVariants(consumer);
     CRACKED_MILK_CLAY_BUCKET.get().addVariants(consumer);
-    EMPTY_CLAY_BUCKET.get().addVariants(consumer);
+    SOLID_CLAY_BUCKET.get().addVariants(consumer);
     CRACKED_SOLID_CLAY_BUCKET.get().addVariants(consumer);
   }
 
