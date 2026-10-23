@@ -1,4 +1,5 @@
 {
+  "render_type": "cutout",
   "textures": {
     "particle": "ceramics:block/terracotta_gauge",
     "gauge": "ceramics:block/terracotta_gauge",

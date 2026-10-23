@@ -8,8 +8,6 @@ import knightminer.ceramics.client.renderer.CisternFluids;
 import knightminer.ceramics.client.renderer.FaucetBlockEntityRenderer;
 import knightminer.ceramics.client.screen.KilnScreen;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.ModelEvent.RegisterGeometryLoaders;
@@ -33,14 +31,6 @@ public class ClientEvents {
 
   @SubscribeEvent
   static void setupClient(FMLClientSetupEvent event) {
-    RenderType cutout = RenderType.cutout();
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_GAUGE.get(), cutout);
-    ItemBlockRenderTypes.setRenderLayer(Registration.PORCELAIN_GAUGE.get(), cutout);
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CISTERN.get(), cutout);
-    Registration.COLORED_CISTERN.forEach(cistern -> ItemBlockRenderTypes.setRenderLayer(cistern, cutout));
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_FAUCET.get(), cutout);
-    ItemBlockRenderTypes.setRenderLayer(Registration.TERRACOTTA_CHANNEL.get(), cutout);
-
     MenuScreens.register(Registration.KILN_MENU.get(), KilnScreen::new);
   }
 

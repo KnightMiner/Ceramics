@@ -31,6 +31,7 @@ import net.minecraftforge.client.model.geometry.IUnbakedGeometry;
 import slimeknights.mantle.client.model.util.ColoredBlockModel;
 import slimeknights.mantle.client.model.util.DynamicBakedWrapper;
 import slimeknights.mantle.client.model.util.ExtraTextureContext;
+import slimeknights.mantle.client.model.util.GeometryContextWrapper;
 import slimeknights.mantle.client.model.util.SimpleBlockModel;
 
 import javax.annotation.Nullable;
@@ -39,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Function;
 
 /** Generic cracked model for cracked clay blocks */
@@ -59,6 +61,19 @@ public class CrackedModel implements IUnbakedGeometry<CrackedModel> {
 	@Override
 	public void resolveParents(Function<ResourceLocation, UnbakedModel> modelGetter, IGeometryBakingContext context) {
 		model.resolveParents(modelGetter, context);
+	}
+
+	/** Wrapper around baking context making the render type default to cutout */
+	private static class DefaultCutoutBakingContext extends GeometryContextWrapper {
+		private static final ResourceLocation DEFAULT = new ResourceLocation("cutout");
+		public DefaultCutoutBakingContext(IGeometryBakingContext base) {
+			super(base);
+		}
+
+		@Override
+		public ResourceLocation getRenderTypeHint() {
+			return Objects.requireNonNullElse(super.getRenderTypeHint(), DEFAULT);
+		}
 	}
 
 	@Override
@@ -85,6 +100,7 @@ public class CrackedModel implements IUnbakedGeometry<CrackedModel> {
 		}
 
 		// wrap the original model
+		owner = new DefaultCutoutBakingContext(owner);
 		BakedModel original = model.bake(owner, bakery, spriteGetter, transform, overrides, location);
 		return new Baked(original, owner, newElements, textures, transform);
 	}
