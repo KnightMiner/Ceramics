@@ -98,20 +98,6 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
     return outputHandler != null ? outputHandler.getCapability() : null;
   }
 
-  /**
-   * Called when a neighbor changes to invalidate the cached fluid handler
-   * @param neighbor  Neighbor position that changed
-   */
-  public void neighborChanged(BlockPos neighbor) {
-    // if the neighbor was below us, remove output
-    if (worldPosition.equals(neighbor.above())) {
-      outputHandler = null;
-      // neighbor behind us
-    } else if (worldPosition.equals(neighbor.relative(getBlockState().getValue(FACING)))) {
-      inputHandler = null;
-    }
-  }
-
 
   /* Data */
 

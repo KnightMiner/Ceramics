@@ -124,14 +124,6 @@ public class ChannelBlockEntity extends CrackableBlockEntity implements FluidUpd
 	}
 
 	/**
-	 * Removes a cached handler from the given neighbor
-	 * @param side  Side to remove
-	 */
-	public void removeCachedNeighbor(Direction side) {
-		neighborTanks.remove(side);
-	}
-
-	/**
 	 * Refreshes a neighbor based on the new connection
 	 * @param newState  The state that will later be put in the world, may not be the state currently in the world
 	 * @param side   Side to update

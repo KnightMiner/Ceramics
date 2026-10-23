@@ -77,7 +77,6 @@ public class PouringFaucetBlock extends FaucetBlock implements ICrackableBlock, 
       return;
     }
     if (worldIn.getBlockEntity(pos) instanceof FaucetBlockEntity faucet) {
-      faucet.neighborChanged(fromPos);
       faucet.handleRedstone(worldIn.hasNeighborSignal(pos));
     }
   }

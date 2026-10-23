@@ -13,7 +13,6 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -56,14 +55,6 @@ public class FlowingChannelBlock extends ChannelBlock implements ICrackableBlock
 		}
 		Ceramics.LOG.error("Channel found no offset for position pair {} and {} on neighbor changed", pos, neighbor);
 		return Direction.DOWN;
-	}
-
-	@Override
-	protected void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-		if (!worldIn.isClientSide() && worldIn.getBlockEntity(pos) instanceof ChannelBlockEntity channel) {
-			channel.removeCachedNeighbor(fromOffset(pos, fromPos));
-		}
 	}
 
 	@Override
