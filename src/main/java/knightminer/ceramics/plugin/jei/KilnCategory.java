@@ -128,7 +128,7 @@ public class KilnCategory implements IRecipeCategory<KilnRecipe> {
 
   @Override
   public boolean isHandled(KilnRecipe recipe) {
-    return !recipe.isSpecial();
+    return true;
   }
 
   @Override
