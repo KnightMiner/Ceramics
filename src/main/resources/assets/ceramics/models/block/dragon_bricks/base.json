@@ -1,0 +1,5 @@
+{
+  "loader": "mantle:colored_block",
+  "parent": "block/cube_all",
+  "colors": [{ "luminosity": 7 }]
+}

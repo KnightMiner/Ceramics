@@ -1,8 +1,6 @@
 {
-    "parent": "block/slab",
-    "textures": {
-        "bottom": "ceramics:block/dragon_bricks/2",
-        "top": "ceramics:block/dragon_bricks/2",
-        "side": "ceramics:block/dragon_bricks/2"
-    }
+  "parent": "ceramics:block/dragon_bricks/slab/bottom",
+  "textures": {
+    "texture": "ceramics:block/dragon_bricks/2"
+  }
 }

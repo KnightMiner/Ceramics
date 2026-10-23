@@ -1,0 +1,5 @@
+{
+  "loader": "mantle:colored_block",
+  "parent": "ceramics:block/template/slab_bottom",
+  "colors": [{ "luminosity": 7 }]
+}

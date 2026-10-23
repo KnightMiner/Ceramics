@@ -1,0 +1,5 @@
+{
+  "loader": "mantle:colored_block",
+  "parent": "block/template_wall_side",
+  "colors": [{ "luminosity": 7 }]
+}

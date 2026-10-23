@@ -1,6 +1,11 @@
 {
-    "parent": "block/wall_inventory",
-    "textures": {
-        "wall": "ceramics:block/dragon_bricks/1"
-    }
+  "loader": "mantle:colored_block",
+  "parent": "block/wall_inventory",
+  "colors": [
+    { "luminosity": 7 },
+    { "luminosity": 7 }
+  ],
+  "textures": {
+    "wall": "ceramics:block/dragon_bricks/1"
+  }
 }
