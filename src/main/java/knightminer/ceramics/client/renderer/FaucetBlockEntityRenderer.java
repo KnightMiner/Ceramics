@@ -9,11 +9,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.client.render.FluidCuboid;
@@ -70,5 +72,11 @@ public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBloc
         matrices.popPose();
       }
     }
+  }
+
+  @Override
+  public AABB getRenderBoundingBox(FaucetBlockEntity faucet) {
+    BlockPos pos = faucet.getBlockPos();
+    return new AABB(pos.getX(), pos.getY() - 1, pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
   }
 }
