@@ -1,6 +1,7 @@
 package knightminer.ceramics.util.tank;
 
 import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
@@ -67,15 +68,15 @@ public class ChannelTank extends FluidTank {
 	}
 
 	@Override
-	public FluidTank readFromNBT(CompoundTag nbt) {
+	public FluidTank readFromNBT(HolderLookup.Provider registries, CompoundTag nbt) {
 		this.locked = nbt.getInt(TAG_LOCKED);
-		super.readFromNBT(nbt);
+		super.readFromNBT(registries, nbt);
 		return this;
 	}
 
 	@Override
-	public CompoundTag writeToNBT(CompoundTag nbt) {
-		nbt = super.writeToNBT(nbt);
+	public CompoundTag writeToNBT(HolderLookup.Provider registries, CompoundTag nbt) {
+		nbt = super.writeToNBT(registries, nbt);
 		nbt.putInt(TAG_LOCKED, locked);
 		return nbt;
 	}

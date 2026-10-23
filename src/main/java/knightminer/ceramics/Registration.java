@@ -323,6 +323,7 @@ public class Registration {
     );
     event.registerItem(Capabilities.FluidHandler.ITEM, SolidClayBucketItem.CAPABILITY_PROVIDER, SOLID_CLAY_BUCKET, CRACKED_SOLID_CLAY_BUCKET);
     event.registerItem(Capabilities.FluidHandler.ITEM, MilkClayBucketItem.CAPABILITY_PROVIDER, MILK_CLAY_BUCKET, CRACKED_MILK_CLAY_BUCKET);
+    event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CHANNEL_BLOCK_ENTITY.get(), ChannelBlockEntity::getFluidHandler);
   }
 
   @SubscribeEvent
