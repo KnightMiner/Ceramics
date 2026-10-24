@@ -196,6 +196,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
       case POWERED -> {
         faucetState = FaucetState.OFF;
         syncToClient(FluidStack.EMPTY, false);
+        setChangedFast();
       }
       // pouring means we stop pouring as soon as possible
       case POURING -> stopPouring = true;
@@ -217,6 +218,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
         faucetState = FaucetState.OFF;
         syncToClient(FluidStack.EMPTY, false);
       }
+      setChangedFast();
     }
   }
 
@@ -230,6 +232,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
       // if powered and we can transfer, schedule transfer for next tick
     } else if (faucetState == FaucetState.POWERED && doTransfer(false)) {
       faucetState = FaucetState.POURING;
+      setChangedFast();
       return;
     }
 
@@ -278,6 +281,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
                 syncToClient(this.drained, true);
               }
               faucetState = FaucetState.POURING;
+              setChangedFast();
 
               // pour after initial packet, in case we end up resetting later
               pour();
@@ -290,10 +294,13 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
       // if powered, keep faucet running
       if (lastRedstoneState) {
         // sync if either we were not pouring before (particle effects), or if the client thinks we have fluid
-        if (execute && (faucetState == FaucetState.OFF || !renderFluid.isFluidEqual(FluidStack.EMPTY))) {
-          syncToClient(FluidStack.EMPTY, true);
+        if (execute) {
+          if (faucetState == FaucetState.OFF || !renderFluid.isFluidEqual(FluidStack.EMPTY)) {
+            syncToClient(FluidStack.EMPTY, true);
+          }
+          faucetState = FaucetState.POWERED;
+          setChangedFast();
         }
-        faucetState = FaucetState.POWERED;
         return false;
       }
     }
@@ -331,6 +338,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
         this.drained.shrink(filled);
         fillStack.setAmount(filled);
         output.fill(fillStack, IFluidHandler.FluidAction.EXECUTE);
+        setChangedFast();
       }
     }
     else {
@@ -349,6 +357,7 @@ public class FaucetBlockEntity extends MantleBlockEntity implements ICrackableBl
       faucetState = FaucetState.OFF;
       syncToClient(FluidStack.EMPTY, false);
     }
+    setChangedFast();
   }
 
   @Override

@@ -318,7 +318,10 @@ public class ChannelBlockEntity extends MantleBlockEntity implements ICrackableB
 	 * @param flowing  Flowing state to sync
 	 */
 	private void syncFlowToClient(Direction side, boolean flowing) {
-		CeramicsNetwork.getInstance().sendToClientsAround(new ChannelFlowPacket(worldPosition, side, flowing), level, worldPosition);
+		if (level != null && !level.isClientSide) {
+			setChangedFast();
+			CeramicsNetwork.getInstance().sendToClientsAround(new ChannelFlowPacket(worldPosition, side, flowing), level, worldPosition);
+		}
 	}
 
 
