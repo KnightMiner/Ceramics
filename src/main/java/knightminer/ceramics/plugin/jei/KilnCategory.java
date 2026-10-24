@@ -103,7 +103,7 @@ public class KilnCategory extends AbstractRecipeCategory<NamedRecipe<KilnRecipe>
 
   @Override
   public boolean isHandled(NamedRecipe<KilnRecipe> recipe) {
-    return true;
+    return !recipe.recipe().isSpecial();
   }
 
   @Override

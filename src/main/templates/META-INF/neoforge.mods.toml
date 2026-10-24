@@ -12,6 +12,7 @@ authors="KnightMiner"
 description='''
 Mod adding additional early game and vanilla-like tools made of clay. Includes fluid transport, decoration, and ceramic tools.
 '''
+enumExtensions="META-INF/enumextensions.json"
 [[dependencies.ceramics]]
     modId="neoforge"
     type="required"

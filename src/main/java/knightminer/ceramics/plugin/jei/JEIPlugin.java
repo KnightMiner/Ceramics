@@ -110,6 +110,10 @@ public class JEIPlugin implements IModPlugin {
     List<NamedRecipe<KilnRecipe>> results = MultiNamedRecipe.streamNamedRecipes(world.registryAccess(), recipeManager, Registration.KILN_RECIPE.get(), KilnRecipe.class)
       .filter(holder -> {
         KilnRecipe recipe = holder.recipe();
+        // skip dynamic recipes
+        if (recipe.isSpecial()) {
+          return false;
+        }
 
         // validate output
         ItemStack output = recipe.getResultItem(access);

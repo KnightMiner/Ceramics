@@ -32,12 +32,6 @@ public class KilnRecipe extends AbstractCookingRecipe implements CookingResultRe
     this.result = result;
   }
 
-  @Override
-  public boolean isSpecial() {
-    // suppress recipe book errors
-    return true;
-  }
-
   /** Gets the input for JEI */
   public Ingredient getInput() {
     return ingredient;

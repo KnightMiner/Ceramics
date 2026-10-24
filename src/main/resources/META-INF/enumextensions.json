@@ -1,0 +1,37 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/world/inventory/RecipeBookType",
+      "name": "CERAMICS_KILN",
+      "constructor": "()V",
+      "parameters": []
+    },
+    {
+      "enum": "net/minecraft/client/RecipeBookCategories",
+      "name": "CERAMICS_KILN_SEARCH",
+      "constructor": "(Ljava/util/function/Supplier;)V",
+      "parameters": {
+        "class": "knightminer/ceramics/EnumExtensions",
+        "field": "KILN_SEARCH"
+      }
+    },
+    {
+      "enum": "net/minecraft/client/RecipeBookCategories",
+      "name": "CERAMICS_KILN_BLOCKS",
+      "constructor": "(Ljava/util/function/Supplier;)V",
+      "parameters": {
+        "class": "knightminer/ceramics/EnumExtensions",
+        "field": "KILN_BLOCKS"
+      }
+    },
+    {
+      "enum": "net/minecraft/client/RecipeBookCategories",
+      "name": "CERAMICS_KILN_MISC",
+      "constructor": "(Ljava/util/function/Supplier;)V",
+      "parameters": {
+        "class": "knightminer/ceramics/EnumExtensions",
+        "field": "KILN_MISC"
+      }
+    }
+  ]
+}
