@@ -222,6 +222,7 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
                 syncToClient(this.drained, true);
               }
               faucetState = FaucetState.POURING;
+              setChangedFast();
 
               // pour after initial packet, in case we end up resetting later
               pour();
@@ -310,7 +311,6 @@ public class FaucetBlockEntity extends CrackableBlockEntity implements FluidUpda
   private void syncToClient(FluidStack fluid, boolean isPouring) {
     renderFluid = fluid.copy();
     if (level != null && !level.isClientSide) {
-      setChangedFast();
       PacketHelper.sendToPlayersTrackingPosition(level, worldPosition, new FluidUpdatePacket(worldPosition, fluid, isPouring));
     }
   }
