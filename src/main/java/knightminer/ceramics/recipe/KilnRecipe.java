@@ -13,6 +13,7 @@ public class KilnRecipe extends AbstractCookingRecipe {
     super(Registration.KILN_RECIPE.get(), id, group, category, ingredient, result, experience, cookTime);
   }
 
+  /** Gets the input for JEI */
   public Ingredient getInput() {
     return ingredient;
   }
@@ -25,10 +26,5 @@ public class KilnRecipe extends AbstractCookingRecipe {
   @Override
   public RecipeSerializer<?> getSerializer() {
     return Registration.KILN_SERIALIZER.get();
-  }
-
-  @Override
-  public boolean isSpecial() {
-    return true;
   }
 }

@@ -77,6 +77,10 @@ public class JEIPlugin implements IModPlugin {
     List<KilnRecipe> results = new ArrayList<>();
     RegistryAccess access = Objects.requireNonNullElse(SafeClientAccess.getRegistryAccess(), RegistryAccess.EMPTY);
     for (Recipe<Container> recipe : recipeManager.byType(Registration.KILN_RECIPE.get()).values()) {
+      // skip dynamic recipes
+      if (recipe.isSpecial()) {
+        continue;
+      }
       // validate output
       ItemStack output = recipe.getResultItem(access);
       if (output.isEmpty()) {
