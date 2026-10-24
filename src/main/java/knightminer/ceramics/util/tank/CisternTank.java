@@ -39,11 +39,13 @@ public class CisternTank implements IFluidHandler, IFluidTank {
   }
 
   /** Ensures the tank does not have too much fluid */
-  public void validateAmount() {
+  public boolean validateAmount() {
     int extra = fluid.getAmount() - getCapacity();
     if (extra > 0) {
       drain(extra, FluidAction.EXECUTE);
+      return true;
     }
+    return false;
   }
 
   /**
