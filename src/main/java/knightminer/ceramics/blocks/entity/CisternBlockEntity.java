@@ -26,7 +26,6 @@ import slimeknights.mantle.network.PacketHelper;
 import javax.annotation.Nullable;
 
 public class CisternBlockEntity extends CrackableBlockEntity {
-  /** Max capacity per cistern block */
   private static final String TAG_FLUID = "fluid";
   private static final String TAG_EXTENSIONS = "extensions";
 

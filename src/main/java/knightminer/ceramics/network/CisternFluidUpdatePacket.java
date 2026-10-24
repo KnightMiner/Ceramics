@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.network.BlockEntityPacket;
 
-/** Base class for fluid updating behavior. */
+/** Updates the fluid and extension count in a cistern. */
 @Internal
 public record CisternFluidUpdatePacket(BlockPos pos, FluidStack fluid, boolean refreshHandler, int extensions) implements BlockEntityPacket<CisternBlockEntity> {
 	public static final Type<CisternFluidUpdatePacket> TYPE = new Type<>(Ceramics.getResource("cistern_fluid_update"));

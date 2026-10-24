@@ -10,7 +10,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import slimeknights.mantle.network.BlockEntityPacket;
 
-/** Base class for fluid updating behavior. */
+/** Updates the size of the cistern after an extension is added or removed. */
 @Internal
 public record CisternSizeUpdatePacket(BlockPos pos, int extensions) implements BlockEntityPacket<CisternBlockEntity> {
 	public static final Type<CisternSizeUpdatePacket> TYPE = new Type<>(Ceramics.getResource("cistern_size_update"));
