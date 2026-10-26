@@ -17,18 +17,22 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 import javax.annotation.Nullable;
 
+/**
+ * Common logic to interaction with cauldrons
+ */
 public abstract class EmptyClayBucketCauldronInteraction<T> implements CauldronInteraction {
-
 	/** Gets the contents of the given stack */
 	protected abstract T getContents(ItemStack stack);
 
 	/**
 	 * Converts a fluid to a cauldron
+	 *
+	 * @param state  Current cauldron state
 	 * @param contents  Input
-	 * @return  Cauldron, or null if none exists
+	 * @return Cauldron, or null if none exists
 	 */
 	@Nullable
-	protected abstract BlockState getFullCauldron(T contents);
+	protected abstract BlockState getFullCauldron(BlockState state, T contents);
 
 	/** Gets the sound for the given contents */
 	protected abstract SoundEvent getSound(T contents);
@@ -39,7 +43,7 @@ public abstract class EmptyClayBucketCauldronInteraction<T> implements CauldronI
 		if (stack.getComponentsPatch().forget(BaseClayBucketItem.FORGET).isEmpty()) {
 			// fill cauldron from bucket
 			T contents = getContents(stack);
-			BlockState cauldron = getFullCauldron(contents);
+			BlockState cauldron = getFullCauldron(state, contents);
 			if (cauldron != null) {
 				// would use vanilla logic here, but it is dumb and insists on using a vanilla bucket
 				if (!level.isClientSide) {
@@ -57,6 +61,6 @@ public abstract class EmptyClayBucketCauldronInteraction<T> implements CauldronI
 				return ItemInteractionResult.sidedSuccess(level.isClientSide);
 			}
 		}
-		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 	}
 }

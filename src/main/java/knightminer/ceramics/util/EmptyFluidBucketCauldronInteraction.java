@@ -30,20 +30,24 @@ public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldron
 
 	@Override
 	@Nullable
-	protected BlockState getFullCauldron(Fluid fluid) {
+	protected BlockState getFullCauldron(BlockState state, Fluid fluid) {
 		CauldronFluidContent cauldronFluid = CauldronFluidContent.getForFluid(fluid);
 		if (cauldronFluid != null) {
-			BlockState state = cauldronFluid.block.defaultBlockState();
+			BlockState cauldron = cauldronFluid.block.defaultBlockState();
 			// if we have a level property, figure out how many layers 1 bucket gives
 			if (cauldronFluid.levelProperty != null) {
 				int layers = FluidType.BUCKET_VOLUME * cauldronFluid.maxLevel / cauldronFluid.totalAmount;
 				if (layers > 0) {
-					return state.setValue(cauldronFluid.levelProperty, layers);
+					// if the cauldron already has the fluid, add the bucket to existing contents
+					// probably not needed, but maybe someone adds a cauldron that holds more than a bucket
+					if (cauldron.getBlock() == state.getBlock()) {
+						layers = Math.min(layers + state.getValue(cauldronFluid.levelProperty), cauldronFluid.maxLevel);
+					}
+					return cauldron.setValue(cauldronFluid.levelProperty, layers);
 				}
-
 				// if no level property, we can use the plain state as long as the cauldron holds a bucket or less
 			} else if (cauldronFluid.totalAmount <= FluidType.BUCKET_VOLUME) {
-				return state;
+				return cauldron;
 			}
 		}
 		// its possible the powder snow cauldron is not registered to a fluid, so check it directly

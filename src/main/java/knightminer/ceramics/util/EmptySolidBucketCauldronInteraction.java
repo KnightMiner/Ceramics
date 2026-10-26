@@ -24,7 +24,7 @@ public class EmptySolidBucketCauldronInteraction extends EmptyClayBucketCauldron
 	// TODO: currently hardcoded to vanilla cauldrons, need a way to generalize this
 	@Override
 	@Nullable
-	protected BlockState getFullCauldron(Block block) {
+	protected BlockState getFullCauldron(BlockState state, Block block) {
 		if (block == Blocks.POWDER_SNOW) {
 			return Blocks.POWDER_SNOW_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3);
 		}
