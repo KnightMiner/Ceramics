@@ -13,7 +13,6 @@ import knightminer.ceramics.blocks.entity.ChannelBlockEntity;
 import knightminer.ceramics.blocks.entity.CisternBlockEntity;
 import knightminer.ceramics.blocks.entity.FaucetBlockEntity;
 import knightminer.ceramics.blocks.entity.KilnBlockEntity;
-import knightminer.ceramics.items.BaseClayBucketItem;
 import knightminer.ceramics.items.CrackableBlockItem;
 import knightminer.ceramics.items.EmptyClayBucketItem;
 import knightminer.ceramics.items.FixedTooltipBlockItem;
@@ -25,21 +24,18 @@ import knightminer.ceramics.menu.KilnMenu;
 import knightminer.ceramics.recipe.CrackableIngredient;
 import knightminer.ceramics.recipe.CrackedClayRepairRecipe;
 import knightminer.ceramics.recipe.KilnRecipe;
-import knightminer.ceramics.util.EmptyFluidBucketCauldronInteraction;
-import knightminer.ceramics.util.EmptySolidBucketCauldronInteraction;
 import knightminer.ceramics.util.FluidClayBucketWrapper;
+import knightminer.ceramics.util.cauldron.EmptyFluidBucketCauldronInteraction;
+import knightminer.ceramics.util.cauldron.EmptySolidBucketCauldronInteraction;
+import knightminer.ceramics.util.cauldron.FillFluidBucketCauldronInteraction;
+import knightminer.ceramics.util.cauldron.FillSolidBucketCauldronInteraction;
 import net.minecraft.Util;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
@@ -54,7 +50,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
@@ -64,7 +59,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -93,7 +87,6 @@ import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
 import java.util.EnumMap;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -327,40 +320,33 @@ public class Registration {
     event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, CHANNEL_BLOCK_ENTITY.get(), ChannelBlockEntity::getFluidHandler);
   }
 
+  /** Adds an interaction to all cauldrons */
+  private static void addToAllCauldrons(CauldronInteraction interaction, boolean includeEmpty, ItemLike... items) {
+    for (CauldronInteraction.InteractionMap map : CauldronInteraction.INTERACTIONS.values()) {
+      for (ItemLike item : items) {
+        if (includeEmpty || map != CauldronInteraction.EMPTY) {
+          map.map().put(item.asItem(), interaction);
+        }
+      }
+    }
+  }
+
   @SubscribeEvent
   static void commonSetup(FMLCommonSetupEvent event) {
     SolidClayBucketItem.loadBucketableBlocks();
     event.enqueueWork(() -> {
-      record FillClayBucketCauldronInteraction(Predicate<BlockState> cauldron, ItemStack filledBucket, SoundEvent sound) implements CauldronInteraction {
-        @Override
-        public ItemInteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
-          return CauldronInteraction.fillBucket(state, level, pos, player, hand, stack, filledBucket.copy(), cauldron, sound);
-        }
-      }
-
-      // filling buckets - not needed on empty cauldron
-      // TODO: this is pretty hardcoded, can this be generalized in any way?
-      // neo has a new event for this
+      // filling buckets - works from anything except empty
+      addToAllCauldrons(new FillFluidBucketCauldronInteraction(false), false, EMPTY_CLAY_BUCKET);
+      addToAllCauldrons(new FillFluidBucketCauldronInteraction(true), false, CRACKED_EMPTY_CLAY_BUCKET);
+      // powder snow may not be registered as a fluid, so add direct filling logic for it
+      // TODO: would be useful to have a general map from block to cauldron like the fluid one
       Predicate<BlockState> full = state -> state.getValue(LayeredCauldronBlock.LEVEL) == 3;
-      CauldronInteraction.WATER.map().put(EMPTY_CLAY_BUCKET.get(),         new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withFluid(Fluids.WATER, false), SoundEvents.BUCKET_FILL));
-      CauldronInteraction.WATER.map().put(CRACKED_EMPTY_CLAY_BUCKET.get(), new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withFluid(Fluids.WATER, true),  SoundEvents.BUCKET_FILL));
-      CauldronInteraction.POWDER_SNOW.map().put(EMPTY_CLAY_BUCKET.get(),         new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withBlock(Blocks.POWDER_SNOW, false), SoundEvents.BUCKET_FILL_POWDER_SNOW));
-      CauldronInteraction.POWDER_SNOW.map().put(CRACKED_EMPTY_CLAY_BUCKET.get(), new FillClayBucketCauldronInteraction(full, BaseClayBucketItem.withBlock(Blocks.POWDER_SNOW, true),  SoundEvents.BUCKET_FILL_POWDER_SNOW));
-      CauldronInteraction fillLava = new FillClayBucketCauldronInteraction(state -> true, BaseClayBucketItem.withFluid(Fluids.LAVA, true), SoundEvents.BUCKET_FILL_LAVA);
-      CauldronInteraction.LAVA.map().put(EMPTY_CLAY_BUCKET.get(),         fillLava);
-      CauldronInteraction.LAVA.map().put(CRACKED_EMPTY_CLAY_BUCKET.get(), fillLava);
+      CauldronInteraction.POWDER_SNOW.map().put(EMPTY_CLAY_BUCKET.get(),         new FillSolidBucketCauldronInteraction(full, Blocks.POWDER_SNOW, false, SoundEvents.BUCKET_FILL_POWDER_SNOW));
+      CauldronInteraction.POWDER_SNOW.map().put(CRACKED_EMPTY_CLAY_BUCKET.get(), new FillSolidBucketCauldronInteraction(full, Blocks.POWDER_SNOW, true,  SoundEvents.BUCKET_FILL_POWDER_SNOW));
 
-      // emptying buckets - needed on all as fluid can replace existing
-      BiConsumer<ItemLike, CauldronInteraction> addAll = (item, interaction) -> {
-        CauldronInteraction.EMPTY.map().put(item.asItem(), interaction);
-        CauldronInteraction.WATER.map().put(item.asItem(), interaction);
-        CauldronInteraction.LAVA.map().put(item.asItem(), interaction);
-        CauldronInteraction.POWDER_SNOW.map().put(item.asItem(), interaction);
-      };
-      addAll.accept(FLUID_CLAY_BUCKET,         EmptyFluidBucketCauldronInteraction.INSTANCE);
-      addAll.accept(CRACKED_FLUID_CLAY_BUCKET, EmptyFluidBucketCauldronInteraction.INSTANCE);
-      addAll.accept(SOLID_CLAY_BUCKET,         EmptySolidBucketCauldronInteraction.INSTANCE);
-      addAll.accept(CRACKED_SOLID_CLAY_BUCKET, EmptySolidBucketCauldronInteraction.INSTANCE);
+      // emptying buckets - needed on all as new fluid can replace existing fluid
+      addToAllCauldrons(EmptyFluidBucketCauldronInteraction.INSTANCE, true, FLUID_CLAY_BUCKET, CRACKED_FLUID_CLAY_BUCKET);
+      addToAllCauldrons(EmptySolidBucketCauldronInteraction.INSTANCE, true, SOLID_CLAY_BUCKET, CRACKED_SOLID_CLAY_BUCKET);
     });
   }
 

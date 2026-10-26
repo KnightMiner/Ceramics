@@ -1,4 +1,4 @@
-package knightminer.ceramics.util;
+package knightminer.ceramics.util.cauldron;
 
 import knightminer.ceramics.items.BaseClayBucketItem;
 import net.minecraft.core.BlockPos;
@@ -24,6 +24,9 @@ public abstract class EmptyClayBucketCauldronInteraction<T> implements CauldronI
 	/** Gets the contents of the given stack */
 	protected abstract T getContents(ItemStack stack);
 
+	/** Gets the empty version of these contents */
+	protected abstract T emptyContents();
+
 	/**
 	 * Converts a fluid to a cauldron
 	 *
@@ -43,24 +46,27 @@ public abstract class EmptyClayBucketCauldronInteraction<T> implements CauldronI
 		if (stack.getComponentsPatch().forget(BaseClayBucketItem.FORGET).isEmpty()) {
 			// fill cauldron from bucket
 			T contents = getContents(stack);
-			BlockState cauldron = getFullCauldron(state, contents);
-			if (cauldron != null) {
-				// would use vanilla logic here, but it is dumb and insists on using a vanilla bucket
-				if (!level.isClientSide) {
-					// empty bucket
-					player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, stack.getCraftingRemainingItem()));
-					// grant stats
-					player.awardStat(Stats.FILL_CAULDRON);
-					player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-					// update cauldron
-					level.setBlockAndUpdate(pos, cauldron);
-					// effects
-					level.playSound(null, pos, getSound(contents), SoundSource.BLOCKS, 1.0F, 1.0F);
-					level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
+			if (contents != emptyContents()) {
+				BlockState cauldron = getFullCauldron(state, contents);
+				if (cauldron != null) {
+					// would use vanilla logic here, but it is dumb and insists on using a vanilla bucket
+					if (!level.isClientSide) {
+						// empty bucket
+						player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, stack.getCraftingRemainingItem()));
+						// grant stats
+						player.awardStat(Stats.FILL_CAULDRON);
+						player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+						// update cauldron
+						level.setBlockAndUpdate(pos, cauldron);
+						// effects
+						level.playSound(null, pos, getSound(contents), SoundSource.BLOCKS, 1.0F, 1.0F);
+						level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
+					}
+					return ItemInteractionResult.sidedSuccess(level.isClientSide);
 				}
-				return ItemInteractionResult.sidedSuccess(level.isClientSide);
 			}
 		}
-		return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+		// consume so we don't dump the bucket
+		return ItemInteractionResult.CONSUME;
 	}
 }

@@ -1,4 +1,4 @@
-package knightminer.ceramics.util;
+package knightminer.ceramics.util.cauldron;
 
 import knightminer.ceramics.items.SolidClayBucketItem;
 import net.minecraft.sounds.SoundEvent;
@@ -19,6 +19,11 @@ public class EmptySolidBucketCauldronInteraction extends EmptyClayBucketCauldron
 	@Override
 	protected Block getContents(ItemStack stack) {
 		return SolidClayBucketItem.getBlock(stack);
+	}
+
+	@Override
+	protected Block emptyContents() {
+		return Blocks.AIR;
 	}
 
 	// TODO: currently hardcoded to vanilla cauldrons, need a way to generalize this

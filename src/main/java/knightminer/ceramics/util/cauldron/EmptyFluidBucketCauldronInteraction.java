@@ -1,4 +1,4 @@
-package knightminer.ceramics.util;
+package knightminer.ceramics.util.cauldron;
 
 import knightminer.ceramics.items.FluidClayBucketItem;
 import knightminer.ceramics.recipe.CeramicsTags;
@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.CauldronFluidContent;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -26,6 +27,11 @@ public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldron
 	@Override
 	protected Fluid getContents(ItemStack stack) {
 		return FluidClayBucketItem.getFluid(stack);
+	}
+
+	@Override
+	protected Fluid emptyContents() {
+		return Fluids.EMPTY;
 	}
 
 	@Override
