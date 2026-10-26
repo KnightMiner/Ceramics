@@ -18,7 +18,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import org.jetbrains.annotations.Nullable;
-import slimeknights.mantle.item.ConstantItemFluidHandler;
+import slimeknights.mantle.item.ConstantFluidHandlerItem;
 
 /**
  * Clay bucket holding milk
@@ -75,7 +75,7 @@ public class MilkClayBucketItem extends BaseClayBucketItem {
       if (NeoForgeMod.MILK.isBound()) {
         FluidStack fluid = new FluidStack(NeoForgeMod.MILK, FluidType.BUCKET_VOLUME);
         fluid.applyComponents(stack.getComponentsPatch().forget(FORGET));
-        return new ConstantItemFluidHandler(fluid, stack);
+        return new ConstantFluidHandlerItem(fluid, stack);
       }
       return null;
     }

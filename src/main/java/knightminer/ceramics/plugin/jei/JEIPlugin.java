@@ -45,6 +45,10 @@ import java.util.stream.Stream;
 @SuppressWarnings("unused")
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
+  public JEIPlugin() {
+    MantleJEIConstants.enableTransferTab();
+  }
+
   @Override
   public ResourceLocation getPluginUid() {
     return Ceramics.getResource("jei_plugin");

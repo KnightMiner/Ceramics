@@ -26,7 +26,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import slimeknights.mantle.data.loadable.Loadables;
-import slimeknights.mantle.item.ConstantItemFluidHandler;
+import slimeknights.mantle.item.ConstantFluidHandlerItem;
 import slimeknights.mantle.recipe.helper.TagPreference;
 import slimeknights.mantle.util.RegistryHelper;
 import slimeknights.mantle.util.TranslationHelper;
@@ -159,7 +159,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 				if (optional.isPresent()) {
 					FluidStack fluid = new FluidStack(optional.get(), FluidType.BUCKET_VOLUME);
 					fluid.applyComponents(stack.getComponentsPatch().forget(FORGET));
-					return new ConstantItemFluidHandler(fluid, stack);
+					return new ConstantFluidHandlerItem(fluid, stack);
 				}
 			}
 			return null;
