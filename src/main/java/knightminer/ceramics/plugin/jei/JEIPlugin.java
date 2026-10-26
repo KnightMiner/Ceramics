@@ -34,12 +34,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import slimeknights.mantle.client.SafeClientAccess;
 import slimeknights.mantle.data.loadable.Loadables;
+import slimeknights.mantle.plugin.jei.MantleJEIConstants;
 import slimeknights.mantle.recipe.MultiNamedRecipe;
 import slimeknights.mantle.recipe.NamedRecipe;
 import slimeknights.mantle.util.RegistryHelper;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unused")
 @JeiPlugin
@@ -106,7 +107,7 @@ public class JEIPlugin implements IModPlugin {
     ClientLevel world = Minecraft.getInstance().level;
     assert world != null;
     RecipeManager recipeManager = world.getRecipeManager();
-    RegistryAccess access = Objects.requireNonNullElse(SafeClientAccess.getRegistryAccess(), RegistryAccess.EMPTY);
+    RegistryAccess access = SafeClientAccess.getRegistryAccess();
     List<NamedRecipe<KilnRecipe>> results = MultiNamedRecipe.streamNamedRecipes(world.registryAccess(), recipeManager, Registration.KILN_RECIPE.get(), KilnRecipe.class)
       .filter(holder -> {
         KilnRecipe recipe = holder.recipe();
@@ -149,6 +150,11 @@ public class JEIPlugin implements IModPlugin {
   @Override
   public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
     registration.addRecipeCatalyst(new ItemStack(Registration.KILN), KilnCategory.TYPE, RecipeTypes.FUELING);
+    // add cisterns as two groups: clay and porcelain
+    registration.addRecipeCatalyst(MantleJEIConstants.FLUID_TRANSFER, consumer ->
+      consumer.addItemStacks(Stream.concat(Stream.of(Registration.TERRACOTTA_CISTERN.get()), Registration.COLORED_CISTERN.stream()).map(ItemStack::new).toList()));
+    registration.addRecipeCatalyst(MantleJEIConstants.FLUID_TRANSFER, consumer ->
+      consumer.addItemStacks(Registration.PORCELAIN_CISTERN.stream().map(ItemStack::new).toList()));
   }
 
   @Override
