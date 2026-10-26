@@ -26,7 +26,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -75,6 +77,7 @@ public class EmptyClayBucketItem extends BaseClayBucketItem {
 			if (block instanceof LiquidBlock liquidBlock && liquidBlock.getFluid().is(CeramicsTags.Fluids.BUCKET_BLACKLIST)) {
 				return InteractionResultHolder.fail(stack);
 			}
+			// bucket pickup is the standard way to grab it
 			if (block instanceof BucketPickup pickup) {
 				ItemStack pickupStack = pickup.pickupBlock(world, pos, state);
 				ItemStack newStack;
@@ -108,6 +111,14 @@ public class EmptyClayBucketItem extends BaseClayBucketItem {
 				}
 				// success
 				return InteractionResultHolder.sidedSuccess(newStack, world.isClientSide());
+			}
+			// bucket pickup overrides
+			if (state.is(CeramicsTags.Blocks.BUCKET_EXTRA_BLOCKS)) {
+				world.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+				if (!world.isClientSide()) {
+					world.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(state));
+				}
+				return InteractionResultHolder.sidedSuccess(ItemUtils.createFilledResult(stack, player, withBlock(block, isCracked)), world.isClientSide());
 			}
 		}
 		return InteractionResultHolder.fail(stack);

@@ -42,6 +42,8 @@ public class CeramicsTags {
     public static final TagKey<Block> PORCELAIN_CISTERNS = ceramicsTag("porcelain_cisterns");
     public static final TagKey<Block> CISTERN_CONNECTIONS = ceramicsTag("cistern_connections");
 
+    /** Blocks in this tag can be placed in a clay bucket despite not having a {@link net.minecraft.world.item.SolidBucketItem} */
+    public static final TagKey<Block> BUCKET_EXTRA_BLOCKS = ceramicsTag("extra_bucket_blocks");
     /** Blocks that when placed in a clay bucket crack it */
     public static final TagKey<Block> BUCKET_CRACKING_BLOCKS = ceramicsTag("bucket_cracking_blocks");
 
