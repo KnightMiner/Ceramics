@@ -6,11 +6,11 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.SoundActions;
-import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.fluids.CauldronFluidContent;
+import net.neoforged.neoforge.fluids.FluidType;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -28,21 +28,25 @@ public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldron
 		return FluidClayBucketItem.getFluid(stack);
 	}
 
-	/**
-	 * Converts a fluid to a cauldron
-	 * TODO: currently hardcoded to vanilla cauldrons, need a way to generalize this
-	 * @param fluid  Fluid input
-	 * @return  Cauldron, or null if none exists
-	 */
 	@Override
 	@Nullable
 	protected BlockState getFullCauldron(Fluid fluid) {
-		if (fluid.is(Tags.Fluids.WATER)) {
-			return Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3);
+		CauldronFluidContent cauldronFluid = CauldronFluidContent.getForFluid(fluid);
+		if (cauldronFluid != null) {
+			BlockState state = cauldronFluid.block.defaultBlockState();
+			// if we have a level property, figure out how many layers 1 bucket gives
+			if (cauldronFluid.levelProperty != null) {
+				int layers = FluidType.BUCKET_VOLUME * cauldronFluid.maxLevel / cauldronFluid.totalAmount;
+				if (layers > 0) {
+					return state.setValue(cauldronFluid.levelProperty, layers);
+				}
+
+				// if no level property, we can use the plain state as long as the cauldron holds a bucket or less
+			} else if (cauldronFluid.totalAmount <= FluidType.BUCKET_VOLUME) {
+				return state;
+			}
 		}
-		if (fluid.is(Tags.Fluids.LAVA)) {
-			return Blocks.LAVA_CAULDRON.defaultBlockState();
-		}
+		// its possible the powder snow cauldron is not registered to a fluid, so check it directly
 		if (fluid.is(CeramicsTags.Fluids.POWDER_SNOW)) {
 			return Blocks.POWDER_SNOW_CAULDRON.defaultBlockState();
 		}

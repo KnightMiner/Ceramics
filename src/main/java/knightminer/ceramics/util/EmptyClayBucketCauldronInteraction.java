@@ -1,5 +1,6 @@
 package knightminer.ceramics.util;
 
+import knightminer.ceramics.items.BaseClayBucketItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraft.sounds.SoundEvent;
@@ -34,24 +35,27 @@ public abstract class EmptyClayBucketCauldronInteraction<T> implements CauldronI
 
 	@Override
 	public ItemInteractionResult interact(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
-		// fill cauldron from bucket
-		T contents = getContents(stack);
-		BlockState cauldron = getFullCauldron(contents);
-		if (cauldron != null) {
-			// would use vanilla logic here, but it is dumb and insists on using a vanilla bucket
-			if (!level.isClientSide) {
-				// empty bucket
-				player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, stack.getCraftingRemainingItem()));
-				// grant stats
-				player.awardStat(Stats.FILL_CAULDRON);
-				player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
-				// update cauldron
-				level.setBlockAndUpdate(pos, cauldron);
-				// effects
-				level.playSound(null, pos, getSound(contents), SoundSource.BLOCKS, 1.0F, 1.0F);
-				level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
+		// bucket must have no other data
+		if (stack.getComponentsPatch().forget(BaseClayBucketItem.FORGET).isEmpty()) {
+			// fill cauldron from bucket
+			T contents = getContents(stack);
+			BlockState cauldron = getFullCauldron(contents);
+			if (cauldron != null) {
+				// would use vanilla logic here, but it is dumb and insists on using a vanilla bucket
+				if (!level.isClientSide) {
+					// empty bucket
+					player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, stack.getCraftingRemainingItem()));
+					// grant stats
+					player.awardStat(Stats.FILL_CAULDRON);
+					player.awardStat(Stats.ITEM_USED.get(stack.getItem()));
+					// update cauldron
+					level.setBlockAndUpdate(pos, cauldron);
+					// effects
+					level.playSound(null, pos, getSound(contents), SoundSource.BLOCKS, 1.0F, 1.0F);
+					level.gameEvent(null, GameEvent.FLUID_PLACE, pos);
+				}
+				return ItemInteractionResult.sidedSuccess(level.isClientSide);
 			}
-			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
