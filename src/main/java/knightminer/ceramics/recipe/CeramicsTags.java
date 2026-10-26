@@ -85,7 +85,7 @@ public class CeramicsTags {
     /** Fluids in this tag won't show in the creative filled buckets. Unlike {@link #BUCKET_BLACKLIST}, will not prevent filling the bucket */
     public static final TagKey<Fluid> HIDE_IN_BUCKET = ceramicsTag("hide_in_bucket");
     /** Powdered snow in fluid form */
-    public static final TagKey<Fluid> POWDERED_SNOW = FluidTags.create(Mantle.commonResource("powdered_snow"));
+    public static final TagKey<Fluid> POWDER_SNOW = FluidTags.create(Mantle.commonResource("powder_snow"));
 
     private static TagKey<Fluid> ceramicsTag(String id) {
       return FluidTags.create(Ceramics.getResource(id));

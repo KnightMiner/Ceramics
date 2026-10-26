@@ -30,7 +30,7 @@ public class FluidTagProvider extends FluidTagsProvider {
 		this.tag(CeramicsTags.Fluids.BUCKET_BLACKLIST).addOptionalTag(Tags.Fluids.POTION);
 		this.tag(CeramicsTags.Fluids.HIDE_IN_BUCKET)
 			.addTag(CeramicsTags.Fluids.BUCKET_BLACKLIST)
-			.addOptionalTag(CeramicsTags.Fluids.POWDERED_SNOW)
+			.addOptionalTag(CeramicsTags.Fluids.POWDER_SNOW)
 			// JEI uses this tag to hide fluids, appropriate for our uses
 			.addOptionalTag(Mantle.commonResource("hidden_from_recipe_viewers"));
 	}

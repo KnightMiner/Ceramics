@@ -155,7 +155,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 		public IFluidHandlerItem getCapability(ItemStack stack, @Nullable Void context) {
 			// TODO: can this be extracted to JSON?
 			if (getBlock(stack) == Blocks.POWDER_SNOW) {
-				Optional<Fluid> optional = TagPreference.getPreference(CeramicsTags.Fluids.POWDERED_SNOW);
+				Optional<Fluid> optional = TagPreference.getPreference(CeramicsTags.Fluids.POWDER_SNOW);
 				if (optional.isPresent()) {
 					FluidStack fluid = new FluidStack(optional.get(), FluidType.BUCKET_VOLUME);
 					fluid.applyComponents(stack.getComponentsPatch().forget(FORGET));

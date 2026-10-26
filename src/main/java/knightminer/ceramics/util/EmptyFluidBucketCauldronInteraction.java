@@ -10,13 +10,13 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.SoundActions;
-import slimeknights.mantle.datagen.MantleTags;
+import net.neoforged.neoforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
- * Common logic to interaction with cauldrons
+ * Common logic to interaction with cauldrons.
  */
 public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldronInteraction<Fluid> {
 	public static final EmptyFluidBucketCauldronInteraction INSTANCE = new EmptyFluidBucketCauldronInteraction();
@@ -37,13 +37,13 @@ public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldron
 	@Override
 	@Nullable
 	protected BlockState getFullCauldron(Fluid fluid) {
-		if (fluid.is(MantleTags.Fluids.WATER)) {
+		if (fluid.is(Tags.Fluids.WATER)) {
 			return Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3);
 		}
-		if (fluid.is(MantleTags.Fluids.LAVA)) {
+		if (fluid.is(Tags.Fluids.LAVA)) {
 			return Blocks.LAVA_CAULDRON.defaultBlockState();
 		}
-		if (fluid.is(CeramicsTags.Fluids.POWDERED_SNOW)) {
+		if (fluid.is(CeramicsTags.Fluids.POWDER_SNOW)) {
 			return Blocks.POWDER_SNOW_CAULDRON.defaultBlockState();
 		}
 		return null;
