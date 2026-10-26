@@ -1,6 +1,6 @@
 {
   "type": "ceramics:kiln",
-  "category": "misc",
+  "category": "blocks",
   "cooking_time": 100,
   "experience": 0.3,
   "ingredient": {
