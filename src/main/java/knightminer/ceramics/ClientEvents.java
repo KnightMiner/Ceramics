@@ -1,8 +1,8 @@
 package knightminer.ceramics;
 
 import com.google.common.collect.ImmutableList;
-import knightminer.ceramics.client.model.ClayBucketModel;
 import knightminer.ceramics.client.model.CrackedModel;
+import knightminer.ceramics.client.model.SolidBucketModel;
 import knightminer.ceramics.client.renderer.ChannelBlockEntityRenderer;
 import knightminer.ceramics.client.renderer.CisternBlockEntityRenderer;
 import knightminer.ceramics.client.renderer.CisternFluids;
@@ -46,8 +46,7 @@ public class ClientEvents {
 
   @SubscribeEvent
   static void registerModels(RegisterGeometryLoaders event) {
-    event.register(Ceramics.getResource("fluid_bucket"), ClayBucketModel.FLUID_LOADER);
-    event.register(Ceramics.getResource("solid_bucket"), ClayBucketModel.SOLID_LOADER);
+    event.register(SolidBucketModel.ID, SolidBucketModel.LOADER);
     event.register(Ceramics.getResource("cracked"), CrackedModel.LOADER);
   }
 

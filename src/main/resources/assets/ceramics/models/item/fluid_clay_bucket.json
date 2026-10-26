@@ -1,10 +1,8 @@
 {
-  "loader": "ceramics:fluid_bucket",
+  "loader": "mantle:fluid_container",
   "parent": "neoforge:item/default",
   "textures": {
-    "particle": "ceramics:item/clay_bucket/normal_inner",
-    "base": "ceramics:item/clay_bucket/normal_cover",
-    "inner": "ceramics:item/clay_bucket/normal_inner",
+    "base": "ceramics:item/clay_bucket/normal",
     "fluid": "ceramics:item/clay_bucket/normal_fluid"
   }
 }
