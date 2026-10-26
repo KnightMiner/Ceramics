@@ -5,9 +5,9 @@ import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import slimeknights.mantle.Mantle;
-import slimeknights.mantle.datagen.MantleTags;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
@@ -27,10 +27,10 @@ public class FluidTagProvider extends FluidTagsProvider {
 		// water and lava are handled by the temperature check, so just make empty tags
 		this.tag(CeramicsTags.Fluids.COOL_FLUIDS);
 		this.tag(CeramicsTags.Fluids.HOT_FLUIDS);
-		this.tag(CeramicsTags.Fluids.BUCKET_BLACKLIST).addOptionalTag(MantleTags.Fluids.POTION);
+		this.tag(CeramicsTags.Fluids.BUCKET_BLACKLIST).addOptionalTag(Tags.Fluids.POTION);
 		this.tag(CeramicsTags.Fluids.HIDE_IN_BUCKET)
 			.addTag(CeramicsTags.Fluids.BUCKET_BLACKLIST)
-			.addOptionalTag(CeramicsTags.Fluids.POWDERED_SNOW.location())
+			.addOptionalTag(CeramicsTags.Fluids.POWDERED_SNOW)
 			// JEI uses this tag to hide fluids, appropriate for our uses
 			.addOptionalTag(Mantle.commonResource("hidden_from_recipe_viewers"));
 	}
