@@ -18,11 +18,13 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import slimeknights.mantle.fluid.MantleFluids;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -37,6 +39,9 @@ public class Ceramics {
 		CeramicsTags.init();
 		modEventBus.addListener(RegisterPayloadHandlersEvent.class, CeramicsNetwork::register);
 		modEventBus.addListener(this::gatherData);
+		// enable fluids to store more stuff in cisterns
+		NeoForgeMod.enableMilkFluid();
+		MantleFluids.registerPotion(modEventBus);
 	}
 
 	private void gatherData(GatherDataEvent event) {
