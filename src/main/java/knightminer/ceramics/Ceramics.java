@@ -42,6 +42,9 @@ public class Ceramics {
 		// enable fluids to store more stuff in cisterns
 		NeoForgeMod.enableMilkFluid();
 		MantleFluids.registerPotion(modEventBus);
+		MantleFluids.registerPowderSnow(modEventBus);
+		MantleFluids.registerHoney(modEventBus);
+		MantleFluids.registerStew(modEventBus);
 	}
 
 	private void gatherData(GatherDataEvent event) {
