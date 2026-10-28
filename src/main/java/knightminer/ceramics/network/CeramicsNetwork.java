@@ -17,10 +17,10 @@ public class CeramicsNetwork extends NetworkWrapper {
    * Network instance:
    * <ul>
    * <li>1: Initial 1.20.1 release</li>
-   * <li>2: 1.8.1 packet changes.</li>
+   * <li>20.1: 1.8.1 packet changes.</li>
    * </ul>
    */
-  private static final String VERSION = "21.0";
+  private static final String VERSION = "20.1";
 
   /** Network instance, created in {@link #init()} */
   private static CeramicsNetwork INSTANCE;
