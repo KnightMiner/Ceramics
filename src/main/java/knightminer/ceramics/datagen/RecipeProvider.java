@@ -4,7 +4,7 @@ import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.blocks.RainbowPorcelain;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.recipe.CrackedClayRepairRecipe.Finished;
+import knightminer.ceramics.recipe.CrackedClayRepairRecipeBuilder;
 import knightminer.ceramics.recipe.KilnRecipeBuilder;
 import knightminer.ceramics.recipe.NoNBTIngredient;
 import net.minecraft.advancements.CriterionTriggerInstance;
@@ -720,6 +720,8 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
    * @param repairable  Repairable item
    */
   private void clayRepair(Consumer<FinishedRecipe> consumer, ItemLike repairable) {
-    consumer.accept(new Finished(suffix(repairable, "_repair"), repairable, Ingredient.of(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR), has(repairable)));
+    CrackedClayRepairRecipeBuilder.item(repairable)
+      .unlockedBy("has_item", has(repairable))
+      .save(consumer, suffix(repairable, "_repair"));
   }
 }

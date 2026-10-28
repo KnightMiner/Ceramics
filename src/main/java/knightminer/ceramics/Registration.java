@@ -277,7 +277,7 @@ public class Registration {
   public static final RegistryObject<BlockEntityType<ChannelBlockEntity>> CHANNEL_BLOCK_ENTITY = BLOCK_ENTITIES.register("channel", ChannelBlockEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
   // clay repair
-  public static final RegistryObject<RecipeSerializer<?>> CLAY_REPAIR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("cracked_clay_repair", CrackedClayRepairRecipe.Serializer::new);
+  public static final RegistryObject<RecipeSerializer<CrackedClayRepairRecipe>> CLAY_REPAIR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("cracked_clay_repair", () -> LoadableRecipeSerializer.of(CrackedClayRepairRecipe.LOADABLE));
 
   @SubscribeEvent
   static void registerRecipeSerializer(RegisterEvent event) {
