@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -151,6 +153,11 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 		for (Block block : BUCKETABLE_BLOCKS) {
 			if (isCracked == RegistryHelper.contains(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS, block)) {
 				consumer.accept(setBlock(new ItemStack(this), block));
+			}
+		}
+		for (Holder<Block> block : BuiltInRegistries.BLOCK.getTagOrEmpty(CeramicsTags.Blocks.BUCKET_EXTRA_BLOCKS)) {
+			if (isCracked == block.is(CeramicsTags.Blocks.BUCKET_CRACKING_BLOCKS)) {
+				consumer.accept(setBlock(new ItemStack(this), block.value()));
 			}
 		}
 	}
