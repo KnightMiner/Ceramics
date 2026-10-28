@@ -3,7 +3,7 @@
     "_comment": "# Genel #",
     "_comment": "###########",
     
-    "itemGroup.ceramics": "Ceramics",
+    "creative_tab.ceramics": "Ceramics",
     
     "_comment": "##########",
     "_comment": "# Bloklar #",
@@ -95,17 +95,26 @@
     "item.ceramics.porcelain_brick": "Porselen Tuğla",
     
     "item.ceramics.unfired_clay_bucket": "Fırınlanmamış Kova",
-    "item.ceramics.clay_bucket": "Kova",
-    "item.ceramics.clay_bucket.filled": "%s Kovası",
+    "item.ceramics.empty_clay_bucket": "Kova",
+    "item.ceramics.cracked_empty_clay_bucket": "Çatlamış Kova",
+    "item.ceramics.cracked_empty_clay_bucket.tooltip": "Kovayı boşalttığında kova kırılacak",
+
+    "item.ceramics.fluid_clay_bucket": "Kova",
+    "item.ceramics.fluid_clay_bucket.filled": "%s Kovası",
+    "item.ceramics.cracked_fluid_clay_bucket": "Çatlamış Kova",
+    "item.ceramics.cracked_fluid_clay_bucket.filled": "%s Kovası",
+    "item.ceramics.cracked_fluid_clay_bucket.tooltip": "Kovayı boşalttığında kova kırılacak",
+
+    "item.ceramics.solid_clay_bucket": "Kova",
+    "item.ceramics.solid_clay_bucket.filled": "%s Kovası",
+    "item.ceramics.cracked_solid_clay_bucket": "Çatlamış Kova",
+    "item.ceramics.cracked_solid_clay_bucket.filled": "%s Kovası",
+    "item.ceramics.cracked_solid_clay_bucket.tooltip": "Kovayı boşalttığında kova kırılacak",
+
     "item.ceramics.milk_clay_bucket": "Süt Kovası",
-    "item.ceramics.cracked_clay_bucket": "Çatlamış Kova",
-    "item.ceramics.cracked_clay_bucket.filled": "%s Kovası",
-    "item.ceramics.cracked_clay_bucket.tooltip": "Kovayı boşalttığında kova kırılacak",
     "item.ceramics.cracked_milk_clay_bucket": "Süt Kovası",
     "item.ceramics.cracked_milk_clay_bucket.tooltip": "Kovayı boşalttığında kova kırılacak",
     
-    "item.ceramics.unfired_shears": "Fırınlanmamış Makas",
-
     "item.ceramics.unfired_clay_plate": "Fırınlanmamış Kil Levha",
     "item.ceramics.clay_plate": "Kil Levha",
     "item.ceramics.clay_helmet": "Kil Levha Kask",

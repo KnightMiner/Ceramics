@@ -3,7 +3,7 @@
     "_comment": "# General #",
     "_comment": "###########",
     
-    "itemGroup.ceramics": "Ceramics",
+    "creative_tab.ceramics": "Ceramics",
     
     "_comment": "##########",
     "_comment": "# Blocks #",
@@ -90,15 +90,12 @@
     "block.ceramics.terracotta_gauge": "Датчик",
     "block.ceramics.porcelain_gauge": "Датчик",
     "block.ceramics.gauge.tooltip": "Установите на резервуар для считывания уровня содержащейся в нём жидкости",
-    "block.ceramics.gauge.empty": "Бочка пуста",
-    "block.ceramics.gauge.contents": "Содержит: %smb %s",
 
     "block.ceramics.clay_cistern": "Необожжённая глиняная бочка",
     "block.ceramics.unfired_cistern": "Необожжённая фарфоровая бочка",
     "block.ceramics.terracotta_cistern": "Глиняная бочка",
-    "block.ceramics.terracotta_cistern.tooltip": "Чтобы увеличить ёмкость, поставьте по вертикали ещё больше глиняных бочек того же цвета\nПри хранении горячей жидкости, со временем, трескается",
-    "block.ceramics.porcelain_cistern.tooltip": "Чтобы увеличить ёмкость, поставьте по вертикали ещё больше фарфоровых бочек того же цвета\nЖаростойкая",
-    
+    "block.ceramics.cistern.tooltip": "Чтобы увеличить ёмкость, поставьте по вертикали ещё больше глиняных бочек того же цвета",
+
     "block.ceramics.white_terracotta_cistern": "Белая глиняная бочка",
     "block.ceramics.orange_terracotta_cistern": "Оранжевая глиняная бочка",
     "block.ceramics.magenta_terracotta_cistern": "Пурпурная глиняная бочка",
@@ -136,23 +133,23 @@
     "block.ceramics.clay_faucet": "Необожжённый глиняный кран",
     "block.ceramics.unfired_faucet": "Необожжённый фарфоровый кран",
     "block.ceramics.terracotta_faucet": "Глиняный кран",
-    "block.ceramics.terracotta_faucet.tooltip": "Извлекает жидкости из соседних резервуаров и переливает их в тот, что находится снизу\nТрескается во время транспортировки горячей жидкости",
     "block.ceramics.porcelain_faucet": "Фарфоровый кран",
-    "block.ceramics.porcelain_faucet.tooltip": "Извлекает жидкости из соседних резервуаров и переливает их в тот, что находится снизу\nЖаростойкий",
+    "block.ceramics.faucet.tooltip": "Извлекает жидкости из соседних резервуаров и переливает их в тот, что находится снизу",
     
     "block.ceramics.clay_channel": "Необожжённый глиняный жёлоб",
     "block.ceramics.unfired_channel": "Необожжённый фарфоровый жёлоб",
     "block.ceramics.terracotta_channel": "Глиняный жёлоб",
-    "block.ceramics.terracotta_channel.tooltip": "Напоняется при помощи крана, а вот выливаться в подсоединённые жёлоба и резервуары жидкость будет автоматически\nТрескается во время транспортировки горячей жидкости",
     "block.ceramics.porcelain_channel": "Фарфоровый жёлоб",
-    "block.ceramics.porcelain_channel.tooltip": "Напоняется при помощи крана, а вот выливаться в подсоединённые жёлоба и резервуары жидкость будет автоматически\nЖаростойкий",
+    "block.ceramics.channel.tooltip": "Напоняется при помощи крана, а вот выливаться в подсоединённые жёлоба и резервуары жидкость будет автоматически",
     
     "block.ceramics.channel.side.in": "Жидкость будет затекать с этой стороны",
     "block.ceramics.channel.side.out": "Жидкость будет вытекать с этой стороны",
     "block.ceramics.channel.side.none": "Жидкость не будет течь c этой стороны",
     "block.ceramics.channel.down.out": "Разрешено течь вниз",
     "block.ceramics.channel.down.none": "Запрещено течь вниз",
-    
+
+    "tooltip.ceramics.crackable": "При хранении горячей жидкости, со временем, трескается",
+    "tooltip.ceramics.heat_resistant": "Жаростойкая",
     "tooltip.ceramics.cracked": "Треснуто на: %s / %s",
    
    
@@ -164,13 +161,24 @@
     "item.ceramics.porcelain_brick": "Фарфоровый кирпич",
     
     "item.ceramics.unfired_clay_bucket": "Необожжённое глиняное ведро",
-    "item.ceramics.clay_bucket": "Глиняное ведро",
-    "item.ceramics.clay_bucket.tooltip": "Трескается при заполнении горячей жидкостью",
-    "item.ceramics.clay_bucket.filled": "Глиняное ведро: %s",
+    "item.ceramics.empty_clay_bucket": "Глиняное ведро",
+    "item.ceramics.empty_clay_bucket.tooltip": "Трескается при заполнении горячей жидкостью",
+    "item.ceramics.cracked_empty_clay_bucket": "Треснувшее глиняное ведро",
+    "item.ceramics.cracked_empty_clay_bucket.tooltip": "Ведро сломается при выливании",
+
+    "item.ceramics.fluid_clay_bucket": "Глиняное ведро",
+    "item.ceramics.fluid_clay_bucket.filled": "Глиняное ведро: %s",
+    "item.ceramics.cracked_fluid_clay_bucket": "Треснувшее глиняное ведро",
+    "item.ceramics.cracked_fluid_clay_bucket.filled": "Глиняное ведро: %s",
+    "item.ceramics.cracked_fluid_clay_bucket.tooltip": "Ведро сломается при выливании",
+
+    "item.ceramics.solid_clay_bucket": "Глиняное ведро",
+    "item.ceramics.solid_clay_bucket.filled": "Глиняное ведро: %s",
+    "item.ceramics.cracked_solid_clay_bucket": "Треснувшее глиняное ведро",
+    "item.ceramics.cracked_solid_clay_bucket.filled": "Глиняное ведро: %s",
+    "item.ceramics.cracked_solid_clay_bucket.tooltip": "Ведро сломается при выливании",
+
     "item.ceramics.milk_clay_bucket": "Глиняное ведро с молоком",
-    "item.ceramics.cracked_clay_bucket": "Треснувшее глиняное ведро",
-    "item.ceramics.cracked_clay_bucket.filled": "Глиняное ведро: %s",
-    "item.ceramics.cracked_clay_bucket.tooltip": "Ведро сломается при выливании",
     "item.ceramics.cracked_milk_clay_bucket": "Глиняное ведро с молоком",
     "item.ceramics.cracked_milk_clay_bucket.tooltip": "Ведро сломается при выливании",
 
