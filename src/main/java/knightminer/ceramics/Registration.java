@@ -48,7 +48,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -73,6 +72,7 @@ import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 import slimeknights.mantle.block.GaugeBlock;
 import slimeknights.mantle.item.BlockTooltipItem;
+import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 import slimeknights.mantle.registration.deferred.BlockDeferredRegister;
 import slimeknights.mantle.registration.deferred.BlockEntityTypeDeferredRegister;
 import slimeknights.mantle.registration.deferred.ItemDeferredRegister;
@@ -224,7 +224,7 @@ public class Registration {
       return "ceramics:kiln";
     }
   });
-  public static final RegistryObject<SimpleCookingSerializer<KilnRecipe>> KILN_SERIALIZER = RECIPE_SERIALIZERS.register("kiln", () -> new SimpleCookingSerializer<>(KilnRecipe::new, 100));
+  public static final RegistryObject<RecipeSerializer<KilnRecipe>> KILN_SERIALIZER = RECIPE_SERIALIZERS.register("kiln", () -> LoadableRecipeSerializer.of(KilnRecipe.LOADABLE));
 
   /*
    * fluid handling

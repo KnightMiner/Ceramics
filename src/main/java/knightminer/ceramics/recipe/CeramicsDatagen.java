@@ -17,7 +17,8 @@ public class CeramicsDatagen {
     return result.asItem() instanceof BlockItem ? CookingBookCategory.BLOCKS : CookingBookCategory.MISC;
   }
 
-  /** Creates a kiln recipe builder */
+  /** @deprecated use {@link KilnRecipeBuilder} */
+  @Deprecated(forRemoval = true)
   public static SimpleCookingRecipeBuilder kilnRecipe(Ingredient input, RecipeCategory category, ItemLike output, float experience, int cookTime) {
     return new SimpleCookingRecipeBuilder(category, determineKilnCategory(output), output, input, experience, cookTime, Registration.KILN_SERIALIZER.get());
   }
