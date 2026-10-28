@@ -163,8 +163,8 @@
     "item.ceramics.unfired_clay_bucket": "Jílový kbelík",
     "item.ceramics.empty_clay_bucket": "Kbelík",
     "item.ceramics.empty_clay_bucket.tooltip": "Praskne, je li naplněn žhavou tekutinou",
-    "item.ceramics.empty_cracked_clay_bucket": "Naprasklý kbelík",
-    "item.ceramics.empty_cracked_clay_bucket.tooltip": "Kbelík po vyprázdnění praskne",
+    "item.ceramics.cracked_empty_clay_bucket": "Naprasklý kbelík",
+    "item.ceramics.cracked_empty_clay_bucket.tooltip": "Kbelík po vyprázdnění praskne",
 
     "item.ceramics.fluid_clay_bucket": "Kbelík",
     "item.ceramics.fluid_clay_bucket.filled": "Kbelík (%s)",

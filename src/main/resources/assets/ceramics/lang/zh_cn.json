@@ -3,7 +3,7 @@
     "_comment": "# General #",
     "_comment": "###########",
 
-    "itemGroup.ceramics": "陶瓷器",
+    "creative_tab.ceramics": "陶瓷器",
 
     "_comment": "##########",
     "_comment": "# Blocks #",
@@ -90,15 +90,12 @@
     "block.ceramics.terracotta_gauge": "测量观察器",
     "block.ceramics.porcelain_gauge": "测量观察器",
     "block.ceramics.gauge.tooltip": "右键将其贴在液体容器上，可以用其来查看容器所含液体具体的量",
-    "block.ceramics.gauge.empty": "空的蓄水箱",
-    "block.ceramics.gauge.contents": "包含：%smb %s",
 
     "block.ceramics.clay_cistern": "黏土蓄水箱",
     "block.ceramics.unfired_cistern": "未烧制的蓄水箱",
     "block.ceramics.terracotta_cistern": "陶瓦蓄水箱",
-    "block.ceramics.terracotta_cistern.tooltip": "相同颜色的水箱可以上下堆叠来增加容积\n当装载了过热的液体时，它会逐渐龟裂",
-    "block.ceramics.porcelain_cistern.tooltip": "相同颜色的水箱可以上下堆叠来增加容积\n它很耐热",
-    
+    "block.ceramics.cistern.tooltip": "相同颜色的水箱可以上下堆叠来增加容积",
+
     "block.ceramics.white_terracotta_cistern": "白色陶瓦蓄水箱",
     "block.ceramics.orange_terracotta_cistern": "橙色陶瓦蓄水箱",
     "block.ceramics.magenta_terracotta_cistern": "品红色陶瓦蓄水箱",
@@ -136,24 +133,25 @@
     "block.ceramics.clay_faucet": "黏土排液口",
     "block.ceramics.unfired_faucet": "未烧制的排液口",
     "block.ceramics.terracotta_faucet": "陶瓦排液口",
-    "block.ceramics.terracotta_faucet.tooltip": "将液体从其贴着的液体容器中转移到其下方的容器中\n当排出过热的液体时，它会缓慢龟裂",
     "block.ceramics.porcelain_faucet": "陶瓷排液口",
-    "block.ceramics.porcelain_faucet.tooltip": "将液体从其贴着的液体容器中转移到其下方的容器中\n它很耐热",
-    
+    "block.ceramics.faucet.tooltip": "将液体从其贴着的液体容器中转移到其下方的容器中",
+
     "block.ceramics.clay_channel": "黏土输液道",
     "block.ceramics.unfired_channel": "未烧制的输液道",
     "block.ceramics.terracotta_channel": "陶瓦输液道",
-    "block.ceramics.terracotta_channel.tooltip": "配合排液口或者其他管道/输液道来传输液体\n传输过热的液体时，它会逐渐龟裂",
     "block.ceramics.porcelain_channel": "陶瓷输液道",
-    "block.ceramics.porcelain_channel.tooltip": "配合排液口或者其他管道/输液道来传输液体\n它很耐热",
+    "block.ceramics.channel.tooltip": "配合排液口或者其他管道/输液道来传输液体",
     
     "block.ceramics.channel.side.in": "设置为边沿向传输端流动",
     "block.ceramics.channel.side.out": "设置为边沿向输出端流动",
     "block.ceramics.channel.side.none": "不允许向侧边流动",
     "block.ceramics.channel.down.out": "允许向下流动",
     "block.ceramics.channel.down.none": "不允许向下流动",
-    
+
+    "tooltip.ceramics.crackable": "当装载了过热的液体时，它会逐渐龟裂",
+    "tooltip.ceramics.heat_resistant": "它很耐热",
     "tooltip.ceramics.cracked": "龟裂：%s / %s",
+
 
     "_comment": "#########",
     "_comment": "# Items #",
@@ -163,12 +161,23 @@
     "item.ceramics.porcelain_brick": "瓷砖块",
 
     "item.ceramics.unfired_clay_bucket": "未烧制的黏土桶",
-    "item.ceramics.clay_bucket": "黏土桶",
-    "item.ceramics.clay_bucket.filled": "%s黏土桶",
+    "item.ceramics.empty_clay_bucket": "黏土桶",
+    "item.ceramics.cracked_empty_clay_bucket": "裂开的黏土桶",
+    "item.ceramics.cracked_empty_clay_bucket.tooltip": "倒出液体时桶会碎裂",
+
+    "item.ceramics.fluid_clay_bucket": "黏土桶",
+    "item.ceramics.fluid_clay_bucket.filled": "%s黏土桶",
+    "item.ceramics.cracked_fluid_clay_bucket": "裂开的黏土桶",
+    "item.ceramics.cracked_fluid_clay_bucket.filled": "%s黏土桶",
+    "item.ceramics.cracked_fluid_clay_bucket.tooltip": "倒出液体时桶会碎裂",
+
+    "item.ceramics.solid_clay_bucket": "黏土桶",
+    "item.ceramics.solid_clay_bucket.filled": "%s黏土桶",
+    "item.ceramics.cracked_solid_clay_bucket": "裂开的黏土桶",
+    "item.ceramics.cracked_solid_clay_bucket.filled": "%s黏土桶",
+    "item.ceramics.cracked_solid_clay_bucket.tooltip": "倒出液体时桶会碎裂",
+
     "item.ceramics.milk_clay_bucket": "牛奶黏土桶",
-    "item.ceramics.cracked_clay_bucket": "裂开的黏土桶",
-    "item.ceramics.cracked_clay_bucket.filled": "%s黏土桶",
-    "item.ceramics.cracked_clay_bucket.tooltip": "倒出液体时桶会碎裂",
     "item.ceramics.cracked_milk_clay_bucket": "牛奶黏土桶",
     "item.ceramics.cracked_milk_clay_bucket.tooltip": "倒出液体时桶会碎裂",
 
