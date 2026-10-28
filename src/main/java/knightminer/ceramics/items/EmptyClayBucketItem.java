@@ -121,11 +121,12 @@ public class EmptyClayBucketItem extends BaseClayBucketItem {
 		return InteractionResult.PASS;
 	}
 
-
-	/* Stack properties */
-
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
+		if (isCracked) {
+			tooltip.add(CRACKED);
+		} else {
+			tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
+		}
 	}
 }

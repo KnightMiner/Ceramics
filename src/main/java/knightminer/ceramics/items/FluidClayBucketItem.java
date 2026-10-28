@@ -26,7 +26,6 @@ import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -46,7 +45,6 @@ import slimeknights.mantle.data.loadable.Loadables;
 import slimeknights.mantle.util.TranslationHelper;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -235,13 +233,6 @@ public class FluidClayBucketItem extends BaseClayBucketItem {
 			if (isVisible(fluid) && isCracked == doesCrack(fluid)) {
 				consumer.accept(setFluid(new ItemStack(this), fluid, DataComponentPatch.EMPTY));
 			}
-		}
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		if (isCracked) {
-			tooltip.add(Component.translatable(this.getDescriptionId() + ".tooltip").withStyle(ChatFormatting.GRAY));
 		}
 	}
 
