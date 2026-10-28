@@ -1,5 +1,6 @@
-// 1.20.1	2025-06-07T06:14:58.9935714	Ceramics Fluid Tags
+// 1.20.1	2026-10-27T20:32:23.4485789	Ceramics Fluid Tags
 100d0e77d135691ae3862d188e41234f767ee0b0 data/ceramics/tags/fluids/bucket_blacklist.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/ceramics/tags/fluids/cool_fluids.json
-c981d635c7a774d9fe2ed99abf7a804ca744a301 data/ceramics/tags/fluids/hide_in_bucket.json
+920314fe2c37784cace626e09252d3429a9e4c7a data/ceramics/tags/fluids/hide_in_bucket.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/ceramics/tags/fluids/hot_fluids.json
+39c305e91b644b949a1b37b4473ff15a944844d7 data/ceramics/tags/fluids/powder_snow.json

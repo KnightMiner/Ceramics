@@ -2,7 +2,7 @@
   "values": [
     "#ceramics:bucket_blacklist",
     {
-      "id": "#forge:powdered_snow",
+      "id": "#ceramics:powder_snow",
       "required": false
     },
     {

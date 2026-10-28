@@ -198,7 +198,7 @@ public abstract class BaseClayBucketItem extends Item {
       return withMilk(isCracked);
     }
     // TODO: can this be softcoded?
-    if (fluid.is(CeramicsTags.Fluids.POWDERED_SNOW)) {
+    if (fluid.is(CeramicsTags.Fluids.POWDER_SNOW)) {
       return withBlock(Blocks.POWDER_SNOW, isCracked);
     }
     // return

@@ -28,9 +28,12 @@ public class FluidTagProvider extends FluidTagsProvider {
 		this.tag(CeramicsTags.Fluids.COOL_FLUIDS);
 		this.tag(CeramicsTags.Fluids.HOT_FLUIDS);
 		this.tag(CeramicsTags.Fluids.BUCKET_BLACKLIST).addOptionalTag(Mantle.commonResource("potion"));
+		this.tag(CeramicsTags.Fluids.POWDER_SNOW)
+			.addOptionalTag(Mantle.commonResource("powder_snow"))
+			.addOptionalTag(Mantle.commonResource("powdered_snow"));
 		this.tag(CeramicsTags.Fluids.HIDE_IN_BUCKET)
 			.addTag(CeramicsTags.Fluids.BUCKET_BLACKLIST)
-			.addOptionalTag(CeramicsTags.Fluids.POWDERED_SNOW.location())
+			.addOptionalTag(CeramicsTags.Fluids.POWDER_SNOW.location())
 			// JEI uses this tag to hide fluids, appropriate for our uses
 			.addOptionalTag(new ResourceLocation("c", "hidden_from_recipe_viewers"));
 	}

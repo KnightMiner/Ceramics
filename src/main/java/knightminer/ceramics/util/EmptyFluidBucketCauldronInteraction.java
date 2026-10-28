@@ -44,7 +44,7 @@ public class EmptyFluidBucketCauldronInteraction extends EmptyClayBucketCauldron
 		if (fluid.is(MantleTags.Fluids.LAVA)) {
 			return Blocks.LAVA_CAULDRON.defaultBlockState();
 		}
-		if (fluid.is(CeramicsTags.Fluids.POWDERED_SNOW)) {
+		if (fluid.is(CeramicsTags.Fluids.POWDER_SNOW)) {
 			return Blocks.POWDER_SNOW_CAULDRON.defaultBlockState();
 		}
 		return null;

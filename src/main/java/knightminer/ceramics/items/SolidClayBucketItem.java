@@ -62,7 +62,7 @@ public class SolidClayBucketItem extends BaseClayBucketItem {
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
 		// TODO: can this be extracted to JSON?
 		if (getBlock(stack) == Blocks.POWDER_SNOW) {
-			Optional<Fluid> optional = TagPreference.getPreference(CeramicsTags.Fluids.POWDERED_SNOW);
+			Optional<Fluid> optional = TagPreference.getPreference(CeramicsTags.Fluids.POWDER_SNOW);
 			if (optional.isPresent()) {
 				return new ConstantFluidContainerWrapper(new FluidStack(optional.get(), FluidType.BUCKET_VOLUME), stack);
 			}

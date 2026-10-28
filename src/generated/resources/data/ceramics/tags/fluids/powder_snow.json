@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#forge:powder_snow",
+      "required": false
+    },
+    {
+      "id": "#forge:powdered_snow",
+      "required": false
+    }
+  ]
+}

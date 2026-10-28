@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import slimeknights.mantle.Mantle;
 
 import java.util.function.Consumer;
 
@@ -88,8 +87,8 @@ public class CeramicsTags {
     public static final TagKey<Fluid> BUCKET_BLACKLIST = ceramicsTag("bucket_blacklist");
     /** Fluids in this tag won't show in the creative filled buckets. Unlike {@link #BUCKET_BLACKLIST}, will not prevent filling the bucket */
     public static final TagKey<Fluid> HIDE_IN_BUCKET = ceramicsTag("hide_in_bucket");
-    /** Powdered snow in fluid form */
-    public static final TagKey<Fluid> POWDERED_SNOW = FluidTags.create(Mantle.commonResource("powdered_snow"));
+    /** Powder snow in fluid form */
+    public static final TagKey<Fluid> POWDER_SNOW = ceramicsTag("powder_snow");
 
     private static TagKey<Fluid> ceramicsTag(String id) {
       return FluidTags.create(Ceramics.getResource(id));
