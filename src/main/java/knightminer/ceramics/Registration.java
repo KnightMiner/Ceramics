@@ -268,12 +268,12 @@ public class Registration {
 
   // faucet
   public static final ItemObject<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("faucet.tooltip"));
-  public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion(), false), HEAT_RESISTANT.apply("faucet.tooltip"));
+  public static final ItemObject<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion().forceSolidOn(), false), HEAT_RESISTANT.apply("faucet.tooltip"));
   public static final RegistryObject<BlockEntityType<FaucetBlockEntity>> FAUCET_BLOCK_ENTITY = BLOCK_ENTITIES.register("faucet", FaucetBlockEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
 
   // channel
   public static final ItemObject<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("channel.tooltip"));
-  public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion(), false), HEAT_RESISTANT.apply("channel.tooltip"));
+  public static final ItemObject<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion().forceSolidOn(), false), HEAT_RESISTANT.apply("channel.tooltip"));
   public static final RegistryObject<BlockEntityType<ChannelBlockEntity>> CHANNEL_BLOCK_ENTITY = BLOCK_ENTITIES.register("channel", ChannelBlockEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
   // clay repair
