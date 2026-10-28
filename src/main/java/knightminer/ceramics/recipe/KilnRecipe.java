@@ -9,6 +9,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import slimeknights.mantle.data.loadable.Loadables;
+import slimeknights.mantle.data.loadable.field.LegacyField;
 import slimeknights.mantle.data.loadable.field.LoadableField;
 import slimeknights.mantle.data.loadable.primitive.IntLoadable;
 import slimeknights.mantle.data.loadable.record.RecordLoadable;
@@ -18,7 +19,7 @@ import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 
 /** Recipe for smelting in the kiln. */
 public class KilnRecipe extends AbstractCookingRecipe implements CookingResultRecipe {
-  public static LoadableField<Integer, AbstractCookingRecipe> COOKING_TIME_FIELD = IntLoadable.FROM_ONE.defaultField("cooking_time", 100, true, AbstractCookingRecipe::getCookingTime);
+  public static LoadableField<Integer, AbstractCookingRecipe> COOKING_TIME_FIELD = new LegacyField<>(IntLoadable.FROM_ONE.defaultField("cooking_time", 100, true, AbstractCookingRecipe::getCookingTime), "cookingtime");
   public static final RecordLoadable<KilnRecipe> LOADABLE = RecordLoadable.create(
     LoadableRecipeSerializer.RECIPE_GROUP, CookingResultRecipe.CATEGORY_FIELD,
     Loadables.ITEM_INGREDIENT_NONEMPTY.requiredField("ingredient", r -> r.ingredient),
