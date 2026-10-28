@@ -99,20 +99,19 @@
     "item.ceramics.cracked_empty_clay_bucket": "금이 간 양동이",
 
     "item.ceramics.fluid_clay_bucket": "양동이",
+    "item.ceramics.cracked_clay_bucket.tooltip": "비울 때 양동이가 부서집니다.",
+
     "item.ceramics.fluid_clay_bucket.filled": "%s 양동이",
     "item.ceramics.cracked_fluid_clay_bucket": "금이 간 양동이",
     "item.ceramics.cracked_fluid_clay_bucket.filled": "%s 양동이",
-    "item.ceramics.cracked_fluid_clay_bucket.tooltip": "비울 때 양동이가 부서집니다.",
 
     "item.ceramics.solid_clay_bucket": "양동이",
     "item.ceramics.solid_clay_bucket.filled": "%s 양동이",
     "item.ceramics.cracked_solid_clay_bucket": "금이 간 양동이",
     "item.ceramics.cracked_solid_clay_bucket.filled": "%s 양동이",
-    "item.ceramics.cracked_solid_clay_bucket.tooltip": "비울 때 양동이가 부서집니다.",
 
     "item.ceramics.milk_clay_bucket": "우유 양동이",
     "item.ceramics.cracked_milk_clay_bucket": "금이 간 우유 양동이",
-    "item.ceramics.cracked_milk_clay_bucket.tooltip": "비울 때 양동이가 부서집니다.",
 
     "item.ceramics.unfired_clay_plate": "굽지 않은 점토판",
     "item.ceramics.clay_plate": "점토판",

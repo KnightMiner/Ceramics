@@ -1,5 +1,6 @@
 package knightminer.ceramics.items;
 
+import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
 import net.minecraft.ChatFormatting;
@@ -12,6 +13,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -24,6 +26,8 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import slimeknights.mantle.util.RegistryHelper;
 
+import javax.annotation.Nullable;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -33,6 +37,8 @@ import java.util.function.Consumer;
 public abstract class BaseClayBucketItem extends Item {
   /** Constant used in rendering items breaking */
   private static final float DEGREE_TO_RAD = (float) Math.PI / 180f;
+  /** Tooltip for when a bucket is cracked */
+  protected static Component CRACKED = Ceramics.component("item", "cracked_clay_bucket.tooltip").withStyle(ChatFormatting.GRAY);
 
   protected boolean isCracked;
   protected BaseClayBucketItem(boolean isCracked, Properties props) {
@@ -73,6 +79,13 @@ public abstract class BaseClayBucketItem extends Item {
     ItemStack original = event.getOriginal();
     if(original.getItem() == this) {
       renderBrokenItem(event.getEntity(), event.getOriginal());
+    }
+  }
+
+  @Override
+  public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    if (isCracked) {
+      tooltip.add(CRACKED);
     }
   }
 

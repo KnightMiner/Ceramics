@@ -161,25 +161,23 @@
     "item.ceramics.porcelain_brick": "瓷砖块",
 
     "item.ceramics.unfired_clay_bucket": "未烧制的黏土桶",
+    "item.ceramics.cracked_clay_bucket.tooltip": "倒出液体时桶会碎裂",
+
     "item.ceramics.empty_clay_bucket": "黏土桶",
     "item.ceramics.cracked_empty_clay_bucket": "裂开的黏土桶",
-    "item.ceramics.cracked_empty_clay_bucket.tooltip": "倒出液体时桶会碎裂",
 
     "item.ceramics.fluid_clay_bucket": "黏土桶",
     "item.ceramics.fluid_clay_bucket.filled": "%s黏土桶",
     "item.ceramics.cracked_fluid_clay_bucket": "裂开的黏土桶",
     "item.ceramics.cracked_fluid_clay_bucket.filled": "%s黏土桶",
-    "item.ceramics.cracked_fluid_clay_bucket.tooltip": "倒出液体时桶会碎裂",
 
     "item.ceramics.solid_clay_bucket": "黏土桶",
     "item.ceramics.solid_clay_bucket.filled": "%s黏土桶",
     "item.ceramics.cracked_solid_clay_bucket": "裂开的黏土桶",
     "item.ceramics.cracked_solid_clay_bucket.filled": "%s黏土桶",
-    "item.ceramics.cracked_solid_clay_bucket.tooltip": "倒出液体时桶会碎裂",
 
     "item.ceramics.milk_clay_bucket": "牛奶黏土桶",
     "item.ceramics.cracked_milk_clay_bucket": "牛奶黏土桶",
-    "item.ceramics.cracked_milk_clay_bucket.tooltip": "倒出液体时桶会碎裂",
 
     "item.ceramics.unfired_clay_plate": "未烧制的黏土板",
     "item.ceramics.clay_plate": "黏土陶板",

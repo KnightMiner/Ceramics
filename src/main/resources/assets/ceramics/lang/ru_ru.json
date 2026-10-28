@@ -161,26 +161,24 @@
     "item.ceramics.porcelain_brick": "Фарфоровый кирпич",
     
     "item.ceramics.unfired_clay_bucket": "Необожжённое глиняное ведро",
+    "item.ceramics.cracked_clay_bucket.tooltip": "Ведро сломается при выливании",
+
     "item.ceramics.empty_clay_bucket": "Глиняное ведро",
     "item.ceramics.empty_clay_bucket.tooltip": "Трескается при заполнении горячей жидкостью",
     "item.ceramics.cracked_empty_clay_bucket": "Треснувшее глиняное ведро",
-    "item.ceramics.cracked_empty_clay_bucket.tooltip": "Ведро сломается при выливании",
 
     "item.ceramics.fluid_clay_bucket": "Глиняное ведро",
     "item.ceramics.fluid_clay_bucket.filled": "Глиняное ведро: %s",
     "item.ceramics.cracked_fluid_clay_bucket": "Треснувшее глиняное ведро",
     "item.ceramics.cracked_fluid_clay_bucket.filled": "Глиняное ведро: %s",
-    "item.ceramics.cracked_fluid_clay_bucket.tooltip": "Ведро сломается при выливании",
 
     "item.ceramics.solid_clay_bucket": "Глиняное ведро",
     "item.ceramics.solid_clay_bucket.filled": "Глиняное ведро: %s",
     "item.ceramics.cracked_solid_clay_bucket": "Треснувшее глиняное ведро",
     "item.ceramics.cracked_solid_clay_bucket.filled": "Глиняное ведро: %s",
-    "item.ceramics.cracked_solid_clay_bucket.tooltip": "Ведро сломается при выливании",
 
     "item.ceramics.milk_clay_bucket": "Глиняное ведро с молоком",
     "item.ceramics.cracked_milk_clay_bucket": "Глиняное ведро с молоком",
-    "item.ceramics.cracked_milk_clay_bucket.tooltip": "Ведро сломается при выливании",
 
     "item.ceramics.unfired_clay_plate": "Необожжённая глиняная пластина",
     "item.ceramics.clay_plate": "Глиняная пластина",
