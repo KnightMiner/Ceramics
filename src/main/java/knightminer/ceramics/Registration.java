@@ -30,13 +30,12 @@ import knightminer.ceramics.util.cauldron.EmptySolidBucketCauldronInteraction;
 import knightminer.ceramics.util.cauldron.FillFluidBucketCauldronInteraction;
 import knightminer.ceramics.util.cauldron.FillSolidBucketCauldronInteraction;
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.core.cauldron.CauldronInteraction;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.BlockItem;
@@ -47,14 +46,11 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -66,21 +62,27 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.common.crafting.IngredientType;
 import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import slimeknights.mantle.block.GaugeBlock;
 import slimeknights.mantle.data.codec.MantleCodecs;
 import slimeknights.mantle.item.tooltip.BlockTooltipItem;
 import slimeknights.mantle.network.codec.MantleStreamCodecs;
-import slimeknights.mantle.recipe.helper.LoadableRecipeSerializer;
 import slimeknights.mantle.registration.deferred.BlockDeferredRegister;
 import slimeknights.mantle.registration.deferred.BlockEntityTypeDeferredRegister;
+import slimeknights.mantle.registration.deferred.DataComponentTypeDeferredRegister;
+import slimeknights.mantle.registration.deferred.IngredientDeferredRegister;
 import slimeknights.mantle.registration.deferred.ItemDeferredRegister;
 import slimeknights.mantle.registration.deferred.MenuTypeDeferredRegister;
+import slimeknights.mantle.registration.deferred.RecipeSerializerDeferredRegister;
+import slimeknights.mantle.registration.deferred.RecipeTypeDeferredRegister;
+import slimeknights.mantle.registration.holder.DeferredBlockEntity;
+import slimeknights.mantle.registration.holder.DeferredDataComponent;
+import slimeknights.mantle.registration.holder.DeferredIngredient;
+import slimeknights.mantle.registration.holder.DeferredMenu;
+import slimeknights.mantle.registration.holder.DeferredRecipeSerializer;
+import slimeknights.mantle.registration.holder.DeferredRecipeType;
 import slimeknights.mantle.registration.object.EnumObject;
 import slimeknights.mantle.registration.object.MultiObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
@@ -97,11 +99,11 @@ public class Registration {
   private static final MenuTypeDeferredRegister MENUS = new MenuTypeDeferredRegister(Ceramics.MOD_ID);
   private static final BlockEntityTypeDeferredRegister BLOCK_ENTITIES = new BlockEntityTypeDeferredRegister(Ceramics.MOD_ID);
   private static final DeferredRegister<ArmorMaterial> ARMOR_MATERIALS = DeferredRegister.create(Registries.ARMOR_MATERIAL, Ceramics.MOD_ID);
-  private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(Registries.RECIPE_SERIALIZER, Ceramics.MOD_ID);
-  private static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(Registries.RECIPE_TYPE, Ceramics.MOD_ID);
-  private static final DeferredRegister<IngredientType<?>> INGREDIENTS = DeferredRegister.create(NeoForgeRegistries.Keys.INGREDIENT_TYPES, Ceramics.MOD_ID);
+  private static final RecipeSerializerDeferredRegister RECIPE_SERIALIZERS = new RecipeSerializerDeferredRegister(Ceramics.MOD_ID);
+  private static final RecipeTypeDeferredRegister RECIPE_TYPES = new RecipeTypeDeferredRegister(Ceramics.MOD_ID);
+  private static final IngredientDeferredRegister INGREDIENTS = new IngredientDeferredRegister(Ceramics.MOD_ID);
   private static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Ceramics.MOD_ID);
-  private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Ceramics.MOD_ID);
+  private static final DataComponentTypeDeferredRegister DATA_COMPONENTS = new DataComponentTypeDeferredRegister(Registries.DATA_COMPONENT_TYPE, Ceramics.MOD_ID);
 
   /**
    * Initializes the registries with the forge mod bus
@@ -189,9 +191,9 @@ public class Registration {
 
   // tools
   /** Fluid contents for the fluid clay bucket */
-  public static final DeferredHolder<DataComponentType<?>,DataComponentType<Fluid>> FLUID = DATA_COMPONENTS.register("fluid", () -> DataComponentType.<Fluid>builder().persistent(MantleCodecs.NON_EMPTY_FLUID).networkSynchronized(MantleStreamCodecs.FLUID).build());
+  public static final DeferredDataComponent<Fluid> FLUID = DATA_COMPONENTS.registerPersistent("fluid", MantleCodecs.NON_EMPTY_FLUID, MantleStreamCodecs.FLUID);
   /** Block contents for the solid clay bucket */
-  public static final DeferredHolder<DataComponentType<?>,DataComponentType<Block>> BLOCK = DATA_COMPONENTS.register("block", () -> DataComponentType.<Block>builder().persistent(MantleCodecs.NON_AIR_BLOCK).networkSynchronized(MantleStreamCodecs.BLOCK).build());
+  public static final DeferredDataComponent<Block> BLOCK = DATA_COMPONENTS.registerPersistent("block", MantleCodecs.NON_AIR_BLOCK, MantleStreamCodecs.BLOCK);
 
   public static final DeferredItem<Item> UNFIRED_CLAY_BUCKET;
   public static final DeferredItem<EmptyClayBucketItem> EMPTY_CLAY_BUCKET, CRACKED_EMPTY_CLAY_BUCKET;
@@ -218,7 +220,7 @@ public class Registration {
   // armor
   public static final DeferredItem<Item> UNFIRED_CLAY_PLATE = ITEMS.register("unfired_clay_plate");
   public static final DeferredItem<Item> CLAY_PLATE = ITEMS.register("clay_plate");
-  public static final DeferredHolder<ArmorMaterial,ArmorMaterial> CLAY_MATERIAL = ARMOR_MATERIALS.register("clay", id -> new ArmorMaterial(Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
+  public static final Holder<ArmorMaterial> CLAY_MATERIAL = ARMOR_MATERIALS.register("clay", id -> new ArmorMaterial(Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
     map.put(ArmorItem.Type.BOOTS, 1);
     map.put(ArmorItem.Type.LEGGINGS, 2);
     map.put(ArmorItem.Type.CHESTPLATE, 3);
@@ -236,24 +238,16 @@ public class Registration {
 
   // kiln block
   public static final DeferredBlock<KilnBlock> KILN = BLOCKS.register("kiln", () -> new KilnBlock(terracottaProps(MapColor.COLOR_ORANGE).lightLevel(s -> s.getValue(KilnBlock.LIT) ? 13 : 0)), DEFAULT_BLOCK_ITEM);
-  public static final DeferredHolder<MenuType<?>,MenuType<KilnMenu>> KILN_MENU = MENUS.register("kiln", KilnMenu::new);
-  public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<KilnBlockEntity>> KILN_BLOCK_ENTITY = BLOCK_ENTITIES.register("kiln", KilnBlockEntity::new, KILN);
+  public static final DeferredMenu<KilnMenu> KILN_MENU = MENUS.register("kiln", KilnMenu::new);
+  public static final DeferredBlockEntity<KilnBlockEntity> KILN_BLOCK_ENTITY = BLOCK_ENTITIES.register("kiln", KilnBlockEntity::new, KILN);
   // kiln recipes
-  public static final DeferredHolder<RecipeType<?>,RecipeType<KilnRecipe>> KILN_RECIPE = RECIPE_TYPES.register("kiln", id -> new RecipeType<>() {
-    @Override
-    public String toString() {
-      return id.toString();
-    }
-  });
-  public static final DeferredHolder<RecipeSerializer<?>,RecipeSerializer<KilnRecipe>> KILN_SERIALIZER = RECIPE_SERIALIZERS.register("kiln", () -> LoadableRecipeSerializer.of(KilnRecipe.LOADABLE));
+  public static final DeferredRecipeType<KilnRecipe> KILN_RECIPE = RECIPE_TYPES.registerType("kiln");
+  public static final DeferredRecipeSerializer<KilnRecipe> KILN_SERIALIZER = RECIPE_SERIALIZERS.registerLoadable("kiln", KilnRecipe.LOADABLE);
 
   /*
    * fluid handling
    */
-  public static final DeferredHolder<DataComponentType<?>,DataComponentType<Byte>> CRACKS = DATA_COMPONENTS.register("cracks", () -> DataComponentType.<Byte>builder()
-    .persistent(Codec.BYTE.validate(Codec.checkRange((byte)1, (byte)5)))
-    .networkSynchronized(ByteBufCodecs.BYTE)
-    .build());
+  public static final DeferredDataComponent<Byte> CRACKS = DATA_COMPONENTS.registerPersistent("cracks", Codec.BYTE.validate(Codec.checkRange((byte)1, (byte)5)), ByteBufCodecs.BYTE);
   // gauge
   public static final DeferredBlock<GaugeBlock> TERRACOTTA_GAUGE, PORCELAIN_GAUGE;
 
@@ -285,7 +279,7 @@ public class Registration {
   public static final DeferredBlock<FluidCisternBlock> TERRACOTTA_CISTERN = BLOCKS.register("terracotta_cistern", () -> new FluidCisternBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
   public static final EnumObject<DyeColor, Block> COLORED_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "terracotta_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion().randomTicks(), true), TERRACOTTA_CISTERN_BLOCK_ITEM);
   public static final EnumObject<DyeColor, Block> PORCELAIN_CISTERN = BLOCKS.registerEnum(DyeColor.values(), "porcelain_cistern", (color) -> new FluidCisternBlock(terracottaProps(getTerracottaColor(color)).noOcclusion(), false), PORCELAIN_CISTERN_BLOCK_ITEM);
-  public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<CisternBlockEntity>> CISTERN_BLOCK_ENTITY = BLOCK_ENTITIES.register("cistern", CisternBlockEntity::new, builder -> {
+  public static final DeferredBlockEntity<CisternBlockEntity> CISTERN_BLOCK_ENTITY = BLOCK_ENTITIES.register("cistern", CisternBlockEntity::new, builder -> {
     builder.add(TERRACOTTA_CISTERN.get());
     builder.addAll(COLORED_CISTERN.values());
     builder.addAll(PORCELAIN_CISTERN.values());
@@ -294,18 +288,18 @@ public class Registration {
   // faucet
   public static final DeferredBlock<PouringFaucetBlock> TERRACOTTA_FAUCET = BLOCKS.register("terracotta_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("faucet.tooltip"));
   public static final DeferredBlock<PouringFaucetBlock> PORCELAIN_FAUCET = BLOCKS.register("porcelain_faucet", () -> new PouringFaucetBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion().forceSolidOn(), false), HEAT_RESISTANT.apply("faucet.tooltip"));
-  public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<FaucetBlockEntity>> FAUCET_BLOCK_ENTITY = BLOCK_ENTITIES.register("faucet", FaucetBlockEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
+  public static final DeferredBlockEntity<FaucetBlockEntity> FAUCET_BLOCK_ENTITY = BLOCK_ENTITIES.register("faucet", FaucetBlockEntity::new, builder -> builder.add(TERRACOTTA_FAUCET.get(), PORCELAIN_FAUCET.get()));
 
   // channel
   public static final DeferredBlock<FlowingChannelBlock> TERRACOTTA_CHANNEL = BLOCKS.register("terracotta_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.COLOR_ORANGE).noOcclusion().randomTicks(), true), CRACKABLE_BLOCK_ITEM.apply("channel.tooltip"));
   public static final DeferredBlock<FlowingChannelBlock> PORCELAIN_CHANNEL = BLOCKS.register("porcelain_channel", () -> new FlowingChannelBlock(terracottaProps(MapColor.TERRACOTTA_WHITE).noOcclusion().forceSolidOn(), false), HEAT_RESISTANT.apply("channel.tooltip"));
-  public static final DeferredHolder<BlockEntityType<?>,BlockEntityType<ChannelBlockEntity>> CHANNEL_BLOCK_ENTITY = BLOCK_ENTITIES.register("channel", ChannelBlockEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
+  public static final DeferredBlockEntity<ChannelBlockEntity> CHANNEL_BLOCK_ENTITY = BLOCK_ENTITIES.register("channel", ChannelBlockEntity::new, builder -> builder.add(TERRACOTTA_CHANNEL.get(), PORCELAIN_CHANNEL.get()));
 
   // clay repair
-  public static final DeferredHolder<RecipeSerializer<?>,RecipeSerializer<CrackedClayRepairRecipe>> CLAY_REPAIR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.register("cracked_clay_repair", () -> LoadableRecipeSerializer.of(CrackedClayRepairRecipe.LOADABLE));
+  public static final DeferredRecipeSerializer<CrackedClayRepairRecipe> CLAY_REPAIR_RECIPE_SERIALIZER = RECIPE_SERIALIZERS.registerLoadable("cracked_clay_repair", CrackedClayRepairRecipe.LOADABLE);
 
   // ingredients
-  public static final DeferredHolder<IngredientType<?>,IngredientType<CrackableIngredient>> CRACKABLE_INGREDIENT = INGREDIENTS.register("crackable", () -> new IngredientType<>(CrackableIngredient.CODEC, CrackableIngredient.STREAM_CODEC));
+  public static final DeferredIngredient<CrackableIngredient> CRACKABLE_INGREDIENT = INGREDIENTS.register("crackable", CrackableIngredient.CODEC, CrackableIngredient.STREAM_CODEC);
 
 
   @SubscribeEvent
