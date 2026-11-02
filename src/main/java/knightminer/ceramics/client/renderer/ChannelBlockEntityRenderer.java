@@ -20,7 +20,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.client.render.ChannelFluids;
 import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
-import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 
 public class ChannelBlockEntityRenderer implements BlockEntityRenderer<ChannelBlockEntity> {
@@ -49,7 +48,7 @@ public class ChannelBlockEntityRenderer implements BlockEntityRenderer<ChannelBl
 		IClientFluidTypeExtensions client = IClientFluidTypeExtensions.of(fluid.getFluid());
 		TextureAtlasSprite still = FluidRenderer.getBlockSprite(client.getStillTexture(fluid));
 		TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(client.getFlowingTexture(fluid));
-		VertexConsumer builder = buffer.getBuffer(MantleRenderTypes.FLUID);
+		VertexConsumer builder = buffer.getBuffer(FluidRenderer.getRenderType(fluid.getFluid()));
 		int color = client.getTintColor(fluid);
 		light = FluidRenderer.withBlockLight(light, fluid.getFluid().getFluidType().getLightLevel(fluid));
 
@@ -109,7 +108,9 @@ public class ChannelBlockEntityRenderer implements BlockEntityRenderer<ChannelBl
 		// render flow downwards
 		if (state.getValue(ChannelBlock.DOWN) && te.isFlowing(Direction.DOWN)) {
 			cube = model.down();
-			FluidRenderer.renderCuboid(matrices, builder, cube, 0, still, flowing, color, light, false);
+			if (cube != null) {
+				FluidRenderer.renderCuboid(matrices, builder, cube, 0, still, flowing, color, light, false);
+			}
 
 			// render into the block(s) below
 			RenderingHelper.renderFaucetFluids(world, pos, Direction.DOWN, matrices, builder, still, flowing, color, light);

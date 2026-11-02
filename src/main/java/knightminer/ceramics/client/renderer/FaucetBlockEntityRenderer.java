@@ -20,7 +20,6 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 import net.neoforged.neoforge.fluids.FluidStack;
 import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
-import slimeknights.mantle.client.render.MantleRenderTypes;
 import slimeknights.mantle.client.render.RenderingHelper;
 
 import java.util.List;
@@ -59,7 +58,7 @@ public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBloc
       combinedLightIn = FluidRenderer.withBlockLight(combinedLightIn, renderFluid.getFluid().getFluidType().getLightLevel(renderFluid));
 
       // render all cubes in the model
-      VertexConsumer buffer = bufferIn.getBuffer(MantleRenderTypes.FLUID);
+      VertexConsumer buffer = bufferIn.getBuffer(FluidRenderer.getRenderType(renderFluid.getFluid()));
       for (FluidCuboid cube : fluids) {
         FluidRenderer.renderCuboid(matrices, buffer, cube, 0, still, flowing, color, combinedLightIn, false);
       }

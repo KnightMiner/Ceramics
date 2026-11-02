@@ -25,10 +25,10 @@ public class CisternFluidProvider extends RegistryDataMapProvider<Block,CisternF
       FluidCuboid.builder().from(3,  2, 3).to(13, 15, 13).face(Direction.UP).build(),
       FluidCuboid.builder().from(3, -1, 3).to(13, 15, 13).face(Direction.UP).build(),
       Map.of(
-        Direction.NORTH, FluidCuboid.builder().from( 5, 6,  0).to(11, 11,  3).face(Direction.UP, Direction.NORTH).build(),
-        Direction.SOUTH, FluidCuboid.builder().from( 5, 6, 13).to(11, 11, 16).face(Direction.UP, Direction.SOUTH).build(),
-        Direction.WEST,  FluidCuboid.builder().from( 0, 6,  5).to( 3, 11, 11).face(Direction.UP, Direction.WEST).build(),
-        Direction.EAST,  FluidCuboid.builder().from(13, 6,  5).to(16, 11, 11).face(Direction.UP, Direction.EAST).build()
+        Direction.NORTH, FluidCuboid.builder().from( 5,     6,  0.05f).to(11,     10.99f,  3    ).face(Direction.UP, Direction.NORTH).build(),
+        Direction.SOUTH, FluidCuboid.builder().from( 5,     6, 13    ).to(11,     10.99f, 15.95f).face(Direction.UP, Direction.SOUTH).build(),
+        Direction.WEST,  FluidCuboid.builder().from( 0.05f, 6,  5    ).to( 3,     10.99f, 11    ).face(Direction.UP, Direction.WEST).build(),
+        Direction.EAST,  FluidCuboid.builder().from(13,     6,  5    ).to(15.95f, 10.99f, 11    ).face(Direction.UP, Direction.EAST).build()
       )
     ));
     redirect(Registration.TERRACOTTA_CISTERN, cistern);

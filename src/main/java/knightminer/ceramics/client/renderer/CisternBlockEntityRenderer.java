@@ -16,7 +16,6 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import org.joml.Vector3f;
 import slimeknights.mantle.client.render.FluidCuboid;
 import slimeknights.mantle.client.render.FluidRenderer;
-import slimeknights.mantle.client.render.MantleRenderTypes;
 
 /**
  * Renderer for cistern blocks
@@ -41,7 +40,7 @@ public class CisternBlockEntityRenderer implements BlockEntityRenderer<CisternBl
           IClientFluidTypeExtensions client = IClientFluidTypeExtensions.of(fluid.getFluid());
           TextureAtlasSprite still = FluidRenderer.getBlockSprite(client.getStillTexture(fluid));
           TextureAtlasSprite flowing = FluidRenderer.getBlockSprite(client.getFlowingTexture(fluid));
-          VertexConsumer builder = buffer.getBuffer(MantleRenderTypes.FLUID);
+          VertexConsumer builder = buffer.getBuffer(FluidRenderer.getRenderType(fluid.getFluid(), false));
           int color = client.getTintColor(fluid);
           light = FluidRenderer.withBlockLight(light, fluid.getFluid().getFluidType().getLightLevel(fluid));
 
