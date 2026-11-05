@@ -11,6 +11,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import slimeknights.mantle.Mantle;
+import slimeknights.mantle.registration.object.BlockItemTagKey;
 
 public class CeramicsTags {
   private static boolean tagsLoaded = false;
@@ -30,13 +31,13 @@ public class CeramicsTags {
 
   public static class Blocks {
     private static void init() {}
-    public static final TagKey<Block> COLORED_TERRACOTTA = ceramicsTag("colored_terracotta");
-    public static final TagKey<Block> PORCELAIN = ceramicsTag("porcelain_block");
-    public static final TagKey<Block> COLORED_PORCELAIN = ceramicsTag("colored_porcelain");
-    public static final TagKey<Block> RAINBOW_PORCELAIN = ceramicsTag("rainbow_porcelain");
-    public static final TagKey<Block> BRICKS = ceramicsTag("bricks");
-    public static final TagKey<Block> TERRACOTTA_CISTERNS = ceramicsTag("terracotta_cisterns");
-    public static final TagKey<Block> PORCELAIN_CISTERNS = ceramicsTag("porcelain_cisterns");
+    public static final BlockItemTagKey COLORED_TERRACOTTA = ceramicsItem("colored_terracotta");
+    public static final BlockItemTagKey PORCELAIN = ceramicsItem("porcelain");
+    public static final BlockItemTagKey COLORED_PORCELAIN = ceramicsItem("colored_porcelain");
+    public static final BlockItemTagKey RAINBOW_PORCELAIN = ceramicsItem("rainbow_porcelain");
+    public static final BlockItemTagKey BRICKS = ceramicsItem("bricks");
+    public static final BlockItemTagKey TERRACOTTA_CISTERNS = ceramicsItem("terracotta_cisterns");
+    public static final BlockItemTagKey PORCELAIN_CISTERNS = ceramicsItem("porcelain_cisterns");
     public static final TagKey<Block> CISTERN_CONNECTIONS = ceramicsTag("cistern_connections");
 
     /** Blocks in this tag can be placed in a clay bucket despite not having a {@link net.minecraft.world.item.SolidBucketItem} */
@@ -44,20 +45,15 @@ public class CeramicsTags {
     /** Blocks that when placed in a clay bucket crack it */
     public static final TagKey<Block> BUCKET_CRACKING_BLOCKS = ceramicsTag("bucket_cracking_blocks");
 
+    private static BlockItemTagKey ceramicsItem(String id) {
+      return BlockItemTagKey.create(Ceramics.getResource(id));
+    }
     private static TagKey<Block> ceramicsTag(String id) {
       return BlockTags.create(Ceramics.getResource(id));
     }
   }
   public static class Items {
     private static void init() {}
-    public static final TagKey<Item> COLORED_TERRACOTTA = ceramicsTag("colored_terracotta");
-    public static final TagKey<Item> PORCELAIN = ceramicsTag("porcelain_block");
-    public static final TagKey<Item> COLORED_PORCELAIN = ceramicsTag("colored_porcelain");
-    public static final TagKey<Item> RAINBOW_PORCELAIN = ceramicsTag("rainbow_porcelain");
-    public static final TagKey<Item> BRICKS = ceramicsTag("bricks");
-    public static final TagKey<Item> MILK_BUCKETS = commonTag("buckets/milk");
-    public static final TagKey<Item> TERRACOTTA_CISTERNS = ceramicsTag("terracotta_cisterns");
-    public static final TagKey<Item> PORCELAIN_CISTERNS = ceramicsTag("porcelain_cisterns");
     public static final TagKey<Item> TERRACOTTA_CRACK_REPAIR = ceramicsTag("terracotta_crack_repair");
 
     public static final TagKey<Item> PLATES = commonTag("plates");

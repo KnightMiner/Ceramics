@@ -4,7 +4,7 @@
   "group": "ceramics:dye_porcelain",
   "key": {
     "B": {
-      "tag": "ceramics:porcelain_block"
+      "tag": "ceramics:porcelain"
     },
     "D": {
       "tag": "c:dyes/white"

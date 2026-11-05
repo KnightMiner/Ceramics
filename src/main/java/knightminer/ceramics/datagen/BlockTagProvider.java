@@ -11,16 +11,16 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;
+import slimeknights.mantle.data.BlockTagProviderExtension;
 import slimeknights.mantle.datagen.MantleTags;
 import slimeknights.mantle.registration.object.EnumObject;
 import slimeknights.mantle.registration.object.WallBuildingBlockObject;
 
 import java.util.concurrent.CompletableFuture;
 
-public class BlockTagProvider extends BlockTagsProvider {
+public class BlockTagProvider extends BlockTagProviderExtension {
   public BlockTagProvider(PackOutput packOutput, CompletableFuture<Provider> lookupProvider, ExistingFileHelper helper) {
     super(packOutput, lookupProvider, Ceramics.MOD_ID, helper);
   }
@@ -49,7 +49,7 @@ public class BlockTagProvider extends BlockTagsProvider {
     });
     this.tag(CeramicsTags.Blocks.PORCELAIN)
         .add(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE))
-        .addTag(CeramicsTags.Blocks.COLORED_PORCELAIN);
+        .addTag(CeramicsTags.Blocks.COLORED_PORCELAIN.block());
 
     // rainbow porcelain
     IntrinsicTagAppender<Block> rainbow = this.tag(CeramicsTags.Blocks.RAINBOW_PORCELAIN);

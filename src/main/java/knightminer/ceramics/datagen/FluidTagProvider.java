@@ -7,7 +7,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import slimeknights.mantle.Mantle;
+import slimeknights.mantle.datagen.MantleTags;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.CompletableFuture;
@@ -29,9 +29,8 @@ public class FluidTagProvider extends FluidTagsProvider {
 		this.tag(CeramicsTags.Fluids.HOT_FLUIDS);
 		this.tag(CeramicsTags.Fluids.BUCKET_BLACKLIST).addOptionalTag(Tags.Fluids.POTION);
 		this.tag(CeramicsTags.Fluids.HIDE_IN_BUCKET)
+			.addTag(MantleTags.Fluids.HIDE_IN_DISPLAY) // handles hidden from recipe viewers
 			.addTag(CeramicsTags.Fluids.BUCKET_BLACKLIST)
-			.addOptionalTag(CeramicsTags.Fluids.POWDER_SNOW)
-			// JEI uses this tag to hide fluids, appropriate for our uses
-			.addOptionalTag(Mantle.commonResource("hidden_from_recipe_viewers"));
+			.addOptionalTag(CeramicsTags.Fluids.POWDER_SNOW);
 	}
 }

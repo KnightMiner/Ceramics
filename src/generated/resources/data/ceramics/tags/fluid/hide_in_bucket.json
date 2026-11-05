@@ -1,12 +1,9 @@
 {
   "values": [
+    "#mantle:hide_in_display",
     "#ceramics:bucket_blacklist",
     {
       "id": "#c:powder_snow",
-      "required": false
-    },
-    {
-      "id": "#c:hidden_from_recipe_viewers",
       "required": false
     }
   ]

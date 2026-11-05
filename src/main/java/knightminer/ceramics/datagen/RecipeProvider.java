@@ -49,10 +49,10 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
   @Override
   protected void buildRecipes(RecipeOutput output) {
     // recoloring terracotta
-    Criterion<?> terracottaCriteria = has(CeramicsTags.Items.COLORED_TERRACOTTA);
+    Criterion<?> terracottaCriteria = has(CeramicsTags.Blocks.COLORED_TERRACOTTA.item());
     Registration.TERRACOTTA.forEach((color, item) ->
       ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 8)
-                         .define('B', CeramicsTags.Items.COLORED_TERRACOTTA)
+                         .define('B', CeramicsTags.Blocks.COLORED_TERRACOTTA.item())
                          .define('D', color.getTag())
                          .group("stained_terracotta")
                          .pattern("BBB")
@@ -85,7 +85,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     Criterion<?> porcelainCriteria = has(Registration.PORCELAIN_BLOCK.get(DyeColor.WHITE));
     Registration.PORCELAIN_BLOCK.forEach((color, item) ->
       ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, item, 8)
-                         .define('B', CeramicsTags.Items.PORCELAIN)
+                         .define('B', CeramicsTags.Blocks.PORCELAIN.item())
                          .define('D', color.getTag())
                          .group(locationString("dye_porcelain"))
                          .pattern("BBB")
@@ -95,12 +95,12 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                          .save(output)
     );
     // rainbow porcelain
-    kilnFurnaceRecipe(output, CeramicsTags.Items.COLORED_PORCELAIN, Registration.RAINBOW_PORCELAIN.get(RainbowPorcelain.RED), 0.1f, location("rainbow_porcelain"));
+    kilnFurnaceRecipe(output, CeramicsTags.Blocks.COLORED_PORCELAIN.item(), Registration.RAINBOW_PORCELAIN.get(RainbowPorcelain.RED), 0.1f, location("rainbow_porcelain"));
 
     // smelt for full rainbow
-    Criterion<?> hasTheRainbow = has(CeramicsTags.Items.RAINBOW_PORCELAIN);
+    Criterion<?> hasTheRainbow = has(CeramicsTags.Blocks.RAINBOW_PORCELAIN.item());
     Registration.RAINBOW_PORCELAIN.forEach((color, item) ->
-      SingleItemRecipeBuilder.stonecutting(Ingredient.of(CeramicsTags.Items.RAINBOW_PORCELAIN), RecipeCategory.BUILDING_BLOCKS, item)
+      SingleItemRecipeBuilder.stonecutting(Ingredient.of(CeramicsTags.Blocks.RAINBOW_PORCELAIN.item()), RecipeCategory.BUILDING_BLOCKS, item)
                              .unlockedBy("has_the_rainbow", hasTheRainbow)
                              .save(output, id(item))
     );
@@ -232,7 +232,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     Registration.COLORED_CISTERN.forEach((color, block) -> {
       // craft
       ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block, 4)
-                         .define('c', CrackableIngredient.uncracked(CeramicsTags.Items.TERRACOTTA_CISTERNS))
+                         .define('c', CrackableIngredient.uncracked(CeramicsTags.Blocks.TERRACOTTA_CISTERNS.item()))
                          .define('d', color.getTag())
                          .pattern(" c ")
                          .pattern("cdc")
@@ -245,7 +245,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
     });
     Registration.PORCELAIN_CISTERN.forEach((color, block) ->
       ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block, 4)
-                         .define('c', CeramicsTags.Items.PORCELAIN_CISTERNS)
+                         .define('c', CeramicsTags.Blocks.PORCELAIN_CISTERNS.item())
                          .define('d', color.getTag())
                          .pattern(" c ")
                          .pattern("cdc")
@@ -388,7 +388,7 @@ public class RecipeProvider extends net.minecraft.data.recipes.RecipeProvider {
                           .save(output, location("porcelain_uncrafting_3"));
     // compat, wish there was a better way to do this
     ShapedRecipeBuilder.shaped(RecipeCategory.FOOD, Blocks.CAKE)
-                       .define('M', CeramicsTags.Items.MILK_BUCKETS)
+                       .define('M', Tags.Items.BUCKETS_MILK)
                        .define('S', Items.SUGAR)
                        .define('W', Items.WHEAT)
                        .define('E', Items.EGG)

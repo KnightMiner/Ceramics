@@ -3,18 +3,18 @@ package knightminer.ceramics.datagen;
 import knightminer.ceramics.Ceramics;
 import knightminer.ceramics.Registration;
 import knightminer.ceramics.recipe.CeramicsTags;
-import knightminer.ceramics.recipe.CeramicsTags.Blocks;
 import net.minecraft.core.HolderLookup.Provider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import slimeknights.mantle.data.ItemTagProviderExtension;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ItemTagProvider extends ItemTagsProvider {
+public class ItemTagProvider extends ItemTagProviderExtension {
   public ItemTagProvider(PackOutput packOutput, CompletableFuture<Provider> lookupProvider, CompletableFuture<TagsProvider.TagLookup<Block>> blockTags, ExistingFileHelper helper) {
     super(packOutput, lookupProvider, blockTags, Ceramics.MOD_ID, helper);
   }
@@ -26,19 +26,19 @@ public class ItemTagProvider extends ItemTagsProvider {
 
   @Override
   protected void addTags(Provider provider) {
-    this.copy(Blocks.COLORED_TERRACOTTA, CeramicsTags.Items.COLORED_TERRACOTTA);
+    this.copy(CeramicsTags.Blocks.COLORED_TERRACOTTA);
     // porcelain
-    this.copy(Blocks.PORCELAIN, CeramicsTags.Items.PORCELAIN);
-    this.copy(Blocks.COLORED_PORCELAIN, CeramicsTags.Items.COLORED_PORCELAIN);
-    this.copy(Blocks.RAINBOW_PORCELAIN, CeramicsTags.Items.RAINBOW_PORCELAIN);
+    this.copy(CeramicsTags.Blocks.PORCELAIN);
+    this.copy(CeramicsTags.Blocks.COLORED_PORCELAIN);
+    this.copy(CeramicsTags.Blocks.RAINBOW_PORCELAIN);
     // bricks
-    this.copy(Blocks.BRICKS, CeramicsTags.Items.BRICKS);
+    this.copy(CeramicsTags.Blocks.BRICKS);
     // cisterns
-    this.copy(Blocks.TERRACOTTA_CISTERNS, CeramicsTags.Items.TERRACOTTA_CISTERNS);
-    this.copy(Blocks.PORCELAIN_CISTERNS, CeramicsTags.Items.PORCELAIN_CISTERNS);
+    this.copy(CeramicsTags.Blocks.TERRACOTTA_CISTERNS);
+    this.copy(CeramicsTags.Blocks.PORCELAIN_CISTERNS);
 
     // item unique tags
-    this.tag(CeramicsTags.Items.MILK_BUCKETS).add(Items.MILK_BUCKET, Registration.MILK_CLAY_BUCKET.get(), Registration.CRACKED_MILK_CLAY_BUCKET.get());
+    this.tag(Tags.Items.BUCKETS_MILK).add(Items.MILK_BUCKET, Registration.MILK_CLAY_BUCKET.get(), Registration.CRACKED_MILK_CLAY_BUCKET.get());
     this.tag(CeramicsTags.Items.TERRACOTTA_CRACK_REPAIR).add(Items.CLAY_BALL);
     this.tag(CeramicsTags.Items.BRICK_PLATES).add(Registration.CLAY_PLATE.get());
     this.tag(CeramicsTags.Items.PLATES).addTag(CeramicsTags.Items.BRICK_PLATES);
