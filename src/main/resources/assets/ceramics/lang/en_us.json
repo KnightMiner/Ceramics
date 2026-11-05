@@ -195,5 +195,41 @@
     
     "container.ceramics.kiln": "Kiln",
     "gui.recipebook.toggleRecipes.ceramics.kiln": "Showing Fireable",
-    "gui.jei.category.ceramics.kiln": "Kiln"
+    "gui.jei.category.ceramics.kiln": "Kiln",
+
+
+    "_comment": "########",
+    "_comment": "# Tags #",
+    "_comment": "########",
+
+    "tag.block.ceramics.cistern_connections": "Blocks Cisterns Connect To",
+    "tag.block.ceramics.extra_bucket_blocks": "Extra Blocks that fill Clay Buckets",
+    "tag.block.ceramics.bucket_cracking_blocks": "Blocks that crack Clay Buckets",
+
+    "tag.block.ceramics.colored_terracotta": "Colored Terracotta",
+    "tag.block.ceramics.porcelain": "Any Porcelain",
+    "tag.block.ceramics.colored_porcelain": "Colored Porcelain",
+    "tag.block.ceramics.rainbow_porcelain": "Rainbow Porcelain",
+    "tag.block.ceramics.bricks": "Brick Blocks",
+    "tag.block.ceramics.terracotta_cisterns": "Terracotta Cisterns",
+    "tag.block.ceramics.porcelain_cisterns": "Porcelain Cisterns",
+
+    "tag.item.ceramics.bricks": "Brick Blocks",
+    "tag.item.ceramics.colored_terracotta": "Colored Terracotta",
+    "tag.item.ceramics.porcelain": "Any Porcelain",
+    "tag.item.ceramics.colored_porcelain": "Colored Porcelain",
+    "tag.item.ceramics.rainbow_porcelain": "Rainbow Porcelain",
+    "tag.item.ceramics.terracotta_cisterns": "Terracotta Cisterns",
+    "tag.item.ceramics.porcelain_cisterns": "Porcelain Cisterns",
+
+    "tag.item.c.plates": "Plates",
+    "tag.item.c.plates.brick": "Clay Plates",
+    "tag.item.ceramics.clay_buckets": "Clay Buckets",
+    "tag.item.ceramics.clay_buckets.empty": "Empty Clay Buckets",
+    "tag.item.ceramics.terracotta_crack_repair": "Items repairing cracked terracotta",
+
+    "tag.fluid.ceramics.hot_fluids": "Fluids that crack Clay Buckets",
+    "tag.fluid.ceramics.cool_fluids": "Fluids that do not crack Clay Buckets",
+    "tag.fluid.ceramics.bucket_blacklist": "Disallowed in Clay Buckets",
+    "tag.fluid.ceramics.hide_in_bucket": "Hidden from display Clay Buckets"
 }
