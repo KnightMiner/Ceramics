@@ -4,5 +4,6 @@
   "textures": {
     "base": "ceramics:item/clay_bucket/normal",
     "fluid": "ceramics:item/clay_bucket/normal_fluid"
-  }
+  },
+  "texture_overrides": "ceramics:fluid_bucket"
 }

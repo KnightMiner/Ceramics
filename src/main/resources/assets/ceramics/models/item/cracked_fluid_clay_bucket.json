@@ -4,5 +4,6 @@
   "textures": {
     "base": "ceramics:item/clay_bucket/cracked",
     "fluid": "ceramics:item/clay_bucket/cracked_fluid"
-  }
+  },
+  "texture_overrides": "ceramics:cracked_fluid_bucket"
 }

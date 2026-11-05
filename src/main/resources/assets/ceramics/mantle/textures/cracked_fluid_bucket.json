@@ -1,0 +1,6 @@
+{
+  "textures": {
+    "minecraft:water": "ceramics:item/clay_bucket/water_cracked",
+    "minecraft:flowing_water": "ceramics:item/clay_bucket/water_cracked"
+  }
+}
